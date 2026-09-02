@@ -99,6 +99,56 @@ def dynamic_aois_to_frame(keyframes: Sequence[DynamicAOIKeyframe]) -> pd.DataFra
     )
 
 
+def dynamic_aois_from_frame(
+    frame: pd.DataFrame,
+    *,
+    default_source: str = "manual",
+) -> list[DynamicAOIKeyframe]:
+    """Parse a canonical dynamic-AOI keyframe table into validated objects.
+
+    Required columns are ``aoi_id``, ``label``, ``timestamp_ms``, ``xmin``, ``ymin``, ``xmax``,
+    and ``ymax``. Optional confidence/provenance columns are preserved when present. Duplicate
+    ``aoi_id``/timestamp pairs are rejected because interpolation would otherwise be ambiguous.
+    """
+    required = ["aoi_id", "label", "timestamp_ms", "xmin", "ymin", "xmax", "ymax"]
+    missing = [column for column in required if column not in frame.columns]
+    if missing:
+        raise SchemaError(f"Dynamic AOI table is missing columns: {missing}")
+    if frame.duplicated(["aoi_id", "timestamp_ms"]).any():
+        raise SchemaError("Dynamic AOI table contains duplicate aoi_id/timestamp_ms pairs.")
+
+    keyframes: list[DynamicAOIKeyframe] = []
+    for row in frame.to_dict(orient="records"):
+        confidence = row.get("confidence", 1.0)
+        if pd.isna(confidence):
+            confidence = 1.0
+        source = row.get("source", default_source)
+        if pd.isna(source):
+            source = default_source
+        model_name = row.get("model_name")
+        if pd.isna(model_name):
+            model_name = None
+        model_version = row.get("model_version")
+        if pd.isna(model_version):
+            model_version = None
+        keyframes.append(
+            DynamicAOIKeyframe(
+                aoi_id=str(row["aoi_id"]),
+                label=str(row["label"]),
+                timestamp_ms=float(row["timestamp_ms"]),
+                xmin=float(row["xmin"]),
+                ymin=float(row["ymin"]),
+                xmax=float(row["xmax"]),
+                ymax=float(row["ymax"]),
+                confidence=float(confidence),
+                source=str(source),
+                model_name=None if model_name is None else str(model_name),
+                model_version=None if model_version is None else str(model_version),
+            )
+        )
+    return keyframes
+
+
 def _sorted_track(keyframes: Sequence[DynamicAOIKeyframe]) -> list[DynamicAOIKeyframe]:
     if not keyframes:
         return []
