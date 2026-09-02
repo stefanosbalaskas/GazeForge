@@ -13,6 +13,20 @@ from .aoi import (
     map_fixations_to_aois,
 )
 from .audit import build_audit_report
+from .benchmarks import (
+    BenchmarkDatasetCard,
+    benchmark_fingerprint,
+    build_benchmark_report,
+    freeze_benchmark_report,
+)
+from .evaluation import (
+    aoi_boundary_sensitivity,
+    aoi_iou,
+    evaluate_aoi_detection,
+    fixation_assignment_agreement,
+    match_aois,
+    pairwise_aoi_iou,
+)
 from .events import (
     EventModel,
     ai_classify_events,
@@ -48,7 +62,9 @@ except PackageNotFoundError:
 
 __all__ = [
     "AOI",
+    "ValidationResult",
     "AuditTrail",
+    "BenchmarkDatasetCard",
     "CallableAOIProvider",
     "EventModel",
     "GazeFrame",
@@ -56,21 +72,27 @@ __all__ = [
     "ModelCard",
     "ProvenanceRecord",
     "ScanpathEmbeddingModel",
-    "ValidationResult",
     "adapt_gazepoint_samples",
     "adapt_processed_table",
+    "aoi_boundary_sensitivity",
+    "aoi_iou",
     "ai_classify_events",
     "ai_flag_anomalies",
     "aois_to_frame",
     "apply_aoi_review",
     "assert_no_group_leakage",
+    "benchmark_fingerprint",
     "build_audit_report",
+    "build_benchmark_report",
     "canonicalize_gaze",
     "cluster_scanpaths_ai",
     "detect_calibration_drift",
     "detect_semantic_aois",
     "embed_scanpaths",
+    "evaluate_aoi_detection",
     "evaluate_event_predictions",
+    "fixation_assignment_agreement",
+    "freeze_benchmark_report",
     "find_scanpath_motifs",
     "fingerprint_frame",
     "fit_scanpath_embedder",
@@ -79,6 +101,8 @@ __all__ = [
     "infer_sampling_rate_hz",
     "ivt_classify_events",
     "map_fixations_to_aois",
+    "match_aois",
+    "pairwise_aoi_iou",
     "scanpath_similarity",
     "score_trial_quality",
     "simulate_gaze",
