@@ -16,6 +16,7 @@ while validation evidence is being established.
 - Boundary-safe temporal-context MLP event classifier with probabilistic abstention metadata.
 - I-VT baseline event classifier.
 - Semantic AOI provider API, optional OWL-ViT provider, human review, and fixation mapping.
+- Dynamic AOI keyframes, provider protocol, gap-limited interpolation, and temporal fixation mapping.
 - Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
 - Participant/group-held-out and leave-one-dataset-out validation.
 - AOI IoU/matching, semantic-label agreement, fixation-assignment agreement, and boundary
