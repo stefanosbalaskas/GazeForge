@@ -12,10 +12,12 @@ The project is intentionally built around a scientific rule:
 ## Current alpha capabilities
 
 - Canonical gaze schema and sampling-rate inference.
+- Gazepoint plus explicit processed-table adapters for ecosystem interoperability.
 - Stable data fingerprints and operation-level provenance.
 - Isolation-Forest quality-control flags that never delete samples.
 - Sampling-rate-aware probabilistic eye-event classification.
 - Classical I-VT event labels for transparent benchmarking.
+- Participant/group-held-out validation with explicit leakage checks.
 - Semantic rectangular AOIs with confidence, source, and model metadata.
 - Optional local Hugging Face OWL-ViT open-vocabulary AOI proposals.
 - Human review/correction of AI AOIs with a retained review log.
@@ -99,6 +101,23 @@ model = train_event_classifier(
 classified = ai_classify_events(new_samples, model, sampling_rate_hz=60)
 ```
 
+## Leakage-safe validation
+
+```python
+from gazeforge import grouped_event_cross_validate
+
+validation = grouped_event_cross_validate(
+    labelled_samples,
+    label_col="event_label",
+    group_col="participant_id",
+    n_splits=5,
+    sampling_rate_hz=60,
+)
+```
+
+A fresh event model is fitted inside every fold, and participants are kept out of the training
+partition for the fold in which they are evaluated.
+
 ## Scientific roadmap
 
 ### v0.1 — auditable AI core
@@ -110,13 +129,14 @@ classified = ai_classify_events(new_samples, model, sampling_rate_hz=60)
 - [x] human AOI review
 - [x] semantic scanpaths and learned embeddings
 - [x] provenance/model cards
+- [x] GP3/eyeprocesspy/gpbiometricspy-compatible adapters
+- [x] participant/group-held-out validation utilities
 - [ ] benchmark datasets and frozen validation reports
-- [ ] GP3/eyeprocesspy/gpbiometricspy adapters
 
 ### v0.2 — validated temporal AI
 - temporal CNN / transformer event models
 - probability calibration and calibration curves
-- participant-held-out and dataset-held-out validation
+- participant-held-out and dataset-held-out benchmark evidence
 - 60 Hz benchmark tranche
 - dynamic video AOIs and object tracking
 

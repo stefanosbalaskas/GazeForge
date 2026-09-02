@@ -24,7 +24,7 @@ class GazeFrame:
     screen_size_px: tuple[int, int] | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
-    def copy(self) -> "GazeFrame":
+    def copy(self) -> GazeFrame:
         """Return an independent copy."""
         return GazeFrame(
             data=self.data.copy(),
