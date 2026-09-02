@@ -19,6 +19,7 @@ while validation evidence is being established.
 - Dynamic AOI keyframes, provider protocol, gap-limited interpolation, and temporal fixation mapping.
 - Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
 - Participant/group-held-out and leave-one-dataset-out validation.
+- Matched-fold comparison of I-VT, Random Forest, and temporal-context event models.
 - AOI IoU/matching, semantic-label agreement, fixation-assignment agreement, and boundary
   sensitivity metrics.
 - Multiclass Brier score, ECE/reliability bins, and confidence-versus-coverage diagnostics.
