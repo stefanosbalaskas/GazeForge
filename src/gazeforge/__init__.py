@@ -26,6 +26,7 @@ from .calibration import (
     selective_accuracy_curve,
     top_label_calibration_table,
 )
+from .comparison import EventModelComparison, compare_event_models_grouped
 from .dynamic_aoi import (
     CallableDynamicAOIProvider,
     DynamicAOIKeyframe,
@@ -92,6 +93,7 @@ __all__ = [
     "CallableDynamicAOIProvider",
     "DynamicAOIKeyframe",
     "EventModel",
+    "EventModelComparison",
     "GazeFrame",
     "HuggingFaceZeroShotAOIProvider",
     "ModelCard",
@@ -113,6 +115,7 @@ __all__ = [
     "build_benchmark_report",
     "canonicalize_gaze",
     "cluster_scanpaths_ai",
+    "compare_event_models_grouped",
     "detect_calibration_drift",
     "detect_dynamic_aois",
     "dataset_holdout_context_event_validate",
