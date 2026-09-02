@@ -2,6 +2,7 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
+from .adapters import adapt_gazepoint_samples, adapt_processed_table
 from .aoi import (
     AOI,
     CallableAOIProvider,
@@ -33,6 +34,12 @@ from .scanpath import (
 )
 from .schema import GazeFrame, canonicalize_gaze, infer_sampling_rate_hz
 from .simulate import simulate_gaze
+from .validation import (
+    ValidationResult,
+    assert_no_group_leakage,
+    grouped_event_cross_validate,
+    grouped_holdout_indices,
+)
 
 try:
     __version__ = version("gazeforge")
@@ -49,10 +56,14 @@ __all__ = [
     "ModelCard",
     "ProvenanceRecord",
     "ScanpathEmbeddingModel",
+    "ValidationResult",
+    "adapt_gazepoint_samples",
+    "adapt_processed_table",
     "ai_classify_events",
     "ai_flag_anomalies",
     "aois_to_frame",
     "apply_aoi_review",
+    "assert_no_group_leakage",
     "build_audit_report",
     "canonicalize_gaze",
     "cluster_scanpaths_ai",
@@ -63,6 +74,8 @@ __all__ = [
     "find_scanpath_motifs",
     "fingerprint_frame",
     "fit_scanpath_embedder",
+    "grouped_event_cross_validate",
+    "grouped_holdout_indices",
     "infer_sampling_rate_hz",
     "ivt_classify_events",
     "map_fixations_to_aois",

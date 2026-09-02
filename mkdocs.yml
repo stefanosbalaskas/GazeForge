@@ -6,6 +6,7 @@ theme:
 nav:
   - Home: index.md
   - Architecture: architecture.md
+  - Adapters & validation: adapters-validation.md
   - Scientific governance: scientific-governance.md
 plugins:
   - search
