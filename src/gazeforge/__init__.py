@@ -52,6 +52,13 @@ from .events import (
     train_event_classifier,
 )
 from .lund2013 import LUND2013_LABELS, load_lund2013_directory, load_lund2013_mat
+from .lund_benchmark import (
+    Lund2013BenchmarkRun,
+    Lund2013PreparedBenchmark,
+    compare_lund2013_annotators,
+    prepare_lund2013_benchmark,
+    run_lund2013_event_benchmark,
+)
 from .model_cards import ModelCard
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
 from .qc import ai_flag_anomalies, detect_calibration_drift, score_trial_quality
@@ -101,6 +108,8 @@ __all__ = [
     "GazeFrame",
     "HuggingFaceZeroShotAOIProvider",
     "LUND2013_LABELS",
+    "Lund2013BenchmarkRun",
+    "Lund2013PreparedBenchmark",
     "ModelCard",
     "ProvenanceRecord",
     "ScanpathEmbeddingModel",
@@ -121,6 +130,7 @@ __all__ = [
     "canonicalize_gaze",
     "cluster_scanpaths_ai",
     "compare_event_models_grouped",
+    "compare_lund2013_annotators",
     "detect_calibration_drift",
     "detect_dynamic_aois",
     "dataset_holdout_context_event_validate",
@@ -150,7 +160,9 @@ __all__ = [
     "multiclass_brier_score",
     "match_aois",
     "pairwise_aoi_iou",
+    "prepare_lund2013_benchmark",
     "resample_labeled_gaze",
+    "run_lund2013_event_benchmark",
     "sample_label_agreement",
     "scanpath_similarity",
     "score_trial_quality",

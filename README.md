@@ -28,6 +28,8 @@ The project is intentionally built around a scientific rule:
 - Semantic scanpaths, n-gram motifs, learned TF-IDF/SVD embeddings, similarity, and clustering.
 - AOI agreement, fixation-assignment agreement, and boundary-sensitivity evaluation.
 - Benchmark dataset cards and deterministic frozen validation-report infrastructure.
+- Native Lund2013 MATLAB ingestion, RA/MN agreement, and explicit 500-to-60-Hz resampling.
+- One-command matched-fold Lund2013 I-VT/Random Forest/ContextMLP benchmark reports.
 - Trial-level quality scores and synthetic gaze generation for examples/tests.
 - Machine-readable model cards and audit reports.
 
@@ -141,6 +143,21 @@ A fresh event model is fitted inside every fold, and participants are kept out o
 partition for the fold in which they are evaluated. Equivalent grouped and dataset-held-out
 validators are available for the temporal-context model.
 
+## Lund2013 empirical benchmark
+
+GazeForge can ingest the externally maintained Lund2013 expert-labelled MATLAB recordings,
+quantify MN-vs-RA human agreement, derive a label-purity-aware 60 Hz tranche, and compare I-VT,
+Random Forest, and ContextMLP on identical participant-held-out folds. Raw benchmark files are not
+bundled or relicensed by GazeForge.
+
+```bash
+gazeforge lund2013-benchmark /path/to/lund \
+  --annotator RA --target-rate 60 --n-splits 5 \
+  --output validation/lund2013-ra-60hz.json
+```
+
+See `docs/lund2013-benchmark.md` for the ambiguity protocol and planned sensitivity analyses.
+
 ## Scientific roadmap
 
 ### v0.1 — auditable AI core
@@ -155,14 +172,16 @@ validators are available for the temporal-context model.
 - [x] GP3/eyeprocesspy/gpbiometricspy-compatible adapters
 - [x] participant/group-held-out validation utilities
 - [x] benchmark cards, evaluation metrics, and frozen validation-report infrastructure
-- [ ] empirical benchmark datasets and frozen empirical reports
+- [x] Lund2013 empirical benchmark ingestion, 60 Hz derivation, and report runner
+- [ ] frozen empirical performance reports from a pinned Lund2013 checkout
 
 ### v0.2 — validated temporal AI
 - [x] temporal-context MLP baseline with boundary-safe windows
 - [x] probability calibration and confidence/coverage diagnostics
 - [x] participant-held-out and dataset-held-out validation
 - [ ] temporal CNN / transformer event models under identical frozen splits
-- [ ] empirical 60 Hz benchmark tranche
+- [x] derived 60 Hz Lund2013 benchmark protocol and runner
+- [ ] native 60 Hz expert-labelled GP3-class validation corpus
 - [x] dynamic AOI keyframes, interpolation guardrails, and fixation mapping
 - [ ] validated video/object-tracking provider implementations
 

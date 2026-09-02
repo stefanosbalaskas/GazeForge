@@ -20,6 +20,9 @@ while validation evidence is being established.
 - Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
 - Participant/group-held-out and leave-one-dataset-out validation.
 - Matched-fold comparison of I-VT, Random Forest, and temporal-context event models.
+- Native Lund2013 MATLAB benchmark ingestion with original expert event-code mapping.
+- Label-purity-aware lower-rate benchmark resampling with explicit ambiguous boundary samples.
+- MN-vs-RA sample-label agreement and a fingerprinted Lund2013 60 Hz benchmark runner/CLI.
 - AOI IoU/matching, semantic-label agreement, fixation-assignment agreement, and boundary
   sensitivity metrics.
 - Multiclass Brier score, ECE/reliability bins, and confidence-versus-coverage diagnostics.

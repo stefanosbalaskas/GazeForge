@@ -109,6 +109,7 @@ def resample_labeled_gaze(
     timestamp_col: str = "timestamp_ms",
     group_cols: tuple[str, ...] = ("participant_id", "trial_id"),
     continuous_cols: Sequence[str] = ("x_px", "y_px", "pupil"),
+    carry_cols: Sequence[str] = ("annotator", "stimulus_type", "dataset_id", "source_file"),
     min_label_purity: float = 0.75,
     ambiguous_label: str = "ambiguous",
     max_interpolation_gap_ms: float | None = None,
@@ -156,6 +157,7 @@ def resample_labeled_gaze(
         raise ValueError("max_interpolation_gap_ms must be positive.")
 
     available_continuous = [col for col in continuous_cols if col in data.columns]
+    available_carry = [col for col in carry_cols if col in data.columns and col not in group_cols]
     output_parts: list[pd.DataFrame] = []
     group_reports: list[dict[str, Any]] = []
 
@@ -185,6 +187,13 @@ def resample_labeled_gaze(
         key_tuple = group_key if isinstance(group_key, tuple) else (group_key,)
         for col, value in zip(group_cols, key_tuple, strict=True):
             out[col] = value
+        for col in available_carry:
+            values = group[col].dropna().unique()
+            if len(values) > 1:
+                raise SchemaError(
+                    f"Cannot carry non-invariant metadata column {col!r} within group {key_tuple}."
+                )
+            out[col] = values[0] if len(values) else np.nan
         for col in available_continuous:
             values = pd.to_numeric(group[col], errors="coerce").to_numpy(dtype=float)
             out[col] = _interpolate_with_gap_limit(

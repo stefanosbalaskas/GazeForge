@@ -27,3 +27,21 @@ jobs:
         run: ruff check src tests
       - name: Tests
         run: pytest --cov=gazeforge --cov-report=term-missing
+
+  package-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build wheel and sdist
+        run: python -m pip install -U pip build && python -m build
+      - name: Install wheel into clean virtual environment
+        shell: bash
+        run: |
+          python -m venv /tmp/gazeforge-wheel-smoke
+          /tmp/gazeforge-wheel-smoke/bin/python -m pip install -U pip
+          /tmp/gazeforge-wheel-smoke/bin/python -m pip install dist/*.whl
+          /tmp/gazeforge-wheel-smoke/bin/python -c "import gazeforge; print(gazeforge.__version__)"
+          /tmp/gazeforge-wheel-smoke/bin/gazeforge --version

@@ -1,0 +1,67 @@
+{
+  "protocol_name": "lund2013-ra-60hz-v1",
+  "protocol_version": 1,
+  "status": "protocol-only-no-empirical-results",
+  "source": {
+    "repository": "richardandersson/EyeMovementDetectorEvaluation",
+    "commit": "3e12416ab3fd6254c81811cf03f8e5d67c5d7129",
+    "data_path": "annotated_data/data used in the article",
+    "repository_license": "GPL-3.0",
+    "bundled_by_gazeforge": false,
+    "citation": "Andersson et al. (2017), Behavior Research Methods 49(2), 616-637"
+  },
+  "labels": {
+    "primary_annotator": "RA",
+    "sensitivity_annotator": "MN",
+    "code_map": {
+      "0": "unlabelled",
+      "1": "fixation",
+      "2": "saccade",
+      "3": "pso",
+      "4": "pursuit",
+      "5": "blink",
+      "6": "undefined"
+    }
+  },
+  "resampling": {
+    "source_sampling_rate_hz": 500.0,
+    "target_sampling_rate_hz": 60.0,
+    "method": "linear_coordinates_majority_window_labels",
+    "min_label_purity": 0.75,
+    "ambiguous_label": "ambiguous",
+    "max_interpolation_gap_ms": "default=2_target_periods",
+    "excluded_primary_labels": ["ambiguous", "unlabelled", "undefined"]
+  },
+  "validation": {
+    "split_unit": "participant_id",
+    "design": "GroupKFold",
+    "n_splits": 5,
+    "participant_leakage_allowed": false,
+    "matched_test_rows_across_models": true,
+    "models": ["I-VT", "RandomForest", "ContextMLP"],
+    "metrics": [
+      "accuracy",
+      "balanced_accuracy",
+      "macro_f1",
+      "multiclass_brier_score_probabilistic_models_only",
+      "expected_calibration_error_probabilistic_models_only"
+    ],
+    "human_reference": [
+      "MN-vs-RA exact agreement",
+      "MN-vs-RA Cohen kappa",
+      "MN-vs-RA confusion matrix"
+    ]
+  },
+  "required_sensitivity_analyses": [
+    "repeat primary model comparison using MN labels",
+    "vary min_label_purity",
+    "report native-500Hz and derived-60Hz human-human agreement",
+    "report results by stimulus family",
+    "state that derived 60Hz data are not a substitute for a native 60Hz expert-labelled corpus"
+  ],
+  "reporting": {
+    "format": "deterministic JSON",
+    "fingerprint": "SHA-256 canonical report fingerprint",
+    "overwrite_protection": true
+  }
+}

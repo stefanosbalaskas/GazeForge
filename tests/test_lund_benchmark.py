@@ -1,0 +1,91 @@
+import numpy as np
+from scipy.io import savemat
+
+from gazeforge import (
+    compare_lund2013_annotators,
+    prepare_lund2013_benchmark,
+    run_lund2013_event_benchmark,
+)
+
+
+def _write_recording(path, *, phase=0.0, annotator_offset=0):
+    n = 400
+    pos = np.zeros((n, 6), dtype=float)
+    t = np.arange(n, dtype=float)
+    pos[:, 3] = 500 + 0.2 * t + phase
+    pos[:, 4] = 300 + 8 * np.sin(t / 15.0 + phase)
+    labels = np.where((np.arange(n) + annotator_offset) % 200 < 150, 1, 2)
+    pos[:, 5] = labels
+    savemat(
+        path,
+        {
+            "ETdata": {
+                "pos": pos,
+                "sampFreq": np.array([[500.0]]),
+                "screenRes": np.array([[1920.0, 1080.0]]),
+                "screenDim": np.array([[530.0, 300.0]]),
+                "viewDist": np.array([[650.0]]),
+            }
+        },
+    )
+
+
+def _benchmark_tree(tmp_path):
+    image_dir = tmp_path / "img"
+    image_dir.mkdir()
+    for index, participant in enumerate(("P01", "P02", "P03")):
+        _write_recording(
+            image_dir / f"{participant}_img_scene_labelled_RA.mat",
+            phase=float(index),
+        )
+        _write_recording(
+            image_dir / f"{participant}_img_scene_labelled_MN.mat",
+            phase=float(index),
+            annotator_offset=2,
+        )
+    return tmp_path
+
+
+def test_prepare_lund2013_benchmark_records_60hz_provenance(tmp_path):
+    root = _benchmark_tree(tmp_path)
+    prepared = prepare_lund2013_benchmark(
+        root,
+        annotator="RA",
+        target_sampling_rate_hz=60,
+        min_label_purity=0.75,
+    )
+    assert prepared.dataset_card.name == "Lund2013"
+    assert prepared.dataset_card.split_unit == "participant_id"
+    assert prepared.preparation_report["source_sampling_rate_hz"] == 500
+    assert prepared.preparation_report["analysis_sampling_rate_hz"] == 60
+    assert prepared.data["participant_id"].nunique() == 3
+    assert set(prepared.data["stimulus_type"]) == {"image"}
+    assert set(prepared.data["annotator"]) == {"RA"}
+
+
+def test_lund2013_annotator_agreement_runs_native_and_resampled(tmp_path):
+    root = _benchmark_tree(tmp_path)
+    native = compare_lund2013_annotators(root)
+    low_rate = compare_lund2013_annotators(root, target_sampling_rate_hz=60)
+    assert native["overall"]["n_aligned_samples"] > low_rate["overall"]["n_aligned_samples"]
+    assert -1 <= native["overall"]["cohen_kappa"] <= 1
+    assert "image" in low_rate["by_stimulus_type"]
+
+
+def test_lund2013_event_benchmark_builds_fingerprinted_report(tmp_path):
+    root = _benchmark_tree(tmp_path)
+    run = run_lund2013_event_benchmark(
+        root,
+        annotator="RA",
+        target_sampling_rate_hz=60,
+        n_splits=2,
+        n_estimators=10,
+        context_radius_ms=20,
+        hidden_layer_sizes=(4,),
+        temporal_solver="lbfgs",
+        temporal_max_iter=100,
+    )
+    assert set(run.comparison.summary["model"]) == {"I-VT", "RandomForest", "ContextMLP"}
+    assert run.report["benchmark"]["name"] == "Lund2013"
+    assert len(run.report["report_fingerprint_sha256"]) == 64
+    assert run.report["protocol"]["comparison_design"]["group_col"] == "participant_id"
