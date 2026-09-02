@@ -13,6 +13,7 @@ while validation evidence is being established.
 - Gazepoint and explicit processed-table adapters.
 - Auditable Isolation-Forest QC flags and trial-quality summaries.
 - Probabilistic event-model API with sampling-rate compatibility guardrails.
+- Boundary-safe temporal-context MLP event classifier with probabilistic abstention metadata.
 - I-VT baseline event classifier.
 - Semantic AOI provider API, optional OWL-ViT provider, human review, and fixation mapping.
 - Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
