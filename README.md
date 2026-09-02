@@ -16,13 +16,17 @@ The project is intentionally built around a scientific rule:
 - Stable data fingerprints and operation-level provenance.
 - Isolation-Forest quality-control flags that never delete samples.
 - Sampling-rate-aware probabilistic eye-event classification.
+- Boundary-safe temporal-context MLP event classification with explicit abstention metadata.
 - Classical I-VT event labels for transparent benchmarking.
 - Participant/group-held-out validation with explicit leakage checks.
+- Leave-one-dataset-out validation and probability-calibration diagnostics.
 - Semantic rectangular AOIs with confidence, source, and model metadata.
 - Optional local Hugging Face OWL-ViT open-vocabulary AOI proposals.
 - Human review/correction of AI AOIs with a retained review log.
 - Fixation-to-AOI mapping with explicit overlap rules.
 - Semantic scanpaths, n-gram motifs, learned TF-IDF/SVD embeddings, similarity, and clustering.
+- AOI agreement, fixation-assignment agreement, and boundary-sensitivity evaluation.
+- Benchmark dataset cards and deterministic frozen validation-report infrastructure.
 - Trial-level quality scores and synthetic gaze generation for examples/tests.
 - Machine-readable model cards and audit reports.
 
@@ -101,6 +105,23 @@ model = train_event_classifier(
 classified = ai_classify_events(new_samples, model, sampling_rate_hz=60)
 ```
 
+The first temporal baseline uses boundary-safe context windows:
+
+```python
+from gazeforge import ai_classify_events_context, train_context_event_classifier
+
+model = train_context_event_classifier(
+    labelled_samples,
+    label_col="event_label",
+    sampling_rate_hz=60,
+    context_radius_ms=50,
+)
+classified = ai_classify_events_context(new_samples, model, sampling_rate_hz=60)
+```
+
+Temporal windows are built separately within each participant/trial and never cross those
+boundaries. They are specified in milliseconds and converted to samples using the recording rate.
+
 ## Leakage-safe validation
 
 ```python
@@ -131,14 +152,16 @@ partition for the fold in which they are evaluated.
 - [x] provenance/model cards
 - [x] GP3/eyeprocesspy/gpbiometricspy-compatible adapters
 - [x] participant/group-held-out validation utilities
-- [ ] benchmark datasets and frozen validation reports
+- [x] benchmark cards, evaluation metrics, and frozen validation-report infrastructure
+- [ ] empirical benchmark datasets and frozen empirical reports
 
 ### v0.2 — validated temporal AI
-- temporal CNN / transformer event models
-- probability calibration and calibration curves
-- participant-held-out and dataset-held-out benchmark evidence
-- 60 Hz benchmark tranche
-- dynamic video AOIs and object tracking
+- [x] temporal-context MLP baseline with boundary-safe windows
+- [x] probability calibration and confidence/coverage diagnostics
+- [x] participant-held-out and dataset-held-out validation
+- [ ] temporal CNN / transformer event models under identical frozen splits
+- [ ] empirical 60 Hz benchmark tranche
+- [ ] dynamic video AOIs and object tracking
 
 ### v0.3 — multimodal and orchestration
 - gaze + pupil + EDA + PPG/HRV fusion
