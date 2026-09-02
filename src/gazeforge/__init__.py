@@ -40,9 +40,9 @@ from .evaluation import (
     aoi_iou,
     evaluate_aoi_detection,
     fixation_assignment_agreement,
-    sample_label_agreement,
     match_aois,
     pairwise_aoi_iou,
+    sample_label_agreement,
 )
 from .events import (
     EventModel,
