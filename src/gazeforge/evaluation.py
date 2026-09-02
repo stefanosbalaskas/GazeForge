@@ -282,3 +282,48 @@ def aoi_boundary_sensitivity(
             }
         )
     return pd.DataFrame(rows)
+
+
+def sample_label_agreement(
+    left: pd.DataFrame,
+    right: pd.DataFrame,
+    *,
+    key_cols: tuple[str, ...] = ("participant_id", "trial_id", "timestamp_ms"),
+    label_col: str = "event_label",
+    missing_label: str = "MISSING",
+) -> dict[str, Any]:
+    """Compare aligned sample-level event labels from two annotators or methods."""
+    required = [*key_cols, label_col]
+    for name, frame in (("left", left), ("right", right)):
+        missing = [col for col in required if col not in frame.columns]
+        if missing:
+            raise SchemaError(f"{name} labels are missing columns: {missing}")
+        if frame.duplicated(list(key_cols)).any():
+            raise SchemaError(f"{name} labels contain duplicate alignment keys.")
+
+    joined = left[required].merge(
+        right[required],
+        on=list(key_cols),
+        how="inner",
+        suffixes=("_left", "_right"),
+        validate="one_to_one",
+    )
+    if joined.empty:
+        raise SchemaError("No aligned samples were available for label agreement.")
+    left_labels = joined[f"{label_col}_left"].fillna(missing_label).astype(str)
+    right_labels = joined[f"{label_col}_right"].fillna(missing_label).astype(str)
+    labels = sorted(set(left_labels) | set(right_labels))
+    confusion = pd.crosstab(
+        pd.Categorical(left_labels, categories=labels),
+        pd.Categorical(right_labels, categories=labels),
+        dropna=False,
+    )
+    confusion.index.name = "left_label"
+    confusion.columns.name = "right_label"
+    return {
+        "n_aligned_samples": int(len(joined)),
+        "exact_agreement": float((left_labels == right_labels).mean()),
+        "cohen_kappa": float(cohen_kappa_score(left_labels, right_labels)),
+        "labels": labels,
+        "confusion_matrix": confusion.to_dict(),
+    }
