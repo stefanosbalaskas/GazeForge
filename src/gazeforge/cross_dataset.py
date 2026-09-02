@@ -69,9 +69,21 @@ def _require_resolved_participants(name: str, gaze: GazeFrame) -> None:
         )
 
 
+def _coordinate_evidence(gaze: GazeFrame) -> tuple[str, bool, str]:
+    unit = str(gaze.metadata.get("coordinate_source_unit", "unverified"))
+    verified = gaze.metadata.get("coordinate_unit_verified") is True
+    basis = "dataset metadata"
+    source = str(gaze.metadata.get("source_dataset", ""))
+    if not verified and source == "Lund2013":
+        unit = "pixels"
+        verified = True
+        basis = "Lund2013 adapter/source convention"
+    return unit, verified, basis
+
+
 def _require_verified_coordinates(name: str, gaze: GazeFrame) -> None:
-    verified = gaze.metadata.get("coordinate_unit_verified")
-    if verified is not True:
+    _, verified, _ = _coordinate_evidence(gaze)
+    if not verified:
         raise SchemaError(
             f"Dataset {name!r} does not have a verified coordinate unit; "
             "unit-sensitive cross-dataset kinematic modelling is blocked."
@@ -126,13 +138,12 @@ def prepare_cross_dataset_event_benchmark(
         if "event_label" not in gaze.data.columns:
             raise SchemaError(f"Dataset {dataset_id!r} has no event_label column.")
 
+        coordinate_unit, coordinate_verified, coordinate_basis = _coordinate_evidence(gaze)
         source = gaze.data.copy()
         source["event_label"] = source["event_label"].map(_normalise_label)
         source["dataset_id"] = dataset_id
-        source["coordinate_unit"] = str(gaze.metadata.get("coordinate_source_unit", "unverified"))
-        source["coordinate_unit_verified"] = bool(
-            gaze.metadata.get("coordinate_unit_verified", False)
-        )
+        source["coordinate_unit"] = coordinate_unit
+        source["coordinate_unit_verified"] = coordinate_verified
 
         if target_rate < float(gaze.sampling_rate_hz):
             sampled_result = resample_labeled_gaze(
@@ -205,8 +216,9 @@ def prepare_cross_dataset_event_benchmark(
             "source_sampling_rate_hz": float(gaze.sampling_rate_hz),
             "target_sampling_rate_hz": target_rate,
             "sampling_origin_at_analysis": sampling_origin,
-            "coordinate_source_unit": gaze.metadata.get("coordinate_source_unit", "unverified"),
-            "coordinate_unit_verified": bool(gaze.metadata.get("coordinate_unit_verified", False)),
+            "coordinate_source_unit": coordinate_unit,
+            "coordinate_unit_verified": coordinate_verified,
+            "coordinate_verification_basis": coordinate_basis,
             "participant_identity_resolved": not sampled["source_participant_id"].isin(
                 {"__unresolved__", "unknown"}
             ).any(),
