@@ -42,6 +42,7 @@ from .evaluation import (
     fixation_assignment_agreement,
     match_aois,
     pairwise_aoi_iou,
+    sample_label_agreement,
 )
 from .events import (
     EventModel,
@@ -50,9 +51,11 @@ from .events import (
     ivt_classify_events,
     train_event_classifier,
 )
+from .lund2013 import LUND2013_LABELS, load_lund2013_directory, load_lund2013_mat
 from .model_cards import ModelCard
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
 from .qc import ai_flag_anomalies, detect_calibration_drift, score_trial_quality
+from .resampling import BenchmarkResamplingResult, resample_labeled_gaze
 from .scanpath import (
     ScanpathEmbeddingModel,
     cluster_scanpaths_ai,
@@ -89,6 +92,7 @@ __all__ = [
     "ValidationResult",
     "AuditTrail",
     "BenchmarkDatasetCard",
+    "BenchmarkResamplingResult",
     "CallableAOIProvider",
     "CallableDynamicAOIProvider",
     "DynamicAOIKeyframe",
@@ -96,6 +100,7 @@ __all__ = [
     "EventModelComparison",
     "GazeFrame",
     "HuggingFaceZeroShotAOIProvider",
+    "LUND2013_LABELS",
     "ModelCard",
     "ProvenanceRecord",
     "ScanpathEmbeddingModel",
@@ -138,11 +143,15 @@ __all__ = [
     "infer_sampling_rate_hz",
     "interpolate_dynamic_aoi",
     "ivt_classify_events",
+    "load_lund2013_directory",
+    "load_lund2013_mat",
     "map_fixations_to_aois",
     "map_fixations_to_dynamic_aois",
     "multiclass_brier_score",
     "match_aois",
     "pairwise_aoi_iou",
+    "resample_labeled_gaze",
+    "sample_label_agreement",
     "scanpath_similarity",
     "score_trial_quality",
     "selective_accuracy_curve",
