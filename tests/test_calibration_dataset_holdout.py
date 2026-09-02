@@ -70,9 +70,7 @@ def _dataset_fixture():
             sampling_rate_hz=60,
             random_state=40 + dataset_index,
         )
-        part["participant_id"] = part["participant_id"].map(
-            lambda value: f"{dataset_id}_{value}"
-        )
+        part["participant_id"] = f"{dataset_id}_" + part["participant_id"].astype(str)
         part["dataset_id"] = dataset_id
         baseline = ivt_classify_events(
             part,
