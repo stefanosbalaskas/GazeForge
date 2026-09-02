@@ -8,6 +8,7 @@ nav:
   - Architecture: architecture.md
   - Adapters & validation: adapters-validation.md
   - Benchmarking: benchmarking.md
+  - Calibration & dataset holdouts: calibration.md
   - Scientific governance: scientific-governance.md
 plugins:
   - search

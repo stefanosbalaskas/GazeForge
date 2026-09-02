@@ -147,3 +147,92 @@ def grouped_event_cross_validate(
         folds=pd.DataFrame(fold_rows),
         metrics=metrics,
     )
+
+
+def dataset_holdout_event_validate(
+    data: pd.DataFrame,
+    *,
+    dataset_col: str = "dataset_id",
+    participant_col: str = "participant_id",
+    label_col: str = "event_label",
+    sampling_rate_hz: float | None = None,
+    min_confidence: float = 0.0,
+    random_state: int = 42,
+    n_estimators: int = 200,
+    require_disjoint_participants: bool = True,
+) -> ValidationResult:
+    """Leave each dataset out in turn to measure cross-dataset generalisation.
+
+    A fresh model is trained for every held-out dataset. When
+    ``require_disjoint_participants=True``, the function refuses a split in which participant IDs
+    occur in both train and test, preventing identity leakage across dataset labels.
+    """
+    required = [dataset_col, participant_col, label_col]
+    missing = [col for col in required if col not in data.columns]
+    if missing:
+        raise SchemaError(f"Dataset-held-out validation is missing columns: {missing}")
+
+    datasets = sorted(data[dataset_col].dropna().astype(str).unique())
+    if len(datasets) < 2:
+        raise ValueError("At least two datasets are required for dataset-held-out validation.")
+
+    rate = (
+        float(sampling_rate_hz)
+        if sampling_rate_hz is not None
+        else infer_sampling_rate_hz(data)
+    )
+    prediction_parts: list[pd.DataFrame] = []
+    fold_rows: list[dict[str, Any]] = []
+
+    dataset_values = data[dataset_col].astype(str)
+    for fold, held_out in enumerate(datasets, start=1):
+        test = data.loc[dataset_values == held_out].copy()
+        train = data.loc[dataset_values != held_out].copy()
+        if require_disjoint_participants:
+            assert_no_group_leakage(train, test, group_cols=(participant_col,))
+
+        model = train_event_classifier(
+            train,
+            label_col=label_col,
+            sampling_rate_hz=rate,
+            random_state=int(random_state) + fold,
+            n_estimators=int(n_estimators),
+        )
+        predicted = ai_classify_events(
+            test,
+            model,
+            sampling_rate_hz=rate,
+            min_confidence=min_confidence,
+        )
+        predicted["validation_fold"] = fold
+        predicted["held_out_dataset"] = held_out
+        prediction_parts.append(predicted)
+        fold_rows.append(
+            {
+                "fold": fold,
+                "held_out_dataset": held_out,
+                "n_train_rows": int(len(train)),
+                "n_test_rows": int(len(test)),
+                "n_train_datasets": int(train[dataset_col].nunique()),
+                "n_test_participants": int(test[participant_col].nunique()),
+            }
+        )
+
+    predictions = pd.concat(prediction_parts, ignore_index=True)
+    metrics = evaluate_event_predictions(
+        predictions[label_col],
+        predictions["predicted_event"],
+    )
+    metrics["validation_design"] = {
+        "design": "leave_one_dataset_out",
+        "dataset_col": dataset_col,
+        "participant_col": participant_col,
+        "n_datasets": len(datasets),
+        "sampling_rate_hz": rate,
+        "require_disjoint_participants": bool(require_disjoint_participants),
+    }
+    return ValidationResult(
+        predictions=predictions,
+        folds=pd.DataFrame(fold_rows),
+        metrics=metrics,
+    )

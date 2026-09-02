@@ -19,6 +19,13 @@ from .benchmarks import (
     build_benchmark_report,
     freeze_benchmark_report,
 )
+from .calibration import (
+    evaluate_event_calibration,
+    expected_calibration_error,
+    multiclass_brier_score,
+    selective_accuracy_curve,
+    top_label_calibration_table,
+)
 from .evaluation import (
     aoi_boundary_sensitivity,
     aoi_iou,
@@ -51,6 +58,7 @@ from .simulate import simulate_gaze
 from .validation import (
     ValidationResult,
     assert_no_group_leakage,
+    dataset_holdout_event_validate,
     grouped_event_cross_validate,
     grouped_holdout_indices,
 )
@@ -87,10 +95,13 @@ __all__ = [
     "canonicalize_gaze",
     "cluster_scanpaths_ai",
     "detect_calibration_drift",
+    "dataset_holdout_event_validate",
     "detect_semantic_aois",
     "embed_scanpaths",
     "evaluate_aoi_detection",
+    "evaluate_event_calibration",
     "evaluate_event_predictions",
+    "expected_calibration_error",
     "fixation_assignment_agreement",
     "freeze_benchmark_report",
     "find_scanpath_motifs",
@@ -101,11 +112,14 @@ __all__ = [
     "infer_sampling_rate_hz",
     "ivt_classify_events",
     "map_fixations_to_aois",
+    "multiclass_brier_score",
     "match_aois",
     "pairwise_aoi_iou",
     "scanpath_similarity",
     "score_trial_quality",
+    "selective_accuracy_curve",
     "simulate_gaze",
     "to_semantic_scanpaths",
+    "top_label_calibration_table",
     "train_event_classifier",
 ]
