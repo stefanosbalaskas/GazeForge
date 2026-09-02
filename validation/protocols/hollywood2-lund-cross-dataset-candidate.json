@@ -1,0 +1,63 @@
+{
+  "protocol_id": "hollywood2-lund-cross-dataset-candidate-v1",
+  "status": "candidate-pending-hollywood2-coordinate-and-identity-audit",
+  "datasets": [
+    {
+      "name": "Lund2013",
+      "native_sampling_rate_hz": 500.0,
+      "annotation_origin": "expert-manual",
+      "target_sampling_rate_hz": 60.0,
+      "sampling_origin_at_analysis": "resampled"
+    },
+    {
+      "name": "Hollywood2EM",
+      "native_sampling_rate_hz": 500.0,
+      "annotation_origin": "human-assisted",
+      "primary_annotation_column": "handlabeller_final",
+      "target_sampling_rate_hz": 60.0,
+      "sampling_origin_at_analysis": "resampled",
+      "participant_identity_mapping_required": true,
+      "reuse_terms_verified": false,
+      "coordinate_unit_verified": false,
+      "coordinate_unit_required_for_modeling": true,
+      "coordinate_audit_required": true
+    }
+  ],
+  "harmonisation": {
+    "common_event_labels": [
+      "fixation",
+      "saccade",
+      "pursuit"
+    ],
+    "excluded_reference_labels": [
+      "ambiguous",
+      "unlabelled",
+      "undefined",
+      "noise",
+      "blink",
+      "pso"
+    ],
+    "resampling_method": "target-window majority label with purity guardrail",
+    "primary_min_label_purity": 0.75,
+    "target_sampling_rate_hz": 60.0,
+    "coordinate_policy": "unit-sensitive modelling blocked until every dataset coordinate unit is verified"
+  },
+  "validation": {
+    "primary_design": "leave-one-dataset-out",
+    "participant_disjointness_required": true,
+    "sampling_rate_compatibility_required": true,
+    "models": [
+      "RandomForest",
+      "ContextMLP"
+    ],
+    "deterministic_baseline": "I-VT only when comparable visual-angle geometry is available",
+    "unresolved_participant_ids_forbidden": true,
+    "unverified_coordinate_units_forbidden": true
+  },
+  "annotation_sensitivity": {
+    "hollywood2_student_column": "handlabeller_1",
+    "hollywood2_expert_column": "handlabeller_final",
+    "report_separately_from_cross_dataset_generalisation": true
+  },
+  "claim_limit": "Both 60 Hz corpora are derived from native 500 Hz human references; Hollywood2 coordinate units and participant mapping must be audited before frozen model results. This protocol does not establish native 60 Hz device validity."
+}
