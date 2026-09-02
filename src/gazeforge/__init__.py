@@ -28,6 +28,12 @@ from .calibration import (
     top_label_calibration_table,
 )
 from .comparison import EventModelComparison, compare_event_models_grouped
+from .cross_dataset import (
+    CrossDatasetEventPrepared,
+    CrossDatasetEventValidation,
+    prepare_cross_dataset_event_benchmark,
+    run_cross_dataset_event_validation,
+)
 from .dynamic_aoi import (
     CallableDynamicAOIProvider,
     DynamicAOIKeyframe,
@@ -62,6 +68,12 @@ from .events import (
     train_event_classifier,
 )
 from .geometry import angular_kinematic_features, pixels_to_visual_angle_deg
+from .hollywood2 import (
+    HOLLYWOOD2_ANNOTATOR_COLUMNS,
+    HOLLYWOOD2_EVENT_LABELS,
+    load_hollywood2_arff,
+    load_hollywood2_directory,
+)
 from .lund2013 import LUND2013_LABELS, load_lund2013_directory, load_lund2013_mat
 from .lund_benchmark import (
     Lund2013BenchmarkRun,
@@ -113,12 +125,16 @@ __all__ = [
     "BenchmarkResamplingResult",
     "CallableAOIProvider",
     "CallableDynamicAOIProvider",
+    "CrossDatasetEventPrepared",
+    "CrossDatasetEventValidation",
     "DynamicAOIEvaluation",
     "DynamicAOIKeyframe",
     "EventModel",
     "EventModelComparison",
     "GazeFrame",
     "HuggingFaceZeroShotAOIProvider",
+    "HOLLYWOOD2_ANNOTATOR_COLUMNS",
+    "HOLLYWOOD2_EVENT_LABELS",
     "LUND2013_LABELS",
     "Lund2013BenchmarkRun",
     "Lund2013PreparedBenchmark",
@@ -173,6 +189,8 @@ __all__ = [
     "interpolate_dynamic_aoi",
     "ivt_classify_events",
     "ivt_classify_events_angular",
+    "load_hollywood2_arff",
+    "load_hollywood2_directory",
     "load_lund2013_directory",
     "load_lund2013_mat",
     "map_fixations_to_aois",
@@ -181,9 +199,11 @@ __all__ = [
     "match_aois",
     "pairwise_aoi_iou",
     "pixels_to_visual_angle_deg",
+    "prepare_cross_dataset_event_benchmark",
     "prepare_lund2013_benchmark",
     "resample_labeled_gaze",
     "run_lund2013_event_benchmark",
+    "run_cross_dataset_event_validation",
     "sample_label_agreement",
     "scanpath_similarity",
     "score_trial_quality",
