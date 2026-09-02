@@ -28,6 +28,7 @@ The project is intentionally built around a scientific rule:
 - Semantic scanpaths, n-gram motifs, learned TF-IDF/SVD embeddings, similarity, and clustering.
 - AOI agreement, fixation-assignment agreement, and boundary-sensitivity evaluation.
 - Benchmark dataset cards and deterministic frozen validation-report infrastructure.
+- Evidence-aware benchmark taxonomy separating human, algorithmic, native, and derived references.
 - Native Lund2013 MATLAB ingestion, RA/MN agreement, and explicit 500-to-60-Hz resampling.
 - One-command matched-fold Lund2013 angular I-VT/Random Forest/ContextMLP benchmark reports.
 - Trial-level quality scores and synthetic gaze generation for examples/tests.
@@ -172,6 +173,7 @@ See `docs/lund2013-benchmark.md` for the ambiguity protocol and planned sensitiv
 - [x] GP3/eyeprocesspy/gpbiometricspy-compatible adapters
 - [x] participant/group-held-out validation utilities
 - [x] benchmark cards, evaluation metrics, and frozen validation-report infrastructure
+- [x] benchmark evidence taxonomy and external validation catalog
 - [x] Lund2013 empirical benchmark ingestion, 60 Hz derivation, and report runner
 - [ ] frozen empirical performance reports from a pinned Lund2013 checkout
 

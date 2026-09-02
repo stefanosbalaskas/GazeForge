@@ -29,4 +29,6 @@ while validation evidence is being established.
 - Multiclass Brier score, ECE/reliability bins, and confidence-versus-coverage diagnostics.
 - Data fingerprints, audit trails, model cards, benchmark dataset cards, and frozen report
   fingerprints.
+- Benchmark evidence-strength taxonomy with native/resampled and human/algorithmic guardrails.
+- External benchmark catalog entries for VISUS dynamic AOIs and Hollywood2 manual events.
 - Synthetic gaze generation, tests, CI matrix, and documentation infrastructure.

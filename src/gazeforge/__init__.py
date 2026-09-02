@@ -13,6 +13,7 @@ from .aoi import (
     map_fixations_to_aois,
 )
 from .audit import build_audit_report
+from .benchmark_catalog import hollywood2_manual_event_card, visus_dynamic_aoi_card
 from .benchmarks import (
     BenchmarkDatasetCard,
     benchmark_fingerprint,
@@ -153,6 +154,7 @@ __all__ = [
     "grouped_context_event_cross_validate",
     "grouped_event_cross_validate",
     "grouped_holdout_indices",
+    "hollywood2_manual_event_card",
     "infer_sampling_rate_hz",
     "interpolate_dynamic_aoi",
     "ivt_classify_events",
@@ -177,4 +179,5 @@ __all__ = [
     "top_label_calibration_table",
     "train_context_event_classifier",
     "train_event_classifier",
+    "visus_dynamic_aoi_card",
 ]

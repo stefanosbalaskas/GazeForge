@@ -8,6 +8,7 @@ nav:
   - Architecture: architecture.md
   - Adapters & validation: adapters-validation.md
   - Benchmarking: benchmarking.md
+  - Benchmark evidence: benchmark-evidence.md
   - Lund2013 benchmark: lund2013-benchmark.md
   - Calibration & dataset holdouts: calibration.md
   - Temporal models: temporal-models.md

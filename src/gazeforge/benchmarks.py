@@ -6,12 +6,47 @@ import hashlib
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 
 @dataclass(slots=True)
 class BenchmarkDatasetCard:
-    """Provenance and split metadata for one benchmark dataset."""
+    """Provenance, evidence-strength, and split metadata for one benchmark dataset.
+
+    ``annotation_origin`` describes who or what produced the reference labels.
+    ``sampling_origin`` distinguishes native recordings from derived/resampled views.
+    ``reference_strength`` states the strongest validation interpretation supported by the
+    reference. These fields are intentionally explicit so algorithm-generated labels cannot be
+    presented as human validation merely because the underlying recording was sampled at a
+    desirable rate.
+    """
+
+    ANNOTATION_ORIGINS: ClassVar[frozenset[str]] = frozenset(
+        {
+            "expert-manual",
+            "human-manual",
+            "human-assisted",
+            "vendor-algorithm",
+            "research-algorithm",
+            "derived",
+            "synthetic",
+            "mixed",
+            "unknown",
+        }
+    )
+    SAMPLING_ORIGINS: ClassVar[frozenset[str]] = frozenset(
+        {"native", "resampled", "mixed", "synthetic", "unknown"}
+    )
+    REFERENCE_STRENGTHS: ClassVar[frozenset[str]] = frozenset(
+        {
+            "expert-human-reference",
+            "human-reference",
+            "derived-human-reference",
+            "algorithmic-concordance",
+            "synthetic-smoke-only",
+            "unknown",
+        }
+    )
 
     name: str
     version: str
@@ -23,7 +58,49 @@ class BenchmarkDatasetCard:
     stimulus_count: int | None = None
     split_unit: str = "participant_id"
     validation_scope: str = "development"
+    annotation_origin: str = "unknown"
+    sampling_origin: str = "unknown"
+    reference_strength: str = "unknown"
+    human_annotator_count: int | None = None
+    reference_description: str | None = None
     notes: list[str] = field(default_factory=list)
+
+    def __post_init__(self) -> None:
+        """Reject ambiguous evidence metadata before reports are generated."""
+        if self.annotation_origin not in self.ANNOTATION_ORIGINS:
+            raise ValueError(f"Unknown annotation_origin: {self.annotation_origin}")
+        if self.sampling_origin not in self.SAMPLING_ORIGINS:
+            raise ValueError(f"Unknown sampling_origin: {self.sampling_origin}")
+        if self.reference_strength not in self.REFERENCE_STRENGTHS:
+            raise ValueError(f"Unknown reference_strength: {self.reference_strength}")
+        if self.human_annotator_count is not None and self.human_annotator_count < 0:
+            raise ValueError("human_annotator_count must be non-negative.")
+        if self.annotation_origin in {"vendor-algorithm", "research-algorithm"} and (
+            self.reference_strength
+            in {"expert-human-reference", "human-reference", "derived-human-reference"}
+        ):
+            raise ValueError(
+                "Algorithm-generated annotations cannot be declared a human reference."
+            )
+        if self.sampling_origin == "synthetic" and self.reference_strength not in {
+            "synthetic-smoke-only",
+            "unknown",
+        }:
+            raise ValueError("Synthetic sampling cannot support an empirical reference claim.")
+
+    @property
+    def is_human_reference(self) -> bool:
+        """Whether the card represents a human-derived validation reference."""
+        return self.reference_strength in {
+            "expert-human-reference",
+            "human-reference",
+            "derived-human-reference",
+        }
+
+    @property
+    def is_native_human_reference(self) -> bool:
+        """Whether human reference labels are evaluated at the native acquisition rate."""
+        return self.is_human_reference and self.sampling_origin == "native"
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize the dataset card."""

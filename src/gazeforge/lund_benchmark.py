@@ -120,6 +120,20 @@ def prepare_lund2013_benchmark(
         stimulus_count=int(retained["trial_id"].nunique()),
         split_unit="participant_id",
         validation_scope="external-empirical-benchmark",
+        annotation_origin="expert-manual",
+        sampling_origin=(
+            "native" if np.isclose(source_rate, analysis_rate) else "resampled"
+        ),
+        reference_strength=(
+            "expert-human-reference"
+            if np.isclose(source_rate, analysis_rate)
+            else "derived-human-reference"
+        ),
+        human_annotator_count=1,
+        reference_description=(
+            f"Sample-level eye-movement labels supplied by expert annotator {annotator}; "
+            "the public corpus contains paired MN/RA annotations for agreement analysis."
+        ),
         notes=[
             f"Human labels from annotator {annotator}.",
             "Ambiguous lower-rate boundary windows are excluded only after prevalence is recorded.",
