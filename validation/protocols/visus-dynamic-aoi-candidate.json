@@ -1,0 +1,44 @@
+{
+  "protocol_id": "visus-dynamic-aoi-candidate-v1",
+  "status": "candidate-pending-authoritative-local-dataset",
+  "benchmark": {
+    "name": "VISUS",
+    "version": "Kurzhals-et-al-2014",
+    "sampling_origin": "native",
+    "sampling_rate_hz": 60.0,
+    "annotation_origin": "human-manual",
+    "reference_strength": "human-reference",
+    "human_annotator_count": 2,
+    "participant_count": 25,
+    "stimulus_count": 11,
+    "raw_data_bundled": false,
+    "reuse_terms_verified": false
+  },
+  "evaluation": {
+    "split_unit": "stimulus_id",
+    "timestamp_grid": "derive from actual video frame timestamps",
+    "matching": "one-to-one Hungarian assignment",
+    "primary_min_iou": 0.5,
+    "require_label_match": true,
+    "interpolation": "between observed human/model keyframes only",
+    "temporal_extrapolation": false,
+    "max_interpolation_gap_ms": "must be fixed after inspecting authoritative annotation cadence"
+  },
+  "primary_metrics": [
+    "precision",
+    "recall",
+    "f1",
+    "mean_matched_iou",
+    "semantic_label_accuracy_matched",
+    "fixation_assignment_exact_agreement",
+    "fixation_assignment_cohen_kappa"
+  ],
+  "required_sensitivity_analyses": [
+    "IoU threshold",
+    "semantic-label matching requirement",
+    "interpolation-gap policy",
+    "scenario/stimulus holdout",
+    "annotator-as-reference"
+  ],
+  "claim_limit": "No completed VISUS performance claim until the authoritative data copy is verified and the protocol is frozen with numeric interpolation settings."
+}

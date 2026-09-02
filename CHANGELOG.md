@@ -18,6 +18,7 @@ while validation evidence is being established.
 - Geometry-normalized angular I-VT baseline with explicit degrees/second thresholds.
 - Semantic AOI provider API, optional OWL-ViT provider, human review, and fixation mapping.
 - Dynamic AOI keyframes, provider protocol, gap-limited interpolation, and temporal fixation mapping.
+- Dynamic AOI track evaluation with explicit timestamp grids, Hungarian IoU matching, and fixation-assignment agreement.
 - Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
 - Participant/group-held-out and leave-one-dataset-out validation.
 - Matched-fold comparison of I-VT, Random Forest, and temporal-context event models.

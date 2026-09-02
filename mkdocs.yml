@@ -14,6 +14,7 @@ nav:
   - Temporal models: temporal-models.md
   - Model comparison: model-comparison.md
   - Dynamic AOIs: dynamic-aois.md
+  - Dynamic AOI evaluation: dynamic-aoi-evaluation.md
   - Scientific governance: scientific-governance.md
 plugins:
   - search
