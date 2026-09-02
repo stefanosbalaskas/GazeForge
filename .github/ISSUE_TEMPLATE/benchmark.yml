@@ -1,0 +1,36 @@
+name: Benchmark dataset or validation tranche
+description: Propose a dataset, annotation set, or frozen validation protocol.
+title: "[Benchmark] "
+labels: []
+body:
+  - type: input
+    id: dataset
+    attributes:
+      label: Dataset and version
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Source, license, consent, and redistribution constraints
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: Target validation task
+      description: Examples include event classification, AOI detection, or fixation assignment.
+    validations:
+      required: true
+  - type: textarea
+    id: split
+    attributes:
+      label: Proposed frozen split and leakage controls
+    validations:
+      required: true
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Metrics and baselines
+    validations:
+      required: true

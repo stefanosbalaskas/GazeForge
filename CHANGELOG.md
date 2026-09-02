@@ -1,0 +1,25 @@
+# Changelog
+
+All notable changes to GazeForge will be documented here.
+
+The project follows semantic versioning once stable releases begin. Alpha versions may change APIs
+while validation evidence is being established.
+
+## Unreleased
+
+### Added
+
+- Canonical vendor-neutral gaze schema and sampling-rate inference.
+- Gazepoint and explicit processed-table adapters.
+- Auditable Isolation-Forest QC flags and trial-quality summaries.
+- Probabilistic event-model API with sampling-rate compatibility guardrails.
+- I-VT baseline event classifier.
+- Semantic AOI provider API, optional OWL-ViT provider, human review, and fixation mapping.
+- Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
+- Participant/group-held-out and leave-one-dataset-out validation.
+- AOI IoU/matching, semantic-label agreement, fixation-assignment agreement, and boundary
+  sensitivity metrics.
+- Multiclass Brier score, ECE/reliability bins, and confidence-versus-coverage diagnostics.
+- Data fingerprints, audit trails, model cards, benchmark dataset cards, and frozen report
+  fingerprints.
+- Synthetic gaze generation, tests, CI matrix, and documentation infrastructure.

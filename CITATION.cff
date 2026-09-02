@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use GazeForge in research, please cite the software and the relevant validation report or package paper when available."
+title: "GazeForge: Auditable AI for Eye-Tracking Analysis"
+type: software
+authors:
+  - family-names: Balaskas
+    given-names: Stefanos
+version: 0.1.0a1
+license: MIT
+repository-code: "https://github.com/stefanosbalaskas/GazeForge"
+url: "https://github.com/stefanosbalaskas/GazeForge"
+keywords:
+  - eye tracking
+  - gaze
+  - artificial intelligence
+  - areas of interest
+  - scanpaths
+  - research software

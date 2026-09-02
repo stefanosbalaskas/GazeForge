@@ -1,0 +1,32 @@
+name: AI model proposal
+description: Propose a learned model or substantial model change for GazeForge.
+title: "[Model] "
+labels: []
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: Scientific task
+      description: Define the observable target and why a learned model is needed.
+    validations:
+      required: true
+  - type: textarea
+    id: inputs
+    attributes:
+      label: Inputs and sampling assumptions
+      description: List required signals, units, sampling rates, and preprocessing assumptions.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation design
+      description: Describe participant/stimulus/dataset holdouts, baselines, metrics, and calibration.
+    validations:
+      required: true
+  - type: textarea
+    id: limitations
+    attributes:
+      label: Limitations and failure modes
+    validations:
+      required: true
