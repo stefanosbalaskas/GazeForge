@@ -55,6 +55,11 @@ from .scanpath import (
 )
 from .schema import GazeFrame, canonicalize_gaze, infer_sampling_rate_hz
 from .simulate import simulate_gaze
+from .temporal import (
+    TemporalContextModel,
+    ai_classify_events_context,
+    train_context_event_classifier,
+)
 from .validation import (
     ValidationResult,
     assert_no_group_leakage,
@@ -80,11 +85,13 @@ __all__ = [
     "ModelCard",
     "ProvenanceRecord",
     "ScanpathEmbeddingModel",
+    "TemporalContextModel",
     "adapt_gazepoint_samples",
     "adapt_processed_table",
     "aoi_boundary_sensitivity",
     "aoi_iou",
     "ai_classify_events",
+    "ai_classify_events_context",
     "ai_flag_anomalies",
     "aois_to_frame",
     "apply_aoi_review",
@@ -121,5 +128,6 @@ __all__ = [
     "simulate_gaze",
     "to_semantic_scanpaths",
     "top_label_calibration_table",
+    "train_context_event_classifier",
     "train_event_classifier",
 ]
