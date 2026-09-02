@@ -15,6 +15,7 @@ while validation evidence is being established.
 - Probabilistic event-model API with sampling-rate compatibility guardrails.
 - Boundary-safe temporal-context MLP event classifier with probabilistic abstention metadata.
 - I-VT baseline event classifier.
+- Geometry-normalized angular I-VT baseline with explicit degrees/second thresholds.
 - Semantic AOI provider API, optional OWL-ViT provider, human review, and fixation mapping.
 - Dynamic AOI keyframes, provider protocol, gap-limited interpolation, and temporal fixation mapping.
 - Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.

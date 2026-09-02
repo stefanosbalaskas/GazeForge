@@ -86,12 +86,15 @@ annotation variability, not a claim that one annotator is error-free ground trut
 
 `run_lund2013_event_benchmark()` prepares the requested annotator's 60 Hz table and evaluates:
 
-- deterministic I-VT;
+- deterministic angular I-VT at an explicit 45°/s threshold;
 - Random Forest sample classification;
 - the boundary-safe temporal-context MLP.
 
-All three methods see exactly the same participant-held-out test rows. The learned models are fitted
-from scratch inside each fold. Calibration metrics are computed only for probabilistic models.
+All three methods see exactly the same participant-held-out test rows. The I-VT baseline converts
+pixel displacement into degrees of visual angle from each recording's `screenRes`, `screenDim`, and
+`viewDist` geometry before thresholding. The 45°/s value is recorded in the protocol rather than
+hidden as a device-specific pixel threshold. The learned models are fitted from scratch inside each
+fold. Calibration metrics are computed only for probabilistic models.
 
 ```python
 from gazeforge import run_lund2013_event_benchmark
@@ -119,6 +122,7 @@ gazeforge lund2013-benchmark /path/to/lund \
   --annotator RA \
   --target-rate 60 \
   --min-label-purity 0.75 \
+  --ivt-threshold-deg-s 45 \
   --n-splits 5 \
   --output validation/lund2013-ra-60hz.json
 ```

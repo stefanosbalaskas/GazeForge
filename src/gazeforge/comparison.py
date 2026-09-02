@@ -11,7 +11,12 @@ from sklearn.metrics import accuracy_score, f1_score, recall_score
 from sklearn.model_selection import GroupKFold
 
 from .calibration import evaluate_event_calibration
-from .events import ai_classify_events, ivt_classify_events, train_event_classifier
+from .events import (
+    ai_classify_events,
+    ivt_classify_events,
+    ivt_classify_events_angular,
+    train_event_classifier,
+)
 from .exceptions import SchemaError
 from .schema import infer_sampling_rate_hz
 from .temporal import ai_classify_events_context, train_context_event_classifier
@@ -118,7 +123,8 @@ def compare_event_models_grouped(
     group_col: str = "participant_id",
     n_splits: int = 5,
     sampling_rate_hz: float | None = None,
-    ivt_velocity_threshold_px_s: float = 1000.0,
+    ivt_velocity_threshold_px_s: float | None = 1000.0,
+    ivt_velocity_threshold_deg_s: float | None = None,
     min_confidence: float = 0.0,
     random_state: int = 42,
     n_estimators: int = 200,
@@ -163,11 +169,22 @@ def compare_event_models_grouped(
         assert_no_group_leakage(train, test, group_cols=(group_col,))
         test_positions = np.asarray(test_idx, dtype=int)
 
-        ivt = ivt_classify_events(
-            test,
-            sampling_rate_hz=rate,
-            velocity_threshold_px_s=ivt_velocity_threshold_px_s,
-        )
+        if ivt_velocity_threshold_deg_s is not None:
+            ivt = ivt_classify_events_angular(
+                test,
+                sampling_rate_hz=rate,
+                velocity_threshold_deg_s=ivt_velocity_threshold_deg_s,
+            )
+        elif ivt_velocity_threshold_px_s is not None:
+            ivt = ivt_classify_events(
+                test,
+                sampling_rate_hz=rate,
+                velocity_threshold_px_s=ivt_velocity_threshold_px_s,
+            )
+        else:
+            raise ValueError(
+                "Provide either ivt_velocity_threshold_deg_s or ivt_velocity_threshold_px_s."
+            )
         rf_model = train_event_classifier(
             train,
             label_col=label_col,
@@ -240,7 +257,17 @@ def compare_event_models_grouped(
         "sampling_rate_hz": rate,
         "models": ["I-VT", "RandomForest", "ContextMLP"],
         "random_state": int(random_state),
-        "ivt_velocity_threshold_px_s": float(ivt_velocity_threshold_px_s),
+        "ivt_velocity_unit": "deg/s" if ivt_velocity_threshold_deg_s is not None else "px/s",
+        "ivt_velocity_threshold_deg_s": (
+            float(ivt_velocity_threshold_deg_s)
+            if ivt_velocity_threshold_deg_s is not None
+            else None
+        ),
+        "ivt_velocity_threshold_px_s": (
+            float(ivt_velocity_threshold_px_s)
+            if ivt_velocity_threshold_deg_s is None and ivt_velocity_threshold_px_s is not None
+            else None
+        ),
         "context_radius_ms": float(context_radius_ms),
         "rolling_window_ms": float(rolling_window_ms),
         "calibration_bins": int(calibration_bins),

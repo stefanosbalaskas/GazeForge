@@ -88,4 +88,8 @@ def test_lund2013_event_benchmark_builds_fingerprinted_report(tmp_path):
     assert set(run.comparison.summary["model"]) == {"I-VT", "RandomForest", "ContextMLP"}
     assert run.report["benchmark"]["name"] == "Lund2013"
     assert len(run.report["report_fingerprint_sha256"]) == 64
-    assert run.report["protocol"]["comparison_design"]["group_col"] == "participant_id"
+    design = run.report["protocol"]["comparison_design"]
+    assert design["group_col"] == "participant_id"
+    assert design["ivt_velocity_unit"] == "deg/s"
+    assert design["ivt_velocity_threshold_deg_s"] == 45.0
+    assert design["ivt_velocity_threshold_px_s"] is None

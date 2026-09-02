@@ -17,7 +17,7 @@ The project is intentionally built around a scientific rule:
 - Isolation-Forest quality-control flags that never delete samples.
 - Sampling-rate-aware probabilistic eye-event classification.
 - Boundary-safe temporal-context MLP event classification with explicit abstention metadata.
-- Classical I-VT event labels for transparent benchmarking.
+- Classical pixel I-VT plus geometry-normalized angular I-VT for transparent benchmarking.
 - Participant/group-held-out validation with explicit leakage checks.
 - Leave-one-dataset-out validation and probability-calibration diagnostics.
 - Semantic rectangular AOIs with confidence, source, and model metadata.
@@ -29,7 +29,7 @@ The project is intentionally built around a scientific rule:
 - AOI agreement, fixation-assignment agreement, and boundary-sensitivity evaluation.
 - Benchmark dataset cards and deterministic frozen validation-report infrastructure.
 - Native Lund2013 MATLAB ingestion, RA/MN agreement, and explicit 500-to-60-Hz resampling.
-- One-command matched-fold Lund2013 I-VT/Random Forest/ContextMLP benchmark reports.
+- One-command matched-fold Lund2013 angular I-VT/Random Forest/ContextMLP benchmark reports.
 - Trial-level quality scores and synthetic gaze generation for examples/tests.
 - Machine-readable model cards and audit reports.
 
@@ -146,13 +146,13 @@ validators are available for the temporal-context model.
 ## Lund2013 empirical benchmark
 
 GazeForge can ingest the externally maintained Lund2013 expert-labelled MATLAB recordings,
-quantify MN-vs-RA human agreement, derive a label-purity-aware 60 Hz tranche, and compare I-VT,
-Random Forest, and ContextMLP on identical participant-held-out folds. Raw benchmark files are not
-bundled or relicensed by GazeForge.
+quantify MN-vs-RA human agreement, derive a label-purity-aware 60 Hz tranche, and compare angular
+I-VT at 45°/s, Random Forest, and ContextMLP on identical participant-held-out folds. Raw benchmark
+files are not bundled or relicensed by GazeForge.
 
 ```bash
 gazeforge lund2013-benchmark /path/to/lund \
-  --annotator RA --target-rate 60 --n-splits 5 \
+  --annotator RA --target-rate 60 --ivt-threshold-deg-s 45 --n-splits 5 \
   --output validation/lund2013-ra-60hz.json
 ```
 

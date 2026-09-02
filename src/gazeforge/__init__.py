@@ -40,17 +40,19 @@ from .evaluation import (
     aoi_iou,
     evaluate_aoi_detection,
     fixation_assignment_agreement,
+    sample_label_agreement,
     match_aois,
     pairwise_aoi_iou,
-    sample_label_agreement,
 )
 from .events import (
     EventModel,
     ai_classify_events,
     evaluate_event_predictions,
     ivt_classify_events,
+    ivt_classify_events_angular,
     train_event_classifier,
 )
+from .geometry import angular_kinematic_features, pixels_to_visual_angle_deg
 from .lund2013 import LUND2013_LABELS, load_lund2013_directory, load_lund2013_mat
 from .lund_benchmark import (
     Lund2013BenchmarkRun,
@@ -119,6 +121,7 @@ __all__ = [
     "aoi_boundary_sensitivity",
     "aoi_iou",
     "ai_classify_events",
+    "angular_kinematic_features",
     "ai_classify_events_context",
     "ai_flag_anomalies",
     "aois_to_frame",
@@ -153,6 +156,7 @@ __all__ = [
     "infer_sampling_rate_hz",
     "interpolate_dynamic_aoi",
     "ivt_classify_events",
+    "ivt_classify_events_angular",
     "load_lund2013_directory",
     "load_lund2013_mat",
     "map_fixations_to_aois",
@@ -160,6 +164,7 @@ __all__ = [
     "multiclass_brier_score",
     "match_aois",
     "pairwise_aoi_iou",
+    "pixels_to_visual_angle_deg",
     "prepare_lund2013_benchmark",
     "resample_labeled_gaze",
     "run_lund2013_event_benchmark",

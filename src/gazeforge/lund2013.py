@@ -132,6 +132,30 @@ def load_lund2013_mat(
     if len(screen_values) >= 2 and np.all(screen_values[:2] > 0):
         screen_size_px = (int(round(screen_values[0])), int(round(screen_values[1])))
 
+    screen_dimensions = (
+        _numeric_flat(_mat_field(etdata, "screenDim"))
+        if "screenDim" in (etdata.dtype.names or ())
+        else np.array([], dtype=float)
+    )
+    view_distance = (
+        _numeric_flat(_mat_field(etdata, "viewDist"))
+        if "viewDist" in (etdata.dtype.names or ())
+        else np.array([], dtype=float)
+    )
+    geometry_available = (
+        screen_size_px is not None
+        and len(screen_dimensions) >= 2
+        and np.all(screen_dimensions[:2] > 0)
+        and len(view_distance) >= 1
+        and view_distance[0] > 0
+    )
+    if geometry_available:
+        frame["screen_width_px"] = float(screen_size_px[0])
+        frame["screen_height_px"] = float(screen_size_px[1])
+        frame["screen_width_physical"] = float(screen_dimensions[0])
+        frame["screen_height_physical"] = float(screen_dimensions[1])
+        frame["view_distance_physical"] = float(view_distance[0])
+
     metadata: dict[str, Any] = {
         "source_dataset": "Lund2013",
         "source_file": file_path.name,
@@ -139,6 +163,8 @@ def load_lund2013_mat(
         "stimulus_type": stimulus,
         "label_code_map": dict(LUND2013_LABELS),
         "zero_pair_is_missing": bool(zero_pair_is_missing),
+        "visual_angle_geometry_available": bool(geometry_available),
+        "physical_geometry_units": "source-consistent; screenDim and viewDist use the same unit",
     }
     for source_name, target_name in (
         ("viewDist", "view_distance"),

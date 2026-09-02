@@ -16,6 +16,7 @@ from sklearn.pipeline import Pipeline
 
 from ._features import kinematic_features
 from .exceptions import ModelCompatibilityError, SchemaError
+from .geometry import angular_kinematic_features
 from .schema import infer_sampling_rate_hz
 
 _EVENT_FEATURES = (
@@ -206,6 +207,46 @@ def ivt_classify_events(
     out["event_confidence"] = 1.0
     out["event_model"] = "I-VT"
     out["event_model_version"] = "deterministic"
+    return out
+
+
+def ivt_classify_events_angular(
+    data: pd.DataFrame,
+    *,
+    sampling_rate_hz: float | None = None,
+    velocity_threshold_deg_s: float = 45.0,
+) -> pd.DataFrame:
+    """Transparent I-VT baseline using geometry-normalized angular velocity.
+
+    The default 45 deg/s threshold matches the Lund2013-calibrated maximum fixation velocity
+    reported for the Andersson et al. benchmark. The threshold remains an explicit parameter and
+    should not be treated as universally optimal for every device, task, or population.
+    """
+    if not np.isfinite(velocity_threshold_deg_s) or velocity_threshold_deg_s <= 0:
+        raise ValueError("velocity_threshold_deg_s must be finite and positive.")
+    rate = (
+        float(sampling_rate_hz)
+        if sampling_rate_hz is not None
+        else infer_sampling_rate_hz(data)
+    )
+    features = angular_kinematic_features(data, sampling_rate_hz=rate)
+    labels = np.where(
+        features["gaze_missing"].to_numpy(bool),
+        "noise",
+        np.where(
+            features["angular_velocity_deg_s"].fillna(0).to_numpy()
+            > float(velocity_threshold_deg_s),
+            "saccade",
+            "fixation",
+        ),
+    )
+    out = data.copy()
+    out["angular_velocity_deg_s"] = features["angular_velocity_deg_s"].to_numpy()
+    out["predicted_event"] = labels
+    out["event_confidence"] = 1.0
+    out["event_model"] = "I-VT-angular"
+    out["event_model_version"] = "deterministic"
+    out["event_velocity_threshold_deg_s"] = float(velocity_threshold_deg_s)
     return out
 
 

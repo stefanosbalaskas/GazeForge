@@ -65,11 +65,17 @@ def test_resampling_carries_invariant_trial_provenance():
     data["stimulus_type"] = "image"
     data["dataset_id"] = "Lund2013"
     data["source_file"] = "P1_image_labelled_RA.mat"
+    data["screen_width_px"] = 1920.0
+    data["screen_height_px"] = 1080.0
+    data["screen_width_physical"] = 530.0
+    data["screen_height_physical"] = 300.0
+    data["view_distance_physical"] = 650.0
     result = resample_labeled_gaze(data, target_sampling_rate_hz=60)
     assert set(result.data["annotator"]) == {"RA"}
     assert set(result.data["stimulus_type"]) == {"image"}
     assert set(result.data["dataset_id"]) == {"Lund2013"}
     assert set(result.data["source_file"]) == {"P1_image_labelled_RA.mat"}
+    assert set(result.data["view_distance_physical"]) == {650.0}
 
 
 def test_resampling_refuses_non_invariant_carried_metadata():

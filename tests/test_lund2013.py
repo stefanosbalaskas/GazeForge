@@ -42,6 +42,16 @@ def test_lund2013_loader_maps_schema_labels_and_metadata(tmp_path):
         "unlabelled",
     ]
     assert gaze.metadata["source_dataset"] == "Lund2013"
+    assert gaze.metadata["visual_angle_geometry_available"] is True
+    assert set(
+        [
+            "screen_width_px",
+            "screen_height_px",
+            "screen_width_physical",
+            "screen_height_physical",
+            "view_distance_physical",
+        ]
+    ).issubset(gaze.data.columns)
 
 
 def test_lund2013_loader_converts_zero_zero_gaze_to_missing(tmp_path):

@@ -38,6 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--min-label-purity", type=float, default=0.75)
     benchmark.add_argument("--n-splits", type=int, default=5)
     benchmark.add_argument("--n-estimators", type=int, default=200)
+    benchmark.add_argument("--ivt-threshold-deg-s", type=float, default=45.0)
     benchmark.add_argument("--context-radius-ms", type=float, default=50.0)
     benchmark.add_argument("--hidden-layers", type=_hidden_layers, default=(64, 32))
     benchmark.add_argument("--temporal-solver", default="adam")
@@ -72,6 +73,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             min_label_purity=args.min_label_purity,
             n_splits=args.n_splits,
             n_estimators=args.n_estimators,
+            ivt_velocity_threshold_deg_s=args.ivt_threshold_deg_s,
             context_radius_ms=args.context_radius_ms,
             hidden_layer_sizes=args.hidden_layers,
             temporal_solver=args.temporal_solver,
