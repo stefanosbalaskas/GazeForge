@@ -10,6 +10,7 @@ nav:
   - Benchmarking: benchmarking.md
   - Calibration & dataset holdouts: calibration.md
   - Temporal models: temporal-models.md
+  - Dynamic AOIs: dynamic-aois.md
   - Scientific governance: scientific-governance.md
 plugins:
   - search
