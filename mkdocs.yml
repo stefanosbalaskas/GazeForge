@@ -9,6 +9,7 @@ nav:
   - Adapters & validation: adapters-validation.md
   - Benchmarking: benchmarking.md
   - Calibration & dataset holdouts: calibration.md
+  - Temporal models: temporal-models.md
   - Scientific governance: scientific-governance.md
 plugins:
   - search
