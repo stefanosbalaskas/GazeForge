@@ -43,7 +43,8 @@ print(result.report_fingerprint_sha256)
 A fresh Random Forest and temporal ContextMLP are fitted for each held-out dataset. Participants are
 namespaced by dataset and the existing dataset-held-out validators enforce train/test identity
 disjointness. Per-held-out-dataset accuracy, balanced accuracy, macro-F1, multiclass Brier score,
-and expected calibration error are returned.
+and expected calibration error are returned together with event-level precision/recall/F1,
+temporal IoU, and onset/offset/duration errors from the same held-out predictions.
 
 I-VT is not included in this cross-dataset learned-model runner. A deterministic velocity baseline
 should only be compared when both corpora provide sufficiently comparable visual-angle geometry.

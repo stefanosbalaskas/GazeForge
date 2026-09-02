@@ -12,6 +12,7 @@ from sklearn.metrics import accuracy_score, f1_score, recall_score
 
 from .benchmarks import benchmark_fingerprint
 from .calibration import evaluate_event_calibration
+from .event_evaluation import evaluate_sample_event_predictions
 from .exceptions import SchemaError
 from .resampling import resample_labeled_gaze
 from .schema import GazeFrame
@@ -251,6 +252,9 @@ def _validation_summary(
     *,
     label_col: str,
     calibration_bins: int,
+    sampling_rate_hz: float,
+    event_min_iou: float,
+    event_excluded_labels: tuple[str, ...],
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for held_out, part in result.predictions.groupby("held_out_dataset", sort=True):
@@ -273,7 +277,35 @@ def _validation_summary(
             "macro_f1": float(f1_score(truth, pred, average="macro", zero_division=0)),
             "multiclass_brier_score": np.nan,
             "expected_calibration_error": np.nan,
+            "event_precision": np.nan,
+            "event_recall": np.nan,
+            "event_f1": np.nan,
+            "event_mean_matched_iou": np.nan,
+            "event_mean_abs_onset_error_ms": np.nan,
+            "event_mean_abs_offset_error_ms": np.nan,
+            "event_mean_abs_duration_error_ms": np.nan,
         }
+        event_result = evaluate_sample_event_predictions(
+            part,
+            true_label_col=label_col,
+            predicted_label_col="predicted_event",
+            sampling_rate_hz=sampling_rate_hz,
+            excluded_labels=event_excluded_labels,
+            min_iou=event_min_iou,
+        )
+        row["event_precision"] = float(event_result.summary["precision"])
+        row["event_recall"] = float(event_result.summary["recall"])
+        row["event_f1"] = float(event_result.summary["f1"])
+        row["event_mean_matched_iou"] = float(event_result.summary["mean_matched_iou"])
+        row["event_mean_abs_onset_error_ms"] = float(
+            event_result.summary["mean_abs_onset_error_ms"]
+        )
+        row["event_mean_abs_offset_error_ms"] = float(
+            event_result.summary["mean_abs_offset_error_ms"]
+        )
+        row["event_mean_abs_duration_error_ms"] = float(
+            event_result.summary["mean_abs_duration_error_ms"]
+        )
         if any(column.startswith("p_event_") for column in part.columns):
             calibration = evaluate_event_calibration(
                 part,
@@ -301,6 +333,13 @@ def run_cross_dataset_event_validation(
     temporal_solver: str = "adam",
     temporal_max_iter: int = 200,
     calibration_bins: int = 10,
+    event_min_iou: float = 0.50,
+    event_excluded_labels: tuple[str, ...] = (
+        "ambiguous",
+        "unlabelled",
+        "undefined",
+        "abstain",
+    ),
 ) -> CrossDatasetEventValidation:
     """Run RF and temporal-context MLP in a leave-one-dataset-out design."""
     if not isinstance(prepared, CrossDatasetEventPrepared):
@@ -310,6 +349,8 @@ def run_cross_dataset_event_validation(
         raise ValueError("At least two datasets are required for validation.")
     if calibration_bins < 2:
         raise ValueError("calibration_bins must be at least 2.")
+    if not 0.0 <= float(event_min_iou) <= 1.0:
+        raise ValueError("event_min_iou must be in [0, 1].")
     target_rate = float(prepared.design["target_sampling_rate_hz"])
 
     rf = dataset_holdout_event_validate(
@@ -344,12 +385,18 @@ def run_cross_dataset_event_validation(
             rf,
             label_col=label_col,
             calibration_bins=calibration_bins,
+            sampling_rate_hz=target_rate,
+            event_min_iou=event_min_iou,
+            event_excluded_labels=event_excluded_labels,
         )
         + _validation_summary(
             "ContextMLP",
             context,
             label_col=label_col,
             calibration_bins=calibration_bins,
+            sampling_rate_hz=target_rate,
+            event_min_iou=event_min_iou,
+            event_excluded_labels=event_excluded_labels,
         )
     ).sort_values(["model", "held_out_dataset"], kind="stable").reset_index(drop=True)
     design = {
@@ -360,6 +407,9 @@ def run_cross_dataset_event_validation(
         "context_radius_ms": float(context_radius_ms),
         "rolling_window_ms": float(rolling_window_ms),
         "calibration_bins": int(calibration_bins),
+        "event_min_iou": float(event_min_iou),
+        "event_excluded_labels": list(event_excluded_labels),
+        "event_interval_convention": "half_open_[start,end)",
     }
     fingerprint_payload = {
         "design": design,

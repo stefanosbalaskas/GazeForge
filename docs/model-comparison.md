@@ -8,10 +8,11 @@ Every learned model is fitted from scratch inside each training partition. The t
 are retained, allowing researchers to verify that all methods were scored on exactly the same
 samples rather than on independently generated splits.
 
-Per-fold reporting includes accuracy, balanced accuracy, and macro-F1. Random Forest and
-ContextMLP additionally receive multiclass Brier score and expected calibration error (ECE).
-Calibration fields for I-VT are intentionally missing because a deterministic velocity threshold
-does not produce calibrated class probabilities.
+Per-fold reporting includes accuracy, balanced accuracy, and macro-F1. The same held-out rows
+are also segmented into events and scored with event precision/recall/F1, temporal IoU, and
+onset/offset/duration error. Random Forest and ContextMLP additionally receive multiclass Brier
+score and expected calibration error (ECE). Calibration fields for I-VT are intentionally missing
+because a deterministic velocity threshold does not produce calibrated class probabilities.
 
 The returned `EventModelComparison` contains:
 

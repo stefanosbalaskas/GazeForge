@@ -65,6 +65,8 @@ def test_model_comparison_reports_calibration_only_for_probabilistic_models():
     assert learned["multiclass_brier_score"].notna().all()
     assert learned["expected_calibration_error"].notna().all()
     assert np.isfinite(learned["macro_f1"]).all()
+    assert result.fold_metrics["event_f1"].between(0, 1).all()
+    assert result.fold_metrics["event_mean_matched_iou"].between(0, 1).all()
 
 
 def test_model_comparison_summary_has_fold_mean_and_spread():
@@ -79,6 +81,6 @@ def test_model_comparison_summary_has_fold_mean_and_spread():
         temporal_max_iter=250,
     )
     assert (result.summary["n_folds"] == 2).all()
-    for metric in ("accuracy", "balanced_accuracy", "macro_f1"):
+    for metric in ("accuracy", "balanced_accuracy", "macro_f1", "event_f1"):
         assert result.summary[f"{metric}_mean"].between(0, 1).all()
         assert result.summary[f"{metric}_std"].ge(0).all()

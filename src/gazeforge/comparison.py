@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score, f1_score, recall_score
 from sklearn.model_selection import GroupKFold
 
 from .calibration import evaluate_event_calibration
+from .event_evaluation import evaluate_sample_event_predictions
 from .events import (
     ai_classify_events,
     ivt_classify_events,
@@ -65,6 +66,11 @@ def _fold_metric_row(
     n_train_groups: int,
     n_test_groups: int,
     calibration_bins: int,
+    sampling_rate_hz: float,
+    event_group_cols: tuple[str, ...],
+    event_min_iou: float,
+    event_excluded_labels: tuple[str, ...],
+    include_event_level_metrics: bool,
 ) -> dict[str, Any]:
     row: dict[str, Any] = {
         "model": model_name,
@@ -76,7 +82,38 @@ def _fold_metric_row(
         **_classification_metrics(predictions[label_col], predictions["predicted_event"]),
         "multiclass_brier_score": np.nan,
         "expected_calibration_error": np.nan,
+        "event_precision": np.nan,
+        "event_recall": np.nan,
+        "event_f1": np.nan,
+        "event_mean_matched_iou": np.nan,
+        "event_mean_abs_onset_error_ms": np.nan,
+        "event_mean_abs_offset_error_ms": np.nan,
+        "event_mean_abs_duration_error_ms": np.nan,
     }
+    if include_event_level_metrics:
+        event_result = evaluate_sample_event_predictions(
+            predictions,
+            true_label_col=label_col,
+            predicted_label_col="predicted_event",
+            group_cols=event_group_cols,
+            sampling_rate_hz=sampling_rate_hz,
+            excluded_labels=event_excluded_labels,
+            min_iou=event_min_iou,
+        )
+        row["event_precision"] = float(event_result.summary["precision"])
+        row["event_recall"] = float(event_result.summary["recall"])
+        row["event_f1"] = float(event_result.summary["f1"])
+        row["event_mean_matched_iou"] = float(event_result.summary["mean_matched_iou"])
+        row["event_mean_abs_onset_error_ms"] = float(
+            event_result.summary["mean_abs_onset_error_ms"]
+        )
+        row["event_mean_abs_offset_error_ms"] = float(
+            event_result.summary["mean_abs_offset_error_ms"]
+        )
+        row["event_mean_abs_duration_error_ms"] = float(
+            event_result.summary["mean_abs_duration_error_ms"]
+        )
+
     probability_cols = [col for col in predictions.columns if col.startswith("p_event_")]
     if probability_cols:
         calibration = evaluate_event_calibration(
@@ -98,6 +135,13 @@ def _comparison_summary(fold_metrics: pd.DataFrame) -> pd.DataFrame:
         "macro_f1",
         "multiclass_brier_score",
         "expected_calibration_error",
+        "event_precision",
+        "event_recall",
+        "event_f1",
+        "event_mean_matched_iou",
+        "event_mean_abs_onset_error_ms",
+        "event_mean_abs_offset_error_ms",
+        "event_mean_abs_duration_error_ms",
     ]
     rows: list[dict[str, Any]] = []
     for model_name, part in fold_metrics.groupby("model", sort=False):
@@ -134,6 +178,15 @@ def compare_event_models_grouped(
     temporal_solver: str = "adam",
     temporal_max_iter: int = 200,
     calibration_bins: int = 10,
+    include_event_level_metrics: bool = True,
+    event_group_cols: tuple[str, ...] = ("participant_id", "trial_id"),
+    event_min_iou: float = 0.50,
+    event_excluded_labels: tuple[str, ...] = (
+        "ambiguous",
+        "unlabelled",
+        "undefined",
+        "abstain",
+    ),
 ) -> EventModelComparison:
     """Compare I-VT, Random Forest, and temporal MLP on identical group-held-out folds.
 
@@ -150,6 +203,14 @@ def compare_event_models_grouped(
         raise ValueError("n_splits must be between 2 and the number of unique groups.")
     if calibration_bins < 2:
         raise ValueError("calibration_bins must be at least 2.")
+    if not 0.0 <= float(event_min_iou) <= 1.0:
+        raise ValueError("event_min_iou must be in [0, 1].")
+    if include_event_level_metrics:
+        missing_event_cols = [col for col in event_group_cols if col not in data.columns]
+        if missing_event_cols:
+            raise SchemaError(
+                f"Event-level comparison requires grouping columns: {missing_event_cols}"
+            )
 
     rate = (
         float(sampling_rate_hz)
@@ -240,6 +301,11 @@ def compare_event_models_grouped(
                     n_train_groups=train[group_col].nunique(),
                     n_test_groups=test[group_col].nunique(),
                     calibration_bins=calibration_bins,
+                    sampling_rate_hz=rate,
+                    event_group_cols=event_group_cols,
+                    event_min_iou=event_min_iou,
+                    event_excluded_labels=event_excluded_labels,
+                    include_event_level_metrics=include_event_level_metrics,
                 )
             )
 
@@ -257,6 +323,10 @@ def compare_event_models_grouped(
         "sampling_rate_hz": rate,
         "models": ["I-VT", "RandomForest", "ContextMLP"],
         "random_state": int(random_state),
+        "include_event_level_metrics": bool(include_event_level_metrics),
+        "event_group_cols": list(event_group_cols),
+        "event_min_iou": float(event_min_iou),
+        "event_excluded_labels": list(event_excluded_labels),
         "ivt_velocity_unit": "deg/s" if ivt_velocity_threshold_deg_s is not None else "px/s",
         "ivt_velocity_threshold_deg_s": (
             float(ivt_velocity_threshold_deg_s)

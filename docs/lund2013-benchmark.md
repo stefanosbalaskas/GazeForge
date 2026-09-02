@@ -122,7 +122,6 @@ gazeforge lund2013-benchmark /path/to/lund \
   --annotator RA \
   --target-rate 60 \
   --min-label-purity 0.75 \
-  --ivt-threshold-deg-s 45 \
   --n-splits 5 \
   --output validation/lund2013-ra-60hz.json
 ```
@@ -146,3 +145,10 @@ The first empirical release report should include:
 
 The derived 60 Hz tranche is therefore a bridge benchmark. A native GP3-class manually annotated
 corpus remains desirable before claiming device-specific validity.
+
+## Event-level reporting
+
+The matched-fold Lund comparison reports event precision/recall/F1, temporal IoU, and boundary
+errors alongside sample-level metrics. Event intervals are segmented independently within each
+participant/trial using the declared analysis sampling rate. Ambiguous lower-rate windows remain
+hard separators and cannot join otherwise adjacent events across an uncertain boundary.

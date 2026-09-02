@@ -109,6 +109,8 @@ def test_cross_dataset_validation_runs_fresh_models_per_held_out_dataset():
     assert set(result.summary["model"]) == {"RandomForest", "ContextMLP"}
     assert set(result.summary["held_out_dataset"]) == {"A", "B"}
     assert len(result.summary) == 4
+    assert result.summary["event_f1"].between(0, 1).all()
+    assert result.summary["event_mean_matched_iou"].between(0, 1).all()
     assert len(result.report_fingerprint_sha256) == 64
     for validation in (result.random_forest, result.context_mlp):
         assert set(validation.predictions["held_out_dataset"]) == {"A", "B"}
