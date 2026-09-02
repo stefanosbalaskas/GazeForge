@@ -18,7 +18,8 @@ while validation evidence is being established.
 - Geometry-normalized angular I-VT baseline with explicit degrees/second thresholds.
 - Semantic AOI provider API, optional OWL-ViT provider, human review, and fixation mapping.
 - Dynamic AOI keyframes, provider protocol, gap-limited interpolation, and temporal fixation mapping.
-- Dynamic AOI track evaluation with explicit timestamp grids, Hungarian IoU matching, and fixation-assignment agreement.
+- Dynamic AOI track evaluation with explicit timestamp grids, Hungarian IoU matching, and
+  fixation-assignment agreement.
 - Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
 - Participant/group-held-out and leave-one-dataset-out validation.
 - Matched-fold comparison of I-VT, Random Forest, and temporal-context event models.
@@ -32,4 +33,8 @@ while validation evidence is being established.
   fingerprints.
 - Benchmark evidence-strength taxonomy with native/resampled and human/algorithmic guardrails.
 - External benchmark catalog entries for VISUS dynamic AOIs and Hollywood2 manual events.
+- Hollywood2EM ARFF ingestion with explicit student/expert labels and unresolved-identity and
+  coordinate-evidence guardrails.
+- Cross-dataset Lund2013/Hollywood2 preparation and leave-one-dataset-out RF/ContextMLP validation
+  with coordinate, participant-identity, resampling, and label-harmonisation guardrails.
 - Synthetic gaze generation, tests, CI matrix, and documentation infrastructure.
