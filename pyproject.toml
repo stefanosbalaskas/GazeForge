@@ -1,0 +1,90 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gazeforge"
+version = "0.1.0a1"
+description = "Auditable AI infrastructure for eye-tracking analysis."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+  {name = "Stefanos Balaskas"}
+]
+keywords = [
+  "eye-tracking",
+  "gaze",
+  "artificial-intelligence",
+  "AOI",
+  "scanpath",
+  "quality-control",
+  "human-computer-interaction",
+  "research-software",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.0",
+  "scikit-learn>=1.4",
+  "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+vision = [
+  "pillow>=10",
+  "transformers>=4.40",
+  "torch>=2.2",
+]
+dev = [
+  "build>=1.2",
+  "pytest>=8",
+  "pytest-cov>=5",
+  "ruff>=0.6",
+]
+docs = [
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.5",
+  "mkdocstrings[python]>=0.26",
+]
+
+[project.scripts]
+gazeforge = "gazeforge.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/stefanosbalaskas/GazeForge"
+Repository = "https://github.com/stefanosbalaskas/GazeForge"
+Issues = "https://github.com/stefanosbalaskas/GazeForge/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gazeforge"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.coverage.run]
+branch = true
+source = ["gazeforge"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true

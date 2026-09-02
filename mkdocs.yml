@@ -1,0 +1,15 @@
+site_name: GazeForge
+site_description: Auditable AI for eye-tracking analysis
+repo_url: https://github.com/stefanosbalaskas/GazeForge
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Scientific governance: scientific-governance.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
