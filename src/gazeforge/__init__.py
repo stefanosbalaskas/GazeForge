@@ -63,7 +63,9 @@ from .temporal import (
 from .validation import (
     ValidationResult,
     assert_no_group_leakage,
+    dataset_holdout_context_event_validate,
     dataset_holdout_event_validate,
+    grouped_context_event_cross_validate,
     grouped_event_cross_validate,
     grouped_holdout_indices,
 )
@@ -102,6 +104,7 @@ __all__ = [
     "canonicalize_gaze",
     "cluster_scanpaths_ai",
     "detect_calibration_drift",
+    "dataset_holdout_context_event_validate",
     "dataset_holdout_event_validate",
     "detect_semantic_aois",
     "embed_scanpaths",
@@ -114,6 +117,7 @@ __all__ = [
     "find_scanpath_motifs",
     "fingerprint_frame",
     "fit_scanpath_embedder",
+    "grouped_context_event_cross_validate",
     "grouped_event_cross_validate",
     "grouped_holdout_indices",
     "infer_sampling_rate_hz",
