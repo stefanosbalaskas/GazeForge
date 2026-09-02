@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -96,7 +96,9 @@ def find_scanpath_motifs(
         for motif, count in counts.items()
         if count >= min_count
     ]
-    return pd.DataFrame(rows).sort_values(["count", "n"], ascending=[False, True], ignore_index=True)
+    return pd.DataFrame(rows).sort_values(
+        ["count", "n"], ascending=[False, True], ignore_index=True
+    )
 
 
 @dataclass(slots=True)

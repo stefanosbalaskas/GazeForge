@@ -104,7 +104,12 @@ def score_trial_quality(
             valid = x.notna() & y.notna()
             if valid.any():
                 offscreen_rate = float(
-                    ((x[valid] < 0) | (x[valid] > width) | (y[valid] < 0) | (y[valid] > height)).mean()
+                    (
+                        (x[valid] < 0)
+                        | (x[valid] > width)
+                        | (y[valid] < 0)
+                        | (y[valid] > height)
+                    ).mean()
                 )
 
         anomaly_rate = float(part["qc_flag"].mean()) if "qc_flag" in part else 0.0
@@ -117,7 +122,12 @@ def score_trial_quality(
         else:
             gap_rate = float((positive_dt > 2.5 * median_dt).mean())
 
-        penalty = 0.50 * missing_rate + 0.20 * offscreen_rate + 0.20 * anomaly_rate + 0.10 * gap_rate
+        penalty = (
+            0.50 * missing_rate
+            + 0.20 * offscreen_rate
+            + 0.20 * anomaly_rate
+            + 0.10 * gap_rate
+        )
         quality = float(np.clip(1.0 - penalty, 0.0, 1.0))
 
         row = {col: value for col, value in zip(group_cols, keys, strict=True)}
@@ -146,7 +156,9 @@ def detect_calibration_drift(
     required = [*group_cols, "x_px", "y_px", expected_x_col, expected_y_col]
     missing = [c for c in required if c not in data.columns]
     if missing:
-        raise SchemaError(f"Calibration drift requires reference-target columns; missing: {missing}")
+        raise SchemaError(
+            f"Calibration drift requires reference-target columns; missing: {missing}"
+        )
 
     out = data.copy()
     dx = pd.to_numeric(out["x_px"], errors="coerce") - pd.to_numeric(

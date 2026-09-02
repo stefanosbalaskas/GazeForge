@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Any, Mapping
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -55,7 +56,9 @@ def infer_sampling_rate_hz(
                 deltas.append(dt)
 
     if not deltas:
-        raise SchemaError("Cannot infer sampling rate from non-increasing or insufficient timestamps.")
+        raise SchemaError(
+            "Cannot infer sampling rate from non-increasing or insufficient timestamps."
+        )
 
     median_dt_ms = float(np.median(np.concatenate(deltas)))
     if not np.isfinite(median_dt_ms) or median_dt_ms <= 0:
@@ -104,7 +107,11 @@ def canonicalize_gaze(
             ["participant_id", "trial_id", "timestamp_ms"], kind="stable"
         ).reset_index(drop=True)
 
-    rate = float(sampling_rate_hz) if sampling_rate_hz is not None else infer_sampling_rate_hz(frame)
+    rate = (
+        float(sampling_rate_hz)
+        if sampling_rate_hz is not None
+        else infer_sampling_rate_hz(frame)
+    )
     if not np.isfinite(rate) or rate <= 0:
         raise SchemaError("sampling_rate_hz must be finite and positive.")
 

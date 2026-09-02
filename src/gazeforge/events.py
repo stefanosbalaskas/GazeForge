@@ -92,7 +92,11 @@ def train_event_classifier(
     if labels.nunique() < 2:
         raise SchemaError("At least two event classes are required for training.")
 
-    rate = float(sampling_rate_hz) if sampling_rate_hz is not None else infer_sampling_rate_hz(data)
+    rate = (
+        float(sampling_rate_hz)
+        if sampling_rate_hz is not None
+        else infer_sampling_rate_hz(data)
+    )
     features = _build_event_features(
         data, sampling_rate_hz=rate, rolling_window_ms=rolling_window_ms
     )
@@ -138,7 +142,11 @@ def ai_classify_events(
     sampling_rate_tolerance: float = 0.10,
 ) -> pd.DataFrame:
     """Classify samples with probabilities and enforce sampling-rate compatibility."""
-    rate = float(sampling_rate_hz) if sampling_rate_hz is not None else infer_sampling_rate_hz(data)
+    rate = (
+        float(sampling_rate_hz)
+        if sampling_rate_hz is not None
+        else infer_sampling_rate_hz(data)
+    )
     relative_error = abs(rate - model.sampling_rate_hz) / model.sampling_rate_hz
     if relative_error > float(sampling_rate_tolerance):
         raise ModelCompatibilityError(
@@ -178,12 +186,20 @@ def ivt_classify_events(
     velocity_threshold_px_s: float = 1000.0,
 ) -> pd.DataFrame:
     """Transparent I-VT-style baseline in pixel coordinates."""
-    rate = float(sampling_rate_hz) if sampling_rate_hz is not None else infer_sampling_rate_hz(data)
+    rate = (
+        float(sampling_rate_hz)
+        if sampling_rate_hz is not None
+        else infer_sampling_rate_hz(data)
+    )
     features = kinematic_features(data, sampling_rate_hz=rate)
     labels = np.where(
         features["gaze_missing"].to_numpy(bool),
         "noise",
-        np.where(features["velocity_px_s"].fillna(0).to_numpy() > velocity_threshold_px_s, "saccade", "fixation"),
+        np.where(
+            features["velocity_px_s"].fillna(0).to_numpy() > velocity_threshold_px_s,
+            "saccade",
+            "fixation",
+        ),
     )
     out = data.copy()
     out["predicted_event"] = labels

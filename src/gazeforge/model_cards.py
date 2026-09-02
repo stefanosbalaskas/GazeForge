@@ -22,7 +22,8 @@ class ModelCard:
     limitations: list[str] = field(default_factory=list)
     ethical_constraints: list[str] = field(
         default_factory=lambda: [
-            "Do not infer diagnoses, protected traits, or unsupported latent mental states from gaze."
+            "Do not infer diagnoses, protected traits, or unsupported latent mental states "
+            "from gaze."
         ]
     )
     metadata: dict[str, Any] = field(default_factory=dict)

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, replace
-from typing import Any, Callable, Iterable, Protocol, Sequence
+from typing import Any, Protocol
 
 import numpy as np
 import pandas as pd
@@ -240,9 +241,15 @@ def map_fixations_to_aois(
         if not candidates:
             chosen = None
         elif overlap_rule == "highest_confidence":
-            chosen = max(candidates, key=lambda a: (a.confidence, -(a.xmax-a.xmin)*(a.ymax-a.ymin)))
+            chosen = max(
+                candidates,
+                key=lambda a: (a.confidence, -(a.xmax - a.xmin) * (a.ymax - a.ymin)),
+            )
         elif overlap_rule == "smallest_area":
-            chosen = min(candidates, key=lambda a: (a.xmax-a.xmin)*(a.ymax-a.ymin))
+            chosen = min(
+                candidates,
+                key=lambda a: (a.xmax - a.xmin) * (a.ymax - a.ymin),
+            )
         else:
             chosen = candidates[0]
 
