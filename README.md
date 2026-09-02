@@ -23,6 +23,7 @@ The project is intentionally built around a scientific rule:
 - Semantic rectangular AOIs with confidence, source, and model metadata.
 - Optional local Hugging Face OWL-ViT open-vocabulary AOI proposals.
 - Human review/correction of AI AOIs with a retained review log.
+- Timestamped dynamic AOI tracks with gap-limited interpolation and no extrapolation.
 - Fixation-to-AOI mapping with explicit overlap rules.
 - Semantic scanpaths, n-gram motifs, learned TF-IDF/SVD embeddings, similarity, and clustering.
 - AOI agreement, fixation-assignment agreement, and boundary-sensitivity evaluation.
@@ -137,7 +138,8 @@ validation = grouped_event_cross_validate(
 ```
 
 A fresh event model is fitted inside every fold, and participants are kept out of the training
-partition for the fold in which they are evaluated.
+partition for the fold in which they are evaluated. Equivalent grouped and dataset-held-out
+validators are available for the temporal-context model.
 
 ## Scientific roadmap
 
@@ -161,7 +163,8 @@ partition for the fold in which they are evaluated.
 - [x] participant-held-out and dataset-held-out validation
 - [ ] temporal CNN / transformer event models under identical frozen splits
 - [ ] empirical 60 Hz benchmark tranche
-- [ ] dynamic video AOIs and object tracking
+- [x] dynamic AOI keyframes, interpolation guardrails, and fixation mapping
+- [ ] validated video/object-tracking provider implementations
 
 ### v0.3 — multimodal and orchestration
 - gaze + pupil + EDA + PPG/HRV fusion
