@@ -116,6 +116,7 @@ from .lund_fetch import (
     LUND2013_REPOSITORY,
     Lund2013FetchResult,
     fetch_lund2013_dataset,
+    validate_lund2013_source_manifest,
 )
 from .lund_sensitivity import Lund2013SensitivityRun, run_lund2013_sampling_sensitivity
 from .model_cards import ModelCard
@@ -281,5 +282,6 @@ __all__ = [
     "train_context_event_classifier",
     "train_event_classifier",
     "validate_frozen_benchmark_report",
+    "validate_lund2013_source_manifest",
     "visus_dynamic_aoi_card",
 ]
