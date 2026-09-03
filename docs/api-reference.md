@@ -177,3 +177,10 @@ The public API is intentionally organised around scientific workflow layers rath
     options:
       show_root_heading: true
       show_source: false
+
+### VISUS human-human agreement
+
+::: gazeforge.visus_agreement
+    options:
+      show_root_heading: true
+      show_source: false
