@@ -1,18 +1,29 @@
 {
-  "protocol_id": "visus-dynamic-aoi-candidate-v1",
+  "protocol_id": "visus-dynamic-aoi-candidate-v2",
   "status": "candidate-pending-authoritative-local-dataset",
   "benchmark": {
     "name": "VISUS",
     "version": "Kurzhals-et-al-2014",
     "sampling_origin": "native",
     "sampling_rate_hz": 60.0,
+    "video_frame_rate_hz": 25.0,
     "annotation_origin": "human-manual",
     "reference_strength": "human-reference",
-    "human_annotator_count": 2,
+    "annotation_process_contributor_count": 2,
+    "independent_human_reference_stream_count": null,
     "participant_count": 25,
     "stimulus_count": 11,
     "raw_data_bundled": false,
-    "reuse_terms_verified": false
+    "reuse_terms_verified": false,
+    "source_audit_required": true
+  },
+  "annotation_provenance": {
+    "published_process": "first contributor performed the main annotation; second contributor added annotations and refined existing annotations",
+    "published_geometry": "axis-aligned rectangular bounding boxes at keyframes with linear interpolation between keyframes",
+    "published_format": "ViPER-compatible XML",
+    "independent_annotation_streams_verified": false,
+    "human_human_agreement_allowed": false,
+    "human_human_agreement_gate": "requires separately manifested and independently verified annotation streams; contributor count alone is insufficient"
   },
   "evaluation": {
     "split_unit": "stimulus_id",
@@ -37,8 +48,10 @@
     "IoU threshold",
     "semantic-label matching requirement",
     "interpolation-gap policy",
-    "scenario/stimulus holdout",
-    "annotator-as-reference"
+    "scenario/stimulus holdout"
   ],
-  "claim_limit": "No completed VISUS performance claim until the authoritative data copy is verified and the protocol is frozen with numeric interpolation settings."
+  "conditional_sensitivity_analyses": [
+    "annotator-as-reference only if independent human annotation streams are actually available and pass the VISUS source-audit gate"
+  ],
+  "claim_limit": "No completed VISUS performance or human-human agreement claim until the authoritative data copy and current reuse terms are verified, the source audit passes, and the protocol is frozen with numeric interpolation settings."
 }
