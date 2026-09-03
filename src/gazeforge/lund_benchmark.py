@@ -14,6 +14,7 @@ from .comparison import EventModelComparison, compare_event_models_grouped
 from .evaluation import sample_label_agreement
 from .exceptions import SchemaError
 from .lund2013 import load_lund2013_directory
+from .lund_fetch import validate_lund2013_source_manifest
 from .resampling import BenchmarkResamplingResult, resample_labeled_gaze
 
 _DEFAULT_EXCLUDED_LABELS = ("ambiguous", "unlabelled", "undefined")
@@ -55,8 +56,11 @@ def prepare_lund2013_benchmark(
 
     The raw benchmark is never modified. When a lower sampling rate is requested, labels are
     transferred with :func:`resample_labeled_gaze`; ambiguous target windows remain auditable and
-    are excluded only after their prevalence has been recorded in the preparation report.
+    are excluded only after their prevalence has been recorded in the preparation report. A
+    GazeForge source manifest, when present, is revalidated with its referenced files before any
+    benchmark rows are loaded.
     """
+    source_manifest = validate_lund2013_source_manifest(root)
     gaze = load_lund2013_directory(root, annotator=annotator)
     source = gaze.data.copy()
     source_rate = float(gaze.sampling_rate_hz)
@@ -92,6 +96,7 @@ def prepare_lund2013_benchmark(
     preparation_report: dict[str, Any] = {
         "dataset": "Lund2013",
         "annotator": annotator,
+        "source_manifest": source_manifest,
         "source_sampling_rate_hz": source_rate,
         "analysis_sampling_rate_hz": analysis_rate,
         "source_rows": int(len(source)),
@@ -121,9 +126,7 @@ def prepare_lund2013_benchmark(
         split_unit="participant_id",
         validation_scope="external-empirical-benchmark",
         annotation_origin="expert-manual",
-        sampling_origin=(
-            "native" if np.isclose(source_rate, analysis_rate) else "resampled"
-        ),
+        sampling_origin=("native" if np.isclose(source_rate, analysis_rate) else "resampled"),
         reference_strength=(
             "expert-human-reference"
             if np.isclose(source_rate, analysis_rate)
@@ -156,6 +159,7 @@ def compare_lund2013_annotators(
     min_label_purity: float = 0.75,
 ) -> dict[str, Any]:
     """Measure the human-human sample-label agreement ceiling for Lund2013."""
+    source_manifest = validate_lund2013_source_manifest(root)
     left = load_lund2013_directory(root, annotator=left_annotator)
     right = load_lund2013_directory(root, annotator=right_annotator)
     left_data = left.data
@@ -191,6 +195,7 @@ def compare_lund2013_annotators(
         "dataset": "Lund2013",
         "left_annotator": left_annotator,
         "right_annotator": right_annotator,
+        "source_manifest": source_manifest,
         "sampling_rate_hz": float(target or left.sampling_rate_hz),
         "overall": overall,
         "by_stimulus_type": by_stimulus,

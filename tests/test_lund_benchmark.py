@@ -1,8 +1,11 @@
+import json
+
 import numpy as np
 from scipy.io import savemat
 
 from gazeforge import (
     compare_lund2013_annotators,
+    lund_fetch,
     prepare_lund2013_benchmark,
     run_lund2013_event_benchmark,
 )
@@ -46,6 +49,41 @@ def _benchmark_tree(tmp_path):
     return tmp_path
 
 
+def _write_source_manifest(root):
+    records = []
+    for path in sorted(root.rglob("*.mat")):
+        payload = path.read_bytes()
+        annotator = "RA" if path.name.endswith("_RA.mat") else "MN"
+        records.append(
+            {
+                "relative_path": path.relative_to(root).as_posix(),
+                "stimulus_family": "img",
+                "annotator": annotator,
+                "git_blob_sha1": lund_fetch._git_blob_sha1(payload),
+                "size_bytes": len(payload),
+            }
+        )
+    body = {
+        "dataset": "Lund2013",
+        "repository": lund_fetch.LUND2013_REPOSITORY,
+        "commit": lund_fetch.LUND2013_COMMIT,
+        "data_path": lund_fetch.LUND2013_DATA_PATH,
+        "repository_license": "GPL-3.0",
+        "bundled_by_gazeforge": False,
+        "annotators": ["RA", "MN"],
+        "stimulus_families": ["img"],
+        "file_count": len(records),
+        "files": records,
+    }
+    fingerprint = lund_fetch._manifest_fingerprint(body)
+    manifest = {**body, "manifest_fingerprint_sha256": fingerprint}
+    (root / "_gazeforge_source_manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return fingerprint
+
+
 def test_prepare_lund2013_benchmark_records_60hz_provenance(tmp_path):
     root = _benchmark_tree(tmp_path)
     prepared = prepare_lund2013_benchmark(
@@ -56,6 +94,7 @@ def test_prepare_lund2013_benchmark_records_60hz_provenance(tmp_path):
     )
     assert prepared.dataset_card.name == "Lund2013"
     assert prepared.dataset_card.split_unit == "participant_id"
+    assert prepared.preparation_report["source_manifest"] is None
     assert prepared.preparation_report["source_sampling_rate_hz"] == 500
     assert prepared.preparation_report["analysis_sampling_rate_hz"] == 60
     assert prepared.data["participant_id"].nunique() == 3
@@ -70,10 +109,12 @@ def test_lund2013_annotator_agreement_runs_native_and_resampled(tmp_path):
     assert native["overall"]["n_aligned_samples"] > low_rate["overall"]["n_aligned_samples"]
     assert -1 <= native["overall"]["cohen_kappa"] <= 1
     assert "image" in low_rate["by_stimulus_type"]
+    assert native["source_manifest"] is None
 
 
 def test_lund2013_event_benchmark_builds_fingerprinted_report(tmp_path):
     root = _benchmark_tree(tmp_path)
+    source_fingerprint = _write_source_manifest(root)
     run = run_lund2013_event_benchmark(
         root,
         annotator="RA",
@@ -88,6 +129,11 @@ def test_lund2013_event_benchmark_builds_fingerprinted_report(tmp_path):
     assert set(run.comparison.summary["model"]) == {"I-VT", "RandomForest", "ContextMLP"}
     assert run.report["benchmark"]["name"] == "Lund2013"
     assert len(run.report["report_fingerprint_sha256"]) == 64
+    preparation = run.report["protocol"]["preparation"]
+    source_manifest = preparation["source_manifest"]
+    assert source_manifest["manifest_fingerprint_sha256"] == source_fingerprint
+    assert source_manifest["commit"] == lund_fetch.LUND2013_COMMIT
+    assert source_manifest["files_verified_at_run"] is True
     design = run.report["protocol"]["comparison_design"]
     assert design["group_col"] == "participant_id"
     assert design["ivt_velocity_unit"] == "deg/s"

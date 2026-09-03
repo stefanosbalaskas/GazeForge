@@ -62,6 +62,17 @@ def _sensitivity_result():
 
 def test_lund_sensitivity_builds_derived_human_report(monkeypatch):
     calls = {}
+    source_manifest = {
+        "repository": "richardandersson/EyeMovementDetectorEvaluation",
+        "commit": "3e12416ab3fd6254c81811cf03f8e5d67c5d7129",
+        "manifest_fingerprint_sha256": "f" * 64,
+        "files_verified_at_run": True,
+    }
+    monkeypatch.setattr(
+        lund_sensitivity,
+        "validate_lund2013_source_manifest",
+        lambda *args, **kwargs: source_manifest,
+    )
     monkeypatch.setattr(
         lund_sensitivity,
         "load_lund2013_directory",
@@ -90,6 +101,7 @@ def test_lund_sensitivity_builds_derived_human_report(monkeypatch):
     assert run.dataset_card.reference_strength == "derived-human-reference"
     assert run.report["protocol"]["annotator"] == "RA"
     assert run.report["protocol"]["comparison_folds"] == 3
+    assert run.report["protocol"]["source_manifest"] == source_manifest
     assert run.report["metrics"]["sensitivity_fingerprint_sha256"] == "b" * 64
     assert len(run.report["report_fingerprint_sha256"]) == 64
 

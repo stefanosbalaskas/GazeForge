@@ -134,6 +134,107 @@ def _verified_payload(entry: dict[str, Any], *, existing: bytes | None = None) -
     return payload
 
 
+def _manifest_summary(manifest: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "repository": str(manifest["repository"]),
+        "commit": str(manifest["commit"]),
+        "data_path": str(manifest["data_path"]),
+        "annotators": list(manifest.get("annotators", [])),
+        "stimulus_families": list(manifest.get("stimulus_families", [])),
+        "file_count": int(manifest["file_count"]),
+        "manifest_fingerprint_sha256": str(manifest["manifest_fingerprint_sha256"]),
+        "files_verified_at_run": True,
+    }
+
+
+def validate_lund2013_source_manifest(
+    root: str | Path,
+    *,
+    verify_files: bool = True,
+) -> dict[str, Any] | None:
+    """Validate a GazeForge Lund source manifest and optionally every referenced local file.
+
+    Directories without a GazeForge source manifest remain supported and return ``None``. Once a
+    manifest exists, however, it is treated as an integrity claim: its own fingerprint, pinned
+    upstream identity, file inventory, and (by default) every referenced MATLAB file must validate
+    before the checkout may be recorded as verified benchmark provenance.
+    """
+    root_path = Path(root)
+    manifest_path = root_path / _MANIFEST_NAME
+    if not manifest_path.exists():
+        return None
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise BenchmarkIntegrityError("Lund2013 source manifest is not valid JSON.") from exc
+    if not isinstance(manifest, dict):
+        raise BenchmarkIntegrityError("Lund2013 source manifest must be a JSON object.")
+
+    required = {
+        "dataset",
+        "repository",
+        "commit",
+        "data_path",
+        "file_count",
+        "files",
+        "manifest_fingerprint_sha256",
+    }
+    missing = sorted(required - set(manifest))
+    if missing:
+        raise BenchmarkIntegrityError(f"Lund2013 source manifest is missing fields: {missing}")
+
+    claimed_fingerprint = str(manifest["manifest_fingerprint_sha256"])
+    body = {key: value for key, value in manifest.items() if key != "manifest_fingerprint_sha256"}
+    observed_fingerprint = _manifest_fingerprint(body)
+    if claimed_fingerprint != observed_fingerprint:
+        raise BenchmarkIntegrityError("Lund2013 source manifest fingerprint mismatch.")
+    if manifest["dataset"] != "Lund2013":
+        raise BenchmarkIntegrityError("Source manifest does not identify the Lund2013 dataset.")
+    if manifest["repository"] != LUND2013_REPOSITORY:
+        raise BenchmarkIntegrityError("Lund2013 source manifest repository does not match the pin.")
+    if manifest["commit"] != LUND2013_COMMIT:
+        raise BenchmarkIntegrityError("Lund2013 source manifest commit does not match the pin.")
+    if manifest["data_path"] != LUND2013_DATA_PATH:
+        raise BenchmarkIntegrityError("Lund2013 source manifest data path does not match the pin.")
+
+    records = manifest["files"]
+    if not isinstance(records, list):
+        raise BenchmarkIntegrityError("Lund2013 source manifest files must be a list.")
+    if int(manifest["file_count"]) != len(records):
+        raise BenchmarkIntegrityError("Lund2013 source manifest file_count does not match files.")
+
+    if verify_files:
+        resolved_root = root_path.resolve()
+        for record in records:
+            if not isinstance(record, dict):
+                raise BenchmarkIntegrityError(
+                    "Lund2013 source manifest contains an invalid file row."
+                )
+            relative = Path(str(record.get("relative_path", "")))
+            if not relative.parts or relative.is_absolute() or ".." in relative.parts:
+                raise BenchmarkIntegrityError("Lund2013 source manifest contains an unsafe path.")
+            local_path = (root_path / relative).resolve()
+            if local_path != resolved_root and resolved_root not in local_path.parents:
+                raise BenchmarkIntegrityError("Lund2013 source manifest path escapes the checkout.")
+            if not local_path.is_file():
+                raise BenchmarkIntegrityError(
+                    f"Lund2013 source file is missing: {relative.as_posix()}"
+                )
+            payload = local_path.read_bytes()
+            expected_size = int(record.get("size_bytes", -1))
+            if len(payload) != expected_size:
+                raise BenchmarkIntegrityError(
+                    f"Lund2013 source file byte-size mismatch: {relative.as_posix()}"
+                )
+            expected_sha = str(record.get("git_blob_sha1", ""))
+            if _git_blob_sha1(payload) != expected_sha:
+                raise BenchmarkIntegrityError(
+                    f"Lund2013 source file Git blob SHA mismatch: {relative.as_posix()}"
+                )
+
+    return _manifest_summary(manifest)
+
+
 def fetch_lund2013_dataset(
     destination: str | Path,
     *,

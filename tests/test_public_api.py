@@ -11,7 +11,9 @@ def test_lund_sensitivity_is_exposed_from_top_level_api():
 def test_lund_fetch_is_exposed_from_top_level_api():
     assert gazeforge.Lund2013FetchResult.__name__ == "Lund2013FetchResult"
     assert callable(gazeforge.fetch_lund2013_dataset)
+    assert callable(gazeforge.validate_lund2013_source_manifest)
     assert len(gazeforge.LUND2013_COMMIT) == 40
     assert gazeforge.LUND2013_REPOSITORY == "richardandersson/EyeMovementDetectorEvaluation"
     assert "Lund2013FetchResult" in gazeforge.__all__
     assert "fetch_lund2013_dataset" in gazeforge.__all__
+    assert "validate_lund2013_source_manifest" in gazeforge.__all__

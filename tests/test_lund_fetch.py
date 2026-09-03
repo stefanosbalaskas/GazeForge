@@ -16,6 +16,17 @@ def _entry(name, payload):
     }
 
 
+def _fetched_checkout(monkeypatch, tmp_path, payload=b"verified-matlab"):
+    entry = _entry("P01_trial1_labelled_RA.mat", payload)
+    monkeypatch.setattr(lund_fetch, "_selected_entries", lambda **kwargs: [("dots", entry)])
+    monkeypatch.setattr(lund_fetch, "_request_bytes", lambda url: payload)
+    return lund_fetch.fetch_lund2013_dataset(tmp_path, annotators=("RA",))
+
+
+def _rewrite_manifest(path, manifest):
+    path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
 def test_fetch_lund2013_writes_verified_files_and_manifest(monkeypatch, tmp_path):
     ra = b"ra-matlab-bytes"
     mn = b"mn-matlab-bytes"
@@ -101,3 +112,49 @@ def test_manifest_fingerprint_is_deterministic():
     assert lund_fetch._manifest_fingerprint(payload) == lund_fetch._manifest_fingerprint(
         {"a": [1, 3], "b": 2}
     )
+
+
+def test_source_manifest_is_optional_for_user_managed_checkout(tmp_path):
+    assert lund_fetch.validate_lund2013_source_manifest(tmp_path) is None
+
+
+def test_source_manifest_validation_returns_verified_provenance(monkeypatch, tmp_path):
+    fetched = _fetched_checkout(monkeypatch, tmp_path)
+
+    provenance = lund_fetch.validate_lund2013_source_manifest(tmp_path)
+
+    assert provenance is not None
+    assert provenance["commit"] == lund_fetch.LUND2013_COMMIT
+    assert provenance["file_count"] == 1
+    assert provenance["manifest_fingerprint_sha256"] == fetched.manifest_fingerprint_sha256
+    assert provenance["files_verified_at_run"] is True
+
+
+def test_source_manifest_rejects_tampering_without_recomputed_fingerprint(monkeypatch, tmp_path):
+    fetched = _fetched_checkout(monkeypatch, tmp_path)
+    manifest = dict(fetched.manifest)
+    manifest["commit"] = "0" * 40
+    _rewrite_manifest(fetched.manifest_path, manifest)
+
+    with pytest.raises(BenchmarkIntegrityError, match="fingerprint mismatch"):
+        lund_fetch.validate_lund2013_source_manifest(tmp_path)
+
+
+def test_source_manifest_rejects_wrong_commit_even_with_valid_fingerprint(monkeypatch, tmp_path):
+    fetched = _fetched_checkout(monkeypatch, tmp_path)
+    manifest = dict(fetched.manifest)
+    manifest["commit"] = "0" * 40
+    body = {key: value for key, value in manifest.items() if key != "manifest_fingerprint_sha256"}
+    manifest["manifest_fingerprint_sha256"] = lund_fetch._manifest_fingerprint(body)
+    _rewrite_manifest(fetched.manifest_path, manifest)
+
+    with pytest.raises(BenchmarkIntegrityError, match="commit does not match"):
+        lund_fetch.validate_lund2013_source_manifest(tmp_path)
+
+
+def test_source_manifest_rechecks_file_identity_at_benchmark_time(monkeypatch, tmp_path):
+    fetched = _fetched_checkout(monkeypatch, tmp_path, payload=b"verified-matlab")
+    fetched.files[0].write_bytes(b"modified-matlab")
+
+    with pytest.raises(BenchmarkIntegrityError, match="Git blob SHA mismatch"):
+        lund_fetch.validate_lund2013_source_manifest(tmp_path)
