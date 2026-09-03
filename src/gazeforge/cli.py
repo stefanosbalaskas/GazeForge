@@ -15,6 +15,10 @@ from .lund_sensitivity import run_lund2013_sampling_sensitivity
 from .lund_suite import run_lund2013_benchmark_suite, validate_lund2013_suite_manifest
 from .native_agreement import run_native_event_file_annotator_agreement
 from .native_event import run_native_event_file_benchmark
+from .native_suite import (
+    run_native_event_validation_suite,
+    validate_native_event_suite_manifest,
+)
 
 
 def _hidden_layers(value: str) -> tuple[int, ...]:
@@ -87,6 +91,17 @@ def _add_model_arguments(
     parser.add_argument("--hidden-layers", type=_hidden_layers, default=(64, 32))
     parser.add_argument("--temporal-solver", default="adam")
     parser.add_argument("--temporal-max-iter", type=int, default=200)
+
+
+def _add_native_ivt_pixel_argument(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--ivt-threshold-px-s",
+        type=float,
+        help=(
+            "Explicit pixel/second I-VT threshold. Provide this or --ivt-threshold-deg-s, "
+            "but not both."
+        ),
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -227,14 +242,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Select one annotator when the specification maps an annotator_id column.",
     )
     _add_model_arguments(native, ivt_default_deg_s=None)
-    native.add_argument(
-        "--ivt-threshold-px-s",
-        type=float,
-        help=(
-            "Explicit pixel/second I-VT threshold. Provide this or --ivt-threshold-deg-s, "
-            "but not both."
-        ),
-    )
+    _add_native_ivt_pixel_argument(native)
     native.add_argument("--output", type=Path)
     native.add_argument("--overwrite", action="store_true")
 
@@ -260,6 +268,38 @@ def build_parser() -> argparse.ArgumentParser:
     native_agreement.add_argument("--event-min-iou", type=float, default=0.50)
     native_agreement.add_argument("--output", type=Path)
     native_agreement.add_argument("--overwrite", action="store_true")
+
+    native_suite = subparsers.add_parser(
+        "native-event-suite",
+        help=(
+            "Compute and freeze native human agreement, primary model validation, and "
+            "annotator-sensitivity reports under one completion manifest."
+        ),
+    )
+    native_suite.add_argument("data", type=Path)
+    native_suite.add_argument("spec", type=Path)
+    native_suite.add_argument("output_dir", type=Path)
+    native_suite.add_argument("--primary-annotator", required=True)
+    native_suite.add_argument("--sensitivity-annotator", required=True)
+    native_suite.add_argument("--event-min-iou", type=float, default=0.50)
+    _add_model_arguments(native_suite, ivt_default_deg_s=None)
+    _add_native_ivt_pixel_argument(native_suite)
+    native_suite.add_argument("--overwrite", action="store_true")
+
+    native_suite_validate = subparsers.add_parser(
+        "native-event-suite-validate",
+        help="Verify a frozen native event validation suite manifest and child reports.",
+    )
+    native_suite_validate.add_argument(
+        "path",
+        type=Path,
+        help="Suite output directory or native-event-suite-manifest.json path.",
+    )
+    native_suite_validate.add_argument(
+        "--manifest-only",
+        action="store_true",
+        help="Validate the completion manifest without reading child reports.",
+    )
     return parser
 
 
@@ -425,6 +465,47 @@ def main(argv: Sequence[str] | None = None) -> int:
             overwrite=args.overwrite,
             benchmark=run.report["benchmark"]["name"],
         )
+        return 0
+
+    if args.command == "native-event-suite":
+        run = run_native_event_validation_suite(
+            args.data,
+            args.spec,
+            args.output_dir,
+            primary_annotator=args.primary_annotator,
+            sensitivity_annotator=args.sensitivity_annotator,
+            event_min_iou=args.event_min_iou,
+            n_splits=args.n_splits,
+            n_estimators=args.n_estimators,
+            ivt_velocity_threshold_deg_s=args.ivt_threshold_deg_s,
+            ivt_velocity_threshold_px_s=args.ivt_threshold_px_s,
+            context_radius_ms=args.context_radius_ms,
+            hidden_layer_sizes=args.hidden_layers,
+            temporal_solver=args.temporal_solver,
+            temporal_max_iter=args.temporal_max_iter,
+            overwrite=args.overwrite,
+        )
+        print(
+            json.dumps(
+                {
+                    "suite": run.manifest["suite"],
+                    "status": run.manifest["status"],
+                    "output_dir": str(run.output_dir),
+                    "report_count": len(run.reports),
+                    "manifest": str(run.manifest_path),
+                    "suite_fingerprint_sha256": run.suite_fingerprint_sha256,
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+
+    if args.command == "native-event-suite-validate":
+        summary = validate_native_event_suite_manifest(
+            args.path,
+            verify_reports=not args.manifest_only,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
         return 0
 
     print(json.dumps({"package": "gazeforge", "status": "ready"}))
