@@ -35,3 +35,10 @@ def test_stratified_event_metrics_are_exposed_from_top_level_api():
     assert callable(gazeforge.summarize_event_predictions_by_stratum)
     assert "StratifiedEventPerformance" in gazeforge.__all__
     assert "summarize_event_predictions_by_stratum" in gazeforge.__all__
+
+
+def test_paired_model_differences_are_exposed_from_top_level_api():
+    assert gazeforge.PairedModelDifferences.__name__ == "PairedModelDifferences"
+    assert callable(gazeforge.paired_model_metric_differences)
+    assert "PairedModelDifferences" in gazeforge.__all__
+    assert "paired_model_metric_differences" in gazeforge.__all__
