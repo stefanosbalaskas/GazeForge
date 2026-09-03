@@ -55,6 +55,23 @@ The frame-index convention is never inferred from filenames or model output. The
 canonical output table, source-audit identities, source AOI files, frame convention, and conversion
 basis are fingerprinted in the intake report.
 
+## Minimal use
+
+```python
+from gazeforge import prepare_visus_canonical_aoi_intake
+
+intake = prepare_visus_canonical_aoi_intake(
+    audit,
+    reviewed_aoi_table,
+    extraction_basis="Reviewed export from the audited VISUS AOI XML files.",
+    frame_index_base=1,
+)
+reference = intake.by_stream["published_curated"]
+```
+
+The `reference` mapping is keyed by audited stimulus ID and can be passed directly to the VISUS
+model-human validation runner.
+
 ## Downstream use
 
 The returned `by_stream` mapping is already organised as
