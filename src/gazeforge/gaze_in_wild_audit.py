@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from pathlib import Path, PurePosixPath
-from typing import Any, Mapping
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -457,7 +458,7 @@ def audit_gaze_in_wild_source(
             "labeller_ids": labellers,
             "labeller_count": len(labellers),
             "multi_labeller_trial_count": paired_trial_count,
-            "same_underlying_gaze_verified_for_multi_labeller_trials": True,
+            "same_underlying_gaze_verified_for_multi_labeller_trials": paired_trial_count > 0,
         },
         "coordinates": {
             "unit": spec.coordinate_unit,
@@ -516,7 +517,13 @@ def audited_gaze_in_wild_files_by_labeller(
     for item in run.files:
         grouped.setdefault(item.record.labeller_id, []).append(item)
     for items in grouped.values():
-        items.sort(key=lambda item: (item.record.participant_id, item.record.trial_id, item.record.path))
+        items.sort(
+            key=lambda item: (
+                item.record.participant_id,
+                item.record.trial_id,
+                item.record.path,
+            )
+        )
     return dict(sorted(grouped.items()))
 
 
@@ -524,6 +531,11 @@ def gaze_in_wild_sampling_rate_table(run: GazeInWildSourceAuditRun) -> pd.DataFr
     """Return the audited per-file timestamp-inferred sampling-rate ledger."""
     if not isinstance(run, GazeInWildSourceAuditRun):
         raise TypeError("run must be a GazeInWildSourceAuditRun instance.")
-    return pd.DataFrame(run.report["sampling"]["files"]).sort_values(
-        ["participant_id", "trial_id", "labeller_id", "path"], kind="stable"
-    ).reset_index(drop=True)
+    return (
+        pd.DataFrame(run.report["sampling"]["files"])
+        .sort_values(
+            ["participant_id", "trial_id", "labeller_id", "path"],
+            kind="stable",
+        )
+        .reset_index(drop=True)
+    )
