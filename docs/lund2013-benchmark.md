@@ -212,6 +212,30 @@ already exist, the suite fails before analysis starts unless `--overwrite` is ex
 An incomplete directory without a valid suite manifest must not be described as a completed
 validation tranche.
 
+## Post-freeze verification
+
+A copied, archived, or committed suite can be verified independently from the execution step:
+
+```bash
+gazeforge lund2013-suite-validate ./validation/lund2013-v1
+```
+
+The default verification recomputes the suite-manifest fingerprint, requires the exact five-member
+report inventory, checks safe and unique child paths, validates the pinned Lund source identity when
+source-manifest provenance is present, and recomputes every referenced child report fingerprint.
+Any changed or missing child report invalidates the suite.
+
+For metadata inspection only, child-file I/O can be skipped explicitly:
+
+```bash
+gazeforge lund2013-suite-validate ./validation/lund2013-v1 --manifest-only
+```
+
+This mode reports `reports_verified: false` and must not be interpreted as evidence that the child
+reports themselves were checked. The website uses full verification: a suite is shown as a verified
+report suite only when the completion manifest **and every referenced child report** validate.
+Individual child reports remain separate evidence rows rather than being replaced by the suite row.
+
 ## Planned empirical interpretation
 
 The first empirical release should report:
