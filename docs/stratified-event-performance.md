@@ -9,9 +9,9 @@ The central rule is simple:
 > **Stratification describes fixed held-out predictions; it does not create a second training
 > experiment.**
 
-`summary_event_predictions_by_stratum()` is intentionally not a training API. The input must already
-contain out-of-fold predictions, model identifiers, validation folds, reference labels, and the
-stratification variable.
+`summarize_event_predictions_by_stratum()` is intentionally not a training API. The input must
+already contain out-of-fold predictions, model identifiers, validation folds, reference labels, and
+the stratification variable.
 
 ```python
 from gazeforge import summarize_event_predictions_by_stratum
