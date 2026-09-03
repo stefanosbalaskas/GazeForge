@@ -34,9 +34,12 @@ while validation evidence is being established.
 - Data fingerprints, audit trails, model cards, benchmark dataset cards, and frozen report
   fingerprints.
 - Benchmark evidence-strength taxonomy with native/resampled and human/algorithmic guardrails.
-- External benchmark catalog entries for VISUS dynamic AOIs and Hollywood2 manual events.
+- External benchmark catalog entries for VISUS dynamic AOIs, Hollywood2 manual events, and
+  Gaze-in-the-Wild hand-labelled naturalistic events.
 - Hollywood2EM ARFF ingestion with explicit student/expert labels and unresolved-identity and
   coordinate-evidence guardrails.
 - Cross-dataset Lund2013/Hollywood2 preparation and leave-one-dataset-out RF/ContextMLP validation
   with coordinate, participant-identity, resampling, and label-harmonisation guardrails.
+- Gaze-in-the-Wild MATLAB ingestion with file-timestamp sampling-rate inference, confidence-based
+  track loss, explicit participant identity, and single-labeller modelling-table guardrails.
 - Synthetic gaze generation, tests, CI matrix, and documentation infrastructure.
