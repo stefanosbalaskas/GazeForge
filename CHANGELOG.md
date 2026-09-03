@@ -9,6 +9,21 @@ while validation evidence is being established.
 
 ### Added
 
+- Source-audit-aware VISUS canonical AOI intake that links every extracted row to an exact audited
+  AOI XML path and verified stimulus/stream identity, requires explicit 0- or 1-based frame indexing,
+  converts frames to timestamps from the audited video rate, validates geometry and track invariants,
+  fingerprints input/canonical tables, and returns stream/stimulus `DynamicAOIKeyframe` mappings.
+  The intake deliberately does not guess the historical ViPER XML schema or create empirical claims.
+- Guarded VISUS human-human dynamic-AOI agreement that is unusable unless the source audit explicitly
+  verifies separately recoverable independent annotation streams, evaluates both directional
+  reference assignments, fingerprints human AOI inputs and shared external timestamp grids, and
+  optionally measures fixation-assignment agreement without treating either human stream as ground
+  truth. This remains infrastructure until a real authoritative source proves stream independence.
+- Source-audit-aware VISUS model-human dynamic-AOI validation with complete audited-stimulus
+  coverage, explicit manifested human-reference stream and external timestamp-grid provenance,
+  gap-limited/no-extrapolation evaluation, geometry/semantic metrics, optional fixation-assignment
+  agreement, and deterministic source/grid fingerprints. This remains infrastructure until run on
+  an independently audited authoritative VISUS copy.
 - VISUS authoritative-copy audit infrastructure with exact recursive file manifests, SHA-256 and
   byte-size verification, explicit video/gaze/AOI roles, stimulus and participant identity gates,
   coordinate/timestamp/reuse evidence requirements, published acquisition consistency checks, and
