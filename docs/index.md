@@ -13,8 +13,8 @@ hide:
 Machine learning, computer vision, temporal event modelling, semantic AOIs, scanpaths, validation, and provenance — designed so AI can assist eye-tracking research **without silently rewriting the empirical record**.
 
 [Get started](getting-started.md){ .md-button .md-button--primary }
-[For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
 [Frozen evidence](frozen-evidence.md){ .md-button }
+[For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
 [GitHub](https://github.com/stefanosbalaskas/GazeForge){ .md-button }
 
 </div>
@@ -65,6 +65,23 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
 
 </div>
 
+## First frozen empirical checkpoint
+
+GazeForge now contains its first reviewed external evidence suite from **Lund2013**, pinned to an exact upstream commit and verified file-by-file before analysis. The primary lower-rate analysis derives a 60 Hz human-reference condition from the native 500 Hz expert labels and evaluates all methods on identical participant-held-out folds.
+
+| Model | Balanced accuracy | Macro-F1 | Event-F1 |
+| --- | ---: | ---: | ---: |
+| **I-VT** | 0.388 | 0.287 | **0.626** |
+| **RandomForest** | 0.670 | 0.595 | 0.440 |
+| **ContextMLP** | **0.679** | **0.649** | 0.535 |
+
+The result is intentionally multi-criterion: **ContextMLP leads sample-level multiclass classification, while I-VT leads event segmentation and boundary fidelity.** The independent MN annotator sensitivity analysis reproduces that broad pattern. Human MN–RA agreement remains high from native 500 Hz (κ = 0.815) to derived 60 Hz (κ = 0.799).
+
+!!! warning "Derived 60 Hz is not native GP3 validation"
+    Lund2013 is a native 500 Hz corpus. These lower-rate results quantify a controlled derivation from expert annotations; they do not establish device-specific validity for a native 60 Hz Gazepoint GP3 recording. Native GP3-class expert-labelled event validation remains a major open evidence gate.
+
+[Inspect all verified Lund tables →](frozen-evidence.md) · [Read the validation interpretation →](validation-status.md)
+
 ## A workflow designed for scientific review
 
 ```text
@@ -94,14 +111,14 @@ The package does **not** infer diagnoses, emotions, personality, protected trait
 
 | Benchmark | Human reference | Native rate | Current role |
 | --- | --- | ---: | --- |
-| **Lund2013** | paired expert event labels | 500 Hz | primary event benchmark; derived 60 Hz and sampling/purity sensitivity tooling |
+| **Lund2013** | paired expert event labels | 500 Hz | **frozen external event evidence available**; native/derived human agreement, derived 60 Hz modelling, annotator and sampling/purity sensitivity |
 | **Hollywood2EM** | expert-corrected event labels | 500 Hz | external cross-dataset candidate after coordinate/identity audit |
-| **Gaze-in-the-Wild** | five trained annotators | published 120 Hz | native naturalistic human-reference candidate; file cadence inferred directly |
+| **Gaze-in-the-Wild** | five trained annotators | published 120 Hz | native naturalistic human-reference candidate; authoritative audit pending |
 | **VISUS** | two dynamic-AOI annotators | 60 Hz | native dynamic-AOI candidate |
 
 </div>
 
-**Derived 60 Hz evidence is not treated as native 60 Hz validation.** A native 60 Hz/GP3-class manually labelled event corpus remains an explicit requirement before device-specific validity claims.
+GazeForge never silently upgrades evidence strength. Resampled lower-rate evidence remains labelled as derived, human-human agreement is not treated as an error-free ceiling, and unresolved coordinate or identity evidence blocks stronger cross-dataset claims.
 
 [See the full validation matrix →](validation-status.md) · [See frozen empirical evidence →](frozen-evidence.md)
 
@@ -126,11 +143,12 @@ flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 
 ## Current project phase
 
-GazeForge is **alpha research software**. The architecture, tests, validation machinery, external benchmark adapters, and governance are being established before a stable scientific-performance claim or package paper is frozen.
+GazeForge is **alpha research software with its first frozen external empirical tranche**. The architecture, tests, validation machinery, and benchmark evidence are now substantial, but a stable scientific-performance claim still requires broader independent validation.
 
 - CI spans Python 3.10, 3.12, and 3.14 on Linux, Windows, and macOS.
-- Documentation is built with `mkdocs build --strict`.
+- Documentation is built strictly and deployed through GitHub Pages.
 - External benchmark files are not silently bundled or relicensed.
 - Frozen benchmark reports carry deterministic SHA-256 fingerprints and are revalidated before website display.
+- The highest-priority event-model evidence gap is a native 60 Hz/GP3-class expert-labelled corpus.
 
 [Scientific governance →](scientific-governance.md) · [Benchmark evidence →](benchmark-evidence.md) · [Roadmap on GitHub →](https://github.com/stefanosbalaskas/GazeForge/issues)
