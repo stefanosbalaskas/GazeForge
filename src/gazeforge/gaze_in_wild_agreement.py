@@ -237,14 +237,10 @@ def run_gaze_in_wild_labeller_agreement(
     left_event_parts: list[pd.DataFrame] = []
     right_event_parts: list[pd.DataFrame] = []
     trial_rows: list[dict[str, Any]] = []
-    event_excluded = tuple(
-        sorted(
-            {
-                *(str(label).strip().lower() for label in excluded_labels),
-                *( ["unlabelled"] if exclude_invalid_tracking else [] ),
-            }
-        )
-    )
+    event_excluded_set = {str(label).strip().lower() for label in excluded_labels}
+    if exclude_invalid_tracking:
+        event_excluded_set.add("unlabelled")
+    event_excluded = tuple(sorted(event_excluded_set))
 
     for identity in shared:
         left_item = left_index[identity]
