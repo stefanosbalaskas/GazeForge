@@ -43,6 +43,7 @@ from .dashboard import (
     build_benchmark_dashboard,
     discover_frozen_benchmark_reports,
     discover_lund2013_suite_manifests,
+    discover_visus_dynamic_aoi_suite_manifests,
     load_frozen_benchmark_report,
     render_benchmark_dashboard_markdown,
     validate_frozen_benchmark_report,
@@ -229,6 +230,11 @@ from .visus_prediction import (
     VisusDynamicAOIPredictionIntakeRun,
     prepare_visus_dynamic_aoi_predictions,
 )
+from .visus_suite import (
+    VisusDynamicAOIValidationSuiteRun,
+    run_visus_dynamic_aoi_validation_suite,
+    validate_visus_dynamic_aoi_suite_manifest,
+)
 from .visus_validation import (
     VisusDynamicAOIModelValidationRun,
     run_visus_dynamic_aoi_model_validation,
@@ -300,6 +306,7 @@ __all__ = [
     "VisusDynamicAOIHumanAgreementRun",
     "VisusDynamicAOIModelValidationRun",
     "VisusDynamicAOIPredictionIntakeRun",
+    "VisusDynamicAOIValidationSuiteRun",
     "VisusSourceAuditRun",
     "VisusSourceAuditSpec",
     "VisusSourceFileRecord",
@@ -334,6 +341,7 @@ __all__ = [
     "detect_semantic_aois",
     "discover_frozen_benchmark_reports",
     "discover_lund2013_suite_manifests",
+    "discover_visus_dynamic_aoi_suite_manifests",
     "dynamic_aoi_snapshot",
     "dynamic_aois_from_frame",
     "dynamic_aois_to_frame",
@@ -405,6 +413,7 @@ __all__ = [
     "run_native_event_validation_suite",
     "run_visus_dynamic_aoi_human_agreement",
     "run_visus_dynamic_aoi_model_validation",
+    "run_visus_dynamic_aoi_validation_suite",
     "samples_to_event_intervals",
     "sample_label_agreement",
     "scanpath_similarity",
@@ -421,5 +430,6 @@ __all__ = [
     "validate_lund2013_source_manifest",
     "validate_lund2013_suite_manifest",
     "validate_native_event_suite_manifest",
+    "validate_visus_dynamic_aoi_suite_manifest",
     "visus_dynamic_aoi_card",
 ]
