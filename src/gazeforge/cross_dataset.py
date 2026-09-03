@@ -91,6 +91,43 @@ def _require_verified_coordinates(name: str, gaze: GazeFrame) -> None:
         )
 
 
+def _is_sha256(value: Any) -> bool:
+    text = str(value).strip().lower()
+    if len(text) != 64:
+        return False
+    try:
+        int(text, 16)
+    except ValueError:
+        return False
+    return True
+
+
+def _require_source_audit(name: str, gaze: GazeFrame) -> None:
+    """Require dataset-specific provenance gates where frozen use needs them."""
+    if name != "Hollywood2EM":
+        return
+    if gaze.metadata.get("source_audit_status") != "verified":
+        raise SchemaError(
+            "Hollywood2EM must pass the reviewed source-audit workflow before cross-dataset "
+            "benchmark preparation."
+        )
+    fingerprint_keys = (
+        "source_audit_report_fingerprint_sha256",
+        "source_audit_spec_fingerprint_sha256",
+        "source_manifest_fingerprint_sha256",
+    )
+    invalid = [key for key in fingerprint_keys if not _is_sha256(gaze.metadata.get(key, ""))]
+    if invalid:
+        raise SchemaError(
+            "Hollywood2EM source-audit provenance is incomplete or malformed: "
+            f"{invalid}."
+        )
+    if gaze.metadata.get("reuse_terms_verified") is not True:
+        raise SchemaError("Hollywood2EM reuse terms are not verified for audited analysis.")
+    if gaze.metadata.get("analysis_use_permitted") is not True:
+        raise SchemaError("Hollywood2EM analysis-use permission is not verified.")
+
+
 def _normalise_label(value: Any) -> str:
     return str(value).strip().lower().replace("smooth_pursuit", "pursuit")
 
@@ -104,6 +141,7 @@ def prepare_cross_dataset_event_benchmark(
     ambiguous_label: str = "ambiguous",
     require_resolved_participants: bool = True,
     require_verified_coordinates: bool = True,
+    require_source_audits: bool = True,
     require_all_common_labels: bool = True,
 ) -> CrossDatasetEventPrepared:
     """Prepare multiple human-reference corpora for matched lower-rate validation.
@@ -111,6 +149,8 @@ def prepare_cross_dataset_event_benchmark(
     Each source is independently resampled to the requested rate using the benchmark resampling
     guardrails. Participant and trial identifiers are namespaced by dataset after source identities
     have been checked, preventing accidental collisions across independently collected corpora.
+    Dataset-specific provenance gates, currently Hollywood2EM, are required by default for frozen
+    cross-dataset preparation rather than trusting a caller-supplied coordinate declaration alone.
     """
     if len(datasets) < 2:
         raise ValueError("At least two datasets are required for cross-dataset validation.")
@@ -136,6 +176,8 @@ def prepare_cross_dataset_event_benchmark(
             _require_resolved_participants(dataset_id, gaze)
         if require_verified_coordinates:
             _require_verified_coordinates(dataset_id, gaze)
+        if require_source_audits:
+            _require_source_audit(dataset_id, gaze)
         if "event_label" not in gaze.data.columns:
             raise SchemaError(f"Dataset {dataset_id!r} has no event_label column.")
 
@@ -223,6 +265,16 @@ def prepare_cross_dataset_event_benchmark(
             "participant_identity_resolved": not sampled["source_participant_id"].isin(
                 {"__unresolved__", "unknown"}
             ).any(),
+            "source_audit_status": gaze.metadata.get("source_audit_status"),
+            "source_audit_report_fingerprint_sha256": gaze.metadata.get(
+                "source_audit_report_fingerprint_sha256"
+            ),
+            "source_audit_spec_fingerprint_sha256": gaze.metadata.get(
+                "source_audit_spec_fingerprint_sha256"
+            ),
+            "source_manifest_fingerprint_sha256": gaze.metadata.get(
+                "source_manifest_fingerprint_sha256"
+            ),
             "rows_before_common_label_filter": int(before_filter),
             "rows_after_common_label_filter": int(len(sampled)),
             "common_labels_present": available_labels,
@@ -239,6 +291,7 @@ def prepare_cross_dataset_event_benchmark(
         "ambiguous_label": ambiguous_label,
         "require_resolved_participants": bool(require_resolved_participants),
         "require_verified_coordinates": bool(require_verified_coordinates),
+        "require_source_audits": bool(require_source_audits),
         "require_all_common_labels": bool(require_all_common_labels),
         "participant_namespace_policy": "dataset_id::source_participant_id",
         "trial_namespace_policy": "dataset_id::source_trial_id",
