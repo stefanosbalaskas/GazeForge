@@ -60,6 +60,7 @@ nav:
   - Validation:
       - Validation status: validation-status.md
       - Native 60 Hz event validation: native-60hz-validation.md
+      - Native event validation suite: native-event-suite.md
       - Empirical execution: empirical-execution.md
       - Frozen empirical evidence: frozen-evidence.md
       - Benchmarking: benchmarking.md
