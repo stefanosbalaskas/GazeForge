@@ -28,3 +28,10 @@ def test_lund_suite_is_exposed_from_top_level_api():
     assert "run_lund2013_benchmark_suite" in gazeforge.__all__
     assert "validate_lund2013_suite_manifest" in gazeforge.__all__
     assert "discover_lund2013_suite_manifests" in gazeforge.__all__
+
+
+def test_stratified_event_metrics_are_exposed_from_top_level_api():
+    assert gazeforge.StratifiedEventPerformance.__name__ == "StratifiedEventPerformance"
+    assert callable(gazeforge.summarize_event_predictions_by_stratum)
+    assert "StratifiedEventPerformance" in gazeforge.__all__
+    assert "summarize_event_predictions_by_stratum" in gazeforge.__all__

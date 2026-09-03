@@ -144,6 +144,7 @@ from .scanpath import (
 )
 from .schema import GazeFrame, canonicalize_gaze, infer_sampling_rate_hz
 from .simulate import simulate_gaze
+from .stratified import StratifiedEventPerformance, summarize_event_predictions_by_stratum
 from .temporal import (
     TemporalContextModel,
     ai_classify_events_context,
@@ -201,6 +202,7 @@ __all__ = [
     "ProvenanceRecord",
     "SamplingSensitivityResult",
     "ScanpathEmbeddingModel",
+    "StratifiedEventPerformance",
     "TemporalContextModel",
     "adapt_gazepoint_samples",
     "adapt_processed_table",
@@ -285,6 +287,7 @@ __all__ = [
     "score_trial_quality",
     "selective_accuracy_curve",
     "simulate_gaze",
+    "summarize_event_predictions_by_stratum",
     "temporal_event_iou",
     "to_semantic_scanpaths",
     "top_label_calibration_table",

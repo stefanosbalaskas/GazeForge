@@ -23,6 +23,10 @@ while validation evidence is being established.
 - Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
 - Participant/group-held-out and leave-one-dataset-out validation.
 - Matched-fold comparison of I-VT, Random Forest, and temporal-context event models.
+- Post-hoc out-of-fold stratified event performance with sample, calibration, and temporal-event
+  metrics, explicit fold/group counts, and no model refitting by stratum.
+- Lund2013 stimulus-family performance for image, moving-dot, and video recordings, embedded in
+  the same RA/MN participant-held-out benchmark reports and suite artifacts.
 - Event-level temporal IoU matching, event precision/recall/F1, and onset/offset/duration error
   metrics integrated into matched-fold and cross-dataset validation.
 - Sampling-rate × label-purity sensitivity surfaces with complete ambiguity/retention ledgers,
