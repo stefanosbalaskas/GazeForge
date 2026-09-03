@@ -42,6 +42,11 @@ repository, commit, data path, requested annotators and stimulus families, each 
 Git blob SHA, size, and a deterministic manifest SHA-256 fingerprint. Raw files remain local and are
 not added to the GazeForge package or repository.
 
+When this manifest exists, Lund benchmark runners validate the manifest fingerprint, pinned source
+identity, file inventory, byte sizes, and Git blob identities again before analysis. The verified
+manifest summary is embedded in the resulting benchmark protocol. User-managed Lund directories
+without a GazeForge manifest remain supported, but they cannot claim this verified checkout chain.
+
 ## Native loader
 
 `load_lund2013_mat()` reads the MATLAB `ETdata` structure directly. The adapter uses:
@@ -148,11 +153,9 @@ policy, model configuration, and resulting report fingerprint are frozen.
 
 ## Command line
 
-A complete local workflow is:
+The individual runners remain available:
 
 ```bash
-gazeforge lund2013-fetch ./external/lund2013
-
 gazeforge lund2013-agreement ./external/lund2013 --target-rate 60
 
 gazeforge lund2013-benchmark ./external/lund2013 \
@@ -172,9 +175,46 @@ gazeforge lund2013-sensitivity ./external/lund2013 \
 `freeze_benchmark_report()` protects an existing report from accidental overwrite unless
 `--overwrite` is explicitly supplied.
 
-## Planned frozen analyses
+## One-command validation suite
 
-The first empirical release report should include:
+For the first complete Lund evidence tranche, `gazeforge lund2013-suite` runs the analyses together
+and freezes them into one output directory:
+
+```bash
+gazeforge lund2013-fetch ./external/lund2013
+
+gazeforge lund2013-suite \
+  ./external/lund2013 \
+  ./validation/lund2013-v1 \
+  --target-rate 60 \
+  --min-label-purity 0.75 \
+  --n-splits 5 \
+  --ivt-threshold-deg-s 45 \
+  --target-rates 120,90,60,30 \
+  --purities 0.60,0.75,0.90
+```
+
+The suite computes all analyses before it writes a completion manifest. The default tranche contains:
+
+1. native 500 Hz MN-vs-RA human-human agreement;
+2. derived 60 Hz MN-vs-RA human-human agreement;
+3. the RA-labelled 60 Hz participant-held-out I-VT/RF/ContextMLP comparison;
+4. the same 60 Hz model comparison using MN labels as annotator sensitivity;
+5. the RA sampling-rate × label-purity sensitivity surface.
+
+Each child JSON remains independently fingerprinted. Before freezing, the suite recomputes each
+child fingerprint and rejects an inconsistent report. It then writes `lund2013-suite-manifest.json`
+**last**. The suite manifest records the verified source-manifest summary, complete protocol, child
+filenames, child report fingerprints, and a deterministic suite SHA-256 fingerprint.
+
+If analysis fails, no child reports or completion manifest are written. If protected output files
+already exist, the suite fails before analysis starts unless `--overwrite` is explicitly requested.
+An incomplete directory without a valid suite manifest must not be described as a completed
+validation tranche.
+
+## Planned empirical interpretation
+
+The first empirical release should report:
 
 1. native MN-vs-RA agreement;
 2. derived-60-Hz MN-vs-RA agreement;
