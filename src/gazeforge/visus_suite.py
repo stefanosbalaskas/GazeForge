@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any
 
 import pandas as pd
 
 from .benchmarks import benchmark_fingerprint, freeze_benchmark_report
-from .dynamic_aoi import DynamicAOIKeyframe
 from .exceptions import BenchmarkIntegrityError
 from .visus_agreement import run_visus_dynamic_aoi_human_agreement
 from .visus_audit import VisusSourceAuditRun
@@ -45,10 +45,18 @@ class VisusDynamicAOIValidationSuiteRun:
 def _report_fingerprint(report: Mapping[str, Any], *, name: str) -> str:
     claimed = report.get("report_fingerprint_sha256")
     if not isinstance(claimed, str) or len(claimed) != 64:
-        raise BenchmarkIntegrityError(f"VISUS suite child {name!r} is missing a valid fingerprint.")
-    body = {key: value for key, value in report.items() if key != "report_fingerprint_sha256"}
+        raise BenchmarkIntegrityError(
+            f"VISUS suite child {name!r} is missing a valid fingerprint."
+        )
+    body = {
+        key: value
+        for key, value in report.items()
+        if key != "report_fingerprint_sha256"
+    }
     if benchmark_fingerprint(body) != claimed:
-        raise BenchmarkIntegrityError(f"VISUS suite child {name!r} fingerprint does not revalidate.")
+        raise BenchmarkIntegrityError(
+            f"VISUS suite child {name!r} fingerprint does not revalidate."
+        )
     return claimed
 
 
@@ -58,15 +66,27 @@ def _audit_identity(audit: VisusSourceAuditRun) -> dict[str, str]:
     if audit.report.get("status") != "verified":
         raise BenchmarkIntegrityError("VISUS source audit is not verified.")
     claimed = str(audit.report.get("report_fingerprint_sha256", ""))
-    body = {key: value for key, value in audit.report.items() if key != "report_fingerprint_sha256"}
+    body = {
+        key: value
+        for key, value in audit.report.items()
+        if key != "report_fingerprint_sha256"
+    }
     if len(claimed) != 64 or benchmark_fingerprint(body) != claimed:
-        raise BenchmarkIntegrityError("VISUS source-audit report fingerprint does not revalidate.")
+        raise BenchmarkIntegrityError(
+            "VISUS source-audit report fingerprint does not revalidate."
+        )
     spec = str(audit.report.get("spec_fingerprint_sha256", ""))
     if benchmark_fingerprint(audit.spec.to_dict()) != spec:
-        raise BenchmarkIntegrityError("VISUS source-audit specification fingerprint does not revalidate.")
-    manifest = str(audit.report.get("inventory", {}).get("manifest_fingerprint_sha256", ""))
+        raise BenchmarkIntegrityError(
+            "VISUS source-audit specification fingerprint does not revalidate."
+        )
+    manifest = str(
+        audit.report.get("inventory", {}).get("manifest_fingerprint_sha256", "")
+    )
     if len(manifest) != 64:
-        raise BenchmarkIntegrityError("VISUS source audit is missing a manifest fingerprint.")
+        raise BenchmarkIntegrityError(
+            "VISUS source audit is missing a manifest fingerprint."
+        )
     return {
         "source_audit_report_fingerprint_sha256": claimed,
         "source_audit_spec_fingerprint_sha256": spec,
@@ -74,12 +94,18 @@ def _audit_identity(audit: VisusSourceAuditRun) -> dict[str, str]:
     }
 
 
-def _child_source_identity(report: Mapping[str, Any], *, benchmark_report: bool) -> dict[str, str]:
+def _child_source_identity(
+    report: Mapping[str, Any],
+    *,
+    benchmark_report: bool,
+) -> dict[str, str]:
     source: Mapping[str, Any]
     if benchmark_report:
         protocol = report.get("protocol")
         if not isinstance(protocol, Mapping):
-            raise BenchmarkIntegrityError("VISUS benchmark child protocol must be an object.")
+            raise BenchmarkIntegrityError(
+                "VISUS benchmark child protocol must be an object."
+            )
         source = protocol
     else:
         source = report
@@ -99,9 +125,13 @@ def _verify_intakes(
     prediction: VisusDynamicAOIPredictionIntakeRun,
 ) -> tuple[dict[str, str], dict[str, Any]]:
     if not isinstance(reference, VisusCanonicalAOIIntakeRun):
-        raise TypeError("reference_intake must be a VisusCanonicalAOIIntakeRun instance.")
+        raise TypeError(
+            "reference_intake must be a VisusCanonicalAOIIntakeRun instance."
+        )
     if not isinstance(prediction, VisusDynamicAOIPredictionIntakeRun):
-        raise TypeError("prediction_intake must be a VisusDynamicAOIPredictionIntakeRun instance.")
+        raise TypeError(
+            "prediction_intake must be a VisusDynamicAOIPredictionIntakeRun instance."
+        )
     identity = _audit_identity(audit)
     _report_fingerprint(reference.report, name="human_reference_intake")
     _report_fingerprint(prediction.report, name="model_prediction_intake")
@@ -110,24 +140,36 @@ def _verify_intakes(
     if prediction.report.get("status") != "verified-prediction-intake":
         raise BenchmarkIntegrityError("VISUS model-prediction intake is not verified.")
     if _child_source_identity(reference.report, benchmark_report=False) != identity:
-        raise BenchmarkIntegrityError("VISUS human-reference intake does not share source identity.")
+        raise BenchmarkIntegrityError(
+            "VISUS human-reference intake does not share source identity."
+        )
     if _child_source_identity(prediction.report, benchmark_report=False) != identity:
-        raise BenchmarkIntegrityError("VISUS model-prediction intake does not share source identity.")
+        raise BenchmarkIntegrityError(
+            "VISUS model-prediction intake does not share source identity."
+        )
     if prediction.report.get("evaluation_timestamp_grid_generated") is not False:
         raise BenchmarkIntegrityError(
             "VISUS prediction intake must not generate the evaluation timestamp grid."
         )
     model = prediction.report.get("model")
     if not isinstance(model, dict):
-        raise BenchmarkIntegrityError("VISUS prediction intake is missing model provenance.")
+        raise BenchmarkIntegrityError(
+            "VISUS prediction intake is missing model provenance."
+        )
     name = str(model.get("name", "")).strip()
     version = str(model.get("version", "")).strip()
     if not name or not version:
-        raise BenchmarkIntegrityError("VISUS prediction intake model identity is incomplete.")
+        raise BenchmarkIntegrityError(
+            "VISUS prediction intake model identity is incomplete."
+        )
     return identity, model
 
 
-def _target_paths(output_dir: Path, *, include_human_agreement: bool) -> dict[str, Path]:
+def _target_paths(
+    output_dir: Path,
+    *,
+    include_human_agreement: bool,
+) -> dict[str, Path]:
     paths = {
         "human_reference_intake": output_dir / "visus-human-reference-intake.json",
         "model_prediction_intake": output_dir / "visus-model-prediction-intake.json",
@@ -138,7 +180,12 @@ def _target_paths(output_dir: Path, *, include_human_agreement: bool) -> dict[st
     return paths
 
 
-def _preflight(paths: Mapping[str, Path], manifest_path: Path, *, overwrite: bool) -> None:
+def _preflight(
+    paths: Mapping[str, Path],
+    manifest_path: Path,
+    *,
+    overwrite: bool,
+) -> None:
     if overwrite:
         return
     existing = [path for path in [*paths.values(), manifest_path] if path.exists()]
@@ -152,11 +199,15 @@ def _preflight(paths: Mapping[str, Path], manifest_path: Path, *, overwrite: boo
 def _safe_child_path(root: Path, relative_text: str) -> Path:
     relative = Path(relative_text)
     if not relative.parts or relative.is_absolute() or ".." in relative.parts:
-        raise BenchmarkIntegrityError("VISUS suite manifest contains an unsafe report path.")
+        raise BenchmarkIntegrityError(
+            "VISUS suite manifest contains an unsafe report path."
+        )
     resolved_root = root.resolve()
     resolved = (root / relative).resolve()
     if resolved != resolved_root and resolved_root not in resolved.parents:
-        raise BenchmarkIntegrityError("VISUS suite report path escapes the suite directory.")
+        raise BenchmarkIntegrityError(
+            "VISUS suite report path escapes the suite directory."
+        )
     return resolved
 
 
@@ -180,56 +231,103 @@ def _validate_child_semantics(
     protocol: Mapping[str, Any],
 ) -> None:
     benchmark_report = name in {"model_human_validation", _HUMAN_AGREEMENT_NAME}
-    if _child_source_identity(report, benchmark_report=benchmark_report) != dict(source_identity):
-        raise BenchmarkIntegrityError(f"VISUS suite child {name!r} source identity mismatch.")
+    observed_identity = _child_source_identity(
+        report,
+        benchmark_report=benchmark_report,
+    )
+    if observed_identity != dict(source_identity):
+        raise BenchmarkIntegrityError(
+            f"VISUS suite child {name!r} source identity mismatch."
+        )
 
     if name == "human_reference_intake":
         if report.get("status") != "verified-canonical-intake":
-            raise BenchmarkIntegrityError("VISUS reference-intake child is not verified.")
+            raise BenchmarkIntegrityError(
+                "VISUS reference-intake child is not verified."
+            )
         stream = str(protocol.get("reference_stream_id", ""))
         if stream not in set(report.get("annotation_stream_ids", [])):
-            raise BenchmarkIntegrityError("VISUS suite reference stream is absent from intake.")
+            raise BenchmarkIntegrityError(
+                "VISUS suite reference stream is absent from intake."
+            )
     elif name == "model_prediction_intake":
         if report.get("status") != "verified-prediction-intake":
-            raise BenchmarkIntegrityError("VISUS prediction-intake child is not verified.")
+            raise BenchmarkIntegrityError(
+                "VISUS prediction-intake child is not verified."
+            )
         if report.get("evaluation_timestamp_grid_generated") is not False:
-            raise BenchmarkIntegrityError("VISUS prediction child improperly generated a grid.")
+            raise BenchmarkIntegrityError(
+                "VISUS prediction child improperly generated a grid."
+            )
         child_model = report.get("model", {})
         if child_model.get("name") != protocol.get("model_name") or child_model.get(
             "version"
         ) != protocol.get("model_version"):
-            raise BenchmarkIntegrityError("VISUS prediction child model identity mismatch.")
+            raise BenchmarkIntegrityError(
+                "VISUS prediction child model identity mismatch."
+            )
     elif name == "model_human_validation":
         child_protocol = report.get("protocol", {})
-        if child_protocol.get("reference_stream_id") != protocol.get("reference_stream_id"):
-            raise BenchmarkIntegrityError("VISUS model-human reference stream mismatch.")
+        if child_protocol.get("reference_stream_id") != protocol.get(
+            "reference_stream_id"
+        ):
+            raise BenchmarkIntegrityError(
+                "VISUS model-human reference stream mismatch."
+            )
         if child_protocol.get("timestamp_grid_explicit") is not True:
-            raise BenchmarkIntegrityError("VISUS model-human child lacks an explicit grid.")
-        if child_protocol.get("timestamp_grid_basis") != protocol.get("timestamp_grid_basis"):
-            raise BenchmarkIntegrityError("VISUS model-human timestamp-grid basis mismatch.")
+            raise BenchmarkIntegrityError(
+                "VISUS model-human child lacks an explicit grid."
+            )
+        if child_protocol.get("timestamp_grid_basis") != protocol.get(
+            "timestamp_grid_basis"
+        ):
+            raise BenchmarkIntegrityError(
+                "VISUS model-human timestamp-grid basis mismatch."
+            )
         if child_protocol.get("timestamp_grids") != protocol.get("timestamp_grids"):
-            raise BenchmarkIntegrityError("VISUS model-human timestamp-grid fingerprints mismatch.")
+            raise BenchmarkIntegrityError(
+                "VISUS model-human timestamp-grid fingerprints mismatch."
+            )
         if child_protocol.get("human_human_agreement_claimed") is not False:
-            raise BenchmarkIntegrityError("VISUS model-human child makes an invalid HH claim.")
+            raise BenchmarkIntegrityError(
+                "VISUS model-human child makes an invalid HH claim."
+            )
         child_model = report.get("model", {})
         if child_model.get("name") != protocol.get("model_name") or child_model.get(
             "version"
         ) != protocol.get("model_version"):
-            raise BenchmarkIntegrityError("VISUS model-human child model identity mismatch.")
+            raise BenchmarkIntegrityError(
+                "VISUS model-human child model identity mismatch."
+            )
     elif name == _HUMAN_AGREEMENT_NAME:
         child_protocol = report.get("protocol", {})
         if protocol.get("independent_annotation_streams_verified") is not True:
-            raise BenchmarkIntegrityError("VISUS human-agreement child lacks suite independence proof.")
+            raise BenchmarkIntegrityError(
+                "VISUS human-agreement child lacks suite independence proof."
+            )
         if child_protocol.get("independent_annotation_streams_verified") is not True:
-            raise BenchmarkIntegrityError("VISUS human-agreement child lacks independence proof.")
+            raise BenchmarkIntegrityError(
+                "VISUS human-agreement child lacks independence proof."
+            )
         if child_protocol.get("human_agreement_reference_not_ground_truth") is not True:
-            raise BenchmarkIntegrityError("VISUS human-agreement child must be not-ground-truth.")
+            raise BenchmarkIntegrityError(
+                "VISUS human-agreement child must be not-ground-truth."
+            )
         pair = list(protocol.get("human_agreement_stream_ids", []))
-        observed = [child_protocol.get("left_stream_id"), child_protocol.get("right_stream_id")]
+        observed = [
+            child_protocol.get("left_stream_id"),
+            child_protocol.get("right_stream_id"),
+        ]
         if observed != pair:
-            raise BenchmarkIntegrityError("VISUS human-agreement stream pair mismatch.")
-        if child_protocol.get("timestamp_grid_basis") != protocol.get("timestamp_grid_basis"):
-            raise BenchmarkIntegrityError("VISUS human-agreement timestamp-grid basis mismatch.")
+            raise BenchmarkIntegrityError(
+                "VISUS human-agreement stream pair mismatch."
+            )
+        if child_protocol.get("timestamp_grid_basis") != protocol.get(
+            "timestamp_grid_basis"
+        ):
+            raise BenchmarkIntegrityError(
+                "VISUS human-agreement timestamp-grid basis mismatch."
+            )
 
 
 def validate_visus_dynamic_aoi_suite_manifest(
@@ -244,25 +342,56 @@ def validate_visus_dynamic_aoi_suite_manifest(
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        raise BenchmarkIntegrityError("VISUS suite manifest is not valid JSON.") from exc
+        raise BenchmarkIntegrityError(
+            "VISUS suite manifest is not valid JSON."
+        ) from exc
     if not isinstance(manifest, dict):
-        raise BenchmarkIntegrityError("VISUS suite manifest must be a JSON object.")
-    required = {"suite", "status", "source", "protocol", "reports", "suite_fingerprint_sha256"}
+        raise BenchmarkIntegrityError(
+            "VISUS suite manifest must be a JSON object."
+        )
+    required = {
+        "suite",
+        "status",
+        "source",
+        "protocol",
+        "reports",
+        "suite_fingerprint_sha256",
+    }
     missing = sorted(required - set(manifest))
     if missing:
-        raise BenchmarkIntegrityError(f"VISUS suite manifest is missing fields: {missing}")
+        raise BenchmarkIntegrityError(
+            f"VISUS suite manifest is missing fields: {missing}"
+        )
     if manifest["suite"] != _SUITE_NAME or manifest["status"] != "complete":
-        raise BenchmarkIntegrityError("VISUS suite manifest identity/status is invalid.")
+        raise BenchmarkIntegrityError(
+            "VISUS suite manifest identity/status is invalid."
+        )
     claimed = manifest["suite_fingerprint_sha256"]
-    body = {key: value for key, value in manifest.items() if key != "suite_fingerprint_sha256"}
-    if not isinstance(claimed, str) or len(claimed) != 64 or benchmark_fingerprint(body) != claimed:
-        raise BenchmarkIntegrityError("VISUS suite manifest fingerprint mismatch.")
+    body = {
+        key: value
+        for key, value in manifest.items()
+        if key != "suite_fingerprint_sha256"
+    }
+    if (
+        not isinstance(claimed, str)
+        or len(claimed) != 64
+        or benchmark_fingerprint(body) != claimed
+    ):
+        raise BenchmarkIntegrityError(
+            "VISUS suite manifest fingerprint mismatch."
+        )
 
     source = manifest["source"]
     protocol = manifest["protocol"]
     records = manifest["reports"]
-    if not isinstance(source, dict) or not isinstance(protocol, dict) or not isinstance(records, list):
-        raise BenchmarkIntegrityError("VISUS suite source/protocol/reports structure is invalid.")
+    if (
+        not isinstance(source, dict)
+        or not isinstance(protocol, dict)
+        or not isinstance(records, list)
+    ):
+        raise BenchmarkIntegrityError(
+            "VISUS suite source/protocol/reports structure is invalid."
+        )
     source_identity = {
         key: str(source.get(key, ""))
         for key in (
@@ -272,41 +401,68 @@ def validate_visus_dynamic_aoi_suite_manifest(
         )
     }
     if any(len(value) != 64 for value in source_identity.values()):
-        raise BenchmarkIntegrityError("VISUS suite source fingerprints are incomplete.")
+        raise BenchmarkIntegrityError(
+            "VISUS suite source fingerprints are incomplete."
+        )
 
     names: set[str] = set()
     paths: set[str] = set()
     verified: list[dict[str, Any]] = []
     for record in records:
         if not isinstance(record, dict):
-            raise BenchmarkIntegrityError("VISUS suite contains an invalid report record.")
+            raise BenchmarkIntegrityError(
+                "VISUS suite contains an invalid report record."
+            )
         name = str(record.get("name", ""))
         relative = str(record.get("path", ""))
         fingerprint = str(record.get("report_fingerprint_sha256", ""))
-        if not name or name in names or not relative or relative in paths or len(fingerprint) != 64:
-            raise BenchmarkIntegrityError("VISUS suite report records must be unique and complete.")
+        invalid_record = (
+            not name
+            or name in names
+            or not relative
+            or relative in paths
+            or len(fingerprint) != 64
+        )
+        if invalid_record:
+            raise BenchmarkIntegrityError(
+                "VISUS suite report records must be unique and complete."
+            )
         names.add(name)
         paths.add(relative)
         child_path = _safe_child_path(manifest_path.parent, relative)
         if verify_reports:
             if not child_path.is_file():
-                raise BenchmarkIntegrityError(f"VISUS suite child report is missing: {relative}")
+                raise BenchmarkIntegrityError(
+                    f"VISUS suite child report is missing: {relative}"
+                )
             try:
                 child = json.loads(child_path.read_text(encoding="utf-8"))
             except json.JSONDecodeError as exc:
-                raise BenchmarkIntegrityError(f"VISUS suite child is invalid JSON: {relative}") from exc
+                raise BenchmarkIntegrityError(
+                    f"VISUS suite child is invalid JSON: {relative}"
+                ) from exc
             if not isinstance(child, dict):
-                raise BenchmarkIntegrityError(f"VISUS suite child must be an object: {relative}")
+                raise BenchmarkIntegrityError(
+                    f"VISUS suite child must be an object: {relative}"
+                )
             observed = _report_fingerprint(child, name=name)
             if observed != fingerprint:
-                raise BenchmarkIntegrityError(f"VISUS suite manifest/child fingerprint mismatch: {name}")
+                raise BenchmarkIntegrityError(
+                    f"VISUS suite manifest/child fingerprint mismatch: {name}"
+                )
             _validate_child_semantics(
                 name,
                 child,
                 source_identity=source_identity,
                 protocol=protocol,
             )
-        verified.append({"name": name, "path": relative, "report_fingerprint_sha256": fingerprint})
+        verified.append(
+            {
+                "name": name,
+                "path": relative,
+                "report_fingerprint_sha256": fingerprint,
+            }
+        )
 
     expected = _expected_report_names(protocol)
     if names != expected:
@@ -357,15 +513,24 @@ def run_visus_dynamic_aoi_validation_suite(
     recoverable streams. When independence is not verified, the suite explicitly records that the
     child is unavailable rather than inferring reliability from the published contributor count.
     """
-    identity, model = _verify_intakes(audit, reference_intake, prediction_intake)
+    identity, model = _verify_intakes(
+        audit,
+        reference_intake,
+        prediction_intake,
+    )
     stream = str(reference_stream_id).strip()
     if not stream:
         raise ValueError("reference_stream_id cannot be empty.")
     if stream not in reference_intake.by_stream:
-        raise BenchmarkIntegrityError("Selected VISUS reference stream is absent from canonical intake.")
+        raise BenchmarkIntegrityError(
+            "Selected VISUS reference stream is absent from canonical intake."
+        )
 
     ready = bool(
-        audit.report.get("annotation_provenance", {}).get("human_human_agreement_ready") is True
+        audit.report.get("annotation_provenance", {}).get(
+            "human_human_agreement_ready"
+        )
+        is True
         and audit.spec.independent_annotation_streams_verified is True
     )
     if ready and human_agreement_streams is None:
@@ -382,13 +547,20 @@ def run_visus_dynamic_aoi_validation_suite(
     if human_agreement_streams is not None:
         left, right = (str(value).strip() for value in human_agreement_streams)
         if not left or not right or left == right:
-            raise ValueError("human_agreement_streams must contain two distinct non-empty IDs.")
+            raise ValueError(
+                "human_agreement_streams must contain two distinct non-empty IDs."
+            )
         if left not in reference_intake.by_stream or right not in reference_intake.by_stream:
-            raise BenchmarkIntegrityError("Human-agreement streams are absent from canonical intake.")
+            raise BenchmarkIntegrityError(
+                "Human-agreement streams are absent from canonical intake."
+            )
         pair = (left, right)
 
     output = Path(output_dir)
-    report_paths = _target_paths(output, include_human_agreement=pair is not None)
+    report_paths = _target_paths(
+        output,
+        include_human_agreement=pair is not None,
+    )
     manifest_path = output / _SUITE_MANIFEST_NAME
     _preflight(report_paths, manifest_path, overwrite=overwrite)
 
@@ -414,7 +586,6 @@ def run_visus_dynamic_aoi_validation_suite(
         "model_prediction_intake": prediction_intake.report,
         "model_human_validation": model_run.report,
     }
-    human_run = None
     if pair is not None:
         human_run = run_visus_dynamic_aoi_human_agreement(
             audit,
@@ -435,9 +606,18 @@ def run_visus_dynamic_aoi_validation_suite(
 
     for name, report in reports.items():
         _report_fingerprint(report, name=name)
-        benchmark_report = name in {"model_human_validation", _HUMAN_AGREEMENT_NAME}
-        if _child_source_identity(report, benchmark_report=benchmark_report) != identity:
-            raise BenchmarkIntegrityError(f"VISUS suite child {name!r} source identity mismatch.")
+        benchmark_report = name in {
+            "model_human_validation",
+            _HUMAN_AGREEMENT_NAME,
+        }
+        observed_identity = _child_source_identity(
+            report,
+            benchmark_report=benchmark_report,
+        )
+        if observed_identity != identity:
+            raise BenchmarkIntegrityError(
+                f"VISUS suite child {name!r} source identity mismatch."
+            )
 
     model_protocol = model_run.report["protocol"]
     protocol = {
@@ -457,15 +637,27 @@ def run_visus_dynamic_aoi_validation_suite(
         "human_human_unavailable_reason": (
             None
             if ready
-            else "source audit does not verify separately recoverable independent annotation streams"
+            else (
+                "source audit does not verify separately recoverable independent "
+                "annotation streams"
+            )
         ),
         "prediction_emission_grid_used": False,
-        "completion_rule": "manifest_written_only_after_all_required_child_reports_freeze_and_revalidate",
+        "completion_rule": (
+            "manifest_written_only_after_all_required_child_reports_"
+            "freeze_and_revalidate"
+        ),
         "claim_limits": [
             "Suite completion records reproducibility, not generalizable detector validity.",
-            "Human agreement is included only when independent streams are source-audit verified.",
+            (
+                "Human agreement is included only when independent streams are "
+                "source-audit verified."
+            ),
             "Neither human stream is treated as error-free ground truth.",
-            "No empirical VISUS claim exists until real authoritative inputs are reviewed and frozen.",
+            (
+                "No empirical VISUS claim exists until real authoritative inputs are "
+                "reviewed and frozen."
+            ),
         ],
     }
     source = {
@@ -481,9 +673,18 @@ def run_visus_dynamic_aoi_validation_suite(
     }
 
     for name, report in reports.items():
-        _validate_child_semantics(name, report, source_identity=identity, protocol=protocol)
+        _validate_child_semantics(
+            name,
+            report,
+            source_identity=identity,
+            protocol=protocol,
+        )
     for name, report in reports.items():
-        freeze_benchmark_report(report, report_paths[name], overwrite=overwrite)
+        freeze_benchmark_report(
+            report,
+            report_paths[name],
+            overwrite=overwrite,
+        )
 
     records = [
         {
@@ -501,13 +702,25 @@ def run_visus_dynamic_aoi_validation_suite(
         "reports": records,
     }
     suite_fingerprint = benchmark_fingerprint(body)
-    manifest = {**body, "suite_fingerprint_sha256": suite_fingerprint}
+    manifest = {
+        **body,
+        "suite_fingerprint_sha256": suite_fingerprint,
+    }
     output.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(
-        json.dumps(manifest, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+        json.dumps(
+            manifest,
+            indent=2,
+            sort_keys=True,
+            ensure_ascii=False,
+        )
+        + "\n",
         encoding="utf-8",
     )
-    validate_visus_dynamic_aoi_suite_manifest(manifest_path, verify_reports=True)
+    validate_visus_dynamic_aoi_suite_manifest(
+        manifest_path,
+        verify_reports=True,
+    )
     return VisusDynamicAOIValidationSuiteRun(
         output_dir=output,
         report_paths=report_paths,
