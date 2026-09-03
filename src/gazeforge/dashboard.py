@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +11,7 @@ import pandas as pd
 
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
+from .lund_suite import validate_lund2013_suite_manifest
 
 _REPORT_BODY_KEYS = ("benchmark", "model", "protocol", "metrics")
 _REQUIRED_BENCHMARK_FIELDS = (
@@ -22,15 +23,19 @@ _REQUIRED_BENCHMARK_FIELDS = (
     "sampling_origin",
     "reference_strength",
 )
+_SUITE_MANIFEST_NAME = "lund2013-suite-manifest.json"
 
 
 @dataclass(slots=True)
 class BenchmarkDashboard:
-    """Validated benchmark reports plus a compact public evidence table."""
+    """Validated benchmark reports and verified report suites for public evidence."""
 
     reports: tuple[dict[str, Any], ...]
     table: pd.DataFrame
     source_files: tuple[str, ...]
+    suites: tuple[dict[str, Any], ...] = ()
+    suite_table: pd.DataFrame = field(default_factory=pd.DataFrame)
+    suite_source_files: tuple[str, ...] = ()
 
 
 def validate_frozen_benchmark_report(report: dict[str, Any]) -> str:
@@ -59,7 +64,11 @@ def validate_frozen_benchmark_report(report: dict[str, Any]) -> str:
     benchmark = report["benchmark"]
     if not isinstance(benchmark, dict):
         raise BenchmarkIntegrityError("Benchmark metadata must be a JSON object.")
-    missing_metadata = [field for field in _REQUIRED_BENCHMARK_FIELDS if field not in benchmark]
+    missing_metadata = [
+        field_name
+        for field_name in _REQUIRED_BENCHMARK_FIELDS
+        if field_name not in benchmark
+    ]
     if missing_metadata:
         raise BenchmarkIntegrityError(
             f"Benchmark metadata is missing evidence fields: {missing_metadata}"
@@ -106,6 +115,23 @@ def discover_frozen_benchmark_reports(
     return tuple(reports)
 
 
+def discover_lund2013_suite_manifests(
+    root: str | Path,
+    *,
+    recursive: bool = True,
+) -> tuple[Path, ...]:
+    """Discover Lund suite completion manifests without treating them as result rows."""
+    directory = Path(root)
+    if not directory.exists():
+        raise FileNotFoundError(directory)
+    if recursive:
+        paths = sorted(directory.rglob(_SUITE_MANIFEST_NAME))
+    else:
+        candidate = directory / _SUITE_MANIFEST_NAME
+        paths = [candidate] if candidate.is_file() else []
+    return tuple(paths)
+
+
 def _model_names(model_metadata: Any) -> str:
     if not isinstance(model_metadata, dict):
         return ""
@@ -142,15 +168,37 @@ def _dashboard_row(report: dict[str, Any], source_file: str) -> dict[str, Any]:
     }
 
 
+def _suite_row(summary: dict[str, Any], source_file: str) -> dict[str, Any]:
+    source_manifest = summary.get("source_manifest")
+    source_fingerprint = ""
+    if isinstance(source_manifest, dict):
+        source_fingerprint = str(
+            source_manifest.get("manifest_fingerprint_sha256", "")
+        )
+    protocol = summary.get("protocol")
+    target_rate = ""
+    if isinstance(protocol, dict) and "target_sampling_rate_hz" in protocol:
+        target_rate = f"{float(protocol['target_sampling_rate_hz']):g}"
+    return {
+        "suite": str(summary["suite"]),
+        "status": str(summary["status"]),
+        "report_count": int(summary["report_count"]),
+        "target_sampling_rate_hz": target_rate,
+        "source_manifest_fingerprint_sha256": source_fingerprint,
+        "suite_fingerprint_sha256": str(summary["suite_fingerprint_sha256"]),
+        "source_file": source_file,
+    }
+
+
 def build_benchmark_dashboard(
     root: str | Path,
     *,
     recursive: bool = True,
 ) -> BenchmarkDashboard:
-    """Build an evidence table from integrity-checked frozen reports under ``root``.
+    """Build evidence tables from integrity-checked reports and complete suites under ``root``.
 
-    Duplicate report fingerprints are rejected so copied files cannot inflate the apparent number
-    of independent validation results on a public dashboard.
+    Duplicate report and suite fingerprints are rejected so copied artifacts cannot inflate the
+    apparent number of independent validation results or completed tranches on a public dashboard.
     """
     paths = discover_frozen_benchmark_reports(root, recursive=recursive)
     reports: list[dict[str, Any]] = []
@@ -174,10 +222,36 @@ def build_benchmark_dashboard(
             ["benchmark", "version", "report_fingerprint_sha256"],
             kind="stable",
         ).reset_index(drop=True)
+
+    suite_paths = discover_lund2013_suite_manifests(root, recursive=recursive)
+    suites: list[dict[str, Any]] = []
+    suite_rows: list[dict[str, Any]] = []
+    suite_fingerprints: set[str] = set()
+    for path in suite_paths:
+        summary = validate_lund2013_suite_manifest(path)
+        fingerprint = str(summary["suite_fingerprint_sha256"])
+        if fingerprint in suite_fingerprints:
+            raise BenchmarkIntegrityError(
+                f"Duplicate Lund2013 suite fingerprint discovered: {fingerprint}"
+            )
+        suite_fingerprints.add(fingerprint)
+        suites.append(summary)
+        suite_rows.append(_suite_row(summary, str(path)))
+
+    suite_table = pd.DataFrame(suite_rows)
+    if not suite_table.empty:
+        suite_table = suite_table.sort_values(
+            ["suite", "suite_fingerprint_sha256"],
+            kind="stable",
+        ).reset_index(drop=True)
+
     return BenchmarkDashboard(
         reports=tuple(reports),
         table=table,
         source_files=tuple(str(path) for path in paths),
+        suites=tuple(suites),
+        suite_table=suite_table,
+        suite_source_files=tuple(str(path) for path in suite_paths),
     )
 
 
@@ -193,14 +267,16 @@ def _markdown_table(frame: pd.DataFrame) -> str:
         "| " + " | ".join("---" for _ in headers) + " |",
     ]
     for row in frame.itertuples(index=False, name=None):
-        lines.append("| " + " | ".join(_escape_markdown_cell(value) for value in row) + " |")
+        lines.append(
+            "| " + " | ".join(_escape_markdown_cell(value) for value in row) + " |"
+        )
     return "\n".join(lines)
 
 
 def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
     """Render a conservative Markdown evidence index for the documentation website."""
     heading = "# Frozen benchmark evidence\n\n"
-    if dashboard.table.empty:
+    if dashboard.table.empty and dashboard.suite_table.empty:
         return (
             heading
             + "No integrity-checked frozen empirical benchmark reports are committed yet. "
@@ -208,21 +284,58 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
             "validation-status pages, but they are not displayed here as performance evidence.\n"
         )
 
-    columns = [
-        "benchmark",
-        "version",
-        "annotation_origin",
-        "sampling_origin",
-        "reference_strength",
-        "sampling_rates_hz",
-        "models",
-        "report_fingerprint_sha256",
-    ]
-    public = dashboard.table.loc[:, columns].copy()
-    public["report_fingerprint_sha256"] = public["report_fingerprint_sha256"].str.slice(0, 12)
-    return (
-        heading
-        + "Only reports whose deterministic fingerprint recomputes successfully are listed.\n\n"
-        + _markdown_table(public)
-        + "\n"
-    )
+    sections = [heading]
+    if not dashboard.suite_table.empty:
+        suite_columns = [
+            "suite",
+            "status",
+            "report_count",
+            "target_sampling_rate_hz",
+            "source_manifest_fingerprint_sha256",
+            "suite_fingerprint_sha256",
+        ]
+        public_suites = dashboard.suite_table.loc[:, suite_columns].copy()
+        for column in (
+            "source_manifest_fingerprint_sha256",
+            "suite_fingerprint_sha256",
+        ):
+            public_suites[column] = public_suites[column].str.slice(0, 12)
+        sections.extend(
+            [
+                "## Verified report suites\n\n",
+                (
+                    "A suite appears here only when its completion manifest and every "
+                    "referenced child report verify successfully.\n\n"
+                ),
+                _markdown_table(public_suites),
+                "\n\n",
+            ]
+        )
+
+    if not dashboard.table.empty:
+        columns = [
+            "benchmark",
+            "version",
+            "annotation_origin",
+            "sampling_origin",
+            "reference_strength",
+            "sampling_rates_hz",
+            "models",
+            "report_fingerprint_sha256",
+        ]
+        public = dashboard.table.loc[:, columns].copy()
+        public["report_fingerprint_sha256"] = public[
+            "report_fingerprint_sha256"
+        ].str.slice(0, 12)
+        sections.extend(
+            [
+                "## Frozen reports\n\n",
+                (
+                    "Only reports whose deterministic fingerprint recomputes "
+                    "successfully are listed.\n\n"
+                ),
+                _markdown_table(public),
+                "\n",
+            ]
+        )
+    return "".join(sections)
