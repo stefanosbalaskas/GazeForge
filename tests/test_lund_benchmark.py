@@ -100,6 +100,10 @@ def test_prepare_lund2013_benchmark_records_60hz_provenance(tmp_path):
     assert prepared.data["participant_id"].nunique() == 3
     assert set(prepared.data["stimulus_type"]) == {"image"}
     assert set(prepared.data["annotator"]) == {"RA"}
+    counts = prepared.preparation_report["stimulus_type_counts"]["image"]
+    assert counts["participants"] == 3
+    assert counts["trials"] == 3
+    assert counts["rows"] == len(prepared.data)
 
 
 def test_lund2013_annotator_agreement_runs_native_and_resampled(tmp_path):
@@ -127,6 +131,12 @@ def test_lund2013_event_benchmark_builds_fingerprinted_report(tmp_path):
         temporal_max_iter=100,
     )
     assert set(run.comparison.summary["model"]) == {"I-VT", "RandomForest", "ContextMLP"}
+    assert set(run.stimulus_type_performance.summary["stratum"]) == {"image"}
+    assert set(run.stimulus_type_performance.summary["model"]) == {
+        "I-VT",
+        "RandomForest",
+        "ContextMLP",
+    }
     assert run.report["benchmark"]["name"] == "Lund2013"
     assert len(run.report["report_fingerprint_sha256"]) == 64
     preparation = run.report["protocol"]["preparation"]
@@ -139,3 +149,13 @@ def test_lund2013_event_benchmark_builds_fingerprinted_report(tmp_path):
     assert design["ivt_velocity_unit"] == "deg/s"
     assert design["ivt_velocity_threshold_deg_s"] == 45.0
     assert design["ivt_velocity_threshold_px_s"] is None
+    stimulus_design = run.report["protocol"]["stimulus_type_design"]
+    assert stimulus_design["stratify_col"] == "stimulus_type"
+    assert stimulus_design["models_refit_by_stratum"] is False
+    family_rows = run.report["metrics"]["stimulus_type_summary"]
+    assert {row["stratum"] for row in family_rows} == {"image"}
+    assert {row["model"] for row in family_rows} == {
+        "I-VT",
+        "RandomForest",
+        "ContextMLP",
+    }
