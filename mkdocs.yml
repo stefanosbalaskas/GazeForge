@@ -6,6 +6,9 @@ repo_name: stefanosbalaskas/GazeForge
 repo_url: https://github.com/stefanosbalaskas/GazeForge
 edit_uri: edit/main/docs/
 
+hooks:
+  - scripts/mkdocs_hooks.py
+
 theme:
   name: material
   language: en
@@ -54,6 +57,7 @@ nav:
       - Calibration & dataset holdouts: calibration.md
   - Validation:
       - Validation status: validation-status.md
+      - Frozen empirical evidence: frozen-evidence.md
       - Benchmarking: benchmarking.md
       - Benchmark evidence: benchmark-evidence.md
       - Sampling sensitivity: sampling-sensitivity.md
