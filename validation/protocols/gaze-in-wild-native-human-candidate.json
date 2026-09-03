@@ -44,7 +44,7 @@
     "freeze_per_file_inferred_sampling_rate_distribution",
     "freeze_labeller_to_labeller_sample_agreement",
     "freeze_labeller_to_labeller_event_level_agreement",
-    "report_metrics_by_event_class_and naturalistic_task",
+    "report_metrics_by_event_class_and_naturalistic_task",
     "evaluate_any_model_with_participant_disjoint_splits",
     "report_hardware_and_task_domain_difference_from_Gazepoint_GP3"
   ],
