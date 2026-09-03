@@ -17,9 +17,9 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 | --- | --- | ---: | --- | --- |
 | **Lund2013** | paired expert manual labels | 500 Hz | **Frozen external evidence available**: native and derived-60-Hz MN/RA agreement; derived-60-Hz participant-held-out I-VT/RF/ContextMLP comparison; MN annotator sensitivity; stimulus-family summaries; 120/90/60/30-Hz × .60/.75/.90 purity sensitivity | native 60-Hz/GP3-class expert-labelled events still required for device-specific validity |
 | **Native 60 Hz / GP3-class event corpus** | intended expert manual labels | 60 Hz | **Infrastructure validated, empirical execution pending**: strict native-rate intake, source/spec fingerprints, complete multi-annotator sample/gaze-identity verification, all-label and analysis-label human agreement, bidirectional event-boundary agreement, participant-held-out I-VT/RF/ContextMLP comparison, event metrics, three-report suite orchestration/verification, and non-executable protocol template | collect or independently obtain a real authoritative native corpus; document expert annotation protocol; freeze and review the complete native suite |
-| **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit annotator streams; common-label harmonisation; leave-one-dataset-out infrastructure | audit authoritative participant mapping, coordinate units, and current reuse terms before frozen cross-dataset modelling |
-| **Gaze-in-the-Wild** | five trained annotators | published 120 Hz hardware acquisition | MATLAB adapter; confidence-based track loss; single-labeller safeguard; timestamp-inferred analysis cadence; human-reference dataset card | audit authoritative copy, participant/task mapping, POR coordinate units, per-file sampling-rate distribution, and labeller agreement |
-| **VISUS** | two independent dynamic-AOI annotators | 60 Hz | dynamic track representation; time-grid matching; IoU/semantic metrics; fixation-assignment kappa; candidate protocol | verify authoritative current distribution/reuse terms; freeze human-human and model-human dynamic-AOI reports |
+| **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit student/expert streams; exact-source audit contract; common-label harmonisation; leave-one-dataset-out infrastructure with source-audit requirement | obtain and audit an authoritative local copy; verify real identity/coordinate/reuse evidence; freeze annotator sensitivity and cross-dataset reports |
+| **Gaze-in-the-Wild** | five trained annotators | published 120 Hz hardware acquisition | MATLAB adapter; exact-source audit contract; per-file timestamp-rate ledger; audited labeller-agreement runner; participant-held-out I-VT/RF/ContextMLP validation runner with event/task sensitivity and no-upsampling guardrail | obtain and audit the authoritative copy; verify real participant/task/POR evidence; freeze sampling-rate, labeller-agreement, and model-validation reports |
+| **VISUS** | one published curated AOI annotation process involving two human contributors | 60 Hz | dynamic track representation; time-grid matching; IoU/semantic metrics; fixation-assignment kappa; source-audit contract; corrected candidate protocol that does not assume two independent annotation streams | obtain and audit an authoritative current copy/reuse terms; determine whether separately recoverable independent annotation streams exist; freeze model-human evidence, and human-human evidence only if independence is verified |
 
 ## Frozen Lund2013 checkpoint
 
@@ -102,6 +102,16 @@ The resulting reports and suite manifest record source-file and specification fi
 
 See [Native 60 Hz expert-event validation](native-60hz-validation.md) and [Native event validation suite](native-event-suite.md).
 
+## VISUS annotation provenance gate
+
+The original VISUS benchmark paper reports a manual dynamic-AOI annotation process involving two human contributors. It describes the first contributor as performing the main annotation and the second contributor as adding annotations and refining existing annotations. That is not the same design as two independently labelled copies of every stimulus.
+
+GazeForge therefore no longer treats the contributor count as evidence of independently comparable reference streams. The VISUS source-audit contract records `annotation_process_contributor_count` separately from `independent_annotation_streams_verified`. Human-human AOI agreement is eligible only if a real authoritative copy exposes separately recoverable streams and their independence is explicitly verified.
+
+This correction does not weaken VISUS as a model-human dynamic-AOI benchmark. It prevents a stronger human-human reliability claim from being made from provenance that does not establish independent labelling.
+
+See [VISUS source audit](visus-source-audit.md).
+
 ## Automated empirical execution
 
 The dedicated GitHub Actions workflow uses the existing GazeForge CLI to:
@@ -143,7 +153,7 @@ Accordingly:
 - Lund2013-derived 60 Hz evidence cannot establish GP3-specific validity;
 - the native-event intake, agreement runner, and validation suite can verify and freeze a future GP3-class corpus but do not manufacture that corpus;
 - Gaze-in-the-Wild can contribute native lower-rate human-reference evidence but differs in hardware and naturalistic head-mounted task domain;
-- VISUS can contribute native 60 Hz human dynamic-AOI evidence, not manually labelled fixation/saccade ground truth;
+- VISUS can contribute native 60 Hz human dynamic-AOI evidence, not manually labelled fixation/saccade ground truth, and its published two-contributor annotation process is not assumed to provide two independent human-reference streams;
 - a native 60 Hz/GP3-class manually event-labelled empirical corpus remains open.
 
 ## What GazeForge will not claim yet
@@ -153,6 +163,7 @@ GazeForge does not currently claim:
 - universal superiority of learned event models over established detectors;
 - GP3-specific event-classification validity;
 - generalizable dynamic semantic-AOI performance;
+- VISUS human-human reliability unless independent annotation streams are verified from the source;
 - equivalence between algorithmic/vendor event labels and human annotation;
 - mature stable-release scientific performance.
 
