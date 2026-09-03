@@ -22,5 +22,9 @@ def test_lund_fetch_is_exposed_from_top_level_api():
 def test_lund_suite_is_exposed_from_top_level_api():
     assert gazeforge.Lund2013BenchmarkSuiteRun.__name__ == "Lund2013BenchmarkSuiteRun"
     assert callable(gazeforge.run_lund2013_benchmark_suite)
+    assert callable(gazeforge.validate_lund2013_suite_manifest)
+    assert callable(gazeforge.discover_lund2013_suite_manifests)
     assert "Lund2013BenchmarkSuiteRun" in gazeforge.__all__
     assert "run_lund2013_benchmark_suite" in gazeforge.__all__
+    assert "validate_lund2013_suite_manifest" in gazeforge.__all__
+    assert "discover_lund2013_suite_manifests" in gazeforge.__all__
