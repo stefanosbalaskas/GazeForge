@@ -1,0 +1,30 @@
+{
+  "dataset_name": "Gaze-in-the-Wild",
+  "dataset_version": "REPLACE_WITH_AUDITED_SNAPSHOT_VERSION",
+  "source": "REPLACE_WITH_AUTHORITATIVE_DATASET_DISTRIBUTION_URL",
+  "source_revision": "REPLACE_WITH_PINNED_SOURCE_REVISION_OR_SNAPSHOT_ID",
+  "license": "VERIFY_DATASET_SPECIFIC_TERMS_BEFORE_EMPIRICAL_USE",
+  "reuse_terms_source": "REPLACE_WITH_AUTHORITATIVE_TERMS_SOURCE",
+  "dataset_status": "template",
+  "reuse_terms_verified": false,
+  "analysis_use_permitted": false,
+  "redistribution_status": "unknown",
+  "participant_mapping_verified": false,
+  "participant_mapping_basis": "",
+  "coordinate_unit": "unverified",
+  "coordinate_unit_verified": false,
+  "coordinate_verification_basis": "",
+  "pixel_kinematics_compatible": false,
+  "confidence_threshold": 0.3,
+  "published_hardware_sampling_rate_hz": 120.0,
+  "label_files": [],
+  "process_files": [],
+  "notes": [
+    "This template is deliberately non-empirical and cannot certify a Gaze-in-the-Wild copy.",
+    "Populate every distributed LabelData and ProcessData MATLAB path, SHA-256 digest, and byte size from one authoritative reviewed snapshot.",
+    "Bind every label stream to an audited participant ID, trial/task ID, labeller ID, and ProcessData path.",
+    "Verify analysis-use permission separately from raw-data redistribution permission.",
+    "Do not mark coordinate_unit_verified or pixel_kinematics_compatible until the ETG.POR coordinate basis has been independently verified.",
+    "Keep the published 120 Hz hardware rate separate from the cadence inferred from each LabelData.T stream."
+  ]
+}
