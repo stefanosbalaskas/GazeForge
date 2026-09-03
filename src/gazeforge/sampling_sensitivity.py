@@ -15,6 +15,8 @@ from .exceptions import SchemaError
 from .resampling import resample_labeled_gaze
 from .schema import infer_sampling_rate_hz
 
+_DEFAULT_EXCLUDED_LABELS = ("ambiguous", "unlabelled", "undefined")
+
 
 @dataclass(slots=True)
 class SamplingSensitivityResult:
@@ -26,8 +28,13 @@ class SamplingSensitivityResult:
     report_fingerprint_sha256: str
 
 
-def _normalise_unique(values: Sequence[float], *, name: str, descending: bool) -> tuple[float, ...]:
-    if not values:
+def _normalise_unique(
+    values: Sequence[float],
+    *,
+    name: str,
+    descending: bool,
+) -> tuple[float, ...]:
+    if len(values) == 0:
         raise ValueError(f"{name} cannot be empty.")
     cleaned: list[float] = []
     for value in values:
@@ -52,6 +59,7 @@ def evaluate_sampling_purity_sensitivity(
     group_col: str = "participant_id",
     resampling_group_cols: tuple[str, ...] = ("participant_id", "trial_id"),
     ambiguous_label: str = "ambiguous",
+    excluded_labels: tuple[str, ...] = _DEFAULT_EXCLUDED_LABELS,
     n_splits: int = 5,
     ivt_velocity_threshold_px_s: float | None = 1000.0,
     ivt_velocity_threshold_deg_s: float | None = None,
@@ -69,10 +77,10 @@ def evaluate_sampling_purity_sensitivity(
 ) -> SamplingSensitivityResult:
     """Evaluate model sensitivity to target sampling rate and boundary-label purity.
 
-    Every rate/purity condition is retained in ``settings``. Ambiguous resampled rows are excluded
-    from model fitting and evaluation rather than becoming a learnable event class. Conditions that
-    no longer contain enough groups or labels for the requested validation design are recorded as
-    ``not_evaluable`` instead of being silently dropped.
+    Every rate/purity condition is retained in ``settings``. Ambiguous and other excluded labels
+    are removed only after their prevalence has been recorded, matching the primary Lund benchmark
+    policy. Conditions that no longer contain enough groups or labels for the requested validation
+    design are recorded as ``not_evaluable`` instead of being silently dropped.
     """
     if not isinstance(data, pd.DataFrame):
         raise TypeError("data must be a pandas DataFrame.")
@@ -113,6 +121,8 @@ def evaluate_sampling_purity_sensitivity(
             "Every min_label_purity must be in (0, 1]; "
             f"invalid values: {invalid_purities}"
         )
+    excluded = {str(label) for label in excluded_labels}
+    excluded.add(str(ambiguous_label))
 
     setting_rows: list[dict[str, Any]] = []
     model_rows: list[dict[str, Any]] = []
@@ -132,8 +142,9 @@ def evaluate_sampling_purity_sensitivity(
                 source_sampling_rate_hz=source_rate,
             )
             sampled = resampled.data
-            ambiguous = sampled["benchmark_label_ambiguous"].astype(bool)
-            retained = sampled.loc[~ambiguous & sampled[label_col].ne(ambiguous_label)].copy()
+            labels = sampled[label_col].fillna("MISSING").astype(str)
+            retained_mask = ~labels.isin(excluded)
+            retained = sampled.loc[retained_mask].copy()
             n_target_rows = int(len(sampled))
             n_retained_rows = int(len(retained))
             n_groups = int(retained[group_col].astype(str).nunique()) if n_retained_rows else 0
@@ -143,7 +154,7 @@ def evaluate_sampling_purity_sensitivity(
             reason = ""
             if n_retained_rows == 0:
                 status = "not_evaluable"
-                reason = "no_non_ambiguous_rows"
+                reason = "no_rows_after_label_exclusions"
             elif n_groups < n_splits:
                 status = "not_evaluable"
                 reason = "insufficient_groups_for_requested_splits"
@@ -162,6 +173,7 @@ def evaluate_sampling_purity_sensitivity(
                     "ambiguous_rows": int(resampled.report["ambiguous_rows"]),
                     "ambiguous_fraction": float(resampled.report["ambiguous_fraction"]),
                     "mean_label_purity": float(resampled.report["mean_label_purity"]),
+                    "excluded_rows_after_resampling": int((~retained_mask).sum()),
                     "retained_rows": n_retained_rows,
                     "retained_fraction_of_target": (
                         float(n_retained_rows / n_target_rows) if n_target_rows else 0.0
@@ -195,6 +207,7 @@ def evaluate_sampling_purity_sensitivity(
                 include_event_level_metrics=True,
                 event_group_cols=resampling_group_cols,
                 event_min_iou=event_min_iou,
+                event_excluded_labels=tuple(sorted(excluded)),
             )
             for row in comparison.summary.to_dict(orient="records"):
                 model_rows.append(
@@ -233,7 +246,8 @@ def evaluate_sampling_purity_sensitivity(
         "group_col": group_col,
         "resampling_group_cols": list(resampling_group_cols),
         "ambiguous_label": ambiguous_label,
-        "ambiguous_rows_used_for_modelling": False,
+        "excluded_labels": sorted(excluded),
+        "excluded_rows_used_for_modelling": False,
         "n_splits": int(n_splits),
         "event_min_iou": float(event_min_iou),
         "random_state": int(random_state),
