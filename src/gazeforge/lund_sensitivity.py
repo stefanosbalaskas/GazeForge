@@ -11,6 +11,7 @@ import pandas as pd
 from .benchmarks import BenchmarkDatasetCard, build_benchmark_report
 from .exceptions import SchemaError
 from .lund2013 import load_lund2013_directory
+from .lund_fetch import validate_lund2013_source_manifest
 from .sampling_sensitivity import (
     SamplingSensitivityResult,
     evaluate_sampling_purity_sensitivity,
@@ -55,7 +56,10 @@ def run_lund2013_sampling_sensitivity(
     The workflow uses one expert annotation stream at a time, records ambiguity before exclusions,
     and applies the same default label policy as the primary Lund benchmark. The angular I-VT
     baseline remains fixed at the supplied degrees/second threshold across the sensitivity surface.
+    A GazeForge source manifest, when present, is revalidated with its referenced files before the
+    sensitivity analysis begins and its verified identity is stored in the report protocol.
     """
+    source_manifest = validate_lund2013_source_manifest(root)
     gaze = load_lund2013_directory(root, annotator=annotator)
     source = gaze.data.copy()
     source_rate = float(gaze.sampling_rate_hz)
@@ -84,9 +88,7 @@ def run_lund2013_sampling_sensitivity(
         max_interpolation_gap_ms=max_interpolation_gap_ms,
     )
 
-    analysis_rates = [
-        float(value) for value in sensitivity.design["target_sampling_rates_hz"]
-    ]
+    analysis_rates = [float(value) for value in sensitivity.design["target_sampling_rates_hz"]]
     card = BenchmarkDatasetCard(
         name="Lund2013-sampling-sensitivity",
         version="Andersson-et-al-2017-public-repository",
@@ -124,6 +126,7 @@ def run_lund2013_sampling_sensitivity(
     protocol = {
         "dataset": "Lund2013",
         "annotator": annotator,
+        "source_manifest": source_manifest,
         "source_sampling_rate_hz": source_rate,
         "participant_count": n_participants,
         "trial_count": int(source["trial_id"].nunique()),
