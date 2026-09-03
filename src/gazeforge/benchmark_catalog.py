@@ -69,3 +69,39 @@ def hollywood2_manual_event_card() -> BenchmarkDatasetCard:
             "Useful for cross-dataset validation, not as a native low-rate/GP3-class benchmark.",
         ],
     )
+
+
+def gaze_in_wild_manual_event_card() -> BenchmarkDatasetCard:
+    """Return metadata for the independently hand-labelled Gaze-in-the-Wild corpus."""
+    return BenchmarkDatasetCard(
+        name="Gaze-in-the-Wild-manual-events",
+        version="Kothari-et-al-2020",
+        source="https://doi.org/10.1038/s41598-020-59251-5",
+        license=(
+            "Article open access; dataset-specific redistribution terms require verification; "
+            "raw data not bundled"
+        ),
+        task="head-free fixation/saccade/pursuit/blink/VOR classification",
+        sampling_rates_hz=[120.0],
+        participant_count=19,
+        stimulus_count=None,
+        split_unit="participant_id",
+        validation_scope="external-native-low-rate-human-reference-candidate",
+        annotation_origin="human-manual",
+        sampling_origin="native",
+        reference_strength="human-reference",
+        human_annotator_count=5,
+        reference_description=(
+            "Five trained annotators independently hand-labelled naturalistic head-free gaze; "
+            "uncertain regions and low-confidence samples were left unlabelled."
+        ),
+        notes=[
+            "The primary paper reports 120 Hz binocular Pupil Labs eye-tracking glasses.",
+            "More than 140 minutes of hand-labelled data were reported.",
+            "Published classes include fixation, saccade, pursuit, blink, and VOR.",
+            "The GazeForge loader infers analysis cadence from LabelData.T for every file.",
+            "Secondary processed benchmark metadata has reported a different cadence; do not "
+            "replace file-timestamp provenance with that summary value.",
+            "Head-mounted naturalistic evidence is complementary to, not equivalent to, GP3 data.",
+        ],
+    )
