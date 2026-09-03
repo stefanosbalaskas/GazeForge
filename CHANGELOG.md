@@ -9,6 +9,11 @@ while validation evidence is being established.
 
 ### Added
 
+- First reviewed and merged external empirical evidence suite from the pinned Lund2013 corpus:
+  native/derived MN–RA human agreement, derived-60-Hz RA participant-held-out I-VT/RandomForest/
+  ContextMLP comparison, MN annotator sensitivity, stimulus-family summaries, and a 120/90/60/30-Hz
+  × .60/.75/.90 boundary-purity sensitivity surface. All five reports and the completion manifest
+  are fingerprinted; raw MATLAB benchmark files remain external.
 - Canonical vendor-neutral gaze schema and sampling-rate inference.
 - Gazepoint and explicit processed-table adapters.
 - Auditable Isolation-Forest QC flags and trial-quality summaries.
