@@ -9,6 +9,39 @@ event-detection algorithms*.
 The source repository carries a GPL-3.0 license. GazeForge therefore records the source and license
 in the benchmark card but does not copy the raw recordings into the Python package.
 
+## Pinned local acquisition
+
+`gazeforge lund2013-fetch` provides an explicit opt-in path from the external repository to a local
+benchmark cache. It is pinned to the same upstream commit recorded in the validation protocol:
+
+```text
+richardandersson/EyeMovementDetectorEvaluation
+3e12416ab3fd6254c81811cf03f8e5d67c5d7129
+annotated_data/data used in the article
+```
+
+```bash
+gazeforge lund2013-fetch ./external/lund2013
+```
+
+The default fetch includes both `RA` and `MN` annotations across `dots`, `img`, and `video`. A
+restricted checkout can be requested explicitly:
+
+```bash
+gazeforge lund2013-fetch ./external/lund2013-ra \
+  --annotators RA \
+  --families dots,img,video
+```
+
+Every downloaded MATLAB file is checked against the Git blob SHA and byte size reported by GitHub
+for the pinned commit. Existing files are reused only when their Git blob identity still matches.
+A mismatching local file causes a hard failure unless `--overwrite` is explicitly requested.
+
+The fetcher writes `_gazeforge_source_manifest.json` in the local checkout. The manifest records the
+repository, commit, data path, requested annotators and stimulus families, each file's relative path,
+Git blob SHA, size, and a deterministic manifest SHA-256 fingerprint. Raw files remain local and are
+not added to the GazeForge package or repository.
+
 ## Native loader
 
 `load_lund2013_mat()` reads the MATLAB `ETdata` structure directly. The adapter uses:
@@ -51,7 +84,7 @@ the primary model-comparison table.
 from gazeforge import prepare_lund2013_benchmark
 
 prepared = prepare_lund2013_benchmark(
-    "/path/to/EyeMovementDetectorEvaluation/annotated_data/data used in the article",
+    "/path/to/lund",
     annotator="RA",
     target_sampling_rate_hz=60,
     min_label_purity=0.75,
@@ -115,15 +148,25 @@ policy, model configuration, and resulting report fingerprint are frozen.
 
 ## Command line
 
-```bash
-gazeforge lund2013-agreement /path/to/lund --target-rate 60
+A complete local workflow is:
 
-gazeforge lund2013-benchmark /path/to/lund \
+```bash
+gazeforge lund2013-fetch ./external/lund2013
+
+gazeforge lund2013-agreement ./external/lund2013 --target-rate 60
+
+gazeforge lund2013-benchmark ./external/lund2013 \
   --annotator RA \
   --target-rate 60 \
   --min-label-purity 0.75 \
   --n-splits 5 \
   --output validation/lund2013-ra-60hz.json
+
+gazeforge lund2013-sensitivity ./external/lund2013 \
+  --annotator RA \
+  --target-rates 120,90,60,30 \
+  --purities 0.60,0.75,0.90 \
+  --output validation/lund2013-ra-sensitivity.json
 ```
 
 `freeze_benchmark_report()` protects an existing report from accidental overwrite unless
