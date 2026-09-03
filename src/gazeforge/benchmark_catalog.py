@@ -6,7 +6,7 @@ from .benchmarks import BenchmarkDatasetCard
 
 
 def visus_dynamic_aoi_card() -> BenchmarkDatasetCard:
-    """Return the verified metadata card for the VISUS dynamic-AOI benchmark.
+    """Return the reviewed metadata card for the VISUS dynamic-AOI benchmark.
 
     The historical data endpoint has moved/retired, so GazeForge records the benchmark but does
     not claim to redistribute it or provide a stable downloader until current reuse terms and a
@@ -16,8 +16,8 @@ def visus_dynamic_aoi_card() -> BenchmarkDatasetCard:
         name="VISUS",
         version="Kurzhals-et-al-2014",
         source=(
-            "Kurzhals, Heimerl & Weiskopf (ETRA 2014); historical VISUS Stuttgart "
-            "benchmark-eyetracking distribution"
+            "Kurzhals et al. (BELIV 2014); historical VISUS Stuttgart "
+            "eye-tracking benchmark distribution"
         ),
         license="Reuse/distribution terms require independent verification; not bundled",
         task="dynamic video AOI detection and fixation-to-AOI assignment",
@@ -31,12 +31,17 @@ def visus_dynamic_aoi_card() -> BenchmarkDatasetCard:
         reference_strength="human-reference",
         human_annotator_count=2,
         reference_description=(
-            "Two independent human annotators supplied rectangular AOI keyframes; intermediate "
-            "AOI positions were interpolated in the published evaluation workflow."
+            "The published AOI annotation process involved two human contributors: the first "
+            "performed the main annotation and the second supplied additional annotations and "
+            "refinements. This contributor count is not evidence of two independent annotation "
+            "streams."
         ),
         notes=[
             "Native 60 Hz gaze was recorded with a Tobii T60 XL in the published benchmark.",
             "The dataset contains 25 participants viewing 11 dynamic video stimuli.",
+            "Videos were reported at 25 fps and 1920×1080 pixels.",
+            "Dynamic AOIs were stored as ViPER-compatible XML axis-aligned boxes at keyframes.",
+            "Do not infer human-human agreement from the two-contributor annotation process.",
             "Do not redistribute raw files until current reuse terms are verified.",
         ],
     )

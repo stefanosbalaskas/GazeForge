@@ -9,6 +9,13 @@ while validation evidence is being established.
 
 ### Added
 
+- VISUS authoritative-copy audit infrastructure with exact recursive file manifests, SHA-256 and
+  byte-size verification, explicit video/gaze/AOI roles, stimulus and participant identity gates,
+  coordinate/timestamp/reuse evidence requirements, published acquisition consistency checks, and
+  deterministic source/report fingerprints. The audit also corrects a provenance assumption in the
+  earlier candidate protocol: the published two-person AOI annotation process is not treated as two
+  independent human-reference streams. Human-human agreement remains blocked unless separately
+  manifested independent streams are actually verified from an authoritative copy.
 - Source-audit-aware Gaze-in-the-Wild participant-held-out model-validation infrastructure that
   revalidates source fingerprints, requires an audited pixel-kinematics basis, downsamples each
   source file independently from its timestamp-inferred cadence without upsampling, preserves

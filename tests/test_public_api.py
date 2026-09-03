@@ -83,3 +83,13 @@ def test_gaze_in_wild_model_validation_is_exposed_from_top_level_api():
     assert "GazeInWildModelValidationRun" in gazeforge.__all__
     assert "prepare_gaze_in_wild_benchmark" in gazeforge.__all__
     assert "run_gaze_in_wild_model_validation" in gazeforge.__all__
+
+
+def test_visus_source_audit_is_exposed_from_top_level_api():
+    assert gazeforge.VisusSourceAuditSpec.__name__ == "VisusSourceAuditSpec"
+    assert gazeforge.VisusSourceFileRecord.__name__ == "VisusSourceFileRecord"
+    assert gazeforge.VisusAuditedFile.__name__ == "VisusAuditedFile"
+    assert callable(gazeforge.audit_visus_source)
+    assert callable(gazeforge.load_visus_source_audit_spec)
+    assert "VisusSourceAuditRun" in gazeforge.__all__
+    assert "audit_visus_source" in gazeforge.__all__
