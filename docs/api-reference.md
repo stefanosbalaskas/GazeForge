@@ -71,6 +71,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Matched-fold model differences
+
+::: gazeforge.paired
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Event-level evaluation
 
 ::: gazeforge.event_evaluation

@@ -126,6 +126,7 @@ from .lund_suite import (
     validate_lund2013_suite_manifest,
 )
 from .model_cards import ModelCard
+from .paired import PairedModelDifferences, paired_model_metric_differences
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
 from .qc import ai_flag_anomalies, detect_calibration_drift, score_trial_quality
 from .resampling import BenchmarkResamplingResult, resample_labeled_gaze
@@ -199,6 +200,7 @@ __all__ = [
     "Lund2013PreparedBenchmark",
     "Lund2013SensitivityRun",
     "ModelCard",
+    "PairedModelDifferences",
     "ProvenanceRecord",
     "SamplingSensitivityResult",
     "ScanpathEmbeddingModel",
@@ -271,6 +273,7 @@ __all__ = [
     "multiclass_brier_score",
     "match_event_intervals",
     "match_aois",
+    "paired_model_metric_differences",
     "pairwise_aoi_iou",
     "pixels_to_visual_angle_deg",
     "prepare_cross_dataset_event_benchmark",

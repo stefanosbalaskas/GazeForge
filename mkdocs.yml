@@ -51,6 +51,7 @@ nav:
       - Adapters & validation: adapters-validation.md
       - Temporal models: temporal-models.md
       - Model comparison: model-comparison.md
+      - Matched-fold differences: paired-model-differences.md
       - Event-level evaluation: event-level-evaluation.md
       - Stratified performance: stratified-event-performance.md
       - Dynamic AOIs: dynamic-aois.md
