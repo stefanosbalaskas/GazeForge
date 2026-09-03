@@ -9,7 +9,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from .benchmarks import BenchmarkDatasetCard, build_benchmark_report
+from .benchmarks import BenchmarkDatasetCard, benchmark_fingerprint, build_benchmark_report
 from .evaluation import sample_label_agreement
 from .event_evaluation import EventLevelEvaluation, evaluate_sample_event_predictions
 from .exceptions import SchemaError
@@ -23,7 +23,6 @@ from .native_event import (
 )
 
 _KEYS = ("participant_id", "trial_id", "timestamp_ms")
-_EXCLUDED_SAMPLE_LABEL = "__excluded_from_analysis__"
 
 
 @dataclass(slots=True)
@@ -69,9 +68,15 @@ def _verify_same_native_samples(
             f"left_rows={len(left)}, right_rows={len(right)}, aligned_rows={len(aligned)}."
         )
     for coordinate in ("x_px", "y_px"):
-        left_values = pd.to_numeric(aligned[f"{coordinate}_left"], errors="coerce").to_numpy(float)
-        right_values = pd.to_numeric(aligned[f"{coordinate}_right"], errors="coerce").to_numpy(float)
-        if not np.all(np.isclose(left_values, right_values, equal_nan=True, rtol=0.0, atol=1e-9)):
+        left_values = pd.to_numeric(
+            aligned[f"{coordinate}_left"], errors="coerce"
+        ).to_numpy(float)
+        right_values = pd.to_numeric(
+            aligned[f"{coordinate}_right"], errors="coerce"
+        ).to_numpy(float)
+        if not np.all(
+            np.isclose(left_values, right_values, equal_nan=True, rtol=0.0, atol=1e-9)
+        ):
             raise SchemaError(
                 "Annotator streams do not contain the same underlying native gaze samples: "
                 f"{coordinate} differs after key alignment."
@@ -88,7 +93,10 @@ def _analysis_sample_agreement(
     left_labels = aligned["event_label_left"].astype(str).str.strip()
     right_labels = aligned["event_label_right"].astype(str).str.strip()
     retained = ~left_labels.str.lower().isin(excluded) & ~right_labels.str.lower().isin(excluded)
-    subset = aligned.loc[retained, [*_KEYS, "event_label_left", "event_label_right"]].copy()
+    subset = aligned.loc[
+        retained,
+        [*_KEYS, "event_label_left", "event_label_right"],
+    ].copy()
     if subset.empty:
         raise SchemaError("No paired samples remain after agreement exclusions.")
     left = subset.rename(columns={"event_label_left": "event_label"})
@@ -220,7 +228,10 @@ def run_native_event_annotator_agreement(
         notes=[
             f"Tracker/device declaration: {spec.tracker_model}.",
             "Both annotation streams passed independent native-rate verification.",
-            "Human-human agreement characterizes reference variability; neither annotator is treated as error-free.",
+            (
+                "Human-human agreement characterizes reference variability; neither annotator "
+                "is treated as error-free."
+            ),
             *spec.notes,
         ],
     )
@@ -237,7 +248,10 @@ def run_native_event_annotator_agreement(
         "resampling": None,
         "source_file_name": source_file_name,
         "source_file_sha256": source_file_sha256,
-        "spec_fingerprint_sha256": left.preparation_report["spec_fingerprint_sha256"],
+        "spec_fingerprint_sha256": benchmark_fingerprint(spec.to_dict()),
+        "verification_spec_fingerprint_sha256": left.preparation_report[
+            "spec_fingerprint_sha256"
+        ],
         "left_source_frame_fingerprint_sha256": left.preparation_report[
             "source_frame_fingerprint_sha256"
         ],
