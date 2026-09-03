@@ -13,6 +13,7 @@ from .lund_benchmark import compare_lund2013_annotators, run_lund2013_event_benc
 from .lund_fetch import fetch_lund2013_dataset
 from .lund_sensitivity import run_lund2013_sampling_sensitivity
 from .lund_suite import run_lund2013_benchmark_suite, validate_lund2013_suite_manifest
+from .native_event import run_native_event_file_benchmark
 
 
 def _hidden_layers(value: str) -> tuple[int, ...]:
@@ -69,10 +70,18 @@ def _print_or_freeze(
         print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
 
 
-def _add_model_arguments(parser: argparse.ArgumentParser) -> None:
+def _add_model_arguments(
+    parser: argparse.ArgumentParser,
+    *,
+    ivt_default_deg_s: float | None = 45.0,
+) -> None:
     parser.add_argument("--n-splits", type=int, default=5)
     parser.add_argument("--n-estimators", type=int, default=200)
-    parser.add_argument("--ivt-threshold-deg-s", type=float, default=45.0)
+    parser.add_argument(
+        "--ivt-threshold-deg-s",
+        type=float,
+        default=ivt_default_deg_s,
+    )
     parser.add_argument("--context-radius-ms", type=float, default=50.0)
     parser.add_argument("--hidden-layers", type=_hidden_layers, default=(64, 32))
     parser.add_argument("--temporal-solver", default="adam")
@@ -202,6 +211,31 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Validate the suite manifest without reading the referenced child reports.",
     )
+
+    native = subparsers.add_parser(
+        "native-event-benchmark",
+        help=(
+            "Verify and benchmark a native-rate human-labelled event CSV/TSV using an "
+            "explicit JSON evidence specification."
+        ),
+    )
+    native.add_argument("data", type=Path, help="Native human-labelled CSV or TSV table.")
+    native.add_argument("spec", type=Path, help="Native benchmark JSON specification.")
+    native.add_argument(
+        "--annotator",
+        help="Select one annotator when the specification maps an annotator_id column.",
+    )
+    _add_model_arguments(native, ivt_default_deg_s=None)
+    native.add_argument(
+        "--ivt-threshold-px-s",
+        type=float,
+        help=(
+            "Explicit pixel/second I-VT threshold. Provide this or --ivt-threshold-deg-s, "
+            "but not both."
+        ),
+    )
+    native.add_argument("--output", type=Path)
+    native.add_argument("--overwrite", action="store_true")
     return parser
 
 
@@ -329,6 +363,28 @@ def main(argv: Sequence[str] | None = None) -> int:
             verify_reports=not args.manifest_only,
         )
         print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
+        return 0
+
+    if args.command == "native-event-benchmark":
+        run = run_native_event_file_benchmark(
+            args.data,
+            args.spec,
+            annotator=args.annotator,
+            n_splits=args.n_splits,
+            n_estimators=args.n_estimators,
+            ivt_velocity_threshold_deg_s=args.ivt_threshold_deg_s,
+            ivt_velocity_threshold_px_s=args.ivt_threshold_px_s,
+            context_radius_ms=args.context_radius_ms,
+            hidden_layer_sizes=args.hidden_layers,
+            temporal_solver=args.temporal_solver,
+            temporal_max_iter=args.temporal_max_iter,
+        )
+        _print_or_freeze(
+            run.report,
+            output=args.output,
+            overwrite=args.overwrite,
+            benchmark=run.prepared.dataset_card.name,
+        )
         return 0
 
     print(json.dumps({"package": "gazeforge", "status": "ready"}))
