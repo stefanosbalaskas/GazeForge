@@ -178,6 +178,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### VISUS model prediction intake
+
+::: gazeforge.visus_prediction
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### VISUS model-human validation
 
 ::: gazeforge.visus_validation

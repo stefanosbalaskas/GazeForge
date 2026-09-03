@@ -19,7 +19,7 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 | **Native 60 Hz / GP3-class event corpus** | intended expert manual labels | 60 Hz | **Infrastructure validated, empirical execution pending**: strict native-rate intake, source/spec fingerprints, complete multi-annotator sample/gaze-identity verification, all-label and analysis-label human agreement, bidirectional event-boundary agreement, participant-held-out I-VT/RF/ContextMLP comparison, event metrics, three-report suite orchestration/verification, and non-executable protocol template | collect or independently obtain a real authoritative native corpus; document expert annotation protocol; freeze and review the complete native suite |
 | **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit student/expert streams; exact-source audit contract; common-label harmonisation; leave-one-dataset-out infrastructure with source-audit requirement | obtain and audit an authoritative local copy; verify real identity/coordinate/reuse evidence; freeze annotator sensitivity and cross-dataset reports |
 | **Gaze-in-the-Wild** | five trained annotators | published 120 Hz hardware acquisition | MATLAB adapter; exact-source audit contract; per-file timestamp-rate ledger; audited labeller-agreement runner; participant-held-out I-VT/RF/ContextMLP validation runner with event/task sensitivity and no-upsampling guardrail | obtain and audit the authoritative copy; verify real participant/task/POR evidence; freeze sampling-rate, labeller-agreement, and model-validation reports |
-| **VISUS** | one published curated AOI annotation process involving two human contributors | 60 Hz | dynamic track representation; time-grid matching; IoU/semantic metrics; fixation-assignment kappa; source-audit contract; corrected candidate protocol that does not assume two independent annotation streams | obtain and audit an authoritative current copy/reuse terms; determine whether separately recoverable independent annotation streams exist; freeze model-human evidence, and human-human evidence only if independence is verified |
+| **VISUS** | one published curated AOI annotation process involving two human contributors | 60 Hz | **Infrastructure validated, empirical execution pending**: exact-source audit; reviewed human-reference canonical intake; audited model-prediction intake; explicit external-grid model-human validation; guarded bidirectional human-human agreement only when independent streams are verified | obtain and audit an authoritative current copy/reuse terms; extract/review canonical reference AOIs; determine whether independent streams exist; run at least one documented detector/tracker and freeze model-human evidence; freeze human-human evidence only if independence is verified |
 
 ## Frozen Lund2013 checkpoint
 
@@ -102,15 +102,19 @@ The resulting reports and suite manifest record source-file and specification fi
 
 See [Native 60 Hz expert-event validation](native-60hz-validation.md) and [Native event validation suite](native-event-suite.md).
 
-## VISUS annotation provenance gate
+## VISUS annotation provenance and execution gates
 
 The original VISUS benchmark paper reports a manual dynamic-AOI annotation process involving two human contributors. It describes the first contributor as performing the main annotation and the second contributor as adding annotations and refining existing annotations. That is not the same design as two independently labelled copies of every stimulus.
 
 GazeForge therefore no longer treats the contributor count as evidence of independently comparable reference streams. The VISUS source-audit contract records `annotation_process_contributor_count` separately from `independent_annotation_streams_verified`. Human-human AOI agreement is eligible only if a real authoritative copy exposes separately recoverable streams and their independence is explicitly verified.
 
-This correction does not weaken VISUS as a model-human dynamic-AOI benchmark. It prevents a stronger human-human reliability claim from being made from provenance that does not establish independent labelling.
+The implemented VISUS execution path now keeps source, human reference, model prediction, and evaluation protocol separate. A reviewed human-reference extraction is bound back to exact audited AOI XML files and converted from an explicit frame convention to canonical dynamic-AOI keyframes. Model predictions are separately bound to exact audited video identities, explicit model/version/artifact provenance, the audited coordinate basis, and the same explicit frame-time conversion. Detector emission frames never become the evaluation grid: model-human validation still requires a separately supplied, fingerprinted timestamp grid.
 
-See [VISUS source audit](visus-source-audit.md).
+This architecture permits one curated human-reference stream to support model-human validation without fabricating human-human reliability evidence. If the authoritative source later verifies independent annotation streams, the guarded agreement runner can evaluate them bidirectionally without treating either human stream as error-free ground truth.
+
+None of these VISUS components constitutes frozen empirical evidence until an authoritative copy, reviewed source/reuse provenance, canonical human extraction, documented model output, fixed evaluation grid, and resulting report are actually reviewed and frozen.
+
+See [VISUS source audit](visus-source-audit.md), [VISUS canonical AOI intake](visus-canonical-intake.md), [VISUS model prediction intake](visus-prediction-intake.md), [VISUS model validation](visus-model-validation.md), and [VISUS human agreement](visus-human-agreement.md).
 
 ## Automated empirical execution
 
