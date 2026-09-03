@@ -42,6 +42,7 @@ from .dashboard import (
     BenchmarkDashboard,
     build_benchmark_dashboard,
     discover_frozen_benchmark_reports,
+    discover_lund2013_suite_manifests,
     load_frozen_benchmark_report,
     render_benchmark_dashboard_markdown,
     validate_frozen_benchmark_report,
@@ -119,7 +120,11 @@ from .lund_fetch import (
     validate_lund2013_source_manifest,
 )
 from .lund_sensitivity import Lund2013SensitivityRun, run_lund2013_sampling_sensitivity
-from .lund_suite import Lund2013BenchmarkSuiteRun, run_lund2013_benchmark_suite
+from .lund_suite import (
+    Lund2013BenchmarkSuiteRun,
+    run_lund2013_benchmark_suite,
+    validate_lund2013_suite_manifest,
+)
 from .model_cards import ModelCard
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
 from .qc import ai_flag_anomalies, detect_calibration_drift, score_trial_quality
@@ -223,6 +228,7 @@ __all__ = [
     "dataset_holdout_event_validate",
     "detect_semantic_aois",
     "discover_frozen_benchmark_reports",
+    "discover_lund2013_suite_manifests",
     "dynamic_aoi_snapshot",
     "dynamic_aois_from_frame",
     "dynamic_aois_to_frame",
@@ -286,5 +292,6 @@ __all__ = [
     "train_event_classifier",
     "validate_frozen_benchmark_report",
     "validate_lund2013_source_manifest",
+    "validate_lund2013_suite_manifest",
     "visus_dynamic_aoi_card",
 ]
