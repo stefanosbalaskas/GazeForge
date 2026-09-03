@@ -8,7 +8,11 @@ from gazeforge.benchmarks import (
     build_benchmark_report,
 )
 from gazeforge.exceptions import BenchmarkIntegrityError
-from gazeforge.lund_fetch import LUND2013_COMMIT, LUND2013_DATA_PATH, LUND2013_REPOSITORY
+from gazeforge.lund_fetch import (
+    LUND2013_COMMIT,
+    LUND2013_DATA_PATH,
+    LUND2013_REPOSITORY,
+)
 from gazeforge.lund_suite import validate_lund2013_suite_manifest
 
 _REPORT_NAMES = (
@@ -87,7 +91,9 @@ def test_validate_lund_suite_verifies_manifest_and_all_children(tmp_path):
     assert summary["status"] == "complete"
     assert summary["report_count"] == 5
     assert summary["reports_verified"] is True
-    assert summary["suite_fingerprint_sha256"] == manifest["suite_fingerprint_sha256"]
+    assert summary["suite_fingerprint_sha256"] == manifest[
+        "suite_fingerprint_sha256"
+    ]
     assert summary["manifest_path"] == str(path)
 
 
@@ -122,7 +128,9 @@ def test_validate_lund_suite_manifest_only_skips_child_io(tmp_path):
     assert summary["reports_verified"] is False
 
 
-def test_validate_lund_suite_rejects_unsafe_report_path_even_with_valid_manifest_hash(tmp_path):
+def test_validate_lund_suite_rejects_unsafe_report_path_even_with_valid_manifest_hash(
+    tmp_path,
+):
     path, manifest = _make_suite(tmp_path)
     manifest["reports"][0]["path"] = "../escape.json"
     body = {
