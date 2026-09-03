@@ -15,10 +15,18 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 
 | Benchmark | Annotation source | Native sampling | GazeForge support | Remaining evidence work |
 | --- | --- | ---: | --- | --- |
-| **Lund2013** | paired expert manual labels | 500 Hz | MATLAB adapter; RA/MN agreement; angular I-VT; RF/ContextMLP matched folds; 500→lower-rate purity-aware resampling; event-level metrics; sampling/purity sensitivity | freeze native and derived agreement; freeze RA/MN model reports; report stimulus-family and rate/purity sensitivity |
+| **Lund2013** | paired expert manual labels | 500 Hz | MATLAB adapter; RA/MN agreement; angular I-VT; RF/ContextMLP matched folds; 500→lower-rate purity-aware resampling; event-level metrics; paired model deltas; stimulus-family reporting; sampling/purity sensitivity; pinned automated execution/review workflow | execute the pinned workflow, inspect the generated evidence branch, and merge only scientifically accepted frozen reports |
 | **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit annotator streams; common-label harmonisation; leave-one-dataset-out infrastructure | audit authoritative participant mapping, coordinate units, and current reuse terms before frozen cross-dataset modelling |
 | **Gaze-in-the-Wild** | five trained annotators | published 120 Hz hardware acquisition | MATLAB adapter; confidence-based track loss; single-labeller safeguard; timestamp-inferred analysis cadence; human-reference dataset card | audit authoritative copy, participant/task mapping, POR coordinate units, per-file sampling-rate distribution, and labeller agreement |
 | **VISUS** | two independent dynamic-AOI annotators | 60 Hz | dynamic track representation; time-grid matching; IoU/semantic metrics; fixation-assignment kappa; candidate protocol | verify authoritative current distribution/reuse terms; freeze human-human and model-human dynamic-AOI reports |
+
+## Automated Lund empirical execution
+
+The repository contains a dedicated GitHub Actions evidence workflow that uses the existing GazeForge CLI to fetch and verify the pinned Lund2013 corpus, execute the complete five-report suite, revalidate every report fingerprint, and push only JSON evidence to `evidence/lund2013-auto`.
+
+Raw MATLAB benchmark files remain in the runner's temporary directory and are explicitly blocked from the evidence tree. The generated branch is reviewed through an ordinary pull request before any empirical result becomes part of `main` or the public website.
+
+See [Empirical benchmark execution](empirical-execution.md) for the execution and review contract.
 
 ## Event-model validation stack
 
@@ -46,9 +54,11 @@ Implemented split designs include:
 - participant/group-held-out cross-validation;
 - dataset-held-out validation;
 - matched-fold comparison of I-VT, Random Forest, and ContextMLP;
+- descriptive paired model differences on identical held-out folds;
+- post-hoc stimulus-family performance from fixed out-of-fold predictions;
 - dataset-namespaced identities for cross-dataset evaluation.
 
-Learned models are refitted inside every training fold.
+Learned models are refitted inside every training fold. Cross-validation folds are not treated as independent replicates for naive significance testing.
 
 ## Sampling-rate evidence
 
@@ -88,7 +98,7 @@ GazeForge does not currently claim:
 - equivalence between algorithmic/vendor event labels and human annotation;
 - mature stable-release scientific performance.
 
-Those claims require frozen empirical evidence from audited benchmark copies.
+Those claims require frozen empirical evidence from audited benchmark copies and, where relevant, independent native-rate/device-specific validation.
 
 ## Roadmap evidence gates
 

@@ -1,0 +1,161 @@
+name: Lund empirical evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/lund-empirical-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lund-empirical-evidence
+  cancel-in-progress: false
+
+jobs:
+  run-lund-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      LUND_ROOT: ${{ runner.temp }}/lund2013
+      EVIDENCE_DIR: validation/evidence/lund2013
+      EVIDENCE_BRANCH: evidence/lund2013-auto
+    steps:
+      - name: Check out GazeForge
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install GazeForge
+        run: |
+          python -m pip install -U pip
+          python -m pip install -e .
+
+      - name: Fetch and verify pinned Lund2013 corpus
+        run: gazeforge lund2013-fetch "$LUND_ROOT"
+
+      - name: Run complete Lund2013 empirical suite
+        run: |
+          rm -rf "$EVIDENCE_DIR"
+          gazeforge lund2013-suite \
+            "$LUND_ROOT" \
+            "$EVIDENCE_DIR" \
+            --target-rate 60 \
+            --min-label-purity 0.75 \
+            --target-rates 120,90,60,30 \
+            --purities 0.60,0.75,0.90 \
+            --n-splits 5 \
+            --n-estimators 200 \
+            --ivt-threshold-deg-s 45 \
+            --context-radius-ms 50 \
+            --hidden-layers 64,32 \
+            --temporal-solver adam \
+            --temporal-max-iter 200
+
+      - name: Revalidate frozen suite and child reports
+        run: |
+          gazeforge lund2013-suite-validate "$EVIDENCE_DIR" \
+            | tee "${RUNNER_TEMP}/lund-suite-validation.json"
+
+      - name: Enforce JSON-only evidence output
+        shell: bash
+        run: |
+          unexpected="$(find "$EVIDENCE_DIR" -type f ! -name '*.json' -print -quit)"
+          if [[ -n "$unexpected" ]]; then
+            echo "Unexpected non-JSON evidence output: $unexpected" >&2
+            exit 1
+          fi
+          if find . -path './validation/evidence/lund2013/*' -name '*.mat' -print -quit | grep -q .; then
+            echo "Raw Lund MATLAB data must never be committed as GazeForge evidence." >&2
+            exit 1
+          fi
+
+      - name: Record execution metadata
+        shell: bash
+        run: |
+          export EXECUTION_UTC="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          validation = json.loads(
+              Path(os.environ["RUNNER_TEMP"])
+              .joinpath("lund-suite-validation.json")
+              .read_text(encoding="utf-8")
+          )
+          metadata = {
+              "kind": "gazeforge_empirical_execution_metadata",
+              "dataset": "Lund2013",
+              "gazeforge_commit": os.environ["GITHUB_SHA"],
+              "workflow": os.environ["GITHUB_WORKFLOW"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "runner_os": os.environ["RUNNER_OS"],
+              "python_version": "3.12",
+              "generated_at_utc": os.environ["EXECUTION_UTC"],
+              "suite_fingerprint_sha256": validation["suite_fingerprint_sha256"],
+              "report_count": validation["report_count"],
+              "reports_verified": validation["reports_verified"],
+          }
+          target = Path(os.environ["EVIDENCE_DIR"]) / "execution-metadata.json"
+          target.write_text(
+              json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Summarize evidence run
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          import os
+          from pathlib import Path
+
+          summary = json.loads(
+              Path(os.environ["RUNNER_TEMP"])
+              .joinpath("lund-suite-validation.json")
+              .read_text(encoding="utf-8")
+          )
+          print("## Lund2013 empirical evidence")
+          print()
+          print(f"- Suite: `{summary['suite']}`")
+          print(f"- Status: `{summary['status']}`")
+          print(f"- Verified child reports: `{summary['report_count']}`")
+          print(f"- Suite fingerprint: `{summary['suite_fingerprint_sha256']}`")
+          print("- Raw external benchmark files are not committed.")
+          PY
+
+      - name: Upload evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lund2013-frozen-evidence
+          path: validation/evidence/lund2013
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Push evidence-only branch for review
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$EVIDENCE_BRANCH"
+          git add "$EVIDENCE_DIR"
+          if git diff --cached --quiet; then
+            echo "No evidence changes to push."
+            exit 0
+          fi
+          git commit -m "validation: freeze Lund2013 empirical evidence"
+          git push --force origin "HEAD:refs/heads/$EVIDENCE_BRANCH"

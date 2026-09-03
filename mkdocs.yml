@@ -59,6 +59,7 @@ nav:
       - Calibration & dataset holdouts: calibration.md
   - Validation:
       - Validation status: validation-status.md
+      - Empirical execution: empirical-execution.md
       - Frozen empirical evidence: frozen-evidence.md
       - Benchmarking: benchmarking.md
       - Benchmark evidence: benchmark-evidence.md

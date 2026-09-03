@@ -48,6 +48,11 @@ while validation evidence is being established.
 - Generated Frozen Evidence detail tables for validated model performance, paired fold differences,
   stimulus-family performance, human agreement, and sampling×purity sensitivity without manually
   transcribing benchmark values into website Markdown.
+- One-shot/manual Lund2013 empirical GitHub Actions workflow that fetches the pinned external corpus,
+  executes and revalidates the complete suite, uploads JSON evidence, blocks raw MATLAB files from
+  the evidence tree, and pushes a dedicated evidence-only branch for scientific review.
+- GitHub Pages rebuild triggers for committed validation evidence and the evidence-rendering code,
+  so reviewed evidence automatically regenerates the public Frozen Evidence page after merge.
 - Native Lund2013 MATLAB benchmark ingestion with original expert event-code mapping.
 - Label-purity-aware lower-rate benchmark resampling with explicit ambiguous boundary samples.
 - MN-vs-RA sample-label agreement and a fingerprinted Lund2013 60 Hz benchmark runner/CLI.
