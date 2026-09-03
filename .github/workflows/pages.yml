@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - "docs/**"
+      - "validation/**"
+      - "scripts/mkdocs_hooks.py"
+      - "src/gazeforge/dashboard.py"
+      - "src/gazeforge/evidence_details.py"
       - "mkdocs.yml"
       - "pyproject.toml"
       - ".github/workflows/pages.yml"
