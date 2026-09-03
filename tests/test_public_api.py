@@ -127,3 +127,16 @@ def test_visus_human_agreement_is_exposed_from_top_level_api():
     assert callable(gazeforge.run_visus_dynamic_aoi_human_agreement)
     assert "VisusDynamicAOIHumanAgreementRun" in gazeforge.__all__
     assert "run_visus_dynamic_aoi_human_agreement" in gazeforge.__all__
+
+
+def test_visus_validation_suite_is_exposed_from_top_level_api():
+    assert gazeforge.VisusDynamicAOIValidationSuiteRun.__name__ == (
+        "VisusDynamicAOIValidationSuiteRun"
+    )
+    assert callable(gazeforge.run_visus_dynamic_aoi_validation_suite)
+    assert callable(gazeforge.validate_visus_dynamic_aoi_suite_manifest)
+    assert callable(gazeforge.discover_visus_dynamic_aoi_suite_manifests)
+    assert "VisusDynamicAOIValidationSuiteRun" in gazeforge.__all__
+    assert "run_visus_dynamic_aoi_validation_suite" in gazeforge.__all__
+    assert "validate_visus_dynamic_aoi_suite_manifest" in gazeforge.__all__
+    assert "discover_visus_dynamic_aoi_suite_manifests" in gazeforge.__all__
