@@ -38,6 +38,14 @@ from .cross_dataset import (
     prepare_cross_dataset_event_benchmark,
     run_cross_dataset_event_validation,
 )
+from .dashboard import (
+    BenchmarkDashboard,
+    build_benchmark_dashboard,
+    discover_frozen_benchmark_reports,
+    load_frozen_benchmark_report,
+    render_benchmark_dashboard_markdown,
+    validate_frozen_benchmark_report,
+)
 from .dynamic_aoi import (
     CallableDynamicAOIProvider,
     DynamicAOIKeyframe,
@@ -79,6 +87,7 @@ from .events import (
     ivt_classify_events_angular,
     train_event_classifier,
 )
+from .exceptions import BenchmarkIntegrityError
 from .gaze_in_wild import (
     GAZE_IN_WILD_LABELS,
     load_gaze_in_wild_directory,
@@ -143,7 +152,9 @@ __all__ = [
     "AOI",
     "ValidationResult",
     "AuditTrail",
+    "BenchmarkDashboard",
     "BenchmarkDatasetCard",
+    "BenchmarkIntegrityError",
     "BenchmarkResamplingResult",
     "CallableAOIProvider",
     "CallableDynamicAOIProvider",
@@ -181,6 +192,7 @@ __all__ = [
     "assert_no_group_leakage",
     "benchmark_fingerprint",
     "build_audit_report",
+    "build_benchmark_dashboard",
     "build_dynamic_aoi_benchmark_report",
     "build_benchmark_report",
     "canonicalize_gaze",
@@ -192,6 +204,7 @@ __all__ = [
     "dataset_holdout_context_event_validate",
     "dataset_holdout_event_validate",
     "detect_semantic_aois",
+    "discover_frozen_benchmark_reports",
     "dynamic_aoi_snapshot",
     "dynamic_aois_from_frame",
     "dynamic_aois_to_frame",
@@ -219,6 +232,7 @@ __all__ = [
     "interpolate_dynamic_aoi",
     "ivt_classify_events",
     "ivt_classify_events_angular",
+    "load_frozen_benchmark_report",
     "load_gaze_in_wild_directory",
     "load_gaze_in_wild_mat",
     "load_hollywood2_arff",
@@ -234,6 +248,7 @@ __all__ = [
     "pixels_to_visual_angle_deg",
     "prepare_cross_dataset_event_benchmark",
     "prepare_lund2013_benchmark",
+    "render_benchmark_dashboard_markdown",
     "resample_labeled_gaze",
     "run_lund2013_event_benchmark",
     "run_lund2013_sampling_sensitivity",
@@ -249,5 +264,6 @@ __all__ = [
     "top_label_calibration_table",
     "train_context_event_classifier",
     "train_event_classifier",
+    "validate_frozen_benchmark_report",
     "visus_dynamic_aoi_card",
 ]
