@@ -13,7 +13,11 @@ from .aoi import (
     map_fixations_to_aois,
 )
 from .audit import build_audit_report
-from .benchmark_catalog import hollywood2_manual_event_card, visus_dynamic_aoi_card
+from .benchmark_catalog import (
+    gaze_in_wild_manual_event_card,
+    hollywood2_manual_event_card,
+    visus_dynamic_aoi_card,
+)
 from .benchmarks import (
     BenchmarkDatasetCard,
     benchmark_fingerprint,
@@ -74,6 +78,11 @@ from .events import (
     ivt_classify_events,
     ivt_classify_events_angular,
     train_event_classifier,
+)
+from .gaze_in_wild import (
+    GAZE_IN_WILD_LABELS,
+    load_gaze_in_wild_directory,
+    load_gaze_in_wild_mat,
 )
 from .geometry import angular_kinematic_features, pixels_to_visual_angle_deg
 from .hollywood2 import (
@@ -140,6 +149,7 @@ __all__ = [
     "EventLevelEvaluation",
     "EventModel",
     "EventModelComparison",
+    "GAZE_IN_WILD_LABELS",
     "GazeFrame",
     "HuggingFaceZeroShotAOIProvider",
     "HOLLYWOOD2_ANNOTATOR_COLUMNS",
@@ -192,6 +202,7 @@ __all__ = [
     "find_scanpath_motifs",
     "fingerprint_frame",
     "fit_scanpath_embedder",
+    "gaze_in_wild_manual_event_card",
     "grouped_context_event_cross_validate",
     "grouped_event_cross_validate",
     "grouped_holdout_indices",
@@ -200,6 +211,8 @@ __all__ = [
     "interpolate_dynamic_aoi",
     "ivt_classify_events",
     "ivt_classify_events_angular",
+    "load_gaze_in_wild_directory",
+    "load_gaze_in_wild_mat",
     "load_hollywood2_arff",
     "load_hollywood2_directory",
     "load_lund2013_directory",
