@@ -149,3 +149,10 @@ The public API is intentionally organised around scientific workflow layers rath
     options:
       show_root_heading: true
       show_source: false
+
+### Gaze-in-the-Wild labeller agreement
+
+::: gazeforge.gaze_in_wild_agreement
+    options:
+      show_root_heading: true
+      show_source: false
