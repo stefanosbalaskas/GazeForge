@@ -108,6 +108,12 @@ from .gaze_in_wild_audit import (
     audited_gaze_in_wild_files_by_labeller,
     load_gaze_in_wild_source_audit_spec,
 )
+from .gaze_in_wild_validation import (
+    GazeInWildModelValidationRun,
+    GazeInWildPreparedBenchmark,
+    prepare_gaze_in_wild_benchmark,
+    run_gaze_in_wild_model_validation,
+)
 from .geometry import angular_kinematic_features, pixels_to_visual_angle_deg
 from .hollywood2 import (
     HOLLYWOOD2_ANNOTATOR_COLUMNS,
@@ -231,6 +237,8 @@ __all__ = [
     "GazeInWildAuditedFile",
     "GazeInWildLabellerAgreementRun",
     "GazeInWildLabelFileRecord",
+    "GazeInWildModelValidationRun",
+    "GazeInWildPreparedBenchmark",
     "GazeInWildProcessFileRecord",
     "GazeInWildSourceAuditRun",
     "GazeInWildSourceAuditSpec",
@@ -343,11 +351,13 @@ __all__ = [
     "pairwise_aoi_iou",
     "pixels_to_visual_angle_deg",
     "prepare_cross_dataset_event_benchmark",
+    "prepare_gaze_in_wild_benchmark",
     "prepare_lund2013_benchmark",
     "prepare_native_event_benchmark",
     "render_benchmark_dashboard_markdown",
     "resample_labeled_gaze",
     "run_gaze_in_wild_labeller_agreement",
+    "run_gaze_in_wild_model_validation",
     "run_lund2013_benchmark_suite",
     "run_lund2013_event_benchmark",
     "run_lund2013_sampling_sensitivity",
