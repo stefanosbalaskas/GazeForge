@@ -1,0 +1,58 @@
+{
+  "benchmark": "Gaze-in-the-Wild",
+  "status": "candidate_pending_authoritative_data_audit",
+  "source_paper": "https://doi.org/10.1038/s41598-020-59251-5",
+  "historical_distribution": "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/",
+  "evidence": {
+    "annotation_origin": "human-manual",
+    "reference_strength": "human-reference",
+    "human_annotator_count": 5,
+    "participant_count": 19,
+    "published_hardware_sampling_rate_hz": 120.0,
+    "sampling_origin": "native",
+    "reported_classes": [
+      "fixation",
+      "saccade",
+      "pursuit",
+      "blink",
+      "vor"
+    ]
+  },
+  "ingestion": {
+    "label_variable": "LabelData",
+    "label_timestamp_field": "T",
+    "label_field": "Labels",
+    "labeller_field": "LbrIdx",
+    "process_variable": "ProcessData",
+    "por_field": "ETG.POR",
+    "confidence_field": "ETG.Confidence",
+    "confidence_threshold": 0.3,
+    "analysis_sampling_rate_policy": "infer_from_LabelData.T",
+    "coordinate_unit_policy": "unverified_until_authoritative_audit",
+    "participant_identity_policy": "must_be_explicitly_resolved_before_participant_sensitive_validation",
+    "multi_labeller_policy": "one_labeller_per_modelling_table"
+  },
+  "sampling_provenance": {
+    "published_hardware_rate_is_not_forced_onto_files": true,
+    "secondary_processed_rate_discrepancy_must_be_reported": true,
+    "future_resampling_must_record_source_and_target_rates_separately": true
+  },
+  "planned_validation": [
+    "verify_authoritative_current_data_copy_and_reuse_terms",
+    "audit_participant_and_task_identity_mapping",
+    "audit_point_of_regard_coordinate_units",
+    "freeze_per_file_inferred_sampling_rate_distribution",
+    "freeze_labeller_to_labeller_sample_agreement",
+    "freeze_labeller_to_labeller_event_level_agreement",
+    "report_metrics_by_event_class_and naturalistic_task",
+    "evaluate_any_model_with_participant_disjoint_splits",
+    "report_hardware_and_task_domain_difference_from_Gazepoint_GP3"
+  ],
+  "claim_limits": [
+    "Do not describe the corpus as GP3-equivalent.",
+    "Do not replace inferred file cadence with a secondary summary sampling rate.",
+    "Do not use unresolved participant identities for held-out validation.",
+    "Do not use point-of-regard coordinates for unit-sensitive cross-dataset modelling until audited.",
+    "Do not combine multiple human labellers into one training table without an explicit adjudication design."
+  ]
+}
