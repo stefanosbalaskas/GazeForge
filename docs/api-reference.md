@@ -78,6 +78,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Stratified out-of-fold performance
+
+::: gazeforge.stratified
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Sampling sensitivity
 
 ::: gazeforge.sampling_sensitivity
