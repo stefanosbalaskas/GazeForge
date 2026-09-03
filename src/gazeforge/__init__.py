@@ -217,6 +217,10 @@ from .visus_audit import (
     audit_visus_source,
     load_visus_source_audit_spec,
 )
+from .visus_validation import (
+    VisusDynamicAOIModelValidationRun,
+    run_visus_dynamic_aoi_model_validation,
+)
 
 try:
     __version__ = version("gazeforge")
@@ -280,6 +284,7 @@ __all__ = [
     "StratifiedEventPerformance",
     "TemporalContextModel",
     "VisusAuditedFile",
+    "VisusDynamicAOIModelValidationRun",
     "VisusSourceAuditRun",
     "VisusSourceAuditSpec",
     "VisusSourceFileRecord",
@@ -381,6 +386,7 @@ __all__ = [
     "run_native_event_file_annotator_agreement",
     "run_native_event_file_benchmark",
     "run_native_event_validation_suite",
+    "run_visus_dynamic_aoi_model_validation",
     "samples_to_event_intervals",
     "sample_label_agreement",
     "scanpath_similarity",
