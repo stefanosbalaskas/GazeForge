@@ -93,3 +93,12 @@ def test_visus_source_audit_is_exposed_from_top_level_api():
     assert callable(gazeforge.load_visus_source_audit_spec)
     assert "VisusSourceAuditRun" in gazeforge.__all__
     assert "audit_visus_source" in gazeforge.__all__
+
+
+def test_visus_model_validation_is_exposed_from_top_level_api():
+    assert gazeforge.VisusDynamicAOIModelValidationRun.__name__ == (
+        "VisusDynamicAOIModelValidationRun"
+    )
+    assert callable(gazeforge.run_visus_dynamic_aoi_model_validation)
+    assert "VisusDynamicAOIModelValidationRun" in gazeforge.__all__
+    assert "run_visus_dynamic_aoi_model_validation" in gazeforge.__all__
