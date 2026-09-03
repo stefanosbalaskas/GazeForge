@@ -94,6 +94,10 @@ from .gaze_in_wild import (
     load_gaze_in_wild_directory,
     load_gaze_in_wild_mat,
 )
+from .gaze_in_wild_agreement import (
+    GazeInWildLabellerAgreementRun,
+    run_gaze_in_wild_labeller_agreement,
+)
 from .gaze_in_wild_audit import (
     GazeInWildAuditedFile,
     GazeInWildLabelFileRecord,
@@ -225,6 +229,7 @@ __all__ = [
     "GAZE_IN_WILD_LABELS",
     "GazeFrame",
     "GazeInWildAuditedFile",
+    "GazeInWildLabellerAgreementRun",
     "GazeInWildLabelFileRecord",
     "GazeInWildProcessFileRecord",
     "GazeInWildSourceAuditRun",
@@ -342,6 +347,7 @@ __all__ = [
     "prepare_native_event_benchmark",
     "render_benchmark_dashboard_markdown",
     "resample_labeled_gaze",
+    "run_gaze_in_wild_labeller_agreement",
     "run_lund2013_benchmark_suite",
     "run_lund2013_event_benchmark",
     "run_lund2013_sampling_sensitivity",
