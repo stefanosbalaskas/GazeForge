@@ -42,7 +42,8 @@ def validate_frozen_benchmark_report(report: dict[str, Any]) -> str:
     """
     if not isinstance(report, dict):
         raise BenchmarkIntegrityError("Benchmark report must be a JSON object.")
-    missing = [key for key in (*_REPORT_BODY_KEYS, "report_fingerprint_sha256") if key not in report]
+    required = (*_REPORT_BODY_KEYS, "report_fingerprint_sha256")
+    missing = [key for key in required if key not in report]
     if missing:
         raise BenchmarkIntegrityError(f"Benchmark report is missing required fields: {missing}")
 
@@ -180,6 +181,22 @@ def build_benchmark_dashboard(
     )
 
 
+def _escape_markdown_cell(value: Any) -> str:
+    text = str(value).replace("\n", " ").replace("\r", " ")
+    return text.replace("|", "\\|")
+
+
+def _markdown_table(frame: pd.DataFrame) -> str:
+    headers = [str(column) for column in frame.columns]
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join("---" for _ in headers) + " |",
+    ]
+    for row in frame.itertuples(index=False, name=None):
+        lines.append("| " + " | ".join(_escape_markdown_cell(value) for value in row) + " |")
+    return "\n".join(lines)
+
+
 def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
     """Render a conservative Markdown evidence index for the documentation website."""
     heading = "# Frozen benchmark evidence\n\n"
@@ -206,6 +223,6 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
     return (
         heading
         + "Only reports whose deterministic fingerprint recomputes successfully are listed.\n\n"
-        + public.to_markdown(index=False)
+        + _markdown_table(public)
         + "\n"
     )
