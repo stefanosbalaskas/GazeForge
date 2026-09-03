@@ -73,6 +73,7 @@ nav:
       - Hollywood2EM: hollywood2-benchmark.md
       - Hollywood2 source audit: hollywood2-source-audit.md
       - Gaze-in-the-Wild: gaze-in-wild-benchmark.md
+      - Gaze-in-the-Wild source audit: gaze-in-wild-source-audit.md
   - API: api-reference.md
 
 plugins:
