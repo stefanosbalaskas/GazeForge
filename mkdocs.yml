@@ -78,6 +78,7 @@ nav:
       - Gaze-in-the-Wild model validation: gaze-in-wild-model-validation.md
       - VISUS source audit: visus-source-audit.md
       - VISUS canonical AOI intake: visus-canonical-intake.md
+      - VISUS model prediction intake: visus-prediction-intake.md
       - VISUS model validation: visus-model-validation.md
       - VISUS human agreement: visus-human-agreement.md
   - API: api-reference.md
