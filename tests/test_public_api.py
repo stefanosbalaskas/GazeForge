@@ -17,3 +17,10 @@ def test_lund_fetch_is_exposed_from_top_level_api():
     assert "Lund2013FetchResult" in gazeforge.__all__
     assert "fetch_lund2013_dataset" in gazeforge.__all__
     assert "validate_lund2013_source_manifest" in gazeforge.__all__
+
+
+def test_lund_suite_is_exposed_from_top_level_api():
+    assert gazeforge.Lund2013BenchmarkSuiteRun.__name__ == "Lund2013BenchmarkSuiteRun"
+    assert callable(gazeforge.run_lund2013_benchmark_suite)
+    assert "Lund2013BenchmarkSuiteRun" in gazeforge.__all__
+    assert "run_lund2013_benchmark_suite" in gazeforge.__all__
