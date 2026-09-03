@@ -159,6 +159,14 @@ def test_duplicate_model_fold_rows_are_rejected():
         paired_model_metric_differences(data, metrics=("accuracy",))
 
 
+def test_models_must_have_identical_fold_coverage():
+    data = _fold_metrics().loc[
+        ~((_fold_metrics()["model"] == "ContextMLP") & (_fold_metrics()["fold"] == 2))
+    ]
+    with pytest.raises(SchemaError, match="identical validation-fold coverage"):
+        paired_model_metric_differences(data, metrics=("accuracy",))
+
+
 def test_paired_difference_design_refuses_cv_inference_claims():
     result = paired_model_metric_differences(
         _fold_metrics(),
