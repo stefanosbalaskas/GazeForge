@@ -23,7 +23,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      pages-configured: ${{ steps.pages.outcome == 'success' }}
+      pages_configured: ${{ steps.pages.outcome == 'success' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -47,7 +47,7 @@ jobs:
           path: site
 
   deploy:
-    if: needs.build.outputs.pages-configured == 'true'
+    if: needs.build.outputs.pages_configured == 'true'
     needs: build
     runs-on: ubuntu-latest
     environment:
