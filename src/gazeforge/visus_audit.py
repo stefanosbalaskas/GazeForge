@@ -18,7 +18,8 @@ _HEX = set("0123456789abcdef")
 
 def _resolved(value: str) -> bool:
     text = str(value).strip()
-    return bool(text) and "REPLACE" not in text.upper() and "VERIFY" not in text.upper()
+    upper = text.upper()
+    return bool(text) and "REPLACE" not in upper and "VERIFY" not in upper
 
 
 def _safe_relative_path(value: str) -> str:
@@ -53,18 +54,22 @@ class VisusSourceFileRecord:
     def __post_init__(self) -> None:
         path = _safe_relative_path(self.path)
         object.__setattr__(self, "path", path)
+
         digest = str(self.sha256).strip().lower()
         if len(digest) != 64 or any(character not in _HEX for character in digest):
             raise ValueError("VISUS manifest SHA-256 values must contain exactly 64 hex digits.")
         object.__setattr__(self, "sha256", digest)
-        if int(self.bytes) <= 0:
+
+        size = int(self.bytes)
+        if size <= 0:
             raise ValueError("VISUS manifest byte sizes must be positive.")
-        object.__setattr__(self, "bytes", int(self.bytes))
+        object.__setattr__(self, "bytes", size)
 
         role = str(self.role).strip().lower()
         if role not in _ALLOWED_ROLES:
             raise ValueError(f"VISUS file role must be one of {sorted(_ALLOWED_ROLES)}.")
         object.__setattr__(self, "role", role)
+
         suffix = PurePosixPath(path).suffix.lower()
         if role == "video" and suffix not in _VIDEO_SUFFIXES:
             raise ValueError("VISUS video records must reference a recognized video file suffix.")
@@ -79,6 +84,7 @@ class VisusSourceFileRecord:
         stream = (
             None if self.annotation_stream_id is None else str(self.annotation_stream_id).strip()
         )
+
         if role in {"video", "gaze", "aoi_annotation"} and not stimulus:
             raise ValueError(f"VISUS {role} records require an explicit stimulus_id.")
         if role == "gaze" and not participant:
@@ -89,6 +95,7 @@ class VisusSourceFileRecord:
             )
         if role != "aoi_annotation" and stream is not None:
             raise ValueError("annotation_stream_id is only valid for AOI annotation records.")
+
         object.__setattr__(self, "stimulus_id", stimulus)
         object.__setattr__(self, "participant_id", participant)
         object.__setattr__(self, "participant_group", group)
@@ -134,28 +141,35 @@ class VisusSourceAuditSpec:
     def __post_init__(self) -> None:
         if str(self.dataset_name).strip() != "VISUS":
             raise ValueError("VISUS source audits require dataset_name='VISUS'.")
+
         status = str(self.dataset_status).strip().lower()
         if status not in {"template", "empirical"}:
             raise ValueError("dataset_status must be either 'template' or 'empirical'.")
         self.dataset_status = status
+
         if float(self.published_eye_sampling_rate_hz) <= 0:
             raise ValueError("published_eye_sampling_rate_hz must be positive.")
         if float(self.published_video_frame_rate_hz) <= 0:
             raise ValueError("published_video_frame_rate_hz must be positive.")
+
         for name, value in (
             ("published_video_resolution_px", self.published_video_resolution_px),
             ("published_display_resolution_px", self.published_display_resolution_px),
         ):
             if len(value) != 2 or any(int(component) <= 0 for component in value):
                 raise ValueError(f"{name} must contain positive width and height.")
+
         self.published_video_resolution_px = tuple(
             int(component) for component in self.published_video_resolution_px
         )
         self.published_display_resolution_px = tuple(
             int(component) for component in self.published_display_resolution_px
         )
+
         if int(self.published_stimulus_count) != 11:
-            raise ValueError("VISUS published_stimulus_count must be 11 for this benchmark version.")
+            raise ValueError(
+                "VISUS published_stimulus_count must be 11 for this benchmark version."
+            )
         if int(self.published_participant_count) != 25:
             raise ValueError(
                 "VISUS published_participant_count must be 25 for this benchmark version."
@@ -170,6 +184,7 @@ class VisusSourceAuditSpec:
         paths = [record.path for record in self.files]
         if len(paths) != len(set(paths)):
             raise ValueError("VISUS source-audit manifest paths must be unique.")
+
         annotation_keys = [
             (record.stimulus_id, record.annotation_stream_id)
             for record in self.files
@@ -180,86 +195,77 @@ class VisusSourceAuditSpec:
                 "VISUS AOI manifests cannot duplicate a stimulus/annotation-stream identity."
             )
 
-        if self.independent_annotation_streams_verified:
-            if not _resolved(self.independent_annotation_streams_basis):
-                raise ValueError(
-                    "Verified independent VISUS annotation streams require an evidence basis."
-                )
-            streams_by_stimulus: dict[str, set[str]] = {}
-            for record in self.files:
-                if record.role != "aoi_annotation":
-                    continue
-                streams_by_stimulus.setdefault(str(record.stimulus_id), set()).add(
-                    str(record.annotation_stream_id)
-                )
-            if not streams_by_stimulus or any(
-                len(streams) < 2 for streams in streams_by_stimulus.values()
-            ):
-                raise ValueError(
-                    "independent_annotation_streams_verified=true requires at least two "
-                    "manifested AOI streams for every annotated stimulus."
-                )
-
+        self._validate_independent_stream_claim()
         if status == "empirical":
-            required_text = {
-                "dataset_version": self.dataset_version,
-                "source": self.source,
-                "source_revision": self.source_revision,
-                "license": self.license,
-                "reuse_terms_source": self.reuse_terms_source,
-            }
-            unresolved = [name for name, value in required_text.items() if not _resolved(value)]
-            if unresolved:
-                raise ValueError(f"Empirical VISUS audits require resolved fields: {unresolved}")
-            if not self.files:
-                raise ValueError("Empirical VISUS audits require a non-empty exact file manifest.")
-            if not self.reuse_terms_verified or not self.analysis_use_permitted:
-                raise ValueError(
-                    "Empirical VISUS audits require reviewed reuse terms and explicit analysis use."
-                )
-            if not self.stimulus_mapping_verified or not _resolved(
-                self.stimulus_mapping_basis
-            ):
-                raise ValueError(
-                    "Empirical VISUS audits require a verified stimulus mapping and evidence basis."
-                )
-            if not self.participant_mapping_verified or not _resolved(
-                self.participant_mapping_basis
-            ):
-                raise ValueError(
-                    "Empirical VISUS audits require a verified participant mapping and basis."
-                )
-            if (
-                not self.coordinate_unit_verified
-                or str(self.coordinate_unit).strip().lower() == "unverified"
-                or not _resolved(self.coordinate_verification_basis)
-            ):
-                raise ValueError(
-                    "Empirical VISUS audits require an independently verified coordinate basis."
-                )
-            if not self.timestamp_basis_verified or not _resolved(
-                self.timestamp_verification_basis
-            ):
-                raise ValueError(
-                    "Empirical VISUS audits require a verified timestamp/frame-time basis."
-                )
+            self._validate_empirical_provenance()
             self._validate_empirical_coverage()
 
+    def _validate_independent_stream_claim(self) -> None:
+        if not self.independent_annotation_streams_verified:
+            return
+        if not _resolved(self.independent_annotation_streams_basis):
+            raise ValueError(
+                "Verified independent VISUS annotation streams require an evidence basis."
+            )
+        streams = _streams_by_stimulus(self.files)
+        if not streams or any(len(values) < 2 for values in streams.values()):
+            raise ValueError(
+                "independent_annotation_streams_verified=true requires at least two "
+                "manifested AOI streams for every annotated stimulus."
+            )
+
+    def _validate_empirical_provenance(self) -> None:
+        required_text = {
+            "dataset_version": self.dataset_version,
+            "source": self.source,
+            "source_revision": self.source_revision,
+            "license": self.license,
+            "reuse_terms_source": self.reuse_terms_source,
+        }
+        unresolved = [name for name, value in required_text.items() if not _resolved(value)]
+        if unresolved:
+            raise ValueError(f"Empirical VISUS audits require resolved fields: {unresolved}")
+        if not self.files:
+            raise ValueError("Empirical VISUS audits require a non-empty exact file manifest.")
+        if not self.reuse_terms_verified or not self.analysis_use_permitted:
+            raise ValueError(
+                "Empirical VISUS audits require reviewed reuse terms and explicit analysis use."
+            )
+        if not self.stimulus_mapping_verified or not _resolved(self.stimulus_mapping_basis):
+            raise ValueError(
+                "Empirical VISUS audits require a verified stimulus mapping and evidence basis."
+            )
+        if not self.participant_mapping_verified or not _resolved(
+            self.participant_mapping_basis
+        ):
+            raise ValueError(
+                "Empirical VISUS audits require a verified participant mapping and basis."
+            )
+        if (
+            not self.coordinate_unit_verified
+            or str(self.coordinate_unit).strip().lower() == "unverified"
+            or not _resolved(self.coordinate_verification_basis)
+        ):
+            raise ValueError(
+                "Empirical VISUS audits require an independently verified coordinate basis."
+            )
+        if not self.timestamp_basis_verified or not _resolved(
+            self.timestamp_verification_basis
+        ):
+            raise ValueError(
+                "Empirical VISUS audits require a verified timestamp/frame-time basis."
+            )
+
     def _validate_empirical_coverage(self) -> None:
-        video_stimuli = {
-            str(record.stimulus_id) for record in self.files if record.role == "video"
-        }
-        gaze_stimuli = {
-            str(record.stimulus_id) for record in self.files if record.role == "gaze"
-        }
-        aoi_stimuli = {
-            str(record.stimulus_id)
-            for record in self.files
-            if record.role == "aoi_annotation"
-        }
+        video_stimuli = _stimulus_ids(self.files, "video")
+        gaze_stimuli = _stimulus_ids(self.files, "gaze")
+        aoi_stimuli = _stimulus_ids(self.files, "aoi_annotation")
         participants = {
-            str(record.participant_id) for record in self.files if record.role == "gaze"
+            str(record.participant_id)
+            for record in self.files
+            if record.role == "gaze" and record.participant_id is not None
         }
+
         expected_stimuli = int(self.published_stimulus_count)
         if len(video_stimuli) != expected_stimuli:
             raise ValueError(
@@ -305,14 +311,37 @@ def load_visus_source_audit_spec(path: str | Path) -> VisusSourceAuditSpec:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("VISUS source-audit specification must contain one JSON object.")
+
     raw_files = payload.pop("files", [])
     if not isinstance(raw_files, list):
         raise ValueError("VISUS source-audit files must be a JSON list.")
     records = [VisusSourceFileRecord(**dict(item)) for item in raw_files]
+
     for field_name in ("published_video_resolution_px", "published_display_resolution_px"):
         if field_name in payload:
             payload[field_name] = tuple(payload[field_name])
     return VisusSourceAuditSpec(files=records, **payload)
+
+
+def _stimulus_ids(records: list[VisusSourceFileRecord], role: str) -> set[str]:
+    return {
+        str(record.stimulus_id)
+        for record in records
+        if record.role == role and record.stimulus_id is not None
+    }
+
+
+def _streams_by_stimulus(
+    records: list[VisusSourceFileRecord],
+) -> dict[str, set[str]]:
+    streams: dict[str, set[str]] = {}
+    for record in records:
+        if record.role != "aoi_annotation":
+            continue
+        streams.setdefault(str(record.stimulus_id), set()).add(
+            str(record.annotation_stream_id)
+        )
+    return streams
 
 
 def _inventory(root: Path, spec: VisusSourceAuditSpec) -> tuple[list[VisusAuditedFile], str]:
@@ -349,24 +378,16 @@ def _inventory(root: Path, spec: VisusSourceAuditSpec) -> tuple[list[VisusAudite
             )
         audited.append(VisusAuditedFile(record=record, local_path=str(local)))
         manifest_rows.append(asdict(record))
+
     return audited, benchmark_fingerprint(manifest_rows)
 
 
 def _annotation_stream_summary(
     records: list[VisusSourceFileRecord],
 ) -> tuple[dict[str, list[str]], int]:
-    streams_by_stimulus: dict[str, set[str]] = {}
-    for record in records:
-        if record.role != "aoi_annotation":
-            continue
-        streams_by_stimulus.setdefault(str(record.stimulus_id), set()).add(
-            str(record.annotation_stream_id)
-        )
-    summary = {
-        stimulus: sorted(streams)
-        for stimulus, streams in sorted(streams_by_stimulus.items())
-    }
-    minimum = min((len(streams) for streams in summary.values()), default=0)
+    raw = _streams_by_stimulus(records)
+    summary = {stimulus: sorted(values) for stimulus, values in sorted(raw.items())}
+    minimum = min((len(values) for values in summary.values()), default=0)
     return summary, minimum
 
 
@@ -377,10 +398,8 @@ def audit_visus_source(
     """Verify an exact VISUS snapshot before dynamic-AOI empirical analysis.
 
     The published benchmark describes one manual AOI annotation process involving two human
-    contributors: the first performed the main annotation and the second added/refined annotations.
-    Contributor count is therefore kept separate from independently available annotation streams.
-    Human-human agreement is considered ready only if independent streams are explicitly manifested
-    and independently verified by the audit specification.
+    contributors. Contributor count is kept separate from independently recoverable annotation
+    streams, so human-human agreement is enabled only after independent streams are verified.
     """
     if not isinstance(spec, VisusSourceAuditSpec):
         raise TypeError("spec must be a VisusSourceAuditSpec instance.")
@@ -388,6 +407,7 @@ def audit_visus_source(
         raise BenchmarkIntegrityError(
             "VISUS source-audit templates cannot be promoted to empirical evidence."
         )
+
     root_path = Path(root)
     if not root_path.is_dir():
         raise FileNotFoundError(f"VISUS source directory does not exist: {root_path}")
@@ -492,8 +512,8 @@ def audit_visus_source(
         "notes": list(spec.notes),
         "claim_limits": [
             (
-                "Two human contributors to one published annotation process do not by themselves "
-                "establish two independent human-reference streams."
+                "Two human contributors to one published annotation process do not by "
+                "themselves establish two independent human-reference streams."
             ),
             (
                 "Human-human dynamic-AOI agreement must remain blocked unless independent "
