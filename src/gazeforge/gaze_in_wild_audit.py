@@ -204,13 +204,15 @@ class GazeInWildSourceAuditSpec:
             previous = trial_process.setdefault(key, item.process_path)
             if previous != item.process_path:
                 raise ValueError(
-                    "All labellers for one participant/trial must reference the same ProcessData file."
+                    "All labellers for one participant/trial must reference the same "
+                    "ProcessData file."
                 )
 
         if self.dataset_status == "empirical":
             if not self.label_files or not self.process_files:
                 raise ValueError(
-                    "Empirical Gaze-in-the-Wild audits require non-empty label and process manifests."
+                    "Empirical Gaze-in-the-Wild audits require non-empty label and "
+                    "process manifests."
                 )
             if not self.reuse_terms_verified:
                 raise ValueError("Empirical audits require verified reuse terms.")
@@ -223,7 +225,9 @@ class GazeInWildSourceAuditSpec:
                     "Empirical audits require a documented participant/task identity mapping basis."
                 )
             if not self.coordinate_unit_verified or self.coordinate_unit.lower() == "unverified":
-                raise ValueError("Empirical audits require a verified point-of-regard coordinate unit.")
+                raise ValueError(
+                    "Empirical audits require a verified point-of-regard coordinate unit."
+                )
             if not str(self.coordinate_verification_basis).strip():
                 raise ValueError(
                     "Empirical audits require a documented coordinate-unit verification basis."
@@ -273,7 +277,9 @@ def load_gaze_in_wild_source_audit_spec(path: str | Path) -> GazeInWildSourceAud
     """Load a Gaze-in-the-Wild source-audit specification from JSON."""
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
-        raise ValueError("Gaze-in-the-Wild source-audit specification must contain one JSON object.")
+        raise ValueError(
+            "Gaze-in-the-Wild source-audit specification must contain one JSON object."
+        )
     return GazeInWildSourceAuditSpec.from_dict(payload)
 
 
