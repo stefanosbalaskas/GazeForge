@@ -12,24 +12,50 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-alpha-orange)](CHANGELOG.md)
 
-[Website](https://stefanosbalaskas.github.io/GazeForge/) · [For Gazepoint / GP3](docs/gazepoint-gp3.md) · [Frozen evidence](docs/frozen-evidence.md) · [Validation status](docs/validation-status.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
+[Website](https://stefanosbalaskas.github.io/GazeForge/) · [Frozen evidence](docs/frozen-evidence.md) · [Validation status](docs/validation-status.md) · [For Gazepoint / GP3](docs/gazepoint-gp3.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
 
 </div>
 
 ---
 
-GazeForge is a vendor-neutral Python research-software package for integrating **AI into the analysis of eye-tracking data**. It is designed for research workflows where machine learning can assist with quality control, event classification, AOI construction, sequence analysis, and benchmark validation while every important transformation remains observable and auditable.
+GazeForge is a vendor-neutral Python research-software package for integrating **AI into the analysis of eye-tracking data**. It supports machine-learning-assisted quality control, event classification, semantic AOIs, sequence analysis, and benchmark validation while keeping transformations, uncertainty, model identity, sampling assumptions, and human review visible.
 
 > **Scientific contract:** AI may propose, score, classify, embed, or flag. It must not silently alter the empirical record.
 
 GazeForge does **not** infer diagnoses, emotions, personality, protected traits, or unsupported latent mental states from gaze.
+
+## First frozen external empirical evidence
+
+The first audited external benchmark tranche is now frozen from the public **Lund2013** expert-labelled corpus. GazeForge verifies the exact upstream source files at a pinned commit, derives lower-rate human-reference data with explicit boundary-purity rules, evaluates all models on identical participant-held-out folds, and stores only fingerprinted JSON evidence in this repository.
+
+Primary RA-labelled **derived 60 Hz** results:
+
+| Model | Accuracy | Balanced accuracy | Macro-F1 | Event-F1 | Event IoU |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| **I-VT** | 0.637 | 0.388 | 0.287 | **0.626** | **0.921** |
+| **RandomForest** | 0.676 | 0.670 | 0.595 | 0.440 | 0.892 |
+| **ContextMLP** | **0.694** | **0.679** | **0.649** | 0.535 | 0.900 |
+
+The result is deliberately **not** summarized as “AI beats I-VT.” Learned models are substantially stronger for sample-level multiclass classification, whereas transparent I-VT is stronger for contiguous event segmentation and boundary timing. The MN annotator sensitivity analysis reproduces this broad pattern.
+
+Human MN–RA agreement is also strong: native 500 Hz κ = **0.815** with exact agreement **0.893**; independently derived 60 Hz κ = **0.799** with exact agreement **0.880**. Video has the lowest agreement among the benchmark stimulus families.
+
+The frozen suite fingerprint is:
+
+```text
+5dc6d6336b505b0a2283fe64d478a27b0394c9568a86fc4eb4d2771b8d600f93
+```
+
+**Important limitation:** Lund2013 is natively 500 Hz. The 60 Hz analyses are derived lower-rate evidence and are **not native GP3/60 Hz device validation**. A genuinely native 60 Hz/GP3-class manually labelled event corpus remains a major evidence requirement.
+
+[Inspect the frozen evidence →](docs/frozen-evidence.md) · [See the full validation matrix →](docs/validation-status.md)
 
 ## What GazeForge adds to eye-tracking analysis
 
 | Layer | Capabilities |
 | --- | --- |
 | **Data & QC** | Canonical gaze schema, Gazepoint adapters, sampling-rate inference, anomaly flags, trial-quality scores, calibration-drift diagnostics |
-| **Eye events** | Transparent I-VT, angular I-VT, Random Forest classification, temporal-context MLP, calibrated probabilities, abstention metadata |
+| **Eye events** | Transparent I-VT and angular I-VT, Random Forest classification, temporal-context MLP, calibrated probabilities, abstention metadata |
 | **Semantic AOIs** | Human-defined AOIs, optional OWL-ViT proposals, review/correction logs, dynamic AOI keyframes, guarded interpolation |
 | **Sequences** | Semantic scanpaths, motifs, TF-IDF/SVD embeddings, cosine similarity, clustering |
 | **Validation** | Participant-held-out folds, leave-one-dataset-out validation, calibration, event-level temporal matching, sampling/purity sensitivity |
@@ -58,20 +84,16 @@ canonical gaze table
 
 AI outputs remain ordinary data structures with confidence, source, model, sampling-rate, and review metadata. Researchers can inspect or correct them before downstream statistics.
 
-## Validation is part of the package
-
-GazeForge treats validation infrastructure as a core feature rather than a post-hoc demonstration.
+## Validation matrix
 
 | Benchmark | Reference | Native rate | GazeForge status |
 | --- | --- | ---: | --- |
-| **Lund2013** | paired expert manual event labels | 500 Hz | pinned acquisition, adapter, human-human agreement, 60 Hz derivation, matched-fold benchmark and sensitivity tooling implemented; frozen empirical reports pending |
-| **Hollywood2EM** | expert-corrected manual event labels | 500 Hz | adapter and Lund↔Hollywood cross-dataset infrastructure implemented; coordinate/identity audit required before frozen cross-dataset results |
-| **Gaze-in-the-Wild** | five trained human annotators | published 120 Hz acquisition | native human-reference adapter and protocol implemented; file cadence inferred from timestamps; authoritative data audit pending |
+| **Lund2013** | paired expert manual event labels | 500 Hz | **first frozen external evidence complete**: native/derived human agreement, derived 60 Hz matched-fold modelling, MN sensitivity, stimulus-family results, sampling×purity sensitivity |
+| **Hollywood2EM** | expert-corrected manual event labels | 500 Hz | adapter and Lund↔Hollywood cross-dataset infrastructure implemented; authoritative identity/coordinate audit still required |
+| **Gaze-in-the-Wild** | five trained human annotators | published 120 Hz acquisition | native human-reference adapter and protocol implemented; authoritative data audit pending |
 | **VISUS** | two human dynamic-AOI annotators | 60 Hz | dynamic-AOI evaluation infrastructure and candidate protocol implemented; authoritative current dataset copy pending |
 
-**Derived 60 Hz evidence is never described as native 60 Hz validation.** A genuinely native 60 Hz/GP3-class manually event-labelled corpus remains an explicit open requirement before device-specific validity claims.
-
-See the [frozen empirical evidence](docs/frozen-evidence.md), [validation status](docs/validation-status.md), and [benchmark evidence model](docs/benchmark-evidence.md). The frozen-evidence page is intentionally empty until integrity-checked empirical reports are actually committed.
+GazeForge never upgrades derived evidence into a stronger evidence category. Resampled 60 Hz results remain labelled **derived human-reference evidence**, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved.
 
 ## Installation
 
@@ -118,7 +140,7 @@ model = train_event_classifier(
 classified = ai_classify_events(new_samples, model, sampling_rate_hz=60)
 ```
 
-A model trained at one sampling rate is not silently applied at an incompatible rate. Temporal-context models build their context windows separately inside each participant/trial boundary.
+A model trained at one sampling rate is not silently applied at an incompatible rate. Temporal-context models build context windows separately inside each participant/trial boundary.
 
 ## Semantic and dynamic AOIs
 
@@ -150,7 +172,7 @@ validation = grouped_event_cross_validate(
 )
 ```
 
-Learned models are refitted inside every fold. GazeForge also provides leave-one-dataset-out validation, calibration diagnostics, matched-model comparisons, and event-level temporal IoU / boundary-error metrics.
+Learned models are refitted inside every fold. GazeForge also provides leave-one-dataset-out validation, calibration diagnostics, matched-model comparisons, stimulus-family summaries, and event-level temporal IoU / boundary-error metrics. Cross-validation folds are not treated as independent replicates for naive significance tests.
 
 ## Reproducible Lund2013 workflows
 
@@ -160,43 +182,38 @@ Acquire the exact pinned external labelled-data checkout without bundling it int
 gazeforge lund2013-fetch ./external/lund2013
 ```
 
-The fetcher verifies each MATLAB file against the upstream Git blob SHA and byte size at the pinned commit and writes a fingerprinted local `_gazeforge_source_manifest.json`. Existing local files are accepted only if their identity still matches.
+The fetcher verifies every expected MATLAB file against the upstream Git blob SHA and byte size and writes a fingerprinted local source manifest.
 
-Human-human agreement:
-
-```bash
-gazeforge lund2013-agreement ./external/lund2013 --target-rate 60
-```
-
-Primary 60 Hz benchmark:
+Run and freeze the complete evidence suite:
 
 ```bash
-gazeforge lund2013-benchmark ./external/lund2013 \
-  --annotator RA \
+gazeforge lund2013-suite \
+  ./external/lund2013 \
+  validation/evidence/lund2013 \
   --target-rate 60 \
-  --ivt-threshold-deg-s 45 \
-  --n-splits 5 \
-  --output validation/lund2013-ra-60hz.json
-```
-
-Sampling-rate × boundary-purity sensitivity analysis:
-
-```bash
-gazeforge lund2013-sensitivity ./external/lund2013 \
-  --annotator RA \
+  --min-label-purity 0.75 \
   --target-rates 120,90,60,30 \
   --purities 0.60,0.75,0.90 \
+  --n-splits 5 \
+  --n-estimators 200 \
   --ivt-threshold-deg-s 45 \
-  --output validation/lund2013-ra-sensitivity.json
+  --context-radius-ms 50 \
+  --hidden-layers 64,32
 ```
 
-Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event-boundary samples are counted before exclusion, non-evaluable rate/purity settings remain visible in the sensitivity ledger, and the website only displays reports whose fingerprints revalidate successfully.
+Revalidate the frozen suite and every child report:
+
+```bash
+gazeforge lund2013-suite-validate validation/evidence/lund2013
+```
+
+Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event-boundary samples are counted before exclusion, all sensitivity settings remain visible, and the website displays only reports whose fingerprints revalidate successfully.
 
 ## Project status
 
-GazeForge is under active alpha development. The software architecture, tests, CI, benchmark adapters, validation layers, and documentation are being built before any claim of mature scientific performance.
+GazeForge is under active alpha development. The first external empirical benchmark tranche is now frozen and publicly rendered, but that does not establish mature performance across trackers or tasks.
 
-### Implemented
+### Implemented and frozen
 
 - vendor-neutral gaze schema and Gazepoint interoperability
 - auditable QC and anomaly scoring
@@ -206,17 +223,19 @@ GazeForge is under active alpha development. The software architecture, tests, C
 - semantic scanpaths, motifs, embeddings, and clustering
 - participant-held-out and dataset-held-out validation
 - sample-level and event-level benchmark metrics
-- evidence-aware benchmark taxonomy
+- evidence-aware benchmark taxonomy and deterministic provenance
 - pinned and integrity-checked Lund2013 acquisition
-- Lund2013, Hollywood2EM, Gaze-in-the-Wild, and VISUS validation infrastructure
-- sampling-rate × annotation-purity sensitivity analysis
-- deterministic model/data/benchmark provenance
+- **five-report Lund2013 external empirical suite with verified fingerprints**
+- native/derived MN–RA human agreement
+- derived 60 Hz RA primary model comparison and MN annotator sensitivity
+- stimulus-family and sampling-rate × annotation-purity sensitivity analyses
 - integrity-checked frozen-evidence website generation
+- CI across Python 3.10/3.12/3.14 on Linux, Windows, and macOS
 
 ### Still required before a stable scientific release
 
-- frozen empirical reports from audited external dataset copies
-- native 60 Hz/GP3-class human event validation
+- **native 60 Hz/GP3-class expert-labelled event validation**
+- authoritative audits and frozen cross-dataset results for additional external benchmarks
 - validated dynamic object-detection/tracking backend results
 - broader cross-dataset validation after coordinate and identity audits
 - final API stability and release packaging
@@ -225,7 +244,7 @@ The active benchmark plan is tracked in [Issue #1](https://github.com/stefanosba
 
 ## Relationship to the wider research-software ecosystem
 
-GazeForge is intended to complement, not replace, deterministic eye-tracking and psychophysiology tooling. Its role is the **auditable AI layer**: prediction, semantic interpretation, representation learning, validation, and provenance around ordinary research tables.
+GazeForge complements rather than replaces deterministic eye-tracking and psychophysiology tooling. Its role is the **auditable AI layer**: prediction, semantic interpretation, representation learning, validation, and provenance around ordinary research tables.
 
 ## Scientific governance
 
@@ -235,15 +254,13 @@ See [Scientific governance](docs/scientific-governance.md).
 
 ## Documentation
 
-The documentation source lives under `docs/` and is built with MkDocs Material. The project website is configured for:
+The documentation source lives under `docs/`, is strict-built with MkDocs Material, and deploys to GitHub Pages after successful builds:
 
 **https://stefanosbalaskas.github.io/GazeForge/**
 
-Until GitHub Pages is enabled for the repository, the same documentation is continuously checked with `mkdocs build --strict` in CI.
-
 ## Citation
 
-A software paper/citation record will be added once the first empirical benchmark tranche and public release are frozen. Until then, use the repository and version/commit SHA in reproducible work. Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff).
+A formal software-paper citation will be added with the public release/paper freeze. Until then, cite the repository together with the exact GazeForge version or commit SHA used in reproducible work. Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff).
 
 ## License
 
