@@ -234,7 +234,9 @@ def test_visus_suite_dashboard_discovers_only_benchmark_children_and_verified_su
     assert dashboard.suite_table.iloc[0]["human_human_agreement_included"] == "false"
     assert dashboard.suite_source_files == (str(run.manifest_path),)
     assert len(dashboard.reports) == 1
-    assert dashboard.reports[0]["benchmark"]["task"] == "dynamic semantic-AOI model validation"
+    assert dashboard.reports[0]["benchmark"]["task"] == (
+        "dynamic video AOI detection and fixation-to-AOI assignment"
+    )
     markdown = render_benchmark_dashboard_markdown(dashboard)
     assert "visus-dynamic-aoi-validation-v1" in markdown
     assert run.suite_fingerprint_sha256[:12] in markdown
