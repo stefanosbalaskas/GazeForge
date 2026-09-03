@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from gazeforge.dashboard import build_benchmark_dashboard, render_benchmark_dashboard_markdown
+from gazeforge.evidence_details import render_validated_report_detail_markdown
 
 
 def _project_root(config) -> Path:
@@ -19,6 +20,15 @@ def on_pre_build(config) -> None:
     root = _project_root(config)
     dashboard = build_benchmark_dashboard(root / "validation")
     content = render_benchmark_dashboard_markdown(dashboard)
+    if dashboard.reports:
+        content += "\n## Validated report details\n\n"
+        content += (
+            "The tables below are generated directly from the same fingerprint-validated JSON "
+            "reports listed above; no performance values are transcribed manually.\n\n"
+        )
+        for report in dashboard.reports:
+            content += render_validated_report_detail_markdown(report)
+
     content += """
 
 ## What appears on this page
@@ -34,6 +44,10 @@ The table surfaces annotation origin, sampling origin, reference strength, model
 sampling rate so evidence strength remains visible alongside any future performance result.
 Derived lower-rate evidence is therefore distinguishable from native-rate recordings, and
 algorithmic/vendor labels cannot silently appear as human ground truth.
+
+Detailed performance tables are generated only from reports that passed the same integrity check.
+Unknown future report schemas remain visible in the frozen-report index without GazeForge guessing
+which nested values should be presented as headline performance metrics.
 
 ## Current scientific rule
 

@@ -45,6 +45,9 @@ while validation evidence is being established.
   inventory, pinned source identity, safe child paths, and every referenced report fingerprint.
 - Verified Lund suite status in the public benchmark dashboard while preserving child reports as
   separate empirical evidence rows.
+- Generated Frozen Evidence detail tables for validated model performance, paired fold differences,
+  stimulus-family performance, human agreement, and sampling×purity sensitivity without manually
+  transcribing benchmark values into website Markdown.
 - Native Lund2013 MATLAB benchmark ingestion with original expert event-code mapping.
 - Label-purity-aware lower-rate benchmark resampling with explicit ambiguous boundary samples.
 - MN-vs-RA sample-label agreement and a fingerprinted Lund2013 60 Hz benchmark runner/CLI.
