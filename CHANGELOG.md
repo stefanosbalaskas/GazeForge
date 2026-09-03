@@ -9,6 +9,12 @@ while validation evidence is being established.
 
 ### Added
 
+- Source-audit-aware VISUS model prediction intake that binds frame-indexed detector/tracker output
+  to exact audited video identities, requires explicit model/version/output provenance, coordinate
+  units and frame indexing, validates geometry and track identities, fingerprints model/output/source
+  metadata, and returns model-labelled `DynamicAOIKeyframe` mappings. Prediction emission frames are
+  explicitly not treated as the evaluation timestamp grid, and the intake creates no performance
+  evidence by itself.
 - Source-audit-aware VISUS canonical AOI intake that links every extracted row to an exact audited
   AOI XML path and verified stimulus/stream identity, requires explicit 0- or 1-based frame indexing,
   converts frames to timestamps from the audited video rate, validates geometry and track invariants,
