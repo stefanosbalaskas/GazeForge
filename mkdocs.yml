@@ -11,6 +11,7 @@ nav:
   - Benchmark evidence: benchmark-evidence.md
   - Lund2013 benchmark: lund2013-benchmark.md
   - Hollywood2 benchmark: hollywood2-benchmark.md
+  - Gaze-in-the-Wild benchmark: gaze-in-wild-benchmark.md
   - Cross-dataset events: cross-dataset-events.md
   - Calibration & dataset holdouts: calibration.md
   - Temporal models: temporal-models.md
