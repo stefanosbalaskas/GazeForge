@@ -209,6 +209,10 @@ from .validation import (
     grouped_event_cross_validate,
     grouped_holdout_indices,
 )
+from .visus_agreement import (
+    VisusDynamicAOIHumanAgreementRun,
+    run_visus_dynamic_aoi_human_agreement,
+)
 from .visus_audit import (
     VisusAuditedFile,
     VisusSourceAuditRun,
@@ -284,6 +288,7 @@ __all__ = [
     "StratifiedEventPerformance",
     "TemporalContextModel",
     "VisusAuditedFile",
+    "VisusDynamicAOIHumanAgreementRun",
     "VisusDynamicAOIModelValidationRun",
     "VisusSourceAuditRun",
     "VisusSourceAuditSpec",
@@ -386,6 +391,7 @@ __all__ = [
     "run_native_event_file_annotator_agreement",
     "run_native_event_file_benchmark",
     "run_native_event_validation_suite",
+    "run_visus_dynamic_aoi_human_agreement",
     "run_visus_dynamic_aoi_model_validation",
     "samples_to_event_intervals",
     "sample_label_agreement",
