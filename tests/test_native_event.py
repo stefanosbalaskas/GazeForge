@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from gazeforge.cli import build_parser
 from gazeforge.exceptions import SchemaError
 from gazeforge.native_event import (
     NativeEventBenchmarkSpec,
@@ -123,3 +124,19 @@ def test_native_event_run_builds_fingerprinted_matched_fold_report() -> None:
     assert run.report["protocol"]["native_intake"]["resampling"] is None
     assert run.report["protocol"]["native_intake"]["native_rate_verified"] is True
     assert len(run.report["report_fingerprint_sha256"]) == 64
+
+
+def test_native_event_cli_requires_an_explicit_ivt_threshold_choice() -> None:
+    args = build_parser().parse_args(
+        [
+            "native-event-benchmark",
+            "expert-events.csv",
+            "native-spec.json",
+            "--ivt-threshold-px-s",
+            "700",
+        ]
+    )
+
+    assert args.command == "native-event-benchmark"
+    assert args.ivt_threshold_deg_s is None
+    assert args.ivt_threshold_px_s == 700.0
