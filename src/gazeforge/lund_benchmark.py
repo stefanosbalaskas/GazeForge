@@ -16,6 +16,7 @@ from .exceptions import SchemaError
 from .lund2013 import load_lund2013_directory
 from .lund_fetch import validate_lund2013_source_manifest
 from .resampling import BenchmarkResamplingResult, resample_labeled_gaze
+from .stratified import StratifiedEventPerformance, summarize_event_predictions_by_stratum
 
 _DEFAULT_EXCLUDED_LABELS = ("ambiguous", "unlabelled", "undefined")
 
@@ -31,16 +32,30 @@ class Lund2013PreparedBenchmark:
 
 @dataclass(slots=True)
 class Lund2013BenchmarkRun:
-    """Prepared data, matched-fold comparison, and deterministic benchmark report."""
+    """Prepared data, matched-fold comparison, stratified metrics, and report."""
 
     prepared: Lund2013PreparedBenchmark
     comparison: EventModelComparison
+    stimulus_type_performance: StratifiedEventPerformance
     report: dict[str, Any]
 
 
 def _json_safe_records(frame: pd.DataFrame) -> list[dict[str, Any]]:
     clean = frame.astype(object).where(pd.notna(frame), None)
     return clean.to_dict(orient="records")
+
+
+def _stimulus_counts(data: pd.DataFrame) -> dict[str, dict[str, int]]:
+    if "stimulus_type" not in data.columns:
+        return {}
+    rows: dict[str, dict[str, int]] = {}
+    for stimulus, part in data.groupby("stimulus_type", sort=True, dropna=False):
+        rows[str(stimulus)] = {
+            "rows": int(len(part)),
+            "participants": int(part["participant_id"].astype(str).nunique()),
+            "trials": int(part["trial_id"].astype(str).nunique()),
+        }
+    return rows
 
 
 def prepare_lund2013_benchmark(
@@ -110,6 +125,7 @@ def prepare_lund2013_benchmark(
         ),
         "participant_count": int(retained["participant_id"].nunique()),
         "trial_count": int(retained["trial_id"].nunique()),
+        "stimulus_type_counts": _stimulus_counts(retained),
         "resampling": None if resampling is None else resampling.report,
     }
     card = BenchmarkDatasetCard(
@@ -228,10 +244,11 @@ def run_lund2013_event_benchmark(
     folds = min(int(n_splits), int(n_groups))
     if folds < 2:
         raise SchemaError("At least two participant folds are required for Lund2013 validation.")
+    analysis_rate = float(prepared.preparation_report["analysis_sampling_rate_hz"])
     comparison = compare_event_models_grouped(
         prepared.data,
         n_splits=folds,
-        sampling_rate_hz=float(prepared.preparation_report["analysis_sampling_rate_hz"]),
+        sampling_rate_hz=analysis_rate,
         ivt_velocity_threshold_px_s=None,
         ivt_velocity_threshold_deg_s=ivt_velocity_threshold_deg_s,
         random_state=random_state,
@@ -241,14 +258,31 @@ def run_lund2013_event_benchmark(
         temporal_solver=temporal_solver,
         temporal_max_iter=temporal_max_iter,
     )
+    stimulus_type_performance = summarize_event_predictions_by_stratum(
+        comparison.predictions,
+        stratify_col="stimulus_type",
+        sampling_rate_hz=analysis_rate,
+        calibration_bins=int(comparison.design["calibration_bins"]),
+        include_event_level_metrics=bool(
+            comparison.design["include_event_level_metrics"]
+        ),
+        event_group_cols=tuple(comparison.design["event_group_cols"]),
+        event_min_iou=float(comparison.design["event_min_iou"]),
+        event_excluded_labels=tuple(comparison.design["event_excluded_labels"]),
+    )
     metrics = {
         "summary": _json_safe_records(comparison.summary),
         "fold_metrics": _json_safe_records(comparison.fold_metrics),
+        "stimulus_type_summary": _json_safe_records(stimulus_type_performance.summary),
+        "stimulus_type_fold_metrics": _json_safe_records(
+            stimulus_type_performance.fold_metrics
+        ),
         "analysis_label_counts": prepared.preparation_report["label_counts_analysis"],
     }
     protocol = {
         "preparation": prepared.preparation_report,
         "comparison_design": comparison.design,
+        "stimulus_type_design": stimulus_type_performance.design,
     }
     report = build_benchmark_report(
         benchmark=prepared.dataset_card,
@@ -259,5 +293,6 @@ def run_lund2013_event_benchmark(
     return Lund2013BenchmarkRun(
         prepared=prepared,
         comparison=comparison,
+        stimulus_type_performance=stimulus_type_performance,
         report=report,
     )
