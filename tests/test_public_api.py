@@ -102,3 +102,12 @@ def test_visus_model_validation_is_exposed_from_top_level_api():
     assert callable(gazeforge.run_visus_dynamic_aoi_model_validation)
     assert "VisusDynamicAOIModelValidationRun" in gazeforge.__all__
     assert "run_visus_dynamic_aoi_model_validation" in gazeforge.__all__
+
+
+def test_visus_human_agreement_is_exposed_from_top_level_api():
+    assert gazeforge.VisusDynamicAOIHumanAgreementRun.__name__ == (
+        "VisusDynamicAOIHumanAgreementRun"
+    )
+    assert callable(gazeforge.run_visus_dynamic_aoi_human_agreement)
+    assert "VisusDynamicAOIHumanAgreementRun" in gazeforge.__all__
+    assert "run_visus_dynamic_aoi_human_agreement" in gazeforge.__all__
