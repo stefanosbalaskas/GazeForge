@@ -217,6 +217,7 @@ def load_gaze_in_wild_directory(
     *,
     process_root: str | Path | None = None,
     participant_parser: Callable[[Path], str | None] | None = None,
+    labeller: int | None = None,
     recursive: bool = True,
     confidence_threshold: float = 0.30,
 ) -> GazeFrame:
@@ -227,9 +228,18 @@ def load_gaze_in_wild_directory(
     process_dir = None if process_root is None else Path(process_root)
     if process_dir is not None and not process_dir.exists():
         raise FileNotFoundError(process_dir)
-    paths = sorted(label_dir.rglob("*_Lbr_*.mat") if recursive else label_dir.glob("*_Lbr_*.mat"))
+    pattern = "*_Lbr_*.mat" if labeller is None else f"*_Lbr_{int(labeller)}.mat"
+    paths = sorted(label_dir.rglob(pattern) if recursive else label_dir.glob(pattern))
     if not paths:
         raise FileNotFoundError(f"No Gaze-in-the-Wild label files were found under {label_dir}.")
+    selected_labellers = {
+        value for _, value in map(_label_file_metadata, paths) if value is not None
+    }
+    if labeller is None and len(selected_labellers) > 1:
+        raise SchemaError(
+            "Multiple Gaze-in-the-Wild labellers were found; select one labeller explicitly "
+            "before building a modelling table."
+        )
 
     frames: list[GazeFrame] = []
     for path in paths:
@@ -271,6 +281,9 @@ def load_gaze_in_wild_directory(
             "sampling_rate_source": "median_of_file_timestamp_inference",
             "published_hardware_sampling_rate_hz": 120.0,
             "human_annotator_count_published": 5,
+            "selected_labeller": (
+                labeller if labeller is not None else next(iter(selected_labellers), None)
+            ),
             "confidence_threshold": float(confidence_threshold),
         },
     )
