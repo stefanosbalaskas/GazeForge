@@ -12,7 +12,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-alpha-orange)](CHANGELOG.md)
 
-[Website](https://stefanosbalaskas.github.io/GazeForge/) · [Getting started](docs/getting-started.md) · [Architecture](docs/architecture.md) · [Validation status](docs/validation-status.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
+[Website](https://stefanosbalaskas.github.io/GazeForge/) · [For Gazepoint / GP3](docs/gazepoint-gp3.md) · [Frozen evidence](docs/frozen-evidence.md) · [Validation status](docs/validation-status.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
 
 </div>
 
@@ -33,7 +33,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | **Semantic AOIs** | Human-defined AOIs, optional OWL-ViT proposals, review/correction logs, dynamic AOI keyframes, guarded interpolation |
 | **Sequences** | Semantic scanpaths, motifs, TF-IDF/SVD embeddings, cosine similarity, clustering |
 | **Validation** | Participant-held-out folds, leave-one-dataset-out validation, calibration, event-level temporal matching, sampling/purity sensitivity |
-| **Auditability** | Data fingerprints, model cards, benchmark cards, provenance records, deterministic frozen benchmark reports |
+| **Auditability** | Data fingerprints, model cards, benchmark cards, provenance records, verified source manifests, deterministic frozen benchmark reports |
 
 ## Why this is different
 
@@ -64,14 +64,14 @@ GazeForge treats validation infrastructure as a core feature rather than a post-
 
 | Benchmark | Reference | Native rate | GazeForge status |
 | --- | --- | ---: | --- |
-| **Lund2013** | paired expert manual event labels | 500 Hz | adapter, human-human agreement, 60 Hz derivation, matched-fold benchmark and sensitivity tooling implemented; frozen empirical reports pending |
+| **Lund2013** | paired expert manual event labels | 500 Hz | pinned acquisition, adapter, human-human agreement, 60 Hz derivation, matched-fold benchmark and sensitivity tooling implemented; frozen empirical reports pending |
 | **Hollywood2EM** | expert-corrected manual event labels | 500 Hz | adapter and Lund↔Hollywood cross-dataset infrastructure implemented; coordinate/identity audit required before frozen cross-dataset results |
 | **Gaze-in-the-Wild** | five trained human annotators | published 120 Hz acquisition | native human-reference adapter and protocol implemented; file cadence inferred from timestamps; authoritative data audit pending |
 | **VISUS** | two human dynamic-AOI annotators | 60 Hz | dynamic-AOI evaluation infrastructure and candidate protocol implemented; authoritative current dataset copy pending |
 
 **Derived 60 Hz evidence is never described as native 60 Hz validation.** A genuinely native 60 Hz/GP3-class manually event-labelled corpus remains an explicit open requirement before device-specific validity claims.
 
-See the [validation status](docs/validation-status.md) and [benchmark evidence model](docs/benchmark-evidence.md).
+See the [frozen empirical evidence](docs/frozen-evidence.md), [validation status](docs/validation-status.md), and [benchmark evidence model](docs/benchmark-evidence.md). The frozen-evidence page is intentionally empty until integrity-checked empirical reports are actually committed.
 
 ## Installation
 
@@ -154,10 +154,24 @@ Learned models are refitted inside every fold. GazeForge also provides leave-one
 
 ## Reproducible Lund2013 workflows
 
+Acquire the exact pinned external labelled-data checkout without bundling it into GazeForge:
+
+```bash
+gazeforge lund2013-fetch ./external/lund2013
+```
+
+The fetcher verifies each MATLAB file against the upstream Git blob SHA and byte size at the pinned commit and writes a fingerprinted local `_gazeforge_source_manifest.json`. Existing local files are accepted only if their identity still matches.
+
+Human-human agreement:
+
+```bash
+gazeforge lund2013-agreement ./external/lund2013 --target-rate 60
+```
+
 Primary 60 Hz benchmark:
 
 ```bash
-gazeforge lund2013-benchmark /path/to/lund \
+gazeforge lund2013-benchmark ./external/lund2013 \
   --annotator RA \
   --target-rate 60 \
   --ivt-threshold-deg-s 45 \
@@ -168,7 +182,7 @@ gazeforge lund2013-benchmark /path/to/lund \
 Sampling-rate × boundary-purity sensitivity analysis:
 
 ```bash
-gazeforge lund2013-sensitivity /path/to/lund \
+gazeforge lund2013-sensitivity ./external/lund2013 \
   --annotator RA \
   --target-rates 120,90,60,30 \
   --purities 0.60,0.75,0.90 \
@@ -176,7 +190,7 @@ gazeforge lund2013-sensitivity /path/to/lund \
   --output validation/lund2013-ra-sensitivity.json
 ```
 
-Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event-boundary samples are counted before exclusion, and non-evaluable rate/purity settings remain visible in the sensitivity ledger.
+Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event-boundary samples are counted before exclusion, non-evaluable rate/purity settings remain visible in the sensitivity ledger, and the website only displays reports whose fingerprints revalidate successfully.
 
 ## Project status
 
@@ -193,9 +207,11 @@ GazeForge is under active alpha development. The software architecture, tests, C
 - participant-held-out and dataset-held-out validation
 - sample-level and event-level benchmark metrics
 - evidence-aware benchmark taxonomy
+- pinned and integrity-checked Lund2013 acquisition
 - Lund2013, Hollywood2EM, Gaze-in-the-Wild, and VISUS validation infrastructure
 - sampling-rate × annotation-purity sensitivity analysis
 - deterministic model/data/benchmark provenance
+- integrity-checked frozen-evidence website generation
 
 ### Still required before a stable scientific release
 
