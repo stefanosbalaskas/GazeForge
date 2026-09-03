@@ -12,19 +12,32 @@ comparison. This is derived lower-rate validation, not native-60-Hz device valid
 - at least two source `GazeFrame` objects;
 - resolved participant identities;
 - a verified coordinate unit for every source;
+- dataset-specific reviewed source audits where required (currently Hollywood2EM);
 - the same common reference classes (fixation, saccade, pursuit);
 - no upsampling;
 - per-source purity-aware resampling; and
 - dataset-prefixed participant/trial IDs so unrelated corpora cannot collide by name.
 
-Hollywood2EM is intentionally blocked from unit-sensitive cross-dataset modelling until its local
-coordinate convention is explicitly audited and declared. Ingestion remains available while this
-scientific gate is unresolved.
+For Hollywood2EM, `coordinate_unit="pixels"` on the low-level loader is **not sufficient** for frozen
+cross-dataset preparation. By default, the preparation gate also requires `source_audit_status` to
+be verified, valid SHA-256 fingerprints for the source-audit report/specification/file manifest,
+verified reuse terms, and explicit analysis-use permission. These fields are produced by the
+[Hollywood2EM source audit](hollywood2-source-audit.md).
+
+The `require_source_audits=False` switch exists for controlled development/testing of generic
+preparation mechanics. It should not be used to create a frozen Hollywood2EM evidence report.
 
 ```python
 from gazeforge import (
+    load_audited_hollywood2_directory,
     prepare_cross_dataset_event_benchmark,
     run_cross_dataset_event_validation,
+)
+
+hollywood = load_audited_hollywood2_directory(
+    "/path/to/hollywood2_em",
+    hollywood_audit_spec,
+    annotator="expert",
 )
 
 prepared = prepare_cross_dataset_event_benchmark(
@@ -37,6 +50,11 @@ result = run_cross_dataset_event_validation(prepared)
 print(result.summary)
 print(result.report_fingerprint_sha256)
 ```
+
+Each dataset preparation report carries any available source-audit report, specification, and
+manifest fingerprints into the cross-dataset result fingerprint. This makes the future model report
+cryptographically dependent on the reviewed Hollywood2EM source identity rather than only on a
+caller-provided coordinate flag.
 
 ## Validation design
 
@@ -53,5 +71,6 @@ should only be compared when both corpora provide sufficiently comparable visual
 
 The current Lund2013/Hollywood2 protocol is a candidate external-generalisation design. It cannot
 establish native 60 Hz tracker validity because both corpora are natively 500 Hz. Frozen empirical
-reports should only be created after Hollywood2 participant identities, coordinate units, and raw
-data reuse terms have been audited from an authoritative local copy.
+reports should only be created after an authoritative Hollywood2EM copy has passed the reviewed
+source audit covering exact files, participant identities, coordinate units, and current
+analysis/reuse terms.
