@@ -9,6 +9,10 @@ while validation evidence is being established.
 
 ### Added
 
+- Native-rate human-human event agreement with complete sample/gaze-identity verification,
+  all-label and analysis-label sample agreement, bidirectional event-boundary metrics, source/spec
+  fingerprints, and the `gazeforge native-event-agreement` CLI. This adds infrastructure only;
+  no GP3-specific human-agreement result is claimed until a real expert-labelled corpus is run.
 - Native-rate human event benchmark intake with explicit JSON evidence specifications, global and
   per-participant/trial sampling-rate verification, multi-annotator stream selection, source/spec
   SHA-256 provenance, matched participant-held-out I-VT/RandomForest/ContextMLP validation, and the
