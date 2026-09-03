@@ -40,6 +40,8 @@ nav:
   - Home: index.md
   - Start:
       - Getting started: getting-started.md
+      - For Gazepoint / GP3: gazepoint-gp3.md
+      - Research workflows: research-workflows.md
       - Architecture: architecture.md
       - Scientific governance: scientific-governance.md
   - Methods:
