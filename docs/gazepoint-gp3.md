@@ -140,11 +140,39 @@ GazeForge stores training-rate metadata and refuses materially incompatible infe
 
 ### Important evidence limit
 
-The package currently has strong **derived 60 Hz validation infrastructure** based on expert-labelled high-rate benchmarks, plus native lower-rate human evidence from other hardware/task domains. This does **not** yet establish GP3-specific event-classification validity.
+The package has frozen **derived 60 Hz human-reference evidence** from Lund2013 and now also has a dedicated native-rate expert-label intake and benchmark runner. This still does **not** establish GP3-specific event-classification validity by itself.
 
-A native 60 Hz/GP3-class manually labelled event corpus remains an explicit validation target.
+A real native 60 Hz/GP3-class manually labelled event corpus remains required. The new intake exists so that corpus can be verified, benchmarked, fingerprinted, and reported without a one-off analysis script once the empirical data are available.
 
-See [Validation status](validation-status.md).
+See [Validation status](validation-status.md) and [Native 60 Hz expert-event validation](native-60hz-validation.md).
+
+## Prepare a native GP3 expert benchmark
+
+Start from the non-executable protocol template:
+
+```text
+validation/protocols/native-60hz-expert-event-template.json
+```
+
+Keep `dataset_status` as `template` while the file still contains placeholders. Change it to `empirical` only after real data provenance, tracker information, reuse status, expert annotation protocol, and column mapping have been documented.
+
+The input benchmark table must contain native sample timestamps and manual event labels. For a long-format multi-annotator table, map an `annotator_id` field and select the annotation stream explicitly.
+
+Example using a predeclared pixel-velocity I-VT threshold:
+
+```bash
+gazeforge native-event-benchmark \
+  gp3-expert-events.csv \
+  gp3-native-spec.json \
+  --annotator expert-a \
+  --ivt-threshold-px-s 700 \
+  --n-splits 5 \
+  --output validation/gp3-native-expert-a.json
+```
+
+For angular I-VT, provide the explicit screen dimensions and viewing distance in the benchmark table and use `--ivt-threshold-deg-s`. GazeForge intentionally provides no default native-device I-VT threshold.
+
+Before model evaluation, the native intake checks the global inferred rate and every participant/trial median rate against the declared acquisition rate. It rejects rate-incompatible tables, duplicate sample keys, incomplete manual labels, ambiguous multi-annotator selection, and template specifications. The frozen report records `resampling: null` only after those checks pass.
 
 ## Semantic AOIs for experimental stimuli
 
@@ -177,6 +205,8 @@ For a new 60 Hz study, a conservative workflow is:
 7. keep participant/stimulus groups separated during model evaluation;
 8. freeze model cards, fingerprints, exclusions, and review decisions;
 9. report the exact GazeForge version/commit and sampling-rate assumptions in the manuscript.
+
+For a validation study intended to support GP3-specific event claims, also preserve the manual annotation protocol, expert identities/roles or anonymized expertise descriptions, source-file fingerprint, protocol specification, and human-human agreement evidence where multiple annotators are available.
 
 ## What GazeForge should not replace
 
