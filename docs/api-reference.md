@@ -156,3 +156,10 @@ The public API is intentionally organised around scientific workflow layers rath
     options:
       show_root_heading: true
       show_source: false
+
+### Gaze-in-the-Wild model validation
+
+::: gazeforge.gaze_in_wild_validation
+    options:
+      show_root_heading: true
+      show_source: false

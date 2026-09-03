@@ -72,3 +72,14 @@ def test_gaze_in_wild_labeller_agreement_is_exposed_from_top_level_api():
     assert callable(gazeforge.run_gaze_in_wild_labeller_agreement)
     assert "GazeInWildLabellerAgreementRun" in gazeforge.__all__
     assert "run_gaze_in_wild_labeller_agreement" in gazeforge.__all__
+
+
+def test_gaze_in_wild_model_validation_is_exposed_from_top_level_api():
+    assert gazeforge.GazeInWildPreparedBenchmark.__name__ == "GazeInWildPreparedBenchmark"
+    assert gazeforge.GazeInWildModelValidationRun.__name__ == "GazeInWildModelValidationRun"
+    assert callable(gazeforge.prepare_gaze_in_wild_benchmark)
+    assert callable(gazeforge.run_gaze_in_wild_model_validation)
+    assert "GazeInWildPreparedBenchmark" in gazeforge.__all__
+    assert "GazeInWildModelValidationRun" in gazeforge.__all__
+    assert "prepare_gaze_in_wild_benchmark" in gazeforge.__all__
+    assert "run_gaze_in_wild_model_validation" in gazeforge.__all__
