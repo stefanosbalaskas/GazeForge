@@ -63,3 +63,12 @@ def test_gaze_in_wild_source_audit_is_exposed_from_top_level_api():
     assert callable(gazeforge.load_gaze_in_wild_source_audit_spec)
     assert "GazeInWildSourceAuditRun" in gazeforge.__all__
     assert "audit_gaze_in_wild_source" in gazeforge.__all__
+
+
+def test_gaze_in_wild_labeller_agreement_is_exposed_from_top_level_api():
+    assert gazeforge.GazeInWildLabellerAgreementRun.__name__ == (
+        "GazeInWildLabellerAgreementRun"
+    )
+    assert callable(gazeforge.run_gaze_in_wild_labeller_agreement)
+    assert "GazeInWildLabellerAgreementRun" in gazeforge.__all__
+    assert "run_gaze_in_wild_labeller_agreement" in gazeforge.__all__
