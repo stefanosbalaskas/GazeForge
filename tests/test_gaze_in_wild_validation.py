@@ -126,7 +126,7 @@ def test_prepare_gaze_in_wild_uses_each_file_rate_before_common_downsampling(tmp
     )
 
     report = prepared.preparation_report
-    assert report["source_sampling_rates_hz"] == [90.0, 100.0, 120.0]
+    assert report["source_sampling_rates_hz"] == pytest.approx([90.0, 100.0, 120.0])
     assert report["analysis_sampling_rate_hz"] == 60.0
     assert report["sampling_origin"] == "resampled"
     assert report["participant_count"] == 3
