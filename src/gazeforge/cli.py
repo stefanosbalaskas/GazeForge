@@ -10,6 +10,7 @@ from pathlib import Path
 from . import __version__
 from .benchmarks import freeze_benchmark_report
 from .lund_benchmark import compare_lund2013_annotators, run_lund2013_event_benchmark
+from .lund_fetch import fetch_lund2013_dataset
 from .lund_sensitivity import run_lund2013_sampling_sensitivity
 
 
@@ -30,6 +31,13 @@ def _float_tuple(value: str) -> tuple[float, ...]:
         raise argparse.ArgumentTypeError("value must be comma-separated numbers") from exc
     if not values:
         raise argparse.ArgumentTypeError("value must contain at least one number")
+    return values
+
+
+def _string_tuple(value: str) -> tuple[str, ...]:
+    values = tuple(part.strip() for part in value.split(",") if part.strip())
+    if not values:
+        raise argparse.ArgumentTypeError("value must contain at least one item")
     return values
 
 
@@ -61,6 +69,25 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="gazeforge", description="Auditable AI for eye tracking.")
     parser.add_argument("--version", action="store_true", help="Print installed GazeForge version.")
     subparsers = parser.add_subparsers(dest="command")
+
+    fetch = subparsers.add_parser(
+        "lund2013-fetch",
+        help="Fetch the pinned external Lund2013 labelled files into a local cache.",
+    )
+    fetch.add_argument("destination", type=Path)
+    fetch.add_argument(
+        "--annotators",
+        type=_string_tuple,
+        default=("RA", "MN"),
+        help="Comma-separated annotators to fetch: RA,MN.",
+    )
+    fetch.add_argument(
+        "--families",
+        type=_string_tuple,
+        default=("dots", "img", "video"),
+        help="Comma-separated stimulus families: dots,img,video.",
+    )
+    fetch.add_argument("--overwrite", action="store_true")
 
     benchmark = subparsers.add_parser(
         "lund2013-benchmark",
@@ -125,6 +152,28 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.version:
         print(__version__)
+        return 0
+
+    if args.command == "lund2013-fetch":
+        result = fetch_lund2013_dataset(
+            args.destination,
+            annotators=args.annotators,
+            stimulus_families=args.families,
+            overwrite=args.overwrite,
+        )
+        print(
+            json.dumps(
+                {
+                    "dataset": "Lund2013",
+                    "destination": str(result.root),
+                    "file_count": len(result.files),
+                    "source_commit": result.manifest["commit"],
+                    "manifest": str(result.manifest_path),
+                    "manifest_fingerprint_sha256": result.manifest_fingerprint_sha256,
+                },
+                sort_keys=True,
+            )
+        )
         return 0
 
     if args.command == "lund2013-benchmark":
