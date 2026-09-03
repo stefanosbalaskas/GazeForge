@@ -13,6 +13,7 @@ from .lund_benchmark import compare_lund2013_annotators, run_lund2013_event_benc
 from .lund_fetch import fetch_lund2013_dataset
 from .lund_sensitivity import run_lund2013_sampling_sensitivity
 from .lund_suite import run_lund2013_benchmark_suite, validate_lund2013_suite_manifest
+from .native_agreement import run_native_event_file_annotator_agreement
 from .native_event import run_native_event_file_benchmark
 
 
@@ -236,6 +237,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
     native.add_argument("--output", type=Path)
     native.add_argument("--overwrite", action="store_true")
+
+    native_agreement = subparsers.add_parser(
+        "native-event-agreement",
+        help=(
+            "Verify two native human annotation streams and quantify sample-label plus "
+            "event-boundary agreement."
+        ),
+    )
+    native_agreement.add_argument(
+        "data",
+        type=Path,
+        help="Native multi-annotator human-labelled CSV or TSV table.",
+    )
+    native_agreement.add_argument(
+        "spec",
+        type=Path,
+        help="Native benchmark JSON specification with an annotator_id mapping.",
+    )
+    native_agreement.add_argument("--left-annotator", required=True)
+    native_agreement.add_argument("--right-annotator", required=True)
+    native_agreement.add_argument("--event-min-iou", type=float, default=0.50)
+    native_agreement.add_argument("--output", type=Path)
+    native_agreement.add_argument("--overwrite", action="store_true")
     return parser
 
 
@@ -384,6 +408,22 @@ def main(argv: Sequence[str] | None = None) -> int:
             output=args.output,
             overwrite=args.overwrite,
             benchmark=run.prepared.dataset_card.name,
+        )
+        return 0
+
+    if args.command == "native-event-agreement":
+        run = run_native_event_file_annotator_agreement(
+            args.data,
+            args.spec,
+            left_annotator=args.left_annotator,
+            right_annotator=args.right_annotator,
+            event_min_iou=args.event_min_iou,
+        )
+        _print_or_freeze(
+            run.report,
+            output=args.output,
+            overwrite=args.overwrite,
+            benchmark=run.report["benchmark"]["name"],
         )
         return 0
 
