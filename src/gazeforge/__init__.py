@@ -103,6 +103,10 @@ from .model_cards import ModelCard
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
 from .qc import ai_flag_anomalies, detect_calibration_drift, score_trial_quality
 from .resampling import BenchmarkResamplingResult, resample_labeled_gaze
+from .sampling_sensitivity import (
+    SamplingSensitivityResult,
+    evaluate_sampling_purity_sensitivity,
+)
 from .scanpath import (
     ScanpathEmbeddingModel,
     cluster_scanpaths_ai,
@@ -159,6 +163,7 @@ __all__ = [
     "Lund2013PreparedBenchmark",
     "ModelCard",
     "ProvenanceRecord",
+    "SamplingSensitivityResult",
     "ScanpathEmbeddingModel",
     "TemporalContextModel",
     "adapt_gazepoint_samples",
@@ -196,6 +201,7 @@ __all__ = [
     "evaluate_event_calibration",
     "evaluate_sample_event_predictions",
     "evaluate_event_predictions",
+    "evaluate_sampling_purity_sensitivity",
     "expected_calibration_error",
     "fixation_assignment_agreement",
     "freeze_benchmark_report",
