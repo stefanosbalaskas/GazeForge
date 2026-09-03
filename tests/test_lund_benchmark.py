@@ -5,10 +5,10 @@ from scipy.io import savemat
 
 from gazeforge import (
     compare_lund2013_annotators,
+    lund_fetch,
     prepare_lund2013_benchmark,
     run_lund2013_event_benchmark,
 )
-from gazeforge import lund_fetch
 
 
 def _write_recording(path, *, phase=0.0, annotator_offset=0):
