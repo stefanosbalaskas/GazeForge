@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+import gazeforge
 from gazeforge.benchmarks import (
     BenchmarkDatasetCard,
     benchmark_fingerprint,
@@ -43,6 +44,12 @@ def _report():
 
 def _write(path, payload):
     path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def test_dashboard_public_api_is_exposed():
+    assert callable(gazeforge.build_benchmark_dashboard)
+    assert callable(gazeforge.validate_frozen_benchmark_report)
+    assert issubclass(gazeforge.BenchmarkIntegrityError, ValueError)
 
 
 def test_valid_report_recomputes_fingerprint():
