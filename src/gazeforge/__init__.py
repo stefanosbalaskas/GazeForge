@@ -94,6 +94,16 @@ from .gaze_in_wild import (
     load_gaze_in_wild_directory,
     load_gaze_in_wild_mat,
 )
+from .gaze_in_wild_audit import (
+    GazeInWildAuditedFile,
+    GazeInWildLabelFileRecord,
+    GazeInWildProcessFileRecord,
+    GazeInWildSourceAuditRun,
+    GazeInWildSourceAuditSpec,
+    audit_gaze_in_wild_source,
+    audited_gaze_in_wild_files_by_labeller,
+    load_gaze_in_wild_source_audit_spec,
+)
 from .geometry import angular_kinematic_features, pixels_to_visual_angle_deg
 from .hollywood2 import (
     HOLLYWOOD2_ANNOTATOR_COLUMNS,
@@ -214,6 +224,11 @@ __all__ = [
     "EventModelComparison",
     "GAZE_IN_WILD_LABELS",
     "GazeFrame",
+    "GazeInWildAuditedFile",
+    "GazeInWildLabelFileRecord",
+    "GazeInWildProcessFileRecord",
+    "GazeInWildSourceAuditRun",
+    "GazeInWildSourceAuditSpec",
     "HuggingFaceZeroShotAOIProvider",
     "HOLLYWOOD2_ANNOTATOR_COLUMNS",
     "HOLLYWOOD2_EVENT_LABELS",
@@ -254,7 +269,9 @@ __all__ = [
     "aois_to_frame",
     "apply_aoi_review",
     "assert_no_group_leakage",
+    "audit_gaze_in_wild_source",
     "audit_hollywood2_source",
+    "audited_gaze_in_wild_files_by_labeller",
     "benchmark_fingerprint",
     "build_audit_report",
     "build_benchmark_dashboard",
@@ -304,6 +321,7 @@ __all__ = [
     "load_frozen_benchmark_report",
     "load_gaze_in_wild_directory",
     "load_gaze_in_wild_mat",
+    "load_gaze_in_wild_source_audit_spec",
     "load_hollywood2_arff",
     "load_hollywood2_directory",
     "load_hollywood2_source_audit_spec",
