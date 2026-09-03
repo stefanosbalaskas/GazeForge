@@ -1,0 +1,123 @@
+# API reference
+
+The public API is intentionally organised around scientific workflow layers rather than model-provider abstractions.
+
+## Top-level package
+
+::: gazeforge
+    options:
+      show_root_heading: false
+      show_source: false
+      members_order: source
+      show_signature_annotations: true
+
+## Core modules
+
+### Schema
+
+::: gazeforge.schema
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Quality control
+
+::: gazeforge.qc
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Eye events
+
+::: gazeforge.events
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Temporal event models
+
+::: gazeforge.temporal
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Semantic AOIs
+
+::: gazeforge.aoi
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Dynamic AOIs
+
+::: gazeforge.dynamic_aoi
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Scanpaths
+
+::: gazeforge.scanpath
+    options:
+      show_root_heading: true
+      show_source: false
+
+## Validation modules
+
+### Model comparison
+
+::: gazeforge.comparison
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Event-level evaluation
+
+::: gazeforge.event_evaluation
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Sampling sensitivity
+
+::: gazeforge.sampling_sensitivity
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Lund sensitivity workflow
+
+::: gazeforge.lund_sensitivity
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Cross-dataset validation
+
+::: gazeforge.cross_dataset
+    options:
+      show_root_heading: true
+      show_source: false
+
+## Benchmark adapters
+
+### Lund2013
+
+::: gazeforge.lund2013
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Hollywood2EM
+
+::: gazeforge.hollywood2
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Gaze-in-the-Wild
+
+::: gazeforge.gaze_in_wild
+    options:
+      show_root_heading: true
+      show_source: false
