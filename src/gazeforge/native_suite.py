@@ -232,7 +232,9 @@ def validate_native_event_suite_manifest(
         if not relative_text or relative_text in paths:
             raise BenchmarkIntegrityError("Suite report paths must be unique and non-empty.")
         if not claimed_child:
-            raise BenchmarkIntegrityError("Native event suite report row is missing its fingerprint.")
+            raise BenchmarkIntegrityError(
+                "Native event suite report row is missing its fingerprint."
+            )
         names.add(name)
         paths.add(relative_text)
         child_path = _safe_child_path(manifest_path.parent, relative_text)
