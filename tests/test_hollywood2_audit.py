@@ -3,7 +3,9 @@ from pathlib import Path
 
 import pytest
 
+from gazeforge.cross_dataset import prepare_cross_dataset_event_benchmark
 from gazeforge.exceptions import SchemaError
+from gazeforge.hollywood2 import load_hollywood2_directory
 from gazeforge.hollywood2_audit import (
     Hollywood2SourceAuditSpec,
     Hollywood2SourceFileRecord,
@@ -73,6 +75,16 @@ def _fixture(root: Path) -> Hollywood2SourceAuditSpec:
     return _empirical_spec(root)
 
 
+def _identity_parser(spec: Hollywood2SourceAuditSpec):
+    records = {item.path: item for item in spec.files}
+
+    def parser(relative: Path) -> tuple[str, str]:
+        item = records[relative.as_posix()]
+        return item.participant_id, item.trial_id
+
+    return parser
+
+
 def test_hollywood2_source_audit_verifies_inventory_identities_and_gaze(tmp_path):
     spec = _fixture(tmp_path)
     run = audit_hollywood2_source(tmp_path, spec)
@@ -97,6 +109,34 @@ def test_audited_loader_selects_expert_or_student_only_after_full_audit(tmp_path
     assert expert.metadata["coordinate_unit_verified"] is True
     with pytest.raises(ValueError, match="annotator"):
         load_audited_hollywood2_directory(tmp_path, spec, annotator="third-labeller")
+
+
+def test_cross_dataset_hollywood2_requires_source_audit_not_only_pixel_assertion(tmp_path):
+    spec = _fixture(tmp_path)
+    direct = load_hollywood2_directory(
+        tmp_path,
+        identity_parser=_identity_parser(spec),
+        coordinate_unit="pixels",
+    )
+    audited = load_audited_hollywood2_directory(tmp_path, spec)
+    other = audited.copy()
+    other.data["dataset_id"] = "Other"
+    other.metadata["source_dataset"] = "Other"
+
+    with pytest.raises(SchemaError, match="source-audit"):
+        prepare_cross_dataset_event_benchmark(
+            {"Hollywood2EM": direct, "Other": other},
+            target_sampling_rate_hz=500.0,
+        )
+
+    prepared = prepare_cross_dataset_event_benchmark(
+        {"Hollywood2EM": audited, "Other": other},
+        target_sampling_rate_hz=500.0,
+    )
+    report = prepared.dataset_reports["Hollywood2EM"]
+    assert report["source_audit_status"] == "verified"
+    assert len(report["source_audit_report_fingerprint_sha256"]) == 64
+    assert prepared.design["require_source_audits"] is True
 
 
 def test_hollywood2_source_audit_rejects_tampered_file(tmp_path):
