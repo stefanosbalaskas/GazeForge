@@ -380,7 +380,11 @@ def prepare_gaze_in_wild_benchmark(
     )
     origins = {str(report["sampling_origin"]) for report in file_reports}
     sampling_origin = (
-        "native" if origins == {"native"} else "resampled" if origins == {"resampled"} else "mixed"
+        "native"
+        if origins == {"native"}
+        else "resampled"
+        if origins == {"resampled"}
+        else "mixed"
     )
     reference_strength = (
         "human-reference" if sampling_origin == "native" else "derived-human-reference"
@@ -426,7 +430,10 @@ def prepare_gaze_in_wild_benchmark(
         "claim_limits": [
             "The selected human labeller is an explicit reference stream, not ground truth.",
             "Files are never upsampled; any lower-rate preparation is explicitly derived.",
-            "Published 120 Hz hardware provenance is not substituted for timestamp-inferred file rates.",
+            (
+                "Published 120 Hz hardware provenance is not substituted for "
+                "timestamp-inferred file rates."
+            ),
             "Task labels are used only when an explicit complete mapping is supplied.",
             "This validation is not Gazepoint GP3-specific evidence.",
         ],
@@ -452,7 +459,10 @@ def prepare_gaze_in_wild_benchmark(
         notes=[
             "One audited labeller is selected explicitly before modelling.",
             "Participant identity is the protected cross-validation split unit.",
-            "Pixel-space kinematics are allowed only after an explicit source-audit compatibility gate.",
+            (
+                "Pixel-space kinematics are allowed only after an explicit "
+                "source-audit compatibility gate."
+            ),
             "Per-file cadence is preserved as provenance before any declared downsampling.",
         ],
     )
