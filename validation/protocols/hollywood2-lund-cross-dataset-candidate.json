@@ -1,6 +1,6 @@
 {
   "protocol_id": "hollywood2-lund-cross-dataset-candidate-v1",
-  "status": "candidate-pending-hollywood2-coordinate-and-identity-audit",
+  "status": "candidate-pending-hollywood2-source-audit",
   "datasets": [
     {
       "name": "Lund2013",
@@ -16,8 +16,12 @@
       "primary_annotation_column": "handlabeller_final",
       "target_sampling_rate_hz": 60.0,
       "sampling_origin_at_analysis": "resampled",
+      "source_audit_required": true,
+      "source_audit_report_fingerprint_required": true,
       "participant_identity_mapping_required": true,
       "reuse_terms_verified": false,
+      "analysis_use_permission_required": true,
+      "redistribution_permission_not_required_for_local_analysis": true,
       "coordinate_unit_verified": false,
       "coordinate_unit_required_for_modeling": true,
       "coordinate_audit_required": true
@@ -52,12 +56,13 @@
     ],
     "deterministic_baseline": "I-VT only when comparable visual-angle geometry is available",
     "unresolved_participant_ids_forbidden": true,
-    "unverified_coordinate_units_forbidden": true
+    "unverified_coordinate_units_forbidden": true,
+    "unaudited_hollywood2_source_forbidden_for_frozen_results": true
   },
   "annotation_sensitivity": {
     "hollywood2_student_column": "handlabeller_1",
     "hollywood2_expert_column": "handlabeller_final",
     "report_separately_from_cross_dataset_generalisation": true
   },
-  "claim_limit": "Both 60 Hz corpora are derived from native 500 Hz human references; Hollywood2 coordinate units and participant mapping must be audited before frozen model results. This protocol does not establish native 60 Hz device validity."
+  "claim_limit": "Both 60 Hz corpora are derived from native 500 Hz human references; Hollywood2 must pass the reviewed source audit (exact files, reuse/analysis terms, participant mapping, and coordinate units) before frozen model results. This protocol does not establish native 60 Hz device validity."
 }
