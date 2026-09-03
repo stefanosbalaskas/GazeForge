@@ -94,3 +94,17 @@ def test_directory_loader_requires_explicit_identity_parser(tmp_path):
     )
     assert set(resolved.data["participant_id"]) == {"P01"}
     assert resolved.metadata["participant_identity_resolved"] is True
+
+
+def test_directory_loader_rejects_mixed_labellers_without_selection(tmp_path):
+    _, _, label_root, process_root = _write_pair(tmp_path, recording="P01_task", labeller=1)
+    _write_pair(tmp_path, recording="P01_task", labeller=2)
+    with pytest.raises(SchemaError, match="select one labeller explicitly"):
+        load_gaze_in_wild_directory(label_root, process_root=process_root)
+    selected = load_gaze_in_wild_directory(
+        label_root,
+        process_root=process_root,
+        labeller=2,
+        participant_parser=lambda _: "P01",
+    )
+    assert set(selected.data["annotator"]) == {"labeller_2"}
