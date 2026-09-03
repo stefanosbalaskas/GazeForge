@@ -2,7 +2,11 @@ import json
 
 import pytest
 
-from gazeforge.benchmarks import BenchmarkDatasetCard, build_benchmark_report
+from gazeforge.benchmarks import (
+    BenchmarkDatasetCard,
+    benchmark_fingerprint,
+    build_benchmark_report,
+)
 from gazeforge.dashboard import (
     build_benchmark_dashboard,
     discover_frozen_benchmark_reports,
@@ -102,8 +106,6 @@ def test_missing_evidence_metadata_is_rejected():
     report = _report()
     report["benchmark"].pop("reference_strength")
     body = {key: report[key] for key in ("benchmark", "model", "protocol", "metrics")}
-    from gazeforge.benchmarks import benchmark_fingerprint
-
     report["report_fingerprint_sha256"] = benchmark_fingerprint(body)
     with pytest.raises(BenchmarkIntegrityError, match="evidence fields"):
         validate_frozen_benchmark_report(report)
