@@ -14,7 +14,7 @@ Machine learning, computer vision, temporal event modelling, semantic AOIs, scan
 
 [Get started](getting-started.md){ .md-button .md-button--primary }
 [For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
-[Validation status](validation-status.md){ .md-button }
+[Frozen evidence](frozen-evidence.md){ .md-button }
 [GitHub](https://github.com/stefanosbalaskas/GazeForge){ .md-button }
 
 </div>
@@ -61,7 +61,7 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
 
     Participant-held-out folds, leave-one-dataset-out validation, calibration, event-level metrics, evidence-aware dataset cards, fingerprints, and protected frozen reports.
 
-    [Validation status →](validation-status.md)
+    [Frozen empirical evidence →](frozen-evidence.md)
 
 </div>
 
@@ -103,7 +103,7 @@ The package does **not** infer diagnoses, emotions, personality, protected trait
 
 **Derived 60 Hz evidence is not treated as native 60 Hz validation.** A native 60 Hz/GP3-class manually labelled event corpus remains an explicit requirement before device-specific validity claims.
 
-[See the full validation matrix →](validation-status.md)
+[See the full validation matrix →](validation-status.md) · [See frozen empirical evidence →](frozen-evidence.md)
 
 ## Quick start
 
@@ -131,6 +131,6 @@ GazeForge is **alpha research software**. The architecture, tests, validation ma
 - CI spans Python 3.10, 3.12, and 3.14 on Linux, Windows, and macOS.
 - Documentation is built with `mkdocs build --strict`.
 - External benchmark files are not silently bundled or relicensed.
-- Frozen benchmark reports carry deterministic SHA-256 fingerprints.
+- Frozen benchmark reports carry deterministic SHA-256 fingerprints and are revalidated before website display.
 
 [Scientific governance →](scientific-governance.md) · [Benchmark evidence →](benchmark-evidence.md) · [Roadmap on GitHub →](https://github.com/stefanosbalaskas/GazeForge/issues)
