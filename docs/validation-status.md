@@ -16,7 +16,7 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 | Benchmark | Annotation source | Native sampling | Current GazeForge evidence | Remaining evidence work |
 | --- | --- | ---: | --- | --- |
 | **Lund2013** | paired expert manual labels | 500 Hz | **Frozen external evidence available**: native and derived-60-Hz MN/RA agreement; derived-60-Hz participant-held-out I-VT/RF/ContextMLP comparison; MN annotator sensitivity; stimulus-family summaries; 120/90/60/30-Hz × .60/.75/.90 purity sensitivity | native 60-Hz/GP3-class expert-labelled events still required for device-specific validity |
-| **Native 60 Hz / GP3-class event corpus** | intended expert manual labels | 60 Hz | **Infrastructure validated, empirical execution pending**: strict native-rate intake, source/spec fingerprints, complete multi-annotator sample/gaze-identity verification, all-label and analysis-label human agreement, bidirectional event-boundary agreement, participant-held-out I-VT/RF/ContextMLP comparison, event metrics, and non-executable protocol template | collect or independently obtain a real authoritative native corpus; document expert annotation protocol; freeze human-human and model-human reports |
+| **Native 60 Hz / GP3-class event corpus** | intended expert manual labels | 60 Hz | **Infrastructure validated, empirical execution pending**: strict native-rate intake, source/spec fingerprints, complete multi-annotator sample/gaze-identity verification, all-label and analysis-label human agreement, bidirectional event-boundary agreement, participant-held-out I-VT/RF/ContextMLP comparison, event metrics, three-report suite orchestration/verification, and non-executable protocol template | collect or independently obtain a real authoritative native corpus; document expert annotation protocol; freeze and review the complete native suite |
 | **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit annotator streams; common-label harmonisation; leave-one-dataset-out infrastructure | audit authoritative participant mapping, coordinate units, and current reuse terms before frozen cross-dataset modelling |
 | **Gaze-in-the-Wild** | five trained annotators | published 120 Hz hardware acquisition | MATLAB adapter; confidence-based track loss; single-labeller safeguard; timestamp-inferred analysis cadence; human-reference dataset card | audit authoritative copy, participant/task mapping, POR coordinate units, per-file sampling-rate distribution, and labeller agreement |
 | **VISUS** | two independent dynamic-AOI annotators | 60 Hz | dynamic track representation; time-grid matching; IoU/semantic metrics; fixation-assignment kappa; candidate protocol | verify authoritative current distribution/reuse terms; freeze human-human and model-human dynamic-AOI reports |
@@ -80,7 +80,7 @@ This prevents apparent score changes from being interpreted without accounting f
 
 ## Native 60 Hz / GP3-class intake status
 
-GazeForge now provides `NativeEventBenchmarkSpec`, `prepare_native_event_benchmark()`, `run_native_event_benchmark()`, `run_native_event_annotator_agreement()`, and the `gazeforge native-event-benchmark` / `gazeforge native-event-agreement` CLI commands. These components prepare the software for a real native expert-labelled 60 Hz corpus; they are not themselves empirical GP3 evidence.
+GazeForge now provides the native event specification/intake, individual model-human benchmark, paired human-human agreement, and three-report validation-suite APIs. CLI commands cover `native-event-benchmark`, `native-event-agreement`, `native-event-suite`, and `native-event-suite-validate`. These components prepare the software for a real native expert-labelled 60 Hz corpus; they are not themselves empirical GP3 evidence.
 
 The intake requires an explicit JSON specification and verifies:
 
@@ -94,11 +94,13 @@ The intake requires an explicit JSON specification and verifies:
 
 For paired human annotation streams, the agreement runner additionally requires complete one-to-one sample alignment and identical underlying gaze coordinates. It reports all-label and analysis-retained sample agreement plus event-level temporal agreement in both annotator directions. Analysis-excluded labels remain temporal separators during event segmentation.
 
+The native suite computes human-human agreement, primary-annotator model validation, and second-annotator sensitivity before freezing any report. It cross-checks source/specification identities across all three children and writes the completion manifest last. A child report without a valid completion manifest is therefore not treated as a complete native validation tranche.
+
 The repository template `validation/protocols/native-60hz-expert-event-template.json` has `dataset_status="template"`. GazeForge refuses to turn that template into an empirical report until a researcher replaces its placeholders with real corpus provenance and deliberately changes the status to `empirical`.
 
-The resulting reports record source-table and optional source-file fingerprints, the original specification fingerprint, observed sampling-rate provenance, agreement/model metrics, and the final deterministic benchmark fingerprint.
+The resulting reports and suite manifest record source-file and specification fingerprints, observed sampling-rate provenance, agreement/model metrics, child report fingerprints, and deterministic report/suite fingerprints.
 
-See [Native 60 Hz expert-event validation](native-60hz-validation.md).
+See [Native 60 Hz expert-event validation](native-60hz-validation.md) and [Native event validation suite](native-event-suite.md).
 
 ## Automated empirical execution
 
@@ -139,7 +141,7 @@ A 500 Hz expert-labelled corpus resampled to 60 Hz is **derived human-reference 
 Accordingly:
 
 - Lund2013-derived 60 Hz evidence cannot establish GP3-specific validity;
-- the native-event intake and agreement runner can verify and freeze a future GP3-class corpus but do not manufacture that corpus;
+- the native-event intake, agreement runner, and validation suite can verify and freeze a future GP3-class corpus but do not manufacture that corpus;
 - Gaze-in-the-Wild can contribute native lower-rate human-reference evidence but differs in hardware and naturalistic head-mounted task domain;
 - VISUS can contribute native 60 Hz human dynamic-AOI evidence, not manually labelled fixation/saccade ground truth;
 - a native 60 Hz/GP3-class manually event-labelled empirical corpus remains open.
@@ -158,4 +160,4 @@ The current external Lund result instead demonstrates that performance depends o
 
 ## Roadmap evidence gates
 
-The primary empirical work remains tracked in [GitHub Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1). The Lund tranche is frozen and the native-rate intake plus human-agreement infrastructure are implemented; the highest-priority remaining event-model gate is independent **native 60 Hz/GP3-class human event evidence**. Dynamic AOI validation remains tracked separately in the project roadmap.
+The primary empirical work remains tracked in [GitHub Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1). The Lund tranche is frozen and the native-rate intake, human-agreement workflow, and suite-completion infrastructure are implemented; the highest-priority remaining event-model gate is independent **native 60 Hz/GP3-class human event evidence**. Dynamic AOI validation remains tracked separately in the project roadmap.
