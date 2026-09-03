@@ -30,7 +30,7 @@ class VisusDynamicAOIHumanAgreementRun:
     report: dict[str, Any]
 
 
-def _verify_audit_integrity(audit: VisusSourceAuditRun) -> None:
+def _verify_audit(audit: VisusSourceAuditRun) -> None:
     if not isinstance(audit, VisusSourceAuditRun):
         raise TypeError("audit must be a VisusSourceAuditRun instance.")
     if audit.report.get("status") != "verified":
@@ -51,24 +51,13 @@ def _verify_audit_integrity(audit: VisusSourceAuditRun) -> None:
             "VISUS source-audit specification fingerprint does not revalidate."
         )
 
-    manifest_rows = [asdict(item.record) for item in audit.files]
-    expected_manifest = str(
-        audit.report.get("inventory", {}).get("manifest_fingerprint_sha256", "")
-    )
-    if benchmark_fingerprint(manifest_rows) != expected_manifest:
+    manifest = [asdict(item.record) for item in audit.files]
+    expected = str(audit.report.get("inventory", {}).get("manifest_fingerprint_sha256", ""))
+    if benchmark_fingerprint(manifest) != expected:
         raise BenchmarkIntegrityError("VISUS source manifest fingerprint does not revalidate.")
 
 
-def _audited_stimuli(audit: VisusSourceAuditRun) -> list[str]:
-    stimuli = [str(value) for value in audit.report.get("identity", {}).get("stimulus_ids", [])]
-    if not stimuli:
-        raise BenchmarkIntegrityError(
-            "VISUS source audit contains no verified stimulus identities."
-        )
-    return sorted(stimuli)
-
-
-def _require_independent_streams(audit: VisusSourceAuditRun) -> None:
+def _require_independence(audit: VisusSourceAuditRun) -> None:
     provenance = audit.report.get("annotation_provenance", {})
     if provenance.get("human_human_agreement_ready") is not True:
         raise BenchmarkIntegrityError(
@@ -81,16 +70,26 @@ def _require_independent_streams(audit: VisusSourceAuditRun) -> None:
         )
 
 
-def _validate_exact_keys(
+def _audited_stimuli(audit: VisusSourceAuditRun) -> list[str]:
+    values = audit.report.get("identity", {}).get("stimulus_ids", [])
+    stimuli = sorted(str(value) for value in values)
+    if not stimuli:
+        raise BenchmarkIntegrityError(
+            "VISUS source audit contains no verified stimulus identities."
+        )
+    return stimuli
+
+
+def _require_exact_keys(
     mapping: Mapping[str, Any],
-    expected: Sequence[str],
+    stimuli: Sequence[str],
     *,
     name: str,
 ) -> None:
     observed = {str(key) for key in mapping}
-    expected_set = set(expected)
-    missing = sorted(expected_set - observed)
-    extra = sorted(observed - expected_set)
+    expected = set(stimuli)
+    missing = sorted(expected - observed)
+    extra = sorted(observed - expected)
     if missing or extra:
         raise SchemaError(
             f"VISUS {name} must exactly cover the audited stimuli: "
@@ -98,12 +97,12 @@ def _validate_exact_keys(
         )
 
 
-def _validate_streams(
+def _require_streams(
     audit: VisusSourceAuditRun,
+    stimuli: Sequence[str],
     *,
     left_stream_id: str,
     right_stream_id: str,
-    stimuli: Sequence[str],
 ) -> tuple[str, str]:
     left = str(left_stream_id).strip()
     right = str(right_stream_id).strip()
@@ -123,7 +122,7 @@ def _validate_streams(
     return left, right
 
 
-def _validate_keyframes(
+def _keyframes(
     frames: Sequence[DynamicAOIKeyframe],
     *,
     stream_id: str,
@@ -134,23 +133,29 @@ def _validate_keyframes(
         raise SchemaError(
             f"VISUS stream {stream_id!r} has no keyframes for stimulus {stimulus_id!r}."
         )
-    for frame in values:
-        if not isinstance(frame, DynamicAOIKeyframe):
-            raise TypeError(
-                "VISUS human-reference mappings must contain DynamicAOIKeyframe objects."
-            )
+    if not all(isinstance(frame, DynamicAOIKeyframe) for frame in values):
+        raise TypeError("VISUS human-reference mappings require DynamicAOIKeyframe objects.")
     return values
 
 
-def _keyframe_fingerprint(frames: Sequence[DynamicAOIKeyframe]) -> str:
-    return benchmark_fingerprint([asdict(frame) for frame in frames])
+def _grid(values: Sequence[float], *, stimulus_id: str) -> np.ndarray:
+    grid = np.asarray(values, dtype=float)
+    if grid.ndim != 1 or grid.size == 0 or not np.isfinite(grid).all():
+        raise ValueError(
+            f"VISUS timestamp grid for {stimulus_id!r} must be finite and one-dimensional."
+        )
+    if len(np.unique(grid)) != len(grid) or np.any(np.diff(grid) <= 0):
+        raise ValueError(
+            f"VISUS timestamp grid for {stimulus_id!r} must be unique and increasing."
+        )
+    return grid
 
 
 def _aggregate(evaluations: Mapping[str, DynamicAOIEvaluation]) -> dict[str, Any]:
     summaries = [evaluation.summary for evaluation in evaluations.values()]
-    tp = int(sum(int(summary["true_positive"]) for summary in summaries))
-    fp = int(sum(int(summary["false_positive"]) for summary in summaries))
-    fn = int(sum(int(summary["false_negative"]) for summary in summaries))
+    tp = sum(int(summary["true_positive"]) for summary in summaries)
+    fp = sum(int(summary["false_positive"]) for summary in summaries)
+    fn = sum(int(summary["false_negative"]) for summary in summaries)
     precision = tp / (tp + fp) if tp + fp else 1.0
     recall = tp / (tp + fn) if tp + fn else 1.0
     f1 = 2.0 * precision * recall / (precision + recall) if precision + recall else 0.0
@@ -159,21 +164,20 @@ def _aggregate(evaluations: Mapping[str, DynamicAOIEvaluation]) -> dict[str, Any
     semantic: list[bool] = []
     for evaluation in evaluations.values():
         matched = evaluation.matches.loc[evaluation.matches["status"] == "matched"]
-        if not matched.empty:
-            ious.extend(matched["iou"].astype(float).tolist())
-            semantic.extend(matched["label_match"].astype(bool).tolist())
+        ious.extend(matched["iou"].astype(float).tolist())
+        semantic.extend(matched["label_match"].astype(bool).tolist())
 
     return {
-        "stimulus_count": int(len(evaluations)),
-        "n_timestamps": int(sum(int(summary["n_timestamps"]) for summary in summaries)),
-        "n_empty_timestamps": int(
-            sum(int(summary["n_empty_timestamps"]) for summary in summaries)
+        "stimulus_count": len(evaluations),
+        "n_timestamps": sum(int(summary["n_timestamps"]) for summary in summaries),
+        "n_empty_timestamps": sum(
+            int(summary["n_empty_timestamps"]) for summary in summaries
         ),
-        "predicted_track_timepoints": int(
-            sum(int(summary["predicted_track_timepoints"]) for summary in summaries)
+        "predicted_track_timepoints": sum(
+            int(summary["predicted_track_timepoints"]) for summary in summaries
         ),
-        "reference_track_timepoints": int(
-            sum(int(summary["reference_track_timepoints"]) for summary in summaries)
+        "reference_track_timepoints": sum(
+            int(summary["reference_track_timepoints"]) for summary in summaries
         ),
         "true_positive": tp,
         "false_positive": fp,
@@ -198,7 +202,7 @@ def _fixation_agreement(
     left_parts: list[pd.DataFrame] = []
     right_parts: list[pd.DataFrame] = []
     per_stimulus: list[dict[str, Any]] = []
-    fixation_fingerprints: list[dict[str, str]] = []
+    fingerprints: list[dict[str, str]] = []
 
     for stimulus_id in stimuli:
         fixations = fixations_by_stimulus[stimulus_id].copy()
@@ -210,11 +214,8 @@ def _fixation_agreement(
             )
         if fixations.empty:
             raise SchemaError(f"VISUS fixation table for {stimulus_id!r} is empty.")
-        fixation_fingerprints.append(
-            {
-                "stimulus_id": stimulus_id,
-                "fingerprint_sha256": fingerprint_frame(fixations),
-            }
+        fingerprints.append(
+            {"stimulus_id": stimulus_id, "fingerprint_sha256": fingerprint_frame(fixations)}
         )
 
         fixations["__visus_fixation_index"] = np.arange(len(fixations), dtype=int)
@@ -261,7 +262,7 @@ def _fixation_agreement(
     return {
         **combined,
         "per_stimulus": per_stimulus,
-        "fixation_table_fingerprints": fixation_fingerprints,
+        "fixation_table_fingerprints": fingerprints,
         "max_interpolation_gap_ms": float(max_interpolation_gap_ms),
         "overlap_rule": overlap_rule,
     }
@@ -289,13 +290,12 @@ def run_visus_dynamic_aoi_human_agreement(
 ) -> VisusDynamicAOIHumanAgreementRun:
     """Measure agreement only between independently verified VISUS AOI streams.
 
-    The runner is intentionally unusable for the ordinary single curated VISUS stream. A source
-    audit must first establish separately recoverable independent streams and set the corresponding
-    evidence gate. Directional geometry/event metrics are then reported in both stream-reference
-    directions so neither human annotation is treated as error-free ground truth.
+    The ordinary single curated VISUS stream is intentionally insufficient. The source audit must
+    first establish separately recoverable independent streams. Metrics are then computed in both
+    reference directions so neither human stream is treated as error-free ground truth.
     """
-    _verify_audit_integrity(audit)
-    _require_independent_streams(audit)
+    _verify_audit(audit)
+    _require_independence(audit)
 
     basis = str(timestamp_grid_basis).strip()
     if not basis:
@@ -308,93 +308,80 @@ def run_visus_dynamic_aoi_human_agreement(
         raise ValueError("min_iou must be finite and in [0, 1].")
 
     stimuli = _audited_stimuli(audit)
-    left_stream, right_stream = _validate_streams(
+    left_stream, right_stream = _require_streams(
         audit,
+        stimuli,
         left_stream_id=left_stream_id,
         right_stream_id=right_stream_id,
-        stimuli=stimuli,
     )
-    _validate_exact_keys(left_by_stimulus, stimuli, name="left annotation mapping")
-    _validate_exact_keys(right_by_stimulus, stimuli, name="right annotation mapping")
-    _validate_exact_keys(timestamps_by_stimulus, stimuli, name="timestamp grids")
+    _require_exact_keys(left_by_stimulus, stimuli, name="left annotation mapping")
+    _require_exact_keys(right_by_stimulus, stimuli, name="right annotation mapping")
+    _require_exact_keys(timestamps_by_stimulus, stimuli, name="timestamp grids")
     if fixations_by_stimulus is not None:
-        _validate_exact_keys(fixations_by_stimulus, stimuli, name="fixation tables")
-        if str(audit.spec.coordinate_unit).strip().lower() not in {"pixel", "pixels", "px"}:
+        _require_exact_keys(fixations_by_stimulus, stimuli, name="fixation tables")
+        coordinate_unit = str(audit.spec.coordinate_unit).strip().lower()
+        if coordinate_unit not in {"pixel", "pixels", "px"}:
             raise SchemaError(
                 "VISUS fixation-assignment agreement currently requires audited pixel coordinates."
             )
 
-    directions = (
-        ("left_to_right", left_stream, right_stream, left_by_stimulus, right_by_stimulus),
-        ("right_to_left", right_stream, left_stream, right_by_stimulus, left_by_stimulus),
-    )
-    directional_rows: list[dict[str, Any]] = []
-    per_stimulus_rows: list[dict[str, Any]] = []
-    per_timestamp_parts: list[pd.DataFrame] = []
-    match_parts: list[pd.DataFrame] = []
-    input_ledger: list[dict[str, Any]] = []
-
-    validated_left: dict[str, list[DynamicAOIKeyframe]] = {}
-    validated_right: dict[str, list[DynamicAOIKeyframe]] = {}
+    left: dict[str, list[DynamicAOIKeyframe]] = {}
+    right: dict[str, list[DynamicAOIKeyframe]] = {}
     grids: dict[str, np.ndarray] = {}
+    input_ledger: list[dict[str, Any]] = []
     for stimulus_id in stimuli:
-        left_frames = _validate_keyframes(
+        left[stimulus_id] = _keyframes(
             left_by_stimulus[stimulus_id],
             stream_id=left_stream,
             stimulus_id=stimulus_id,
         )
-        right_frames = _validate_keyframes(
+        right[stimulus_id] = _keyframes(
             right_by_stimulus[stimulus_id],
             stream_id=right_stream,
             stimulus_id=stimulus_id,
         )
-        grid = np.asarray(timestamps_by_stimulus[stimulus_id], dtype=float)
-        if grid.ndim != 1 or grid.size == 0 or not np.isfinite(grid).all():
-            raise ValueError(
-                f"VISUS timestamp grid for {stimulus_id!r} must be finite and one-dimensional."
-            )
-        if len(np.unique(grid)) != len(grid) or np.any(np.diff(grid) <= 0):
-            raise ValueError(
-                f"VISUS timestamp grid for {stimulus_id!r} must be unique and increasing."
-            )
-        validated_left[stimulus_id] = left_frames
-        validated_right[stimulus_id] = right_frames
-        grids[stimulus_id] = grid
+        grids[stimulus_id] = _grid(
+            timestamps_by_stimulus[stimulus_id],
+            stimulus_id=stimulus_id,
+        )
         input_ledger.append(
             {
                 "stimulus_id": stimulus_id,
-                "left_stream_fingerprint_sha256": _keyframe_fingerprint(left_frames),
-                "right_stream_fingerprint_sha256": _keyframe_fingerprint(right_frames),
-                "timestamp_grid_fingerprint_sha256": benchmark_fingerprint(
-                    [float(value) for value in grid]
+                "left_stream_fingerprint_sha256": benchmark_fingerprint(
+                    [asdict(frame) for frame in left[stimulus_id]]
                 ),
-                "n_timestamps": int(len(grid)),
+                "right_stream_fingerprint_sha256": benchmark_fingerprint(
+                    [asdict(frame) for frame in right[stimulus_id]]
+                ),
+                "timestamp_grid_fingerprint_sha256": benchmark_fingerprint(
+                    [float(value) for value in grids[stimulus_id]]
+                ),
+                "n_timestamps": int(len(grids[stimulus_id])),
             }
         )
 
-    for direction, predicted_stream, reference_stream, predicted_map, reference_map in directions:
+    direction_specs = (
+        ("left_to_right", left_stream, right_stream, left, right),
+        ("right_to_left", right_stream, left_stream, right, left),
+    )
+    directional_rows: list[dict[str, Any]] = []
+    stimulus_rows: list[dict[str, Any]] = []
+    timestamp_parts: list[pd.DataFrame] = []
+    match_parts: list[pd.DataFrame] = []
+
+    for direction, predicted_stream, reference_stream, predicted, reference in direction_specs:
         evaluations: dict[str, DynamicAOIEvaluation] = {}
         for stimulus_id in stimuli:
-            predicted_frames = (
-                validated_left[stimulus_id]
-                if predicted_map is left_by_stimulus
-                else validated_right[stimulus_id]
-            )
-            reference_frames = (
-                validated_right[stimulus_id]
-                if reference_map is right_by_stimulus
-                else validated_left[stimulus_id]
-            )
             evaluation = evaluate_dynamic_aoi_tracks(
-                predicted_frames,
-                reference_frames,
+                predicted[stimulus_id],
+                reference[stimulus_id],
                 timestamps_ms=grids[stimulus_id],
                 max_interpolation_gap_ms=gap,
                 min_iou=threshold,
                 require_label_match=bool(require_label_match),
             )
             evaluations[stimulus_id] = evaluation
-            per_stimulus_rows.append(
+            stimulus_rows.append(
                 {
                     "direction": direction,
                     "predicted_stream_id": predicted_stream,
@@ -406,12 +393,12 @@ def run_visus_dynamic_aoi_human_agreement(
             timestamps = evaluation.per_timestamp.copy()
             timestamps.insert(0, "stimulus_id", stimulus_id)
             timestamps.insert(0, "direction", direction)
-            per_timestamp_parts.append(timestamps)
+            timestamp_parts.append(timestamps)
             if include_matches and not evaluation.matches.empty:
-                matches = evaluation.matches.copy()
-                matches.insert(0, "stimulus_id", stimulus_id)
-                matches.insert(0, "direction", direction)
-                match_parts.append(matches)
+                matched = evaluation.matches.copy()
+                matched.insert(0, "stimulus_id", stimulus_id)
+                matched.insert(0, "direction", direction)
+                match_parts.append(matched)
 
         directional_rows.append(
             {
@@ -423,8 +410,8 @@ def run_visus_dynamic_aoi_human_agreement(
         )
 
     directional_summary = pd.DataFrame(directional_rows)
-    per_stimulus = pd.DataFrame(per_stimulus_rows)
-    per_timestamp = pd.concat(per_timestamp_parts, ignore_index=True)
+    per_stimulus = pd.DataFrame(stimulus_rows)
+    per_timestamp = pd.concat(timestamp_parts, ignore_index=True)
     matches = (
         pd.concat(match_parts, ignore_index=True)
         if match_parts
@@ -448,8 +435,8 @@ def run_visus_dynamic_aoi_human_agreement(
     if fixations_by_stimulus is not None:
         fixation_assignment = _fixation_agreement(
             fixations_by_stimulus,
-            validated_left,
-            validated_right,
+            left,
+            right,
             stimuli=stimuli,
             max_interpolation_gap_ms=gap,
             overlap_rule=overlap_rule,
@@ -476,7 +463,10 @@ def run_visus_dynamic_aoi_human_agreement(
         ),
         notes=[
             "Agreement is computed in both directional reference assignments.",
-            "The source audit must independently verify stream independence before this runner works.",
+            (
+                "The source audit must independently verify stream independence before this "
+                "runner works."
+            ),
             "Timestamp grids are external and identical across both directional evaluations.",
             "Human-human agreement describes annotation variability, not model performance.",
         ],
@@ -516,8 +506,14 @@ def run_visus_dynamic_aoi_human_agreement(
         "human_agreement_reference_not_ground_truth": True,
         "claim_limits": [
             "Human-human agreement quantifies annotation variability and is not ground truth.",
-            "This runner cannot establish that independent VISUS streams exist; the audit must do so.",
-            "No empirical agreement claim exists until real independently verified inputs are frozen.",
+            (
+                "This runner cannot establish that independent VISUS streams exist; the audit "
+                "must do so."
+            ),
+            (
+                "No empirical agreement claim exists until real independently verified inputs "
+                "are frozen."
+            ),
         ],
     }
     report = build_benchmark_report(
