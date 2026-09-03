@@ -99,6 +99,7 @@ from .lund_benchmark import (
     prepare_lund2013_benchmark,
     run_lund2013_event_benchmark,
 )
+from .lund_sensitivity import Lund2013SensitivityRun, run_lund2013_sampling_sensitivity
 from .model_cards import ModelCard
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
 from .qc import ai_flag_anomalies, detect_calibration_drift, score_trial_quality
@@ -161,6 +162,7 @@ __all__ = [
     "LUND2013_LABELS",
     "Lund2013BenchmarkRun",
     "Lund2013PreparedBenchmark",
+    "Lund2013SensitivityRun",
     "ModelCard",
     "ProvenanceRecord",
     "SamplingSensitivityResult",
@@ -234,6 +236,7 @@ __all__ = [
     "prepare_lund2013_benchmark",
     "resample_labeled_gaze",
     "run_lund2013_event_benchmark",
+    "run_lund2013_sampling_sensitivity",
     "run_cross_dataset_event_validation",
     "samples_to_event_intervals",
     "sample_label_agreement",
