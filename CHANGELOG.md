@@ -9,6 +9,12 @@ while validation evidence is being established.
 
 ### Added
 
+- Three-report native event validation-suite orchestration that computes human-human agreement,
+  primary-annotator model validation, and second-annotator sensitivity before freezing any report;
+  cross-checks source/spec fingerprints; writes the completion manifest last; validates exact child
+  inventory, safe paths, and report fingerprints; and exposes `native-event-suite` plus
+  `native-event-suite-validate` CLI commands. The suite remains infrastructure until run on a real
+  audited native corpus.
 - Native-rate human-human event agreement with complete sample/gaze-identity verification,
   all-label and analysis-label sample agreement, bidirectional event-boundary metrics, source/spec
   fingerprints, and the `gazeforge native-event-agreement` CLI. This adds infrastructure only;
