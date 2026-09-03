@@ -11,6 +11,7 @@ from gazeforge.benchmarks import (
 from gazeforge.dashboard import (
     build_benchmark_dashboard,
     discover_frozen_benchmark_reports,
+    discover_visus_dynamic_aoi_suite_manifests,
     load_frozen_benchmark_report,
     render_benchmark_dashboard_markdown,
     validate_frozen_benchmark_report,
@@ -70,6 +71,29 @@ def test_protocol_json_is_not_discovered_as_performance_evidence(tmp_path):
     _write(tmp_path / "protocol.json", {"benchmark": "candidate", "status": "planned"})
     _write(tmp_path / "report.json", _report())
     assert [path.name for path in discover_frozen_benchmark_reports(tmp_path)] == ["report.json"]
+
+
+def test_fingerprinted_provenance_json_is_not_promoted_to_performance_evidence(tmp_path):
+    provenance = {
+        "status": "verified-canonical-intake",
+        "source_manifest_fingerprint_sha256": "a" * 64,
+    }
+    provenance["report_fingerprint_sha256"] = benchmark_fingerprint(provenance)
+    _write(tmp_path / "intake.json", provenance)
+    _write(tmp_path / "report.json", _report())
+
+    discovered = discover_frozen_benchmark_reports(tmp_path)
+    assert [path.name for path in discovered] == ["report.json"]
+
+
+def test_visus_suite_manifest_discovery_is_filename_specific(tmp_path):
+    nested = tmp_path / "visus"
+    nested.mkdir()
+    expected = nested / "visus-dynamic-aoi-suite-manifest.json"
+    _write(expected, {"suite": "placeholder"})
+    _write(nested / "other-manifest.json", {"suite": "placeholder"})
+
+    assert discover_visus_dynamic_aoi_suite_manifests(tmp_path) == (expected,)
 
 
 def test_dashboard_rejects_duplicate_frozen_report(tmp_path):
