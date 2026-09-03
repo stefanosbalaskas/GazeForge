@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Callable, Mapping
 from dataclasses import asdict, dataclass, field
 from pathlib import Path, PurePosixPath
-from typing import Any, Mapping
+from typing import Any
 
 import numpy as np
-import pandas as pd
 
 from .benchmarks import benchmark_fingerprint
 from .exceptions import SchemaError
@@ -34,14 +34,17 @@ class Hollywood2SourceFileRecord:
     def __post_init__(self) -> None:
         """Reject unsafe paths, weak digests, and unresolved identities."""
         path = PurePosixPath(str(self.path))
-        if path.is_absolute() or not path.parts or any(part in {"", ".", ".."} for part in path.parts):
+        unsafe_part = any(part in {"", ".", ".."} for part in path.parts)
+        if path.is_absolute() or not path.parts or unsafe_part:
             raise ValueError("Hollywood2 manifest paths must be safe relative POSIX paths.")
         if path.suffix.lower() != ".arff":
             raise ValueError("Hollywood2 source-manifest entries must reference .arff files.")
         self.path = path.as_posix()
         self.sha256 = str(self.sha256).strip().lower()
         if _SHA256_RE.fullmatch(self.sha256) is None:
-            raise ValueError("Hollywood2 source-file sha256 must contain exactly 64 hex characters.")
+            raise ValueError(
+                "Hollywood2 source-file sha256 must contain exactly 64 hex characters."
+            )
         if int(self.bytes) <= 0:
             raise ValueError("Hollywood2 source-file byte size must be positive.")
         self.bytes = int(self.bytes)
@@ -120,16 +123,23 @@ class Hollywood2SourceAuditSpec:
         self.sampling_rate_tolerance_fraction = tolerance
         self.coordinate_unit = str(self.coordinate_unit).strip().lower()
         if self.coordinate_unit != "pixels":
-            raise ValueError("Hollywood2 audited cross-dataset coordinates must be verified pixels.")
+            raise ValueError(
+                "Hollywood2 audited cross-dataset coordinates must be verified pixels."
+            )
         self.required_annotation_columns = tuple(
             str(column).strip() for column in self.required_annotation_columns
         )
-        if set(self.required_annotation_columns) != {"handlabeller_1", "handlabeller_final"}:
+        if set(self.required_annotation_columns) != {
+            "handlabeller_1",
+            "handlabeller_final",
+        }:
             raise ValueError(
                 "required_annotation_columns must contain handlabeller_1 and handlabeller_final."
             )
         self.files = [
-            item if isinstance(item, Hollywood2SourceFileRecord) else Hollywood2SourceFileRecord.from_dict(item)
+            item
+            if isinstance(item, Hollywood2SourceFileRecord)
+            else Hollywood2SourceFileRecord.from_dict(item)
             for item in self.files
         ]
         paths = [item.path for item in self.files]
@@ -137,25 +147,35 @@ class Hollywood2SourceAuditSpec:
         if len(paths) != len(set(paths)):
             raise ValueError("Hollywood2 source-manifest paths must be unique.")
         if len(identities) != len(set(identities)):
-            raise ValueError("Hollywood2 participant/trial identities must be unique per ARFF file.")
+            raise ValueError(
+                "Hollywood2 participant/trial identities must be unique per ARFF file."
+            )
         self.notes = [str(note) for note in self.notes]
 
         if self.dataset_status == "empirical":
             if not self.files:
-                raise ValueError("Empirical Hollywood2 source audits require a non-empty file manifest.")
+                raise ValueError(
+                    "Empirical Hollywood2 source audits require a non-empty file manifest."
+                )
             if not self.reuse_terms_verified:
                 raise ValueError("Empirical Hollywood2 audits require verified reuse terms.")
             if not self.analysis_use_permitted:
-                raise ValueError("Empirical Hollywood2 audits require explicit permission for analysis use.")
-            if not self.coordinate_unit_verified or not str(self.coordinate_verification_basis).strip():
                 raise ValueError(
-                    "Empirical Hollywood2 audits require a documented coordinate-unit verification basis."
+                    "Empirical Hollywood2 audits require explicit permission for analysis use."
+                )
+            if not self.coordinate_unit_verified or not str(
+                self.coordinate_verification_basis
+            ).strip():
+                raise ValueError(
+                    "Empirical Hollywood2 audits require a documented coordinate-unit "
+                    "verification basis."
                 )
             if not self.participant_identity_mapping_verified or not str(
                 self.participant_identity_mapping_basis
             ).strip():
                 raise ValueError(
-                    "Empirical Hollywood2 audits require a documented participant-identity mapping basis."
+                    "Empirical Hollywood2 audits require a documented participant-identity "
+                    "mapping basis."
                 )
 
     def to_dict(self) -> dict[str, Any]:
@@ -171,7 +191,9 @@ class Hollywood2SourceAuditSpec:
         if "required_annotation_columns" in values:
             values["required_annotation_columns"] = tuple(values["required_annotation_columns"])
         if "files" in values:
-            values["files"] = [Hollywood2SourceFileRecord.from_dict(item) for item in values["files"]]
+            values["files"] = [
+                Hollywood2SourceFileRecord.from_dict(item) for item in values["files"]
+            ]
         if "notes" in values:
             values["notes"] = list(values["notes"])
         return cls(**values)
@@ -201,7 +223,9 @@ def _data_root(root: Path) -> Path:
 
 def _verify_inventory(root: Path, spec: Hollywood2SourceAuditSpec) -> dict[str, Any]:
     data_root = _data_root(root)
-    actual_paths = sorted(path.relative_to(data_root).as_posix() for path in data_root.rglob("*.arff"))
+    actual_paths = sorted(
+        path.relative_to(data_root).as_posix() for path in data_root.rglob("*.arff")
+    )
     expected_paths = sorted(item.path for item in spec.files)
     missing = sorted(set(expected_paths) - set(actual_paths))
     extra = sorted(set(actual_paths) - set(expected_paths))
@@ -232,7 +256,9 @@ def _verify_inventory(root: Path, spec: Hollywood2SourceAuditSpec) -> dict[str, 
     }
 
 
-def _identity_parser(spec: Hollywood2SourceAuditSpec):
+def _identity_parser(
+    spec: Hollywood2SourceAuditSpec,
+) -> Callable[[Path], tuple[str, str]]:
     records = {item.path: item for item in spec.files}
 
     def parser(relative: Path) -> tuple[str, str]:
@@ -256,15 +282,20 @@ def _verify_annotation_stream_identity(left: GazeFrame, right: GazeFrame) -> Non
         "confidence",
         "source_file",
     ]
-    left_frame = left.data.loc[:, columns].sort_values(
-        ["participant_id", "trial_id", "timestamp_ms"], kind="stable"
-    ).reset_index(drop=True)
-    right_frame = right.data.loc[:, columns].sort_values(
-        ["participant_id", "trial_id", "timestamp_ms"], kind="stable"
-    ).reset_index(drop=True)
+    left_frame = (
+        left.data.loc[:, columns]
+        .sort_values(["participant_id", "trial_id", "timestamp_ms"], kind="stable")
+        .reset_index(drop=True)
+    )
+    right_frame = (
+        right.data.loc[:, columns]
+        .sort_values(["participant_id", "trial_id", "timestamp_ms"], kind="stable")
+        .reset_index(drop=True)
+    )
     if not left_frame.equals(right_frame):
         raise SchemaError(
-            "Hollywood2 student and expert annotation streams do not reference identical gaze samples."
+            "Hollywood2 student and expert annotation streams do not reference identical "
+            "gaze samples."
         )
 
 
