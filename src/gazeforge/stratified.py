@@ -240,7 +240,9 @@ def summarize_event_predictions_by_stratum(
         raise ValueError("predictions must contain at least one row.")
     for column in (stratify_col, model_col, fold_col, group_col):
         if predictions[column].isna().any():
-            raise SchemaError(f"Stratified prediction column {column!r} cannot contain missing values.")
+            raise SchemaError(
+                f"Stratified prediction column {column!r} cannot contain missing values."
+            )
     if calibration_bins < 2:
         raise ValueError("calibration_bins must be at least 2.")
     if not 0.0 <= float(event_min_iou) <= 1.0:
