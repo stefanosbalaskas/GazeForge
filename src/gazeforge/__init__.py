@@ -126,6 +126,17 @@ from .lund_suite import (
     validate_lund2013_suite_manifest,
 )
 from .model_cards import ModelCard
+from .native_event import (
+    NativeEventBenchmarkRun,
+    NativeEventBenchmarkSpec,
+    NativeEventPreparedBenchmark,
+    file_sha256,
+    load_native_event_spec,
+    load_native_event_table,
+    prepare_native_event_benchmark,
+    run_native_event_benchmark,
+    run_native_event_file_benchmark,
+)
 from .paired import PairedModelDifferences, paired_model_metric_differences
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
 from .qc import ai_flag_anomalies, detect_calibration_drift, score_trial_quality
@@ -200,6 +211,9 @@ __all__ = [
     "Lund2013PreparedBenchmark",
     "Lund2013SensitivityRun",
     "ModelCard",
+    "NativeEventBenchmarkRun",
+    "NativeEventBenchmarkSpec",
+    "NativeEventPreparedBenchmark",
     "PairedModelDifferences",
     "ProvenanceRecord",
     "SamplingSensitivityResult",
@@ -247,6 +261,7 @@ __all__ = [
     "evaluate_sampling_purity_sensitivity",
     "expected_calibration_error",
     "fetch_lund2013_dataset",
+    "file_sha256",
     "fixation_assignment_agreement",
     "freeze_benchmark_report",
     "find_scanpath_motifs",
@@ -268,6 +283,8 @@ __all__ = [
     "load_hollywood2_directory",
     "load_lund2013_directory",
     "load_lund2013_mat",
+    "load_native_event_spec",
+    "load_native_event_table",
     "map_fixations_to_aois",
     "map_fixations_to_dynamic_aois",
     "multiclass_brier_score",
@@ -278,12 +295,15 @@ __all__ = [
     "pixels_to_visual_angle_deg",
     "prepare_cross_dataset_event_benchmark",
     "prepare_lund2013_benchmark",
+    "prepare_native_event_benchmark",
     "render_benchmark_dashboard_markdown",
     "resample_labeled_gaze",
     "run_lund2013_benchmark_suite",
     "run_lund2013_event_benchmark",
     "run_lund2013_sampling_sensitivity",
     "run_cross_dataset_event_validation",
+    "run_native_event_benchmark",
+    "run_native_event_file_benchmark",
     "samples_to_event_intervals",
     "sample_label_agreement",
     "scanpath_similarity",
