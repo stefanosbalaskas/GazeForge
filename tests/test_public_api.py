@@ -52,3 +52,14 @@ def test_hollywood2_source_audit_is_exposed_from_top_level_api():
     assert callable(gazeforge.load_hollywood2_source_audit_spec)
     assert "Hollywood2SourceAuditRun" in gazeforge.__all__
     assert "audit_hollywood2_source" in gazeforge.__all__
+
+
+def test_gaze_in_wild_source_audit_is_exposed_from_top_level_api():
+    assert gazeforge.GazeInWildSourceAuditSpec.__name__ == "GazeInWildSourceAuditSpec"
+    assert gazeforge.GazeInWildLabelFileRecord.__name__ == "GazeInWildLabelFileRecord"
+    assert gazeforge.GazeInWildProcessFileRecord.__name__ == "GazeInWildProcessFileRecord"
+    assert callable(gazeforge.audit_gaze_in_wild_source)
+    assert callable(gazeforge.audited_gaze_in_wild_files_by_labeller)
+    assert callable(gazeforge.load_gaze_in_wild_source_audit_spec)
+    assert "GazeInWildSourceAuditRun" in gazeforge.__all__
+    assert "audit_gaze_in_wild_source" in gazeforge.__all__
