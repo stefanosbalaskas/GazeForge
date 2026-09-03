@@ -1,29 +1,97 @@
 site_name: GazeForge
-site_description: Auditable AI for eye-tracking analysis
+site_url: https://stefanosbalaskas.github.io/GazeForge/
+site_description: Auditable AI for eye-tracking research
+site_author: Stefanos Balaskas
+repo_name: stefanosbalaskas/GazeForge
 repo_url: https://github.com/stefanosbalaskas/GazeForge
+edit_uri: edit/main/docs/
+
 theme:
   name: material
+  language: en
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - content.code.copy
+    - content.tabs.link
+    - search.highlight
+    - search.suggest
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
 nav:
   - Home: index.md
-  - Architecture: architecture.md
-  - Adapters & validation: adapters-validation.md
-  - Benchmarking: benchmarking.md
-  - Benchmark evidence: benchmark-evidence.md
-  - Lund2013 benchmark: lund2013-benchmark.md
-  - Hollywood2 benchmark: hollywood2-benchmark.md
-  - Gaze-in-the-Wild benchmark: gaze-in-wild-benchmark.md
-  - Cross-dataset events: cross-dataset-events.md
-  - Sampling sensitivity: sampling-sensitivity.md
-  - Calibration & dataset holdouts: calibration.md
-  - Temporal models: temporal-models.md
-  - Model comparison: model-comparison.md
-  - Event-level evaluation: event-level-evaluation.md
-  - Dynamic AOIs: dynamic-aois.md
-  - Dynamic AOI evaluation: dynamic-aoi-evaluation.md
-  - Scientific governance: scientific-governance.md
+  - Start:
+      - Getting started: getting-started.md
+      - Architecture: architecture.md
+      - Scientific governance: scientific-governance.md
+  - Methods:
+      - Adapters & validation: adapters-validation.md
+      - Temporal models: temporal-models.md
+      - Model comparison: model-comparison.md
+      - Event-level evaluation: event-level-evaluation.md
+      - Dynamic AOIs: dynamic-aois.md
+      - Dynamic AOI evaluation: dynamic-aoi-evaluation.md
+      - Calibration & dataset holdouts: calibration.md
+  - Validation:
+      - Validation status: validation-status.md
+      - Benchmarking: benchmarking.md
+      - Benchmark evidence: benchmark-evidence.md
+      - Sampling sensitivity: sampling-sensitivity.md
+      - Cross-dataset events: cross-dataset-events.md
+  - Benchmarks:
+      - Lund2013 benchmark: lund2013-benchmark.md
+      - Lund2013 sensitivity: lund-sensitivity.md
+      - Hollywood2EM: hollywood2-benchmark.md
+      - Gaze-in-the-Wild: gaze-in-wild-benchmark.md
+  - API: api-reference.md
+
 plugins:
   - search
   - mkdocstrings:
       handlers:
         python:
           paths: [src]
+          options:
+            docstring_style: google
+            show_source: false
+            show_signature_annotations: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/stefanosbalaskas/GazeForge
+      name: GazeForge on GitHub

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "gazeforge"
 version = "0.1.0a1"
-description = "Auditable AI infrastructure for eye-tracking analysis."
+description = "Auditable AI infrastructure for eye-tracking research."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -16,6 +16,8 @@ keywords = [
   "eye-tracking",
   "gaze",
   "artificial-intelligence",
+  "machine-learning",
+  "computer-vision",
   "AOI",
   "scanpath",
   "quality-control",
@@ -64,6 +66,7 @@ gazeforge = "gazeforge.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/stefanosbalaskas/GazeForge"
+Documentation = "https://stefanosbalaskas.github.io/GazeForge/"
 Repository = "https://github.com/stefanosbalaskas/GazeForge"
 Issues = "https://github.com/stefanosbalaskas/GazeForge/issues"
 

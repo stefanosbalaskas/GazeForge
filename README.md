@@ -1,47 +1,81 @@
+<div align="center">
+
 # GazeForge
 
-**Auditable AI for eye-tracking analysis.**
+### Auditable AI for eye-tracking research
 
-GazeForge is a vendor-neutral Python research-software package for integrating machine learning
-and computer vision into eye-tracking analysis without turning the workflow into a black box.
+**Machine learning, computer vision, event modelling, semantic AOIs, scanpaths, validation, and provenance — without turning eye-tracking analysis into a black box.**
 
-The project is intentionally built around a scientific rule:
+[![CI](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml/badge.svg)](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml)
+[![Docs](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml/badge.svg)](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml)
+[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.12%20%7C%203.14-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-alpha-orange)](CHANGELOG.md)
 
-> AI may propose, score, classify, embed, or flag; it must not silently alter the empirical record.
+[Website](https://stefanosbalaskas.github.io/GazeForge/) · [Getting started](docs/getting-started.md) · [Architecture](docs/architecture.md) · [Validation status](docs/validation-status.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
 
-## Current alpha capabilities
+</div>
 
-- Canonical gaze schema and sampling-rate inference.
-- Gazepoint plus explicit processed-table adapters for ecosystem interoperability.
-- Stable data fingerprints and operation-level provenance.
-- Isolation-Forest quality-control flags that never delete samples.
-- Sampling-rate-aware probabilistic eye-event classification.
-- Boundary-safe temporal-context MLP event classification with explicit abstention metadata.
-- Classical pixel I-VT plus geometry-normalized angular I-VT for transparent benchmarking.
-- Participant/group-held-out validation with explicit leakage checks.
-- Leave-one-dataset-out validation and probability-calibration diagnostics.
-- Semantic rectangular AOIs with confidence, source, and model metadata.
-- Optional local Hugging Face OWL-ViT open-vocabulary AOI proposals.
-- Human review/correction of AI AOIs with a retained review log.
-- Timestamped dynamic AOI tracks with gap-limited interpolation and no extrapolation.
-- Fixation-to-AOI mapping with explicit overlap rules.
-- Semantic scanpaths, n-gram motifs, learned TF-IDF/SVD embeddings, similarity, and clustering.
-- AOI agreement, fixation-assignment agreement, and boundary-sensitivity evaluation.
-- Benchmark dataset cards and deterministic frozen validation-report infrastructure.
-- Evidence-aware benchmark taxonomy separating human, algorithmic, native, and derived references.
-- Native Lund2013 MATLAB ingestion, RA/MN agreement, and explicit 500-to-60-Hz resampling.
-- One-command matched-fold Lund2013 angular I-VT/Random Forest/ContextMLP benchmark reports.
-- Trial-level quality scores and synthetic gaze generation for examples/tests.
-- Machine-readable model cards and audit reports.
+---
 
-## Why this is not "ChatGPT for eye tracking"
+GazeForge is a vendor-neutral Python research-software package for integrating **AI into the analysis of eye-tracking data**. It is designed for research workflows where machine learning can assist with quality control, event classification, AOI construction, sequence analysis, and benchmark validation while every important transformation remains observable and auditable.
 
-GazeForge separates **AI inference** from **scientific execution**. AI outputs are ordinary tables
-with confidence scores and model metadata. Researchers can review them before downstream
-statistics. The package does not infer diagnoses, emotions, personality, protected traits, or
-other unsupported latent mental states from gaze.
+> **Scientific contract:** AI may propose, score, classify, embed, or flag. It must not silently alter the empirical record.
 
-## Install for development
+GazeForge does **not** infer diagnoses, emotions, personality, protected traits, or unsupported latent mental states from gaze.
+
+## What GazeForge adds to eye-tracking analysis
+
+| Layer | Capabilities |
+| --- | --- |
+| **Data & QC** | Canonical gaze schema, Gazepoint adapters, sampling-rate inference, anomaly flags, trial-quality scores, calibration-drift diagnostics |
+| **Eye events** | Transparent I-VT, angular I-VT, Random Forest classification, temporal-context MLP, calibrated probabilities, abstention metadata |
+| **Semantic AOIs** | Human-defined AOIs, optional OWL-ViT proposals, review/correction logs, dynamic AOI keyframes, guarded interpolation |
+| **Sequences** | Semantic scanpaths, motifs, TF-IDF/SVD embeddings, cosine similarity, clustering |
+| **Validation** | Participant-held-out folds, leave-one-dataset-out validation, calibration, event-level temporal matching, sampling/purity sensitivity |
+| **Auditability** | Data fingerprints, model cards, benchmark cards, provenance records, deterministic frozen benchmark reports |
+
+## Why this is different
+
+Many AI-assisted workflows collapse prediction and analysis into a single opaque step. GazeForge separates them.
+
+```text
+raw eye-tracking data
+        │
+        ▼
+canonical gaze table
+        │
+        ├── QC / anomaly scores ─────────────┐
+        ├── eye-event probabilities ─────────┤
+        ├── semantic AOI proposals ── review ┤
+        └── scanpath representations ────────┤
+                                             ▼
+                                  reviewed analytic table
+                                             │
+                                             ▼
+                              statistics / modelling / report
+```
+
+AI outputs remain ordinary data structures with confidence, source, model, sampling-rate, and review metadata. Researchers can inspect or correct them before downstream statistics.
+
+## Validation is part of the package
+
+GazeForge treats validation infrastructure as a core feature rather than a post-hoc demonstration.
+
+| Benchmark | Reference | Native rate | GazeForge status |
+| --- | --- | ---: | --- |
+| **Lund2013** | paired expert manual event labels | 500 Hz | adapter, human-human agreement, 60 Hz derivation, matched-fold benchmark and sensitivity tooling implemented; frozen empirical reports pending |
+| **Hollywood2EM** | expert-corrected manual event labels | 500 Hz | adapter and Lund↔Hollywood cross-dataset infrastructure implemented; coordinate/identity audit required before frozen cross-dataset results |
+| **Gaze-in-the-Wild** | five trained human annotators | published 120 Hz acquisition | native human-reference adapter and protocol implemented; file cadence inferred from timestamps; authoritative data audit pending |
+| **VISUS** | two human dynamic-AOI annotators | 60 Hz | dynamic-AOI evaluation infrastructure and candidate protocol implemented; authoritative current dataset copy pending |
+
+**Derived 60 Hz evidence is never described as native 60 Hz validation.** A genuinely native 60 Hz/GP3-class manually event-labelled corpus remains an explicit open requirement before device-specific validity claims.
+
+See the [validation status](docs/validation-status.md) and [benchmark evidence model](docs/benchmark-evidence.md).
+
+## Installation
+
+GazeForge is currently alpha research software and is developed from GitHub.
 
 ```bash
 git clone https://github.com/stefanosbalaskas/GazeForge.git
@@ -50,24 +84,16 @@ python -m pip install -e ".[dev]"
 pytest
 ```
 
-Optional semantic AOI detection:
+Optional open-vocabulary semantic AOI detection:
 
 ```bash
 python -m pip install -e ".[vision]"
 ```
 
-The optional provider uses the Transformers zero-shot object-detection pipeline. Model weights are
-not bundled into GazeForge.
-
-## Minimal example
+## Minimal workflow
 
 ```python
-from gazeforge import (
-    ai_flag_anomalies,
-    canonicalize_gaze,
-    simulate_gaze,
-    score_trial_quality,
-)
+from gazeforge import ai_flag_anomalies, canonicalize_gaze, simulate_gaze, score_trial_quality
 
 raw = simulate_gaze(n_participants=3, n_trials=2, samples_per_trial=180)
 gaze = canonicalize_gaze(raw, sampling_rate_hz=60)
@@ -77,7 +103,24 @@ quality = score_trial_quality(flagged)
 print(quality)
 ```
 
-## Semantic AOIs
+The input samples remain intact. QC adds scores and flags rather than deleting observations.
+
+## Probabilistic eye-event modelling
+
+```python
+from gazeforge import ai_classify_events, train_event_classifier
+
+model = train_event_classifier(
+    labelled_samples,
+    label_col="event_label",
+    sampling_rate_hz=60,
+)
+classified = ai_classify_events(new_samples, model, sampling_rate_hz=60)
+```
+
+A model trained at one sampling rate is not silently applied at an incompatible rate. Temporal-context models build their context windows separately inside each participant/trial boundary.
+
+## Semantic and dynamic AOIs
 
 ```python
 from gazeforge.aoi import HuggingFaceZeroShotAOIProvider, detect_semantic_aois
@@ -91,40 +134,7 @@ aois = detect_semantic_aois(
 )
 ```
 
-AI-generated AOIs should be reviewed before they are locked for confirmatory analyses.
-
-## Event classification
-
-GazeForge stores the sampling rate used to train each event model and checks it at inference.
-A model trained at 250 Hz is therefore not silently applied to a 60 Hz GP3 recording.
-
-```python
-from gazeforge.events import ai_classify_events, train_event_classifier
-
-model = train_event_classifier(
-    labelled_samples,
-    label_col="event_label",
-    sampling_rate_hz=60,
-)
-classified = ai_classify_events(new_samples, model, sampling_rate_hz=60)
-```
-
-The first temporal baseline uses boundary-safe context windows:
-
-```python
-from gazeforge import ai_classify_events_context, train_context_event_classifier
-
-model = train_context_event_classifier(
-    labelled_samples,
-    label_col="event_label",
-    sampling_rate_hz=60,
-    context_radius_ms=50,
-)
-classified = ai_classify_events_context(new_samples, model, sampling_rate_hz=60)
-```
-
-Temporal windows are built separately within each participant/trial and never cross those
-boundaries. They are specified in milliseconds and converted to samples using the recording rate.
+AI AOIs can be accepted, rejected, relabelled, or geometrically corrected while retaining the review history. Dynamic AOIs use timestamped keyframes, bounded interpolation, and no silent temporal extrapolation.
 
 ## Leakage-safe validation
 
@@ -140,68 +150,85 @@ validation = grouped_event_cross_validate(
 )
 ```
 
-A fresh event model is fitted inside every fold, and participants are kept out of the training
-partition for the fold in which they are evaluated. Equivalent grouped and dataset-held-out
-validators are available for the temporal-context model.
+Learned models are refitted inside every fold. GazeForge also provides leave-one-dataset-out validation, calibration diagnostics, matched-model comparisons, and event-level temporal IoU / boundary-error metrics.
 
-## Lund2013 empirical benchmark
+## Reproducible Lund2013 workflows
 
-GazeForge can ingest the externally maintained Lund2013 expert-labelled MATLAB recordings,
-quantify MN-vs-RA human agreement, derive a label-purity-aware 60 Hz tranche, and compare angular
-I-VT at 45°/s, Random Forest, and ContextMLP on identical participant-held-out folds. Raw benchmark
-files are not bundled or relicensed by GazeForge.
+Primary 60 Hz benchmark:
 
 ```bash
 gazeforge lund2013-benchmark /path/to/lund \
-  --annotator RA --target-rate 60 --ivt-threshold-deg-s 45 --n-splits 5 \
+  --annotator RA \
+  --target-rate 60 \
+  --ivt-threshold-deg-s 45 \
+  --n-splits 5 \
   --output validation/lund2013-ra-60hz.json
 ```
 
-See `docs/lund2013-benchmark.md` for the ambiguity protocol and planned sensitivity analyses.
+Sampling-rate × boundary-purity sensitivity analysis:
 
-## Scientific roadmap
+```bash
+gazeforge lund2013-sensitivity /path/to/lund \
+  --annotator RA \
+  --target-rates 120,90,60,30 \
+  --purities 0.60,0.75,0.90 \
+  --ivt-threshold-deg-s 45 \
+  --output validation/lund2013-ra-sensitivity.json
+```
 
-### v0.1 — auditable AI core
-- [x] canonical gaze layer
-- [x] QC anomaly scoring
-- [x] probabilistic event-model API
-- [x] semantic AOI provider API
-- [x] optional open-vocabulary vision provider
-- [x] human AOI review
-- [x] semantic scanpaths and learned embeddings
-- [x] provenance/model cards
-- [x] GP3/eyeprocesspy/gpbiometricspy-compatible adapters
-- [x] participant/group-held-out validation utilities
-- [x] benchmark cards, evaluation metrics, and frozen validation-report infrastructure
-- [x] benchmark evidence taxonomy and external validation catalog
-- [x] Lund2013 empirical benchmark ingestion, 60 Hz derivation, and report runner
-- [ ] frozen empirical performance reports from a pinned Lund2013 checkout
+Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event-boundary samples are counted before exclusion, and non-evaluable rate/purity settings remain visible in the sensitivity ledger.
 
-### v0.2 — validated temporal AI
-- [x] temporal-context MLP baseline with boundary-safe windows
-- [x] probability calibration and confidence/coverage diagnostics
-- [x] participant-held-out and dataset-held-out validation
-- [ ] temporal CNN / transformer event models under identical frozen splits
-- [x] derived 60 Hz Lund2013 benchmark protocol and runner
-- [ ] native 60 Hz expert-labelled GP3-class validation corpus
-- [x] dynamic AOI keyframes, interpolation guardrails, and fixation mapping
-- [ ] validated video/object-tracking provider implementations
+## Project status
 
-### v0.3 — multimodal and orchestration
-- gaze + pupil + EDA + PPG/HRV fusion
-- constrained natural-language analysis specifications
-- deterministic execution engine
-- ONNX export for cross-language inference
+GazeForge is under active alpha development. The software architecture, tests, CI, benchmark adapters, validation layers, and documentation are being built before any claim of mature scientific performance.
 
-## Governance
+### Implemented
 
-GazeForge is designed for observable eye-tracking outcomes and reproducible methodological
-research. Predictions must be evaluated with participant-level and, where relevant,
-stimulus-level holdouts. Model cards should state training data, sampling rates, intended use,
-known limitations, and validation evidence.
+- vendor-neutral gaze schema and Gazepoint interoperability
+- auditable QC and anomaly scoring
+- classical, probabilistic, and temporal eye-event models
+- calibration and confidence/coverage diagnostics
+- static and dynamic semantic AOIs with human review
+- semantic scanpaths, motifs, embeddings, and clustering
+- participant-held-out and dataset-held-out validation
+- sample-level and event-level benchmark metrics
+- evidence-aware benchmark taxonomy
+- Lund2013, Hollywood2EM, Gaze-in-the-Wild, and VISUS validation infrastructure
+- sampling-rate × annotation-purity sensitivity analysis
+- deterministic model/data/benchmark provenance
 
-See `docs/scientific-governance.md`.
+### Still required before a stable scientific release
+
+- frozen empirical reports from audited external dataset copies
+- native 60 Hz/GP3-class human event validation
+- validated dynamic object-detection/tracking backend results
+- broader cross-dataset validation after coordinate and identity audits
+- final API stability and release packaging
+
+The active benchmark plan is tracked in [Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1).
+
+## Relationship to the wider research-software ecosystem
+
+GazeForge is intended to complement, not replace, deterministic eye-tracking and psychophysiology tooling. Its role is the **auditable AI layer**: prediction, semantic interpretation, representation learning, validation, and provenance around ordinary research tables.
+
+## Scientific governance
+
+Confirmatory workflows should lock model/version information, sampling rates, analysis exclusions, validation splits, and human review decisions before final inference. External benchmark files remain external unless their reuse terms clearly permit redistribution.
+
+See [Scientific governance](docs/scientific-governance.md).
+
+## Documentation
+
+The documentation source lives under `docs/` and is built with MkDocs Material. The project website is configured for:
+
+**https://stefanosbalaskas.github.io/GazeForge/**
+
+Until GitHub Pages is enabled for the repository, the same documentation is continuously checked with `mkdocs build --strict` in CI.
+
+## Citation
+
+A software paper/citation record will be added once the first empirical benchmark tranche and public release are frozen. Until then, use the repository and version/commit SHA in reproducible work. Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff).
 
 ## License
 
-MIT.
+MIT License. External validation datasets retain their own licenses and are not silently redistributed by GazeForge.
