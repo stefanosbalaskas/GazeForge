@@ -8,7 +8,7 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 | --- | --- |
 | **Implemented** | code, tests, documentation, and reproducible interfaces exist |
 | **Infrastructure validated** | leakage guards, metrics, provenance, and benchmark execution paths are tested |
-| **Empirical execution pending** | the external benchmark is supported but a pinned/audited dataset run has not yet been frozen in the repository |
+| **Empirical execution pending** | the benchmark path is supported but a real audited dataset run has not yet been frozen in the repository |
 | **Frozen empirical evidence** | a versioned report with deterministic fingerprint has been produced from an audited dataset copy and passed the repository evidence gate |
 
 ## Current benchmark matrix
@@ -16,6 +16,7 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 | Benchmark | Annotation source | Native sampling | Current GazeForge evidence | Remaining evidence work |
 | --- | --- | ---: | --- | --- |
 | **Lund2013** | paired expert manual labels | 500 Hz | **Frozen external evidence available**: native and derived-60-Hz MN/RA agreement; derived-60-Hz participant-held-out I-VT/RF/ContextMLP comparison; MN annotator sensitivity; stimulus-family summaries; 120/90/60/30-Hz × .60/.75/.90 purity sensitivity | native 60-Hz/GP3-class expert-labelled events still required for device-specific validity |
+| **Native 60 Hz / GP3-class event corpus** | intended expert manual labels | 60 Hz | **Infrastructure validated, empirical execution pending**: strict native-rate intake, explicit multi-annotator stream selection, source/spec fingerprints, participant-held-out I-VT/RF/ContextMLP comparison, event metrics, and non-executable protocol template | collect or independently obtain a real authoritative native corpus; document expert annotation protocol; freeze human-human and model-human reports |
 | **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit annotator streams; common-label harmonisation; leave-one-dataset-out infrastructure | audit authoritative participant mapping, coordinate units, and current reuse terms before frozen cross-dataset modelling |
 | **Gaze-in-the-Wild** | five trained annotators | published 120 Hz hardware acquisition | MATLAB adapter; confidence-based track loss; single-labeller safeguard; timestamp-inferred analysis cadence; human-reference dataset card | audit authoritative copy, participant/task mapping, POR coordinate units, per-file sampling-rate distribution, and labeller agreement |
 | **VISUS** | two independent dynamic-AOI annotators | 60 Hz | dynamic track representation; time-grid matching; IoU/semantic metrics; fixation-assignment kappa; candidate protocol | verify authoritative current distribution/reuse terms; freeze human-human and model-human dynamic-AOI reports |
@@ -77,6 +78,26 @@ This prevents apparent score changes from being interpreted without accounting f
 
 [Inspect the generated frozen-evidence tables →](frozen-evidence.md)
 
+## Native 60 Hz / GP3-class intake status
+
+GazeForge now provides `NativeEventBenchmarkSpec`, `prepare_native_event_benchmark()`, `run_native_event_benchmark()`, and the `gazeforge native-event-benchmark` CLI command. These components prepare the software for a real native expert-labelled 60 Hz corpus; they are not themselves empirical GP3 evidence.
+
+The intake requires an explicit JSON specification and verifies:
+
+- the declared native rate against timestamps globally and inside every participant/trial;
+- one-to-one participant/trial/timestamp sample keys;
+- explicit human annotation provenance;
+- an explicit annotation stream when multiple annotators are present;
+- at least two retained event classes and at least two participants;
+- no resampling step before a report is allowed to claim `sampling_origin="native"`;
+- explicit screen/viewing geometry when angular I-VT is requested.
+
+The repository template `validation/protocols/native-60hz-expert-event-template.json` has `dataset_status="template"`. GazeForge refuses to turn that template into an empirical report until a researcher replaces its placeholders with real corpus provenance and deliberately changes the status to `empirical`.
+
+The resulting report records source-table and optional source-file fingerprints, the specification fingerprint, observed per-group sampling rates, exclusions, labels, matched-fold model metrics, and the final deterministic benchmark fingerprint.
+
+See [Native 60 Hz expert-event validation](native-60hz-validation.md).
+
 ## Automated empirical execution
 
 The dedicated GitHub Actions workflow uses the existing GazeForge CLI to:
@@ -116,9 +137,10 @@ A 500 Hz expert-labelled corpus resampled to 60 Hz is **derived human-reference 
 Accordingly:
 
 - Lund2013-derived 60 Hz evidence cannot establish GP3-specific validity;
+- the native-event intake can verify and freeze a future GP3-class corpus but does not manufacture that corpus;
 - Gaze-in-the-Wild can contribute native lower-rate human-reference evidence but differs in hardware and naturalistic head-mounted task domain;
 - VISUS can contribute native 60 Hz human dynamic-AOI evidence, not manually labelled fixation/saccade ground truth;
-- a native 60 Hz/GP3-class manually event-labelled corpus remains open.
+- a native 60 Hz/GP3-class manually event-labelled empirical corpus remains open.
 
 ## What GazeForge will not claim yet
 
@@ -134,4 +156,4 @@ The current external Lund result instead demonstrates that performance depends o
 
 ## Roadmap evidence gates
 
-The primary empirical work remains tracked in [GitHub Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1). The Lund tranche is frozen; the highest-priority remaining event-model gate is independent **native 60 Hz/GP3-class human event validation**. Dynamic AOI validation remains tracked separately in the project roadmap.
+The primary empirical work remains tracked in [GitHub Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1). The Lund tranche is frozen and the native-rate intake is implemented; the highest-priority remaining event-model gate is independent **native 60 Hz/GP3-class human event evidence**. Dynamic AOI validation remains tracked separately in the project roadmap.
