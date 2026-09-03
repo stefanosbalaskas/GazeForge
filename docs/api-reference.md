@@ -129,9 +129,23 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Hollywood2EM source audit
+
+::: gazeforge.hollywood2_audit
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Gaze-in-the-Wild
 
 ::: gazeforge.gaze_in_wild
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Gaze-in-the-Wild source audit
+
+::: gazeforge.gaze_in_wild_audit
     options:
       show_root_heading: true
       show_source: false
