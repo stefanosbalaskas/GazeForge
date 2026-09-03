@@ -59,6 +59,7 @@ nav:
       - Calibration & dataset holdouts: calibration.md
   - Validation:
       - Validation status: validation-status.md
+      - Native 60 Hz event validation: native-60hz-validation.md
       - Empirical execution: empirical-execution.md
       - Frozen empirical evidence: frozen-evidence.md
       - Benchmarking: benchmarking.md
