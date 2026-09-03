@@ -7,15 +7,12 @@ import pytest
 import gazeforge.sampling_sensitivity as sensitivity
 
 
-def _source_data(*, n_participants=2, alternating=False):
+def _source_data(*, n_participants=2):
     parts = []
     for participant in range(n_participants):
         n = 120
         timestamps = np.arange(n, dtype=float) * (1000.0 / 240.0)
-        if alternating:
-            labels = np.where(np.arange(n) % 2 == 0, "fixation", "saccade")
-        else:
-            labels = np.where(np.arange(n) % 40 < 24, "fixation", "saccade")
+        labels = np.where(np.arange(n) % 40 < 24, "fixation", "saccade")
         parts.append(
             pd.DataFrame(
                 {
@@ -35,6 +32,8 @@ def _fake_comparison(monkeypatch, calls):
     def fake(data, **kwargs):
         assert not data["benchmark_label_ambiguous"].any()
         assert "ambiguous" not in set(data["event_label"])
+        assert "unlabelled" not in set(data["event_label"])
+        assert "undefined" not in set(data["event_label"])
         calls.append((kwargs["sampling_rate_hz"], len(data)))
         return SimpleNamespace(
             summary=pd.DataFrame(
@@ -53,7 +52,7 @@ def _fake_comparison(monkeypatch, calls):
     monkeypatch.setattr(sensitivity, "compare_event_models_grouped", fake)
 
 
-def test_grid_records_settings_and_excludes_ambiguous_rows(monkeypatch):
+def test_grid_records_settings_and_excludes_non_analysis_rows(monkeypatch):
     calls = []
     _fake_comparison(monkeypatch, calls)
     result = sensitivity.evaluate_sampling_purity_sensitivity(
@@ -68,7 +67,8 @@ def test_grid_records_settings_and_excludes_ambiguous_rows(monkeypatch):
     assert len(result.model_metrics) == 4
     assert len(calls) == 4
     assert set(result.model_metrics["target_sampling_rate_hz"]) == {60.0, 120.0}
-    assert result.design["ambiguous_rows_used_for_modelling"] is False
+    assert result.design["excluded_rows_used_for_modelling"] is False
+    assert result.design["excluded_labels"] == ["ambiguous", "undefined", "unlabelled"]
     assert all(result.settings["retained_fraction_of_target"].between(0.0, 1.0))
 
 
@@ -128,3 +128,19 @@ def test_non_evaluable_setting_is_kept_without_model_call(monkeypatch):
     assert row["comparison_status"] == "not_evaluable"
     assert row["comparison_reason"] == "insufficient_groups_for_requested_splits"
     assert result.model_metrics.empty
+
+
+def test_lund_style_unlabelled_rows_are_excluded_after_resampling(monkeypatch):
+    calls = []
+    _fake_comparison(monkeypatch, calls)
+    source = _source_data()
+    source.loc[source.index % 20 < 5, "event_label"] = "unlabelled"
+    result = sensitivity.evaluate_sampling_purity_sensitivity(
+        source,
+        target_sampling_rates_hz=(60.0,),
+        min_label_purities=(0.75,),
+        source_sampling_rate_hz=240.0,
+        n_splits=2,
+    )
+    assert len(calls) == 1
+    assert result.settings.loc[0, "excluded_rows_after_resampling"] > 0
