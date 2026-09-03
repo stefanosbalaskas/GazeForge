@@ -1,11 +1,15 @@
-from types import SimpleNamespace
-
 import json
+from types import SimpleNamespace
 
 import pytest
 
 import gazeforge.lund_suite as lund_suite
-from gazeforge.benchmarks import BenchmarkDatasetCard, benchmark_fingerprint, build_benchmark_report
+from gazeforge.benchmarks import (
+    BenchmarkDatasetCard,
+    benchmark_fingerprint,
+    build_benchmark_report,
+)
+from gazeforge.exceptions import BenchmarkIntegrityError
 
 
 def _child_report(name: str) -> dict:
@@ -63,7 +67,9 @@ def _install_fake_analyses(monkeypatch):
     monkeypatch.setattr(
         lund_suite,
         "run_lund2013_sampling_sensitivity",
-        lambda root, **kwargs: SimpleNamespace(report=_child_report("sampling-sensitivity")),
+        lambda root, **kwargs: SimpleNamespace(
+            report=_child_report("sampling-sensitivity")
+        ),
     )
     return source
 
@@ -108,7 +114,8 @@ def test_lund_suite_freezes_five_reports_and_complete_manifest(monkeypatch, tmp_
 def test_lund_suite_preflights_protected_outputs_before_analysis(monkeypatch, tmp_path):
     output = tmp_path / "validation"
     output.mkdir()
-    (output / "lund2013-ra-60hz-primary.json").write_text("protected", encoding="utf-8")
+    target = output / "lund2013-ra-60hz-primary.json"
+    target.write_text("protected", encoding="utf-8")
     monkeypatch.setattr(
         lund_suite,
         "validate_lund2013_source_manifest",
@@ -131,6 +138,23 @@ def test_lund_suite_analysis_failure_leaves_no_frozen_evidence(monkeypatch, tmp_
     monkeypatch.setattr(lund_suite, "compare_lund2013_annotators", fail_agreement)
 
     with pytest.raises(RuntimeError, match="synthetic analysis failure"):
+        lund_suite.run_lund2013_benchmark_suite(tmp_path / "lund", output)
+
+    assert not output.exists()
+
+
+def test_lund_suite_rejects_child_report_fingerprint_mismatch(monkeypatch, tmp_path):
+    _install_fake_analyses(monkeypatch)
+    tampered = _child_report("sampling-sensitivity")
+    tampered["metrics"]["score"] = 0.9
+    monkeypatch.setattr(
+        lund_suite,
+        "run_lund2013_sampling_sensitivity",
+        lambda root, **kwargs: SimpleNamespace(report=tampered),
+    )
+    output = tmp_path / "validation"
+
+    with pytest.raises(BenchmarkIntegrityError, match="fingerprint mismatch"):
         lund_suite.run_lund2013_benchmark_suite(tmp_path / "lund", output)
 
     assert not output.exists()
