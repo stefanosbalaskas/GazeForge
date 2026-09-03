@@ -13,6 +13,7 @@ nav:
   - Hollywood2 benchmark: hollywood2-benchmark.md
   - Gaze-in-the-Wild benchmark: gaze-in-wild-benchmark.md
   - Cross-dataset events: cross-dataset-events.md
+  - Sampling sensitivity: sampling-sensitivity.md
   - Calibration & dataset holdouts: calibration.md
   - Temporal models: temporal-models.md
   - Model comparison: model-comparison.md
