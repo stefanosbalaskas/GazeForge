@@ -95,6 +95,13 @@ def test_visus_source_audit_is_exposed_from_top_level_api():
     assert "audit_visus_source" in gazeforge.__all__
 
 
+def test_visus_canonical_intake_is_exposed_from_top_level_api():
+    assert gazeforge.VisusCanonicalAOIIntakeRun.__name__ == "VisusCanonicalAOIIntakeRun"
+    assert callable(gazeforge.prepare_visus_canonical_aoi_intake)
+    assert "VisusCanonicalAOIIntakeRun" in gazeforge.__all__
+    assert "prepare_visus_canonical_aoi_intake" in gazeforge.__all__
+
+
 def test_visus_model_validation_is_exposed_from_top_level_api():
     assert gazeforge.VisusDynamicAOIModelValidationRun.__name__ == (
         "VisusDynamicAOIModelValidationRun"

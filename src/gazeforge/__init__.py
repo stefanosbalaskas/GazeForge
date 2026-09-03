@@ -221,6 +221,10 @@ from .visus_audit import (
     audit_visus_source,
     load_visus_source_audit_spec,
 )
+from .visus_intake import (
+    VisusCanonicalAOIIntakeRun,
+    prepare_visus_canonical_aoi_intake,
+)
 from .visus_validation import (
     VisusDynamicAOIModelValidationRun,
     run_visus_dynamic_aoi_model_validation,
@@ -288,6 +292,7 @@ __all__ = [
     "StratifiedEventPerformance",
     "TemporalContextModel",
     "VisusAuditedFile",
+    "VisusCanonicalAOIIntakeRun",
     "VisusDynamicAOIHumanAgreementRun",
     "VisusDynamicAOIModelValidationRun",
     "VisusSourceAuditRun",
@@ -378,6 +383,7 @@ __all__ = [
     "prepare_gaze_in_wild_benchmark",
     "prepare_lund2013_benchmark",
     "prepare_native_event_benchmark",
+    "prepare_visus_canonical_aoi_intake",
     "render_benchmark_dashboard_markdown",
     "resample_labeled_gaze",
     "run_gaze_in_wild_labeller_agreement",
