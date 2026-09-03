@@ -95,9 +95,9 @@ def paired_model_metric_differences(
     metrics: tuple[str, ...] | None = None,
     tie_tolerance: float = 1e-12,
 ) -> PairedModelDifferences:
-    """Compare model metrics on exactly matched validation folds without inferential p-values.
+    """Compare model metrics on exactly matched folds without inferential p-values.
 
-    Raw deltas are always ``model_a - model_b``. ``improvement_for_a`` multiplies that raw delta by
+    Raw deltas are always ``model_a - model_b``. ``improvement_for_a`` multiplies the raw delta by
     the registered metric direction so positive values always mean model A performed better. The
     function is deliberately descriptive: cross-validation folds share training data and are not
     treated as independent replicates for hypothesis tests or confidence intervals.
@@ -148,14 +148,18 @@ def paired_model_metric_differences(
             a = pd.to_numeric(paired[f"{metric}_a"], errors="coerce")
             b = pd.to_numeric(paired[f"{metric}_b"], errors="coerce")
             valid = a.notna() & b.notna()
-            valid_folds = paired.loc[valid, fold_col]
-            delta = (a[valid] - b[valid]).astype(float)
-            improvement = delta * float(direction)
+            fold_values = paired.loc[valid, fold_col].to_numpy()
+            value_a = a.loc[valid].to_numpy(dtype=float)
+            value_b = b.loc[valid].to_numpy(dtype=float)
+            delta_values = value_a - value_b
+            improvement_values = delta_values * float(direction)
 
-            for fold, raw_delta, oriented in zip(
-                valid_folds,
-                delta,
-                improvement,
+            for fold, a_value, b_value, raw_delta, oriented in zip(
+                fold_values,
+                value_a,
+                value_b,
+                delta_values,
+                improvement_values,
                 strict=True,
             ):
                 outcome = (
@@ -170,15 +174,15 @@ def paired_model_metric_differences(
                         "fold": fold,
                         "metric": metric,
                         "better_direction": "higher" if direction > 0 else "lower",
-                        "value_model_a": float(a.loc[valid].loc[fold == valid_folds].iloc[0]),
-                        "value_model_b": float(b.loc[valid].loc[fold == valid_folds].iloc[0]),
+                        "value_model_a": float(a_value),
+                        "value_model_b": float(b_value),
                         "delta_a_minus_b": float(raw_delta),
                         "improvement_for_a": float(oriented),
                         "outcome": outcome,
                     }
                 )
 
-            if not len(delta):
+            if not len(delta_values):
                 summary_rows.append(
                     _empty_summary_row(
                         model_a=model_a,
@@ -190,9 +194,9 @@ def paired_model_metric_differences(
                 continue
 
             outcomes = np.where(
-                np.abs(improvement.to_numpy(dtype=float)) <= tolerance,
+                np.abs(improvement_values) <= tolerance,
                 "tie",
-                np.where(improvement.to_numpy(dtype=float) > 0, "model_a", "model_b"),
+                np.where(improvement_values > 0, "model_a", "model_b"),
             )
             summary_rows.append(
                 {
@@ -200,15 +204,17 @@ def paired_model_metric_differences(
                     "model_b": model_b,
                     "metric": metric,
                     "better_direction": "higher" if direction > 0 else "lower",
-                    "n_paired_folds": int(len(delta)),
-                    "mean_delta_a_minus_b": float(delta.mean()),
-                    "median_delta_a_minus_b": float(delta.median()),
+                    "n_paired_folds": int(len(delta_values)),
+                    "mean_delta_a_minus_b": float(np.mean(delta_values)),
+                    "median_delta_a_minus_b": float(np.median(delta_values)),
                     "std_delta_a_minus_b": (
-                        float(delta.std(ddof=1)) if len(delta) > 1 else 0.0
+                        float(np.std(delta_values, ddof=1))
+                        if len(delta_values) > 1
+                        else 0.0
                     ),
-                    "min_delta_a_minus_b": float(delta.min()),
-                    "max_delta_a_minus_b": float(delta.max()),
-                    "mean_improvement_for_a": float(improvement.mean()),
+                    "min_delta_a_minus_b": float(np.min(delta_values)),
+                    "max_delta_a_minus_b": float(np.max(delta_values)),
+                    "mean_improvement_for_a": float(np.mean(improvement_values)),
                     "wins_model_a": int((outcomes == "model_a").sum()),
                     "ties": int((outcomes == "tie").sum()),
                     "wins_model_b": int((outcomes == "model_b").sum()),
