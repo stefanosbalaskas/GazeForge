@@ -23,7 +23,7 @@ jobs:
       OMP_NUM_THREADS: "1"
       OPENBLAS_NUM_THREADS: "1"
       MKL_NUM_THREADS: "1"
-      LUND_ROOT: ${{ runner.temp }}/lund2013
+      LUND_ROOT: /tmp/gazeforge-lund2013
       EVIDENCE_DIR: validation/evidence/lund2013
       EVIDENCE_BRANCH: evidence/lund2013-auto
     steps:
