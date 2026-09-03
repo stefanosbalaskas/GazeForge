@@ -1,0 +1,14 @@
+{
+  "dataset": "Lund2013",
+  "gazeforge_commit": "84fba6601843d00116c878b0f2efaef834bf9e47",
+  "generated_at_utc": "2026-09-03T10:50:28Z",
+  "kind": "gazeforge_empirical_execution_metadata",
+  "python_version": "3.12",
+  "report_count": 5,
+  "reports_verified": true,
+  "runner_os": "Linux",
+  "suite_fingerprint_sha256": "5dc6d6336b505b0a2283fe64d478a27b0394c9568a86fc4eb4d2771b8d600f93",
+  "workflow": "Lund empirical evidence",
+  "workflow_run_attempt": "1",
+  "workflow_run_id": "33745018155"
+}

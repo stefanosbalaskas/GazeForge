@@ -1,0 +1,371 @@
+{
+  "benchmark": {
+    "annotation_origin": "expert-manual",
+    "human_annotator_count": 2,
+    "license": "GPL-3.0 repository license; raw benchmark is not bundled by GazeForge",
+    "name": "Lund2013-human-agreement",
+    "notes": [
+      "Human-human agreement is a reference for annotation variability, not an error-free ceiling.",
+      "Lower-rate agreement is derived independently from each human annotation stream."
+    ],
+    "participant_count": null,
+    "reference_description": "Paired MN and RA expert annotations from the public Lund2013 benchmark.",
+    "reference_strength": "derived-human-reference",
+    "sampling_origin": "resampled",
+    "sampling_rates_hz": [
+      60.0
+    ],
+    "source": "richardandersson/EyeMovementDetectorEvaluation",
+    "split_unit": "participant_id",
+    "stimulus_count": null,
+    "task": "human-human sample-label agreement",
+    "validation_scope": "external-empirical-human-agreement",
+    "version": "Andersson-et-al-2017-public-repository"
+  },
+  "metrics": {
+    "by_stimulus_type": {
+      "image": {
+        "cohen_kappa": 0.799062511183052,
+        "confusion_matrix": {
+          "ambiguous": {
+            "ambiguous": 332,
+            "blink": 2,
+            "fixation": 76,
+            "pso": 32,
+            "pursuit": 1,
+            "saccade": 23,
+            "undefined": 0
+          },
+          "blink": {
+            "ambiguous": 10,
+            "blink": 403,
+            "fixation": 46,
+            "pso": 1,
+            "pursuit": 0,
+            "saccade": 1,
+            "undefined": 0
+          },
+          "fixation": {
+            "ambiguous": 36,
+            "blink": 2,
+            "fixation": 5587,
+            "pso": 22,
+            "pursuit": 0,
+            "saccade": 11,
+            "undefined": 0
+          },
+          "pso": {
+            "ambiguous": 54,
+            "blink": 0,
+            "fixation": 23,
+            "pso": 180,
+            "pursuit": 0,
+            "saccade": 3,
+            "undefined": 0
+          },
+          "pursuit": {
+            "ambiguous": 8,
+            "blink": 0,
+            "fixation": 204,
+            "pso": 6,
+            "pursuit": 62,
+            "saccade": 7,
+            "undefined": 12
+          },
+          "saccade": {
+            "ambiguous": 35,
+            "blink": 2,
+            "fixation": 5,
+            "pso": 15,
+            "pursuit": 0,
+            "saccade": 463,
+            "undefined": 1
+          },
+          "undefined": {
+            "ambiguous": 0,
+            "blink": 2,
+            "fixation": 0,
+            "pso": 0,
+            "pursuit": 0,
+            "saccade": 0,
+            "undefined": 1
+          }
+        },
+        "exact_agreement": 0.9165362545644236,
+        "labels": [
+          "ambiguous",
+          "blink",
+          "fixation",
+          "pso",
+          "pursuit",
+          "saccade",
+          "undefined"
+        ],
+        "n_aligned_samples": 7668
+      },
+      "moving_dot": {
+        "cohen_kappa": 0.6940732694172023,
+        "confusion_matrix": {
+          "ambiguous": {
+            "ambiguous": 35,
+            "blink": 1,
+            "fixation": 2,
+            "pso": 6,
+            "pursuit": 7,
+            "saccade": 4,
+            "undefined": 4
+          },
+          "blink": {
+            "ambiguous": 0,
+            "blink": 12,
+            "fixation": 0,
+            "pso": 0,
+            "pursuit": 0,
+            "saccade": 0,
+            "undefined": 0
+          },
+          "fixation": {
+            "ambiguous": 1,
+            "blink": 0,
+            "fixation": 124,
+            "pso": 0,
+            "pursuit": 83,
+            "saccade": 0,
+            "undefined": 1
+          },
+          "pso": {
+            "ambiguous": 3,
+            "blink": 0,
+            "fixation": 0,
+            "pso": 7,
+            "pursuit": 1,
+            "saccade": 1,
+            "undefined": 0
+          },
+          "pursuit": {
+            "ambiguous": 12,
+            "blink": 7,
+            "fixation": 12,
+            "pso": 2,
+            "pursuit": 934,
+            "saccade": 6,
+            "undefined": 2
+          },
+          "saccade": {
+            "ambiguous": 7,
+            "blink": 0,
+            "fixation": 0,
+            "pso": 0,
+            "pursuit": 2,
+            "saccade": 34,
+            "undefined": 0
+          },
+          "undefined": {
+            "ambiguous": 0,
+            "blink": 0,
+            "fixation": 2,
+            "pso": 0,
+            "pursuit": 0,
+            "saccade": 0,
+            "undefined": 13
+          }
+        },
+        "exact_agreement": 0.8747169811320755,
+        "labels": [
+          "ambiguous",
+          "blink",
+          "fixation",
+          "pso",
+          "pursuit",
+          "saccade",
+          "undefined"
+        ],
+        "n_aligned_samples": 1325
+      },
+      "video": {
+        "cohen_kappa": 0.6720015744588276,
+        "confusion_matrix": {
+          "ambiguous": {
+            "ambiguous": 104,
+            "blink": 2,
+            "fixation": 14,
+            "pso": 25,
+            "pursuit": 6,
+            "saccade": 9,
+            "undefined": 0
+          },
+          "blink": {
+            "ambiguous": 0,
+            "blink": 48,
+            "fixation": 0,
+            "pso": 0,
+            "pursuit": 0,
+            "saccade": 0,
+            "undefined": 0
+          },
+          "fixation": {
+            "ambiguous": 8,
+            "blink": 1,
+            "fixation": 1006,
+            "pso": 5,
+            "pursuit": 82,
+            "saccade": 0,
+            "undefined": 0
+          },
+          "pso": {
+            "ambiguous": 9,
+            "blink": 2,
+            "fixation": 2,
+            "pso": 30,
+            "pursuit": 3,
+            "saccade": 2,
+            "undefined": 0
+          },
+          "pursuit": {
+            "ambiguous": 17,
+            "blink": 16,
+            "fixation": 452,
+            "pso": 7,
+            "pursuit": 1498,
+            "saccade": 2,
+            "undefined": 0
+          },
+          "saccade": {
+            "ambiguous": 12,
+            "blink": 1,
+            "fixation": 1,
+            "pso": 10,
+            "pursuit": 0,
+            "saccade": 113,
+            "undefined": 1
+          },
+          "undefined": {
+            "ambiguous": 0,
+            "blink": 0,
+            "fixation": 0,
+            "pso": 0,
+            "pursuit": 0,
+            "saccade": 0,
+            "undefined": 0
+          }
+        },
+        "exact_agreement": 0.8024655963302753,
+        "labels": [
+          "ambiguous",
+          "blink",
+          "fixation",
+          "pso",
+          "pursuit",
+          "saccade",
+          "undefined"
+        ],
+        "n_aligned_samples": 3488
+      }
+    },
+    "overall": {
+      "cohen_kappa": 0.7994733696047647,
+      "confusion_matrix": {
+        "ambiguous": {
+          "ambiguous": 471,
+          "blink": 5,
+          "fixation": 92,
+          "pso": 63,
+          "pursuit": 14,
+          "saccade": 36,
+          "undefined": 4
+        },
+        "blink": {
+          "ambiguous": 10,
+          "blink": 463,
+          "fixation": 46,
+          "pso": 1,
+          "pursuit": 0,
+          "saccade": 1,
+          "undefined": 0
+        },
+        "fixation": {
+          "ambiguous": 45,
+          "blink": 3,
+          "fixation": 6717,
+          "pso": 27,
+          "pursuit": 165,
+          "saccade": 11,
+          "undefined": 1
+        },
+        "pso": {
+          "ambiguous": 66,
+          "blink": 2,
+          "fixation": 25,
+          "pso": 217,
+          "pursuit": 4,
+          "saccade": 6,
+          "undefined": 0
+        },
+        "pursuit": {
+          "ambiguous": 37,
+          "blink": 23,
+          "fixation": 668,
+          "pso": 15,
+          "pursuit": 2494,
+          "saccade": 15,
+          "undefined": 14
+        },
+        "saccade": {
+          "ambiguous": 54,
+          "blink": 3,
+          "fixation": 6,
+          "pso": 25,
+          "pursuit": 2,
+          "saccade": 610,
+          "undefined": 2
+        },
+        "undefined": {
+          "ambiguous": 0,
+          "blink": 2,
+          "fixation": 2,
+          "pso": 0,
+          "pursuit": 0,
+          "saccade": 0,
+          "undefined": 14
+        }
+      },
+      "exact_agreement": 0.8802179312555084,
+      "labels": [
+        "ambiguous",
+        "blink",
+        "fixation",
+        "pso",
+        "pursuit",
+        "saccade",
+        "undefined"
+      ],
+      "n_aligned_samples": 12481
+    }
+  },
+  "model": {
+    "models": []
+  },
+  "protocol": {
+    "left_annotator": "MN",
+    "right_annotator": "RA",
+    "sampling_rate_hz": 60.0,
+    "source_manifest": {
+      "annotators": [
+        "RA",
+        "MN"
+      ],
+      "commit": "3e12416ab3fd6254c81811cf03f8e5d67c5d7129",
+      "data_path": "annotated_data/data used in the article",
+      "file_count": 68,
+      "files_verified_at_run": true,
+      "manifest_fingerprint_sha256": "45db53af11a2014cb844a53d57279e3f30f58f963120f50a997c916d0cfcdc59",
+      "repository": "richardandersson/EyeMovementDetectorEvaluation",
+      "stimulus_families": [
+        "dots",
+        "img",
+        "video"
+      ]
+    }
+  },
+  "report_fingerprint_sha256": "0524d212e59b8756c2e1fcad04ca135f3fd33ea54d9828fb4a2289a35ad51136"
+}

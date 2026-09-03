@@ -1,0 +1,75 @@
+{
+  "protocol": {
+    "context_radius_ms": 50.0,
+    "hidden_layer_sizes": [
+      64,
+      32
+    ],
+    "ivt_velocity_threshold_deg_s": 45.0,
+    "min_label_purity": 0.75,
+    "n_estimators": 200,
+    "n_splits_requested": 5,
+    "random_state": 42,
+    "sensitivity_min_label_purities": [
+      0.6,
+      0.75,
+      0.9
+    ],
+    "sensitivity_target_rates_hz": [
+      120.0,
+      90.0,
+      60.0,
+      30.0
+    ],
+    "target_sampling_rate_hz": 60.0,
+    "temporal_max_iter": 200,
+    "temporal_solver": "adam"
+  },
+  "reports": [
+    {
+      "name": "annotator_sensitivity_mn_60hz",
+      "path": "lund2013-mn-60hz-annotator-sensitivity.json",
+      "report_fingerprint_sha256": "0c81c902e1f8afefd1e33a2ad40a0f9df3b6d737eaa390ea38311fe669cec561"
+    },
+    {
+      "name": "human_agreement_60hz",
+      "path": "lund2013-mn-vs-ra-60hz.json",
+      "report_fingerprint_sha256": "0524d212e59b8756c2e1fcad04ca135f3fd33ea54d9828fb4a2289a35ad51136"
+    },
+    {
+      "name": "human_agreement_native",
+      "path": "lund2013-mn-vs-ra-native.json",
+      "report_fingerprint_sha256": "52b070a91fcc1f90a4f2c34a0e37990f243911e6291b976eafb299b685353efd"
+    },
+    {
+      "name": "primary_ra_60hz",
+      "path": "lund2013-ra-60hz-primary.json",
+      "report_fingerprint_sha256": "4642fc76aaafba62cfc2c9f5343c18c7762ad353a034464b8e8d4d83c915db67"
+    },
+    {
+      "name": "sampling_purity_sensitivity_ra",
+      "path": "lund2013-ra-sampling-purity-sensitivity.json",
+      "report_fingerprint_sha256": "b01005c0df0ace69b42a88d9f6d70bec757be78b264efb2f6d7aaabc567cc472"
+    }
+  ],
+  "source_manifest": {
+    "annotators": [
+      "RA",
+      "MN"
+    ],
+    "commit": "3e12416ab3fd6254c81811cf03f8e5d67c5d7129",
+    "data_path": "annotated_data/data used in the article",
+    "file_count": 68,
+    "files_verified_at_run": true,
+    "manifest_fingerprint_sha256": "45db53af11a2014cb844a53d57279e3f30f58f963120f50a997c916d0cfcdc59",
+    "repository": "richardandersson/EyeMovementDetectorEvaluation",
+    "stimulus_families": [
+      "dots",
+      "img",
+      "video"
+    ]
+  },
+  "status": "complete",
+  "suite": "lund2013-event-validation-v1",
+  "suite_fingerprint_sha256": "5dc6d6336b505b0a2283fe64d478a27b0394c9568a86fc4eb4d2771b8d600f93"
+}
