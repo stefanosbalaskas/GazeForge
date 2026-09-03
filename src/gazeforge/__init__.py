@@ -142,6 +142,11 @@ from .native_event import (
     run_native_event_benchmark,
     run_native_event_file_benchmark,
 )
+from .native_suite import (
+    NativeEventValidationSuiteRun,
+    run_native_event_validation_suite,
+    validate_native_event_suite_manifest,
+)
 from .paired import PairedModelDifferences, paired_model_metric_differences
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
 from .qc import ai_flag_anomalies, detect_calibration_drift, score_trial_quality
@@ -220,6 +225,7 @@ __all__ = [
     "NativeEventBenchmarkRun",
     "NativeEventBenchmarkSpec",
     "NativeEventPreparedBenchmark",
+    "NativeEventValidationSuiteRun",
     "PairedModelDifferences",
     "ProvenanceRecord",
     "SamplingSensitivityResult",
@@ -312,6 +318,7 @@ __all__ = [
     "run_native_event_benchmark",
     "run_native_event_file_annotator_agreement",
     "run_native_event_file_benchmark",
+    "run_native_event_validation_suite",
     "samples_to_event_intervals",
     "sample_label_agreement",
     "scanpath_similarity",
@@ -327,5 +334,6 @@ __all__ = [
     "validate_frozen_benchmark_report",
     "validate_lund2013_source_manifest",
     "validate_lund2013_suite_manifest",
+    "validate_native_event_suite_manifest",
     "visus_dynamic_aoi_card",
 ]
