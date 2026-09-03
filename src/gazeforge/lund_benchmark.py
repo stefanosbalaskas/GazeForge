@@ -15,6 +15,7 @@ from .evaluation import sample_label_agreement
 from .exceptions import SchemaError
 from .lund2013 import load_lund2013_directory
 from .lund_fetch import validate_lund2013_source_manifest
+from .paired import PairedModelDifferences, paired_model_metric_differences
 from .resampling import BenchmarkResamplingResult, resample_labeled_gaze
 from .stratified import StratifiedEventPerformance, summarize_event_predictions_by_stratum
 
@@ -32,10 +33,11 @@ class Lund2013PreparedBenchmark:
 
 @dataclass(slots=True)
 class Lund2013BenchmarkRun:
-    """Prepared data, matched-fold comparison, stratified metrics, and report."""
+    """Prepared data, matched-fold comparisons, stratified metrics, and report."""
 
     prepared: Lund2013PreparedBenchmark
     comparison: EventModelComparison
+    paired_model_differences: PairedModelDifferences
     stimulus_type_performance: StratifiedEventPerformance
     report: dict[str, Any]
 
@@ -258,6 +260,7 @@ def run_lund2013_event_benchmark(
         temporal_solver=temporal_solver,
         temporal_max_iter=temporal_max_iter,
     )
+    paired_differences = paired_model_metric_differences(comparison.fold_metrics)
     stimulus_type_performance = summarize_event_predictions_by_stratum(
         comparison.predictions,
         stratify_col="stimulus_type",
@@ -273,6 +276,10 @@ def run_lund2013_event_benchmark(
     metrics = {
         "summary": _json_safe_records(comparison.summary),
         "fold_metrics": _json_safe_records(comparison.fold_metrics),
+        "paired_model_difference_summary": _json_safe_records(
+            paired_differences.summary
+        ),
+        "paired_model_fold_deltas": _json_safe_records(paired_differences.deltas),
         "stimulus_type_summary": _json_safe_records(stimulus_type_performance.summary),
         "stimulus_type_fold_metrics": _json_safe_records(
             stimulus_type_performance.fold_metrics
@@ -282,6 +289,7 @@ def run_lund2013_event_benchmark(
     protocol = {
         "preparation": prepared.preparation_report,
         "comparison_design": comparison.design,
+        "paired_model_difference_design": paired_differences.design,
         "stimulus_type_design": stimulus_type_performance.design,
     }
     report = build_benchmark_report(
@@ -293,6 +301,7 @@ def run_lund2013_event_benchmark(
     return Lund2013BenchmarkRun(
         prepared=prepared,
         comparison=comparison,
+        paired_model_differences=paired_differences,
         stimulus_type_performance=stimulus_type_performance,
         report=report,
     )
