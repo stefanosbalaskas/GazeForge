@@ -42,3 +42,13 @@ def test_paired_model_differences_are_exposed_from_top_level_api():
     assert callable(gazeforge.paired_model_metric_differences)
     assert "PairedModelDifferences" in gazeforge.__all__
     assert "paired_model_metric_differences" in gazeforge.__all__
+
+
+def test_hollywood2_source_audit_is_exposed_from_top_level_api():
+    assert gazeforge.Hollywood2SourceAuditSpec.__name__ == "Hollywood2SourceAuditSpec"
+    assert gazeforge.Hollywood2SourceFileRecord.__name__ == "Hollywood2SourceFileRecord"
+    assert callable(gazeforge.audit_hollywood2_source)
+    assert callable(gazeforge.load_audited_hollywood2_directory)
+    assert callable(gazeforge.load_hollywood2_source_audit_spec)
+    assert "Hollywood2SourceAuditRun" in gazeforge.__all__
+    assert "audit_hollywood2_source" in gazeforge.__all__
