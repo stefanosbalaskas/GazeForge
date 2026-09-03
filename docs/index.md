@@ -13,6 +13,7 @@ hide:
 Machine learning, computer vision, temporal event modelling, semantic AOIs, scanpaths, validation, and provenance — designed so AI can assist eye-tracking research **without silently rewriting the empirical record**.
 
 [Get started](getting-started.md){ .md-button .md-button--primary }
+[For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
 [Validation status](validation-status.md){ .md-button }
 [GitHub](https://github.com/stefanosbalaskas/GazeForge){ .md-button }
 
@@ -52,7 +53,7 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
 
     Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering without requiring an opaque generative model.
 
-    [Architecture →](architecture.md)
+    [Research workflows →](research-workflows.md)
 
 -   :material-shield-check-outline:{ .lg .middle } **Validation & provenance**
 
@@ -84,6 +85,8 @@ canonical gaze schema
 ```
 
 The package does **not** infer diagnoses, emotions, personality, protected traits, or unsupported latent mental states from gaze.
+
+[Choose a research workflow →](research-workflows.md)
 
 ## Validation is visible, not implied
 
