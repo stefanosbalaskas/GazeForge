@@ -52,6 +52,7 @@ nav:
       - Temporal models: temporal-models.md
       - Model comparison: model-comparison.md
       - Event-level evaluation: event-level-evaluation.md
+      - Stratified performance: stratified-event-performance.md
       - Dynamic AOIs: dynamic-aois.md
       - Dynamic AOI evaluation: dynamic-aoi-evaluation.md
       - Calibration & dataset holdouts: calibration.md
