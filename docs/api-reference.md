@@ -170,3 +170,10 @@ The public API is intentionally organised around scientific workflow layers rath
     options:
       show_root_heading: true
       show_source: false
+
+### VISUS model-human validation
+
+::: gazeforge.visus_validation
+    options:
+      show_root_heading: true
+      show_source: false
