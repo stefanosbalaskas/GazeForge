@@ -9,6 +9,16 @@ while validation evidence is being established.
 
 ### Added
 
+- Source-audit-aware Gaze-in-the-Wild human-human agreement infrastructure with source-fingerprint
+  revalidation, complete-overlap guardrails, one-to-one gaze/sample identity checks, all-label and
+  analysis-label agreement, per-trial timestamp-inferred sampling rates, invalid/unlabelled temporal
+  separators, and bidirectional event-boundary metrics. This is analysis infrastructure only; no
+  empirical labeller-agreement result is claimed without an independently audited external copy.
+- Gaze-in-the-Wild authoritative-copy audit infrastructure with exact LabelData/ProcessData MATLAB
+  manifests, SHA-256/byte-size verification, participant/trial/labeller mappings, coordinate-unit
+  evidence, analysis/reuse provenance separated from redistribution status, per-file timestamp-
+  inferred sampling-rate ledgers, multi-labeller gaze-identity verification, deterministic source
+  fingerprints, and a deliberately non-executable source-audit template.
 - Hollywood2EM authoritative-copy audit infrastructure with exact ARFF inventory checks, per-file
   SHA-256/byte-size verification, explicit participant/trial mapping, coordinate-unit evidence,
   reuse/analysis provenance kept separate from redistribution status, student/expert gaze-identity
