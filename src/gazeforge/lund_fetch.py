@@ -207,7 +207,9 @@ def validate_lund2013_source_manifest(
         resolved_root = root_path.resolve()
         for record in records:
             if not isinstance(record, dict):
-                raise BenchmarkIntegrityError("Lund2013 source manifest contains an invalid file row.")
+                raise BenchmarkIntegrityError(
+                    "Lund2013 source manifest contains an invalid file row."
+                )
             relative = Path(str(record.get("relative_path", "")))
             if not relative.parts or relative.is_absolute() or ".." in relative.parts:
                 raise BenchmarkIntegrityError("Lund2013 source manifest contains an unsafe path.")
@@ -215,7 +217,9 @@ def validate_lund2013_source_manifest(
             if local_path != resolved_root and resolved_root not in local_path.parents:
                 raise BenchmarkIntegrityError("Lund2013 source manifest path escapes the checkout.")
             if not local_path.is_file():
-                raise BenchmarkIntegrityError(f"Lund2013 source file is missing: {relative.as_posix()}")
+                raise BenchmarkIntegrityError(
+                    f"Lund2013 source file is missing: {relative.as_posix()}"
+                )
             payload = local_path.read_bytes()
             expected_size = int(record.get("size_bytes", -1))
             if len(payload) != expected_size:
