@@ -1,0 +1,30 @@
+{
+  "dataset_name": "Hollywood2EM",
+  "dataset_version": "REPLACE_WITH_AUDITED_SNAPSHOT_VERSION",
+  "source": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em",
+  "source_revision": "REPLACE_WITH_PINNED_SOURCE_REVISION",
+  "license": "VERIFY_DATASET_SPECIFIC_TERMS_BEFORE_EMPIRICAL_USE",
+  "reuse_terms_source": "REPLACE_WITH_AUTHORITATIVE_TERMS_SOURCE",
+  "dataset_status": "template",
+  "reuse_terms_verified": false,
+  "analysis_use_permitted": false,
+  "redistribution_status": "unknown",
+  "expected_sampling_rate_hz": 500.0,
+  "sampling_rate_tolerance_fraction": 0.05,
+  "coordinate_unit": "pixels",
+  "coordinate_unit_verified": false,
+  "coordinate_verification_basis": "",
+  "participant_identity_mapping_verified": false,
+  "participant_identity_mapping_basis": "",
+  "required_annotation_columns": [
+    "handlabeller_1",
+    "handlabeller_final"
+  ],
+  "files": [],
+  "notes": [
+    "This template is deliberately non-empirical and cannot certify a Hollywood2EM copy.",
+    "Populate every ARFF path, SHA-256 digest, byte size, participant identity, and trial identity from an authoritative local snapshot.",
+    "Verify analysis-use permission separately from raw-data redistribution permission.",
+    "Do not mark coordinate_unit_verified until the x/y basis has been checked against authoritative dataset documentation or source material."
+  ]
+}

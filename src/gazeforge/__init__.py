@@ -101,6 +101,14 @@ from .hollywood2 import (
     load_hollywood2_arff,
     load_hollywood2_directory,
 )
+from .hollywood2_audit import (
+    Hollywood2SourceAuditRun,
+    Hollywood2SourceAuditSpec,
+    Hollywood2SourceFileRecord,
+    audit_hollywood2_source,
+    load_audited_hollywood2_directory,
+    load_hollywood2_source_audit_spec,
+)
 from .lund2013 import LUND2013_LABELS, load_lund2013_directory, load_lund2013_mat
 from .lund_benchmark import (
     Lund2013BenchmarkRun,
@@ -209,6 +217,9 @@ __all__ = [
     "HuggingFaceZeroShotAOIProvider",
     "HOLLYWOOD2_ANNOTATOR_COLUMNS",
     "HOLLYWOOD2_EVENT_LABELS",
+    "Hollywood2SourceAuditRun",
+    "Hollywood2SourceAuditSpec",
+    "Hollywood2SourceFileRecord",
     "LUND2013_ANNOTATORS",
     "LUND2013_COMMIT",
     "LUND2013_DATA_PATH",
@@ -243,6 +254,7 @@ __all__ = [
     "aois_to_frame",
     "apply_aoi_review",
     "assert_no_group_leakage",
+    "audit_hollywood2_source",
     "benchmark_fingerprint",
     "build_audit_report",
     "build_benchmark_dashboard",
@@ -288,11 +300,13 @@ __all__ = [
     "interpolate_dynamic_aoi",
     "ivt_classify_events",
     "ivt_classify_events_angular",
+    "load_audited_hollywood2_directory",
     "load_frozen_benchmark_report",
     "load_gaze_in_wild_directory",
     "load_gaze_in_wild_mat",
     "load_hollywood2_arff",
     "load_hollywood2_directory",
+    "load_hollywood2_source_audit_spec",
     "load_lund2013_directory",
     "load_lund2013_mat",
     "load_native_event_spec",

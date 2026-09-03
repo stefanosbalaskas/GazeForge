@@ -9,6 +9,12 @@ while validation evidence is being established.
 
 ### Added
 
+- Hollywood2EM authoritative-copy audit infrastructure with exact ARFF inventory checks, per-file
+  SHA-256/byte-size verification, explicit participant/trial mapping, coordinate-unit evidence,
+  reuse/analysis provenance kept separate from redistribution status, student/expert gaze-identity
+  verification, deterministic audit fingerprints, and a deliberately non-executable source-audit
+  template. This closes an infrastructure gap only; no Hollywood2EM empirical audit or performance
+  result is claimed without a real independently reviewed external data copy.
 - Three-report native event validation-suite orchestration that computes human-human agreement,
   primary-annotator model validation, and second-annotator sensitivity before freezing any report;
   cross-checks source/spec fingerprints; writes the completion manifest last; validates exact child

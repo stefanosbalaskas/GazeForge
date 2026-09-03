@@ -51,6 +51,10 @@ gaze = load_hollywood2_directory(
 )
 ```
 
+This direct-loader example is appropriate for ingestion development. It is **not sufficient for a
+frozen Hollywood2EM evidence artifact** because the callback itself does not prove the source copy,
+reuse terms, coordinate basis, or identity mapping.
+
 ## Coordinate-unit gate
 
 Unit-sensitive event features must not be compared across datasets until the Hollywood2 coordinate
@@ -65,9 +69,21 @@ gaze = load_hollywood2_directory(
 )
 ```
 
-After an external audit establishes that the ARFF values are pixels, the caller can make that
-assumption explicit with `coordinate_unit="pixels"`. Cross-dataset benchmark preparation refuses
-unverified coordinates by default. This separates *ingestion* from *scientific comparability*.
+The low-level loader permits `coordinate_unit="pixels"` only as an explicit caller declaration. A
+caller declaration is not, by itself, frozen scientific evidence. Before publication-grade
+cross-dataset work, use the separate [Hollywood2EM source audit](hollywood2-source-audit.md), which
+binds the coordinate claim to a reviewed verification basis and exact file manifest.
+
+## Source-audit gate for frozen evidence
+
+The repository now provides `Hollywood2SourceAuditSpec`, `audit_hollywood2_source()`, and
+`load_audited_hollywood2_directory()`. An empirical audit requires exact ARFF SHA-256/byte-size
+records, participant/trial identities, pinned source revision, reviewed reuse terms, explicit
+analysis-use permission, coordinate-unit evidence, and participant-mapping evidence. It also loads
+both human label streams and verifies that they refer to the same underlying gaze samples.
+
+The bundled `validation/protocols/hollywood2-source-audit-template.json` is intentionally
+non-executable. It does **not** mean that the external Hollywood2EM copy has already been audited.
 
 ## Planned cross-dataset use
 
@@ -77,11 +93,12 @@ protocol harmonises Lund2013 and Hollywood2EM to 60 Hz with explicit label-purit
 the primary common event set to fixation, saccade, and pursuit.
 
 The final/student annotation difference is a separate sensitivity analysis and must not be mixed
-with model-generalisation metrics.
+with model-generalisation metrics. Frozen Lund↔Hollywood2 modelling should carry the reviewed
+Hollywood2 source-audit fingerprint in its provenance.
 
 ## Distribution and claims
 
 The accompanying article is openly licensed, but GazeForge does not infer that the raw dataset has
 the same redistribution terms. The dataset remains external. No frozen Hollywood2 result should be
-published from GazeForge until the authoritative local data copy, participant mapping, and dataset
-reuse terms have been checked.
+published from GazeForge until the authoritative local data copy, participant mapping, coordinate
+basis, and current analysis/reuse terms have been checked through the source-audit workflow.
