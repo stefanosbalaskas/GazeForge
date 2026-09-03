@@ -13,6 +13,7 @@ from .benchmarks import (
     build_benchmark_report,
     freeze_benchmark_report,
 )
+from .exceptions import BenchmarkIntegrityError
 from .lund_benchmark import compare_lund2013_annotators, run_lund2013_event_benchmark
 from .lund_fetch import validate_lund2013_source_manifest
 from .lund_sensitivity import run_lund2013_sampling_sensitivity
@@ -56,9 +57,13 @@ def _agreement_report(
             "Paired MN and RA expert annotations from the public Lund2013 benchmark."
         ),
         notes=[
-            "Human-human agreement is a reference for annotation variability, not an error-free ceiling.",
             (
-                "Lower-rate agreement is derived independently from each human annotation stream."
+                "Human-human agreement is a reference for annotation variability, "
+                "not an error-free ceiling."
+            ),
+            (
+                "Lower-rate agreement is derived independently from each human "
+                "annotation stream."
                 if sampling_origin == "resampled"
                 else "Agreement is evaluated at the native recording cadence."
             ),
@@ -87,18 +92,45 @@ def _target_paths(output_dir: Path) -> dict[str, Path]:
         "human_agreement_native": output_dir / "lund2013-mn-vs-ra-native.json",
         "human_agreement_60hz": output_dir / "lund2013-mn-vs-ra-60hz.json",
         "primary_ra_60hz": output_dir / "lund2013-ra-60hz-primary.json",
-        "annotator_sensitivity_mn_60hz": output_dir / "lund2013-mn-60hz-annotator-sensitivity.json",
-        "sampling_purity_sensitivity_ra": output_dir / "lund2013-ra-sampling-purity-sensitivity.json",
+        "annotator_sensitivity_mn_60hz": (
+            output_dir / "lund2013-mn-60hz-annotator-sensitivity.json"
+        ),
+        "sampling_purity_sensitivity_ra": (
+            output_dir / "lund2013-ra-sampling-purity-sensitivity.json"
+        ),
     }
 
 
-def _preflight_targets(paths: dict[str, Path], manifest_path: Path, *, overwrite: bool) -> None:
+def _preflight_targets(
+    paths: dict[str, Path],
+    manifest_path: Path,
+    *,
+    overwrite: bool,
+) -> None:
     if overwrite:
         return
     existing = [path for path in [*paths.values(), manifest_path] if path.exists()]
     if existing:
         joined = ", ".join(str(path) for path in existing)
         raise FileExistsError(f"Lund2013 suite output already exists: {joined}")
+
+
+def _validate_child_report(name: str, report: dict[str, Any]) -> None:
+    claimed = report.get("report_fingerprint_sha256")
+    if not isinstance(claimed, str) or not claimed:
+        raise BenchmarkIntegrityError(
+            f"Lund2013 suite child {name!r} is missing a report fingerprint."
+        )
+    body = {
+        key: value
+        for key, value in report.items()
+        if key != "report_fingerprint_sha256"
+    }
+    observed = benchmark_fingerprint(body)
+    if observed != claimed:
+        raise BenchmarkIntegrityError(
+            f"Lund2013 suite child {name!r} has a report fingerprint mismatch."
+        )
 
 
 def run_lund2013_benchmark_suite(
@@ -204,6 +236,8 @@ def run_lund2013_benchmark_suite(
         "annotator_sensitivity_mn_60hz": annotator_sensitivity_mn.report,
         "sampling_purity_sensitivity_ra": sampling_sensitivity.report,
     }
+    for name, report in reports.items():
+        _validate_child_report(name, report)
 
     output_path.mkdir(parents=True, exist_ok=True)
     for name, report in reports.items():
@@ -224,7 +258,9 @@ def run_lund2013_benchmark_suite(
             "hidden_layer_sizes": list(hidden_layer_sizes),
             "temporal_solver": temporal_solver,
             "temporal_max_iter": int(temporal_max_iter),
-            "sensitivity_target_rates_hz": [float(value) for value in sensitivity_target_rates_hz],
+            "sensitivity_target_rates_hz": [
+                float(value) for value in sensitivity_target_rates_hz
+            ],
             "sensitivity_min_label_purities": [
                 float(value) for value in sensitivity_min_label_purities
             ],
@@ -233,7 +269,9 @@ def run_lund2013_benchmark_suite(
             {
                 "name": name,
                 "path": report_paths[name].name,
-                "report_fingerprint_sha256": reports[name]["report_fingerprint_sha256"],
+                "report_fingerprint_sha256": reports[name][
+                    "report_fingerprint_sha256"
+                ],
             }
             for name in sorted(reports)
         ],
