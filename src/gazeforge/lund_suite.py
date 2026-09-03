@@ -1,4 +1,4 @@
-"""One-command orchestration for the complete Lund2013 validation tranche."""
+"""One-command orchestration and verification for the Lund2013 validation tranche."""
 
 from __future__ import annotations
 
@@ -15,10 +15,25 @@ from .benchmarks import (
 )
 from .exceptions import BenchmarkIntegrityError
 from .lund_benchmark import compare_lund2013_annotators, run_lund2013_event_benchmark
-from .lund_fetch import validate_lund2013_source_manifest
+from .lund_fetch import (
+    LUND2013_COMMIT,
+    LUND2013_DATA_PATH,
+    LUND2013_REPOSITORY,
+    validate_lund2013_source_manifest,
+)
 from .lund_sensitivity import run_lund2013_sampling_sensitivity
 
 _SUITE_NAME = "lund2013-event-validation-v1"
+_SUITE_MANIFEST_NAME = "lund2013-suite-manifest.json"
+_SUITE_REPORT_NAMES = frozenset(
+    {
+        "human_agreement_native",
+        "human_agreement_60hz",
+        "primary_ra_60hz",
+        "annotator_sensitivity_mn_60hz",
+        "sampling_purity_sensitivity_ra",
+    }
+)
 
 
 @dataclass(slots=True)
@@ -115,7 +130,7 @@ def _preflight_targets(
         raise FileExistsError(f"Lund2013 suite output already exists: {joined}")
 
 
-def _validate_child_report(name: str, report: dict[str, Any]) -> None:
+def _validate_child_report(name: str, report: dict[str, Any]) -> str:
     claimed = report.get("report_fingerprint_sha256")
     if not isinstance(claimed, str) or not claimed:
         raise BenchmarkIntegrityError(
@@ -131,6 +146,161 @@ def _validate_child_report(name: str, report: dict[str, Any]) -> None:
         raise BenchmarkIntegrityError(
             f"Lund2013 suite child {name!r} has a report fingerprint mismatch."
         )
+    return observed
+
+
+def _manifest_path(path: str | Path) -> Path:
+    source = Path(path)
+    return source / _SUITE_MANIFEST_NAME if source.is_dir() else source
+
+
+def _safe_child_path(root: Path, relative_text: str) -> Path:
+    relative = Path(relative_text)
+    if not relative.parts or relative.is_absolute() or ".." in relative.parts:
+        raise BenchmarkIntegrityError("Lund2013 suite manifest contains an unsafe report path.")
+    resolved_root = root.resolve()
+    resolved = (root / relative).resolve()
+    if resolved != resolved_root and resolved_root not in resolved.parents:
+        raise BenchmarkIntegrityError("Lund2013 suite report path escapes the suite directory.")
+    return resolved
+
+
+def _validate_suite_source_summary(source: Any) -> None:
+    if source is None:
+        return
+    if not isinstance(source, dict):
+        raise BenchmarkIntegrityError("Lund2013 suite source_manifest must be an object or null.")
+    expected = {
+        "repository": LUND2013_REPOSITORY,
+        "commit": LUND2013_COMMIT,
+        "data_path": LUND2013_DATA_PATH,
+    }
+    for field, value in expected.items():
+        if source.get(field) != value:
+            raise BenchmarkIntegrityError(
+                f"Lund2013 suite source_manifest {field} does not match the pinned source."
+            )
+    fingerprint = source.get("manifest_fingerprint_sha256")
+    if not isinstance(fingerprint, str) or not fingerprint:
+        raise BenchmarkIntegrityError(
+            "Lund2013 suite source_manifest is missing its manifest fingerprint."
+        )
+
+
+def validate_lund2013_suite_manifest(
+    path: str | Path,
+    *,
+    verify_reports: bool = True,
+) -> dict[str, Any]:
+    """Validate a frozen Lund suite manifest and, by default, every referenced child report."""
+    manifest_path = _manifest_path(path)
+    if not manifest_path.is_file():
+        raise FileNotFoundError(manifest_path)
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise BenchmarkIntegrityError("Lund2013 suite manifest is not valid JSON.") from exc
+    if not isinstance(manifest, dict):
+        raise BenchmarkIntegrityError("Lund2013 suite manifest must be a JSON object.")
+
+    required = {
+        "suite",
+        "status",
+        "source_manifest",
+        "protocol",
+        "reports",
+        "suite_fingerprint_sha256",
+    }
+    missing = sorted(required - set(manifest))
+    if missing:
+        raise BenchmarkIntegrityError(
+            f"Lund2013 suite manifest is missing required fields: {missing}"
+        )
+    if manifest["suite"] != _SUITE_NAME:
+        raise BenchmarkIntegrityError("Lund2013 suite manifest has an unknown suite identity.")
+    if manifest["status"] != "complete":
+        raise BenchmarkIntegrityError("Lund2013 suite manifest is not marked complete.")
+
+    claimed_suite_fingerprint = str(manifest["suite_fingerprint_sha256"])
+    body = {
+        key: value
+        for key, value in manifest.items()
+        if key != "suite_fingerprint_sha256"
+    }
+    observed_suite_fingerprint = benchmark_fingerprint(body)
+    if claimed_suite_fingerprint != observed_suite_fingerprint:
+        raise BenchmarkIntegrityError("Lund2013 suite manifest fingerprint mismatch.")
+
+    _validate_suite_source_summary(manifest["source_manifest"])
+    records = manifest["reports"]
+    if not isinstance(records, list):
+        raise BenchmarkIntegrityError("Lund2013 suite reports must be a list.")
+
+    names: set[str] = set()
+    paths: set[str] = set()
+    verified_reports: list[dict[str, Any]] = []
+    for record in records:
+        if not isinstance(record, dict):
+            raise BenchmarkIntegrityError("Lund2013 suite contains an invalid report row.")
+        name = str(record.get("name", ""))
+        relative_text = str(record.get("path", ""))
+        claimed_child = str(record.get("report_fingerprint_sha256", ""))
+        if not name or name in names:
+            raise BenchmarkIntegrityError("Suite report names must be unique and non-empty.")
+        if not relative_text or relative_text in paths:
+            raise BenchmarkIntegrityError("Suite report paths must be unique and non-empty.")
+        if not claimed_child:
+            raise BenchmarkIntegrityError("Lund2013 suite report row is missing its fingerprint.")
+        names.add(name)
+        paths.add(relative_text)
+        child_path = _safe_child_path(manifest_path.parent, relative_text)
+        if verify_reports:
+            if not child_path.is_file():
+                raise BenchmarkIntegrityError(
+                    f"Lund2013 suite child report is missing: {relative_text}"
+                )
+            try:
+                child = json.loads(child_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                raise BenchmarkIntegrityError(
+                    f"Lund2013 suite child report is invalid JSON: {relative_text}"
+                ) from exc
+            if not isinstance(child, dict):
+                raise BenchmarkIntegrityError(
+                    f"Lund2013 suite child report must be an object: {relative_text}"
+                )
+            observed_child = _validate_child_report(name, child)
+            if observed_child != claimed_child:
+                raise BenchmarkIntegrityError(
+                    f"Lund2013 suite manifest fingerprint does not match child {name!r}."
+                )
+        verified_reports.append(
+            {
+                "name": name,
+                "path": relative_text,
+                "report_fingerprint_sha256": claimed_child,
+            }
+        )
+
+    if names != _SUITE_REPORT_NAMES:
+        missing_names = sorted(_SUITE_REPORT_NAMES - names)
+        unexpected_names = sorted(names - _SUITE_REPORT_NAMES)
+        raise BenchmarkIntegrityError(
+            "Lund2013 suite report inventory does not match the required tranche: "
+            f"missing={missing_names}, unexpected={unexpected_names}"
+        )
+
+    return {
+        "suite": _SUITE_NAME,
+        "status": "complete",
+        "report_count": len(verified_reports),
+        "reports": verified_reports,
+        "source_manifest": manifest["source_manifest"],
+        "protocol": manifest["protocol"],
+        "suite_fingerprint_sha256": claimed_suite_fingerprint,
+        "reports_verified": bool(verify_reports),
+        "manifest_path": str(manifest_path),
+    }
 
 
 def run_lund2013_benchmark_suite(
@@ -160,7 +330,7 @@ def run_lund2013_benchmark_suite(
     root_path = Path(root)
     output_path = Path(output_dir)
     report_paths = _target_paths(output_path)
-    manifest_path = output_path / "lund2013-suite-manifest.json"
+    manifest_path = output_path / _SUITE_MANIFEST_NAME
     _preflight_targets(report_paths, manifest_path, overwrite=overwrite)
 
     source_manifest = validate_lund2013_source_manifest(root_path)

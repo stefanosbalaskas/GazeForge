@@ -62,6 +62,17 @@ def test_cli_parses_suite_protocol():
     assert args.hidden_layers == (16, 8)
 
 
+def test_cli_parses_suite_manifest_only_validation():
+    args = cli.build_parser().parse_args(
+        [
+            "lund2013-suite-validate",
+            "/tmp/lund-suite",
+            "--manifest-only",
+        ]
+    )
+    assert args.manifest_only is True
+
+
 def test_cli_fetches_pinned_lund_dataset(monkeypatch, tmp_path, capsys):
     manifest_path = tmp_path / "_gazeforge_source_manifest.json"
     result = SimpleNamespace(
@@ -186,3 +197,35 @@ def test_cli_runs_complete_lund_suite(monkeypatch, tmp_path, capsys):
     assert '"report_count": 5' in captured
     assert '"status": "complete"' in captured
     assert '"suite_fingerprint_sha256": "' in captured
+
+
+def test_cli_validates_lund_suite_manifest_only(monkeypatch, tmp_path, capsys):
+    calls = {}
+
+    def fake_validate(path, *, verify_reports):
+        calls["path"] = path
+        calls["verify_reports"] = verify_reports
+        return {
+            "suite": "lund2013-event-validation-v1",
+            "status": "complete",
+            "report_count": 5,
+            "reports_verified": verify_reports,
+            "suite_fingerprint_sha256": "v" * 64,
+        }
+
+    monkeypatch.setattr(cli, "validate_lund2013_suite_manifest", fake_validate)
+    code = cli.main(
+        [
+            "lund2013-suite-validate",
+            str(tmp_path),
+            "--manifest-only",
+        ]
+    )
+
+    assert code == 0
+    assert calls["path"] == tmp_path
+    assert calls["verify_reports"] is False
+    captured = capsys.readouterr().out
+    assert '"report_count": 5' in captured
+    assert '"reports_verified": false' in captured
+    assert '"status": "complete"' in captured

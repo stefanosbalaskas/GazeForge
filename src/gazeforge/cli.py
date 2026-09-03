@@ -12,7 +12,7 @@ from .benchmarks import freeze_benchmark_report
 from .lund_benchmark import compare_lund2013_annotators, run_lund2013_event_benchmark
 from .lund_fetch import fetch_lund2013_dataset
 from .lund_sensitivity import run_lund2013_sampling_sensitivity
-from .lund_suite import run_lund2013_benchmark_suite
+from .lund_suite import run_lund2013_benchmark_suite, validate_lund2013_suite_manifest
 
 
 def _hidden_layers(value: str) -> tuple[int, ...]:
@@ -187,6 +187,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     _add_model_arguments(suite)
     suite.add_argument("--overwrite", action="store_true")
+
+    suite_validate = subparsers.add_parser(
+        "lund2013-suite-validate",
+        help="Verify a frozen Lund2013 suite manifest and its child reports.",
+    )
+    suite_validate.add_argument(
+        "path",
+        type=Path,
+        help="Suite output directory or lund2013-suite-manifest.json path.",
+    )
+    suite_validate.add_argument(
+        "--manifest-only",
+        action="store_true",
+        help="Validate the suite manifest without reading the referenced child reports.",
+    )
     return parser
 
 
@@ -306,6 +321,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                 sort_keys=True,
             )
         )
+        return 0
+
+    if args.command == "lund2013-suite-validate":
+        summary = validate_lund2013_suite_manifest(
+            args.path,
+            verify_reports=not args.manifest_only,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
         return 0
 
     print(json.dumps({"package": "gazeforge", "status": "ready"}))
