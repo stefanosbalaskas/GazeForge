@@ -9,6 +9,11 @@ while validation evidence is being established.
 
 ### Added
 
+- Native-rate human event benchmark intake with explicit JSON evidence specifications, global and
+  per-participant/trial sampling-rate verification, multi-annotator stream selection, source/spec
+  SHA-256 provenance, matched participant-held-out I-VT/RandomForest/ContextMLP validation, and the
+  `gazeforge native-event-benchmark` CLI. The bundled 60 Hz protocol is a non-executable template;
+  no native GP3 performance claim is created until a real expert-labelled corpus is supplied.
 - First reviewed and merged external empirical evidence suite from the pinned Lund2013 corpus:
   native/derived MN–RA human agreement, derived-60-Hz RA participant-held-out I-VT/RandomForest/
   ContextMLP comparison, MN annotator sensitivity, stimulus-family summaries, and a 120/90/60/30-Hz
