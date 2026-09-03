@@ -12,13 +12,16 @@ from .benchmarks import freeze_benchmark_report
 from .lund_benchmark import compare_lund2013_annotators, run_lund2013_event_benchmark
 from .lund_fetch import fetch_lund2013_dataset
 from .lund_sensitivity import run_lund2013_sampling_sensitivity
+from .lund_suite import run_lund2013_benchmark_suite
 
 
 def _hidden_layers(value: str) -> tuple[int, ...]:
     try:
         layers = tuple(int(part.strip()) for part in value.split(",") if part.strip())
     except ValueError as exc:
-        raise argparse.ArgumentTypeError("hidden layers must be comma-separated integers") from exc
+        raise argparse.ArgumentTypeError(
+            "hidden layers must be comma-separated integers"
+        ) from exc
     if not layers or any(layer <= 0 for layer in layers):
         raise argparse.ArgumentTypeError("hidden layers must contain positive integers")
     return layers
@@ -55,7 +58,9 @@ def _print_or_freeze(
                 {
                     "benchmark": benchmark,
                     "output": str(target),
-                    "report_fingerprint_sha256": report["report_fingerprint_sha256"],
+                    "report_fingerprint_sha256": report[
+                        "report_fingerprint_sha256"
+                    ],
                 },
                 sort_keys=True,
             )
@@ -64,10 +69,27 @@ def _print_or_freeze(
         print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
 
 
+def _add_model_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--n-splits", type=int, default=5)
+    parser.add_argument("--n-estimators", type=int, default=200)
+    parser.add_argument("--ivt-threshold-deg-s", type=float, default=45.0)
+    parser.add_argument("--context-radius-ms", type=float, default=50.0)
+    parser.add_argument("--hidden-layers", type=_hidden_layers, default=(64, 32))
+    parser.add_argument("--temporal-solver", default="adam")
+    parser.add_argument("--temporal-max-iter", type=int, default=200)
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the GazeForge command-line parser."""
-    parser = argparse.ArgumentParser(prog="gazeforge", description="Auditable AI for eye tracking.")
-    parser.add_argument("--version", action="store_true", help="Print installed GazeForge version.")
+    parser = argparse.ArgumentParser(
+        prog="gazeforge",
+        description="Auditable AI for eye tracking.",
+    )
+    parser.add_argument(
+        "--version",
+        action="store_true",
+        help="Print installed GazeForge version.",
+    )
     subparsers = parser.add_subparsers(dest="command")
 
     fetch = subparsers.add_parser(
@@ -91,19 +113,20 @@ def build_parser() -> argparse.ArgumentParser:
 
     benchmark = subparsers.add_parser(
         "lund2013-benchmark",
-        help="Run the participant-held-out Lund2013 event benchmark from a local dataset checkout.",
+        help=(
+            "Run the participant-held-out Lund2013 event benchmark from a local "
+            "dataset checkout."
+        ),
     )
-    benchmark.add_argument("root", type=Path, help="Root containing Lund2013 annotated .mat files.")
+    benchmark.add_argument(
+        "root",
+        type=Path,
+        help="Root containing Lund2013 annotated .mat files.",
+    )
     benchmark.add_argument("--annotator", default="RA")
     benchmark.add_argument("--target-rate", type=float, default=60.0)
     benchmark.add_argument("--min-label-purity", type=float, default=0.75)
-    benchmark.add_argument("--n-splits", type=int, default=5)
-    benchmark.add_argument("--n-estimators", type=int, default=200)
-    benchmark.add_argument("--ivt-threshold-deg-s", type=float, default=45.0)
-    benchmark.add_argument("--context-radius-ms", type=float, default=50.0)
-    benchmark.add_argument("--hidden-layers", type=_hidden_layers, default=(64, 32))
-    benchmark.add_argument("--temporal-solver", default="adam")
-    benchmark.add_argument("--temporal-max-iter", type=int, default=200)
+    _add_model_arguments(benchmark)
     benchmark.add_argument("--output", type=Path)
     benchmark.add_argument("--overwrite", action="store_true")
 
@@ -125,13 +148,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=(0.60, 0.75, 0.90),
         help="Comma-separated minimum majority-label purities.",
     )
-    sensitivity.add_argument("--n-splits", type=int, default=5)
-    sensitivity.add_argument("--n-estimators", type=int, default=200)
-    sensitivity.add_argument("--ivt-threshold-deg-s", type=float, default=45.0)
-    sensitivity.add_argument("--context-radius-ms", type=float, default=50.0)
-    sensitivity.add_argument("--hidden-layers", type=_hidden_layers, default=(64, 32))
-    sensitivity.add_argument("--temporal-solver", default="adam")
-    sensitivity.add_argument("--temporal-max-iter", type=int, default=200)
+    _add_model_arguments(sensitivity)
     sensitivity.add_argument("--output", type=Path)
     sensitivity.add_argument("--overwrite", action="store_true")
 
@@ -144,6 +161,32 @@ def build_parser() -> argparse.ArgumentParser:
     agreement.add_argument("--right-annotator", default="RA")
     agreement.add_argument("--target-rate", type=float)
     agreement.add_argument("--min-label-purity", type=float, default=0.75)
+
+    suite = subparsers.add_parser(
+        "lund2013-suite",
+        help=(
+            "Run and freeze the complete first-pass Lund2013 validation tranche "
+            "with a suite manifest."
+        ),
+    )
+    suite.add_argument("root", type=Path)
+    suite.add_argument("output_dir", type=Path)
+    suite.add_argument("--target-rate", type=float, default=60.0)
+    suite.add_argument("--min-label-purity", type=float, default=0.75)
+    suite.add_argument(
+        "--target-rates",
+        type=_float_tuple,
+        default=(120.0, 90.0, 60.0, 30.0),
+        help="Comma-separated sampling rates for the sensitivity surface.",
+    )
+    suite.add_argument(
+        "--purities",
+        type=_float_tuple,
+        default=(0.60, 0.75, 0.90),
+        help="Comma-separated label-purity thresholds for the sensitivity surface.",
+    )
+    _add_model_arguments(suite)
+    suite.add_argument("--overwrite", action="store_true")
     return parser
 
 
@@ -169,7 +212,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "file_count": len(result.files),
                     "source_commit": result.manifest["commit"],
                     "manifest": str(result.manifest_path),
-                    "manifest_fingerprint_sha256": result.manifest_fingerprint_sha256,
+                    "manifest_fingerprint_sha256": (
+                        result.manifest_fingerprint_sha256
+                    ),
                 },
                 sort_keys=True,
             )
@@ -229,6 +274,38 @@ def main(argv: Sequence[str] | None = None) -> int:
             min_label_purity=args.min_label_purity,
         )
         print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
+        return 0
+
+    if args.command == "lund2013-suite":
+        run = run_lund2013_benchmark_suite(
+            args.root,
+            args.output_dir,
+            target_sampling_rate_hz=args.target_rate,
+            min_label_purity=args.min_label_purity,
+            n_splits=args.n_splits,
+            n_estimators=args.n_estimators,
+            ivt_velocity_threshold_deg_s=args.ivt_threshold_deg_s,
+            context_radius_ms=args.context_radius_ms,
+            hidden_layer_sizes=args.hidden_layers,
+            temporal_solver=args.temporal_solver,
+            temporal_max_iter=args.temporal_max_iter,
+            sensitivity_target_rates_hz=args.target_rates,
+            sensitivity_min_label_purities=args.purities,
+            overwrite=args.overwrite,
+        )
+        print(
+            json.dumps(
+                {
+                    "suite": run.manifest["suite"],
+                    "status": run.manifest["status"],
+                    "output_dir": str(run.output_dir),
+                    "report_count": len(run.reports),
+                    "manifest": str(run.manifest_path),
+                    "suite_fingerprint_sha256": run.suite_fingerprint_sha256,
+                },
+                sort_keys=True,
+            )
+        )
         return 0
 
     print(json.dumps({"package": "gazeforge", "status": "ready"}))
