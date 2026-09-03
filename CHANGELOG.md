@@ -27,6 +27,7 @@ while validation evidence is being established.
   metrics integrated into matched-fold and cross-dataset validation.
 - Sampling-rate × label-purity sensitivity surfaces with complete ambiguity/retention ledgers,
   non-evaluable-setting provenance, and matched sample/event model metrics.
+- Lund2013 sampling-rate × label-purity sensitivity runner and frozen-report CLI.
 - Native Lund2013 MATLAB benchmark ingestion with original expert event-code mapping.
 - Label-purity-aware lower-rate benchmark resampling with explicit ambiguous boundary samples.
 - MN-vs-RA sample-label agreement and a fingerprinted Lund2013 60 Hz benchmark runner/CLI.
@@ -44,4 +45,7 @@ while validation evidence is being established.
   with coordinate, participant-identity, resampling, and label-harmonisation guardrails.
 - Gaze-in-the-Wild MATLAB ingestion with file-timestamp sampling-rate inference, confidence-based
   track loss, explicit participant identity, and single-labeller modelling-table guardrails.
+- MkDocs Material website with getting-started, validation-status, benchmark, and API navigation.
+- Conditional GitHub Pages deployment workflow that strict-builds even before Pages is enabled.
+- Redesigned repository README as a scientific project front page.
 - Synthetic gaze generation, tests, CI matrix, and documentation infrastructure.
