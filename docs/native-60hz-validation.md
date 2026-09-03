@@ -124,6 +124,33 @@ Once the evidence intake passes, the existing GazeForge model-comparison engine 
 
 The resulting benchmark report stores the source-table fingerprint, optional source-file SHA-256, specification fingerprint, observed group rates, exclusions, label counts, comparison design, and deterministic report fingerprint.
 
+## Native human-human agreement
+
+When at least two trained or expert annotators label the same native samples, freeze their agreement as a separate artifact **before** interpreting model-human performance:
+
+```bash
+gazeforge native-event-agreement \
+  expert-events.csv \
+  native-gp3-spec.json \
+  --left-annotator expert-a \
+  --right-annotator expert-b \
+  --event-min-iou 0.50 \
+  --output validation/gp3-native-human-agreement.json
+```
+
+The agreement runner reuses the native evidence specification and independently verifies each annotation stream. It then requires complete one-to-one alignment on `participant_id`, `trial_id`, and `timestamp_ms`, and verifies that both streams contain the same underlying `x_px` and `y_px` values. A partial annotation stream or a different gaze trace is refused rather than silently inner-joined.
+
+Two sample-level summaries are reported:
+
+- agreement across all labels, including undefined/noise categories;
+- agreement on the analysis-retained subset after pairwise exclusion of the specification's declared analysis-excluded labels.
+
+For event-level agreement, excluded labels remain present during segmentation and act as temporal separators before they are excluded. This prevents an undefined/noise interval from being deleted first and accidentally joining two adjacent events.
+
+Event precision and recall are directional, so GazeForge reports both `left-as-reference` and `right-as-reference` evaluations. Event F1, matched temporal IoU, and boundary errors can then be inspected without pretending that either human annotator is error-free. The frozen report records both stream fingerprints, the original empirical specification fingerprint, the internal verification-spec fingerprint, the source-file SHA-256 when available, and a deterministic report fingerprint.
+
+Human-human agreement characterizes annotation variability; it is not an error-free performance ceiling and should not be used to justify automatic replacement of expert review.
+
 ## What the workflow can establish
 
 A successfully frozen native benchmark can support claims about the **declared tracker/device, task domain, reference labels, and study population represented by that corpus**.
