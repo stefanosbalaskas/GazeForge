@@ -9,6 +9,13 @@ while validation evidence is being established.
 
 ### Added
 
+- Source-audit-aware Gaze-in-the-Wild participant-held-out model-validation infrastructure that
+  revalidates source fingerprints, requires an audited pixel-kinematics basis, downsamples each
+  source file independently from its timestamp-inferred cadence without upsampling, preserves
+  invalid gaze as interpolation breaks, compares matched-fold I-VT/RandomForest/ContextMLP models,
+  reports sample- and event-class sensitivity, and supports only explicitly supplied fingerprinted
+  task mappings. This remains infrastructure until run on an independently audited authoritative
+  corpus; no Gaze-in-the-Wild or GP3-specific performance claim is created by the implementation.
 - Source-audit-aware Gaze-in-the-Wild human-human agreement infrastructure with source-fingerprint
   revalidation, complete-overlap guardrails, one-to-one gaze/sample identity checks, all-label and
   analysis-label agreement, per-trial timestamp-inferred sampling rates, invalid/unlabelled temporal
