@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,7 @@ import pandas as pd
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
 from .lund_suite import validate_lund2013_suite_manifest
+from .visus_suite import validate_visus_dynamic_aoi_suite_manifest
 
 _REPORT_BODY_KEYS = ("benchmark", "model", "protocol", "metrics")
 _REQUIRED_BENCHMARK_FIELDS = (
@@ -23,7 +25,8 @@ _REQUIRED_BENCHMARK_FIELDS = (
     "sampling_origin",
     "reference_strength",
 )
-_SUITE_MANIFEST_NAME = "lund2013-suite-manifest.json"
+_LUND_SUITE_MANIFEST_NAME = "lund2013-suite-manifest.json"
+_VISUS_SUITE_MANIFEST_NAME = "visus-dynamic-aoi-suite-manifest.json"
 
 
 @dataclass(slots=True)
@@ -50,7 +53,9 @@ def validate_frozen_benchmark_report(report: dict[str, Any]) -> str:
     required = (*_REPORT_BODY_KEYS, "report_fingerprint_sha256")
     missing = [key for key in required if key not in report]
     if missing:
-        raise BenchmarkIntegrityError(f"Benchmark report is missing required fields: {missing}")
+        raise BenchmarkIntegrityError(
+            f"Benchmark report is missing required fields: {missing}"
+        )
 
     body = {key: report[key] for key in _REPORT_BODY_KEYS}
     expected = benchmark_fingerprint(body)
@@ -94,25 +99,48 @@ def discover_frozen_benchmark_reports(
     *,
     recursive: bool = True,
 ) -> tuple[Path, ...]:
-    """Discover fingerprinted benchmark reports while ignoring protocol/config JSON files.
+    """Discover benchmark-schema reports while ignoring provenance/config JSON files.
 
-    JSON files without ``report_fingerprint_sha256`` are not treated as benchmark results. Files
-    that do claim to be frozen reports are validated later and cannot silently bypass integrity
-    checks.
+    A deterministic ``report_fingerprint_sha256`` can also belong to audited intake or provenance
+    reports. Those files are deliberately not treated as performance evidence unless they contain
+    the complete benchmark/model/protocol/metrics report body.
     """
     directory = Path(root)
     if not directory.exists():
         raise FileNotFoundError(directory)
-    candidates = sorted(directory.rglob("*.json") if recursive else directory.glob("*.json"))
+    candidates = sorted(
+        directory.rglob("*.json") if recursive else directory.glob("*.json")
+    )
     reports: list[Path] = []
     for path in candidates:
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
             continue
-        if isinstance(payload, dict) and "report_fingerprint_sha256" in payload:
+        if not isinstance(payload, dict):
+            continue
+        if "report_fingerprint_sha256" not in payload:
+            continue
+        if all(key in payload for key in _REPORT_BODY_KEYS):
             reports.append(path)
     return tuple(reports)
+
+
+def _discover_named_suite_manifests(
+    root: str | Path,
+    manifest_name: str,
+    *,
+    recursive: bool,
+) -> tuple[Path, ...]:
+    directory = Path(root)
+    if not directory.exists():
+        raise FileNotFoundError(directory)
+    if recursive:
+        paths = sorted(directory.rglob(manifest_name))
+    else:
+        candidate = directory / manifest_name
+        paths = [candidate] if candidate.is_file() else []
+    return tuple(paths)
 
 
 def discover_lund2013_suite_manifests(
@@ -121,15 +149,24 @@ def discover_lund2013_suite_manifests(
     recursive: bool = True,
 ) -> tuple[Path, ...]:
     """Discover Lund suite completion manifests without treating them as result rows."""
-    directory = Path(root)
-    if not directory.exists():
-        raise FileNotFoundError(directory)
-    if recursive:
-        paths = sorted(directory.rglob(_SUITE_MANIFEST_NAME))
-    else:
-        candidate = directory / _SUITE_MANIFEST_NAME
-        paths = [candidate] if candidate.is_file() else []
-    return tuple(paths)
+    return _discover_named_suite_manifests(
+        root,
+        _LUND_SUITE_MANIFEST_NAME,
+        recursive=recursive,
+    )
+
+
+def discover_visus_dynamic_aoi_suite_manifests(
+    root: str | Path,
+    *,
+    recursive: bool = True,
+) -> tuple[Path, ...]:
+    """Discover VISUS dynamic-AOI completion manifests for strict suite validation."""
+    return _discover_named_suite_manifests(
+        root,
+        _VISUS_SUITE_MANIFEST_NAME,
+        recursive=recursive,
+    )
 
 
 def _model_names(model_metadata: Any) -> str:
@@ -168,26 +205,53 @@ def _dashboard_row(report: dict[str, Any], source_file: str) -> dict[str, Any]:
     }
 
 
-def _suite_row(summary: dict[str, Any], source_file: str) -> dict[str, Any]:
+def _suite_source_fingerprint(summary: dict[str, Any]) -> str:
     source_manifest = summary.get("source_manifest")
-    source_fingerprint = ""
     if isinstance(source_manifest, dict):
-        source_fingerprint = str(
-            source_manifest.get("manifest_fingerprint_sha256", "")
-        )
+        return str(source_manifest.get("manifest_fingerprint_sha256", ""))
+    source = summary.get("source")
+    if isinstance(source, dict):
+        return str(source.get("source_manifest_fingerprint_sha256", ""))
+    return ""
+
+
+def _suite_row(summary: dict[str, Any], source_file: str) -> dict[str, Any]:
     protocol = summary.get("protocol")
     target_rate = ""
-    if isinstance(protocol, dict) and "target_sampling_rate_hz" in protocol:
-        target_rate = f"{float(protocol['target_sampling_rate_hz']):g}"
+    model = ""
+    reference_stream = ""
+    human_agreement = ""
+    if isinstance(protocol, dict):
+        if "target_sampling_rate_hz" in protocol:
+            target_rate = f"{float(protocol['target_sampling_rate_hz']):g}"
+        model_name = str(protocol.get("model_name", "")).strip()
+        model_version = str(protocol.get("model_version", "")).strip()
+        if model_name:
+            model = model_name if not model_version else f"{model_name} {model_version}"
+        reference_stream = str(protocol.get("reference_stream_id", ""))
+        if "human_human_agreement_included" in protocol:
+            human_agreement = str(
+                bool(protocol["human_human_agreement_included"])
+            ).lower()
     return {
         "suite": str(summary["suite"]),
         "status": str(summary["status"]),
         "report_count": int(summary["report_count"]),
         "target_sampling_rate_hz": target_rate,
-        "source_manifest_fingerprint_sha256": source_fingerprint,
+        "model": model,
+        "reference_stream_id": reference_stream,
+        "human_human_agreement_included": human_agreement,
+        "source_manifest_fingerprint_sha256": _suite_source_fingerprint(summary),
         "suite_fingerprint_sha256": str(summary["suite_fingerprint_sha256"]),
         "source_file": source_file,
     }
+
+
+def _validated_suite_records(
+    paths: tuple[Path, ...],
+    validator: Callable[[str | Path], dict[str, Any]],
+) -> list[tuple[Path, dict[str, Any]]]:
+    return [(path, validator(path)) for path in paths]
 
 
 def build_benchmark_dashboard(
@@ -199,6 +263,7 @@ def build_benchmark_dashboard(
 
     Duplicate report and suite fingerprints are rejected so copied artifacts cannot inflate the
     apparent number of independent validation results or completed tranches on a public dashboard.
+    Provenance-only JSON children are never promoted to performance-report rows.
     """
     paths = discover_frozen_benchmark_reports(root, recursive=recursive)
     reports: list[dict[str, Any]] = []
@@ -223,20 +288,34 @@ def build_benchmark_dashboard(
             kind="stable",
         ).reset_index(drop=True)
 
-    suite_paths = discover_lund2013_suite_manifests(root, recursive=recursive)
+    lund_paths = discover_lund2013_suite_manifests(root, recursive=recursive)
+    visus_paths = discover_visus_dynamic_aoi_suite_manifests(
+        root,
+        recursive=recursive,
+    )
+    suite_records = [
+        *_validated_suite_records(lund_paths, validate_lund2013_suite_manifest),
+        *_validated_suite_records(
+            visus_paths,
+            validate_visus_dynamic_aoi_suite_manifest,
+        ),
+    ]
+    suite_records.sort(key=lambda item: str(item[0]))
+
     suites: list[dict[str, Any]] = []
     suite_rows: list[dict[str, Any]] = []
+    suite_files: list[str] = []
     suite_fingerprints: set[str] = set()
-    for path in suite_paths:
-        summary = validate_lund2013_suite_manifest(path)
+    for path, summary in suite_records:
         fingerprint = str(summary["suite_fingerprint_sha256"])
         if fingerprint in suite_fingerprints:
             raise BenchmarkIntegrityError(
-                f"Duplicate Lund2013 suite fingerprint discovered: {fingerprint}"
+                f"Duplicate verified suite fingerprint discovered: {fingerprint}"
             )
         suite_fingerprints.add(fingerprint)
         suites.append(summary)
         suite_rows.append(_suite_row(summary, str(path)))
+        suite_files.append(str(path))
 
     suite_table = pd.DataFrame(suite_rows)
     if not suite_table.empty:
@@ -251,7 +330,7 @@ def build_benchmark_dashboard(
         source_files=tuple(str(path) for path in paths),
         suites=tuple(suites),
         suite_table=suite_table,
-        suite_source_files=tuple(str(path) for path in suite_paths),
+        suite_source_files=tuple(suite_files),
     )
 
 
@@ -291,6 +370,9 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
             "status",
             "report_count",
             "target_sampling_rate_hz",
+            "model",
+            "reference_stream_id",
+            "human_human_agreement_included",
             "source_manifest_fingerprint_sha256",
             "suite_fingerprint_sha256",
         ]
