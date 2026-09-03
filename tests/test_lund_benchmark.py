@@ -137,6 +137,16 @@ def test_lund2013_event_benchmark_builds_fingerprinted_report(tmp_path):
         "RandomForest",
         "ContextMLP",
     }
+    pairs = set(
+        run.paired_model_differences.summary[["model_a", "model_b"]]
+        .drop_duplicates()
+        .itertuples(index=False, name=None)
+    )
+    assert pairs == {
+        ("I-VT", "RandomForest"),
+        ("I-VT", "ContextMLP"),
+        ("RandomForest", "ContextMLP"),
+    }
     assert run.report["benchmark"]["name"] == "Lund2013"
     assert len(run.report["report_fingerprint_sha256"]) == 64
     preparation = run.report["protocol"]["preparation"]
@@ -149,6 +159,12 @@ def test_lund2013_event_benchmark_builds_fingerprinted_report(tmp_path):
     assert design["ivt_velocity_unit"] == "deg/s"
     assert design["ivt_velocity_threshold_deg_s"] == 45.0
     assert design["ivt_velocity_threshold_px_s"] is None
+    paired_design = run.report["protocol"]["paired_model_difference_design"]
+    assert paired_design["inferential_p_values"] is False
+    assert paired_design["confidence_intervals"] is False
+    assert paired_design["folds_treated_as_independent_replicates"] is False
+    paired_rows = run.report["metrics"]["paired_model_difference_summary"]
+    assert {row["metric"] for row in paired_rows} >= {"accuracy", "macro_f1", "event_f1"}
     stimulus_design = run.report["protocol"]["stimulus_type_design"]
     assert stimulus_design["stratify_col"] == "stimulus_type"
     assert stimulus_design["models_refit_by_stratum"] is False
