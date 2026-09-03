@@ -55,6 +55,24 @@ Any future resampled benchmark must retain all three concepts separately:
 Label-only loading is supported. This is useful for event-level human-human comparisons even when
 paired process data are unavailable.
 
+## Source-audit gate for frozen evidence
+
+Direct MATLAB loading is an ingestion capability, not proof of source identity. The repository now
+also provides `GazeInWildSourceAuditSpec`, `audit_gaze_in_wild_source()`, and
+`audited_gaze_in_wild_files_by_labeller()`.
+
+An empirical source audit requires exact LabelData and ProcessData SHA-256/byte-size manifests,
+explicit participant/trial/labeller mappings, a pinned source snapshot, reviewed reuse terms,
+analysis-use permission, a documented participant/task mapping basis, and independently verified
+`ETG.POR` coordinate semantics. It records the observed timestamp-inferred cadence of every label
+file rather than assuming a uniform nominal rate. For overlapping labeller streams, it also verifies
+that participant/trial identity, timestamps, point-of-regard samples, validity, and confidence are
+identical before those streams are compared.
+
+The bundled source-audit template is deliberately non-executable. It cannot certify an empirical
+copy until every placeholder and manifest entry has been independently reviewed. See
+[Gaze-in-the-Wild source audit](gaze-in-wild-source-audit.md).
+
 ## What this benchmark can support
 
 After the authoritative data copy and identity structure are audited, Gaze-in-the-Wild can support:
@@ -72,4 +90,6 @@ external evidence for human-labelled low-rate/naturalistic event classification.
 ## Distribution policy
 
 GazeForge does not bundle the raw corpus. The historical distribution location and current dataset
-reuse terms must be verified before any automated downloader or redistributed fixture is added.
+reuse terms must be verified before any automated downloader or redistributed fixture is added. The
+source-audit contract records analysis-use permission separately from redistribution permission so a
+scientifically usable local snapshot cannot silently become redistributable package data.
