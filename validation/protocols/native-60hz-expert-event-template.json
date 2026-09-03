@@ -1,0 +1,38 @@
+{
+  "name": "EDIT-ME-native-60hz-expert-events",
+  "version": "v1",
+  "source": "EDIT-ME authoritative dataset or study provenance",
+  "license": "EDIT-ME reuse/distribution status",
+  "tracker_model": "Gazepoint GP3 or explicitly documented 60 Hz device",
+  "expected_sampling_rate_hz": 60.0,
+  "dataset_status": "template",
+  "annotation_origin": "expert-manual",
+  "human_annotator_count": 2,
+  "reference_description": "EDIT-ME: describe annotator expertise, annotation protocol, event taxonomy, adjudication, and blinding.",
+  "sampling_rate_tolerance_fraction": 0.05,
+  "column_map": {
+    "participant_id": "participant_id",
+    "trial_id": "trial_id",
+    "timestamp_ms": "timestamp_ms",
+    "x_px": "x_px",
+    "y_px": "y_px",
+    "event_label": "event_label",
+    "annotator_id": "annotator_id",
+    "pupil": "pupil",
+    "screen_width_px": "screen_width_px",
+    "screen_height_px": "screen_height_px",
+    "screen_width_physical": "screen_width_physical",
+    "screen_height_physical": "screen_height_physical",
+    "view_distance_physical": "view_distance_physical"
+  },
+  "analysis_excluded_labels": [
+    "unlabelled",
+    "undefined"
+  ],
+  "notes": [
+    "TEMPLATE ONLY: dataset_status must remain 'template' until a real empirical corpus and provenance record exist.",
+    "Do not resample the source table before native-rate verification.",
+    "Physical screen dimensions and viewing distance must use the same length unit when angular I-VT is used.",
+    "Document calibration procedure, recording software/version, stimulus/task design, missing-data handling, and expert annotation protocol before freezing results."
+  ]
+}
