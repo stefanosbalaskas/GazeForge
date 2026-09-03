@@ -30,6 +30,11 @@ while validation evidence is being established.
 - Lund2013 sampling-rate × label-purity sensitivity runner and frozen-report CLI.
 - Explicit pinned Lund2013 fetch/cache command with Git-blob SHA/size verification and a
   fingerprinted local source manifest; raw benchmark files remain external.
+- Run-time Lund source-manifest and local-file revalidation bound into agreement, primary benchmark,
+  and sampling-sensitivity provenance when a GazeForge source manifest is present.
+- One-command Lund2013 validation-suite orchestration that freezes native/60 Hz human agreement,
+  RA primary modelling, MN annotator sensitivity, and RA sampling×purity sensitivity before writing
+  a deterministic suite-completion manifest.
 - Native Lund2013 MATLAB benchmark ingestion with original expert event-code mapping.
 - Label-purity-aware lower-rate benchmark resampling with explicit ambiguous boundary samples.
 - MN-vs-RA sample-label agreement and a fingerprinted Lund2013 60 Hz benchmark runner/CLI.
