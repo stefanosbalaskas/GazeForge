@@ -209,6 +209,14 @@ from .validation import (
     grouped_event_cross_validate,
     grouped_holdout_indices,
 )
+from .visus_audit import (
+    VisusAuditedFile,
+    VisusSourceAuditRun,
+    VisusSourceAuditSpec,
+    VisusSourceFileRecord,
+    audit_visus_source,
+    load_visus_source_audit_spec,
+)
 
 try:
     __version__ = version("gazeforge")
@@ -271,6 +279,10 @@ __all__ = [
     "ScanpathEmbeddingModel",
     "StratifiedEventPerformance",
     "TemporalContextModel",
+    "VisusAuditedFile",
+    "VisusSourceAuditRun",
+    "VisusSourceAuditSpec",
+    "VisusSourceFileRecord",
     "adapt_gazepoint_samples",
     "adapt_processed_table",
     "aoi_boundary_sensitivity",
@@ -284,6 +296,7 @@ __all__ = [
     "assert_no_group_leakage",
     "audit_gaze_in_wild_source",
     "audit_hollywood2_source",
+    "audit_visus_source",
     "audited_gaze_in_wild_files_by_labeller",
     "benchmark_fingerprint",
     "build_audit_report",
@@ -342,6 +355,7 @@ __all__ = [
     "load_lund2013_mat",
     "load_native_event_spec",
     "load_native_event_table",
+    "load_visus_source_audit_spec",
     "map_fixations_to_aois",
     "map_fixations_to_dynamic_aois",
     "multiclass_brier_score",
