@@ -107,7 +107,10 @@ def _validate_rows(
     if table.empty:
         raise SchemaError("VISUS canonical AOI table cannot be empty.")
 
-    canonical = table.loc[:, list(_REQUIRED_COLUMNS) + (["confidence"] if "confidence" in table else [])].copy()
+    selected_columns = list(_REQUIRED_COLUMNS)
+    if "confidence" in table:
+        selected_columns.append("confidence")
+    canonical = table.loc[:, selected_columns].copy()
     for column in ("source_path", "stimulus_id", "annotation_stream_id", "aoi_id", "label"):
         canonical[column] = canonical[column].astype(str).str.strip()
         if (canonical[column] == "").any():
@@ -292,7 +295,9 @@ def prepare_visus_canonical_aoi_intake(
         "extraction_basis": str(extraction_basis).strip(),
         "frame_index_base": int(frame_index_base),
         "video_frame_rate_hz": video_rate_hz,
-        "frame_to_timestamp_formula": "(frame_index - frame_index_base) * 1000 / video_frame_rate_hz",
+        "frame_to_timestamp_formula": (
+            "(frame_index - frame_index_base) * 1000 / video_frame_rate_hz"
+        ),
         "coordinate_unit": audit.spec.coordinate_unit,
         "video_resolution_px": list(audit.spec.published_video_resolution_px),
         "complete_annotation_manifest_coverage_required": bool(
@@ -305,7 +310,10 @@ def prepare_visus_canonical_aoi_intake(
         "claim_limits": [
             "Canonical intake verifies linkage and table invariants, not raw ViPER XML parsing.",
             "No model-performance or human-agreement claim is created by this intake step.",
-            "Human-human agreement remains conditional on independently verified annotation streams.",
+            (
+                "Human-human agreement remains conditional on independently verified "
+                "annotation streams."
+            ),
         ],
     }
     report = {**body, "report_fingerprint_sha256": benchmark_fingerprint(body)}
