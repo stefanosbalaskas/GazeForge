@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
-from typing import Any, Mapping, Sequence
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -65,7 +66,9 @@ def _verify_audit_integrity(audit: VisusSourceAuditRun) -> None:
 def _audited_stimuli(audit: VisusSourceAuditRun) -> list[str]:
     stimuli = [str(value) for value in audit.report.get("identity", {}).get("stimulus_ids", [])]
     if not stimuli:
-        raise BenchmarkIntegrityError("VISUS source audit contains no verified stimulus identities.")
+        raise BenchmarkIntegrityError(
+            "VISUS source audit contains no verified stimulus identities."
+        )
     return sorted(stimuli)
 
 
