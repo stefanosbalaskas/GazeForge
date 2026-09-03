@@ -104,8 +104,8 @@ def test_audited_loader_selects_expert_or_student_only_after_full_audit(tmp_path
     expert = load_audited_hollywood2_directory(tmp_path, spec, annotator="expert")
     student = load_audited_hollywood2_directory(tmp_path, spec, annotator="student")
 
-    assert expert.metadata["annotation_column"] == "handlabeller_final"
-    assert student.metadata["annotation_column"] == "handlabeller_1"
+    assert expert.metadata["annotator"] == "final"
+    assert student.metadata["annotator"] == "student"
     assert expert.metadata["coordinate_unit_verified"] is True
     with pytest.raises(ValueError, match="annotator"):
         load_audited_hollywood2_directory(tmp_path, spec, annotator="third-labeller")
