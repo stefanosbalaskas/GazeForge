@@ -208,6 +208,7 @@ def test_visus_canonical_intake_requires_complete_annotation_file_coverage(tmp_p
 def test_visus_canonical_intake_rejects_noninteger_frames_and_bad_geometry(tmp_path):
     audit = _audit(tmp_path)
     fractional = _table()
+    fractional["frame_index"] = fractional["frame_index"].astype(float)
     fractional.loc[fractional.index[0], "frame_index"] = 1.5
     with pytest.raises(SchemaError, match="integers"):
         prepare_visus_canonical_aoi_intake(
