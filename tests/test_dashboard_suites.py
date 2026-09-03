@@ -7,7 +7,10 @@ from gazeforge.benchmarks import (
     benchmark_fingerprint,
     build_benchmark_report,
 )
-from gazeforge.dashboard import build_benchmark_dashboard, render_benchmark_dashboard_markdown
+from gazeforge.dashboard import (
+    build_benchmark_dashboard,
+    render_benchmark_dashboard_markdown,
+)
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.lund_fetch import (
     LUND2013_COMMIT,
@@ -25,7 +28,10 @@ _REPORT_NAMES = (
 
 
 def _write(path, payload):
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
 
 
 def _install_suite(root):
@@ -93,7 +99,9 @@ def test_dashboard_surfaces_verified_suite_separately_from_reports(tmp_path):
     assert row["status"] == "complete"
     assert row["report_count"] == 5
     assert row["target_sampling_rate_hz"] == "60"
-    assert row["suite_fingerprint_sha256"] == manifest["suite_fingerprint_sha256"]
+    assert row["suite_fingerprint_sha256"] == manifest[
+        "suite_fingerprint_sha256"
+    ]
 
     markdown = render_benchmark_dashboard_markdown(dashboard)
     assert "## Verified report suites" in markdown
