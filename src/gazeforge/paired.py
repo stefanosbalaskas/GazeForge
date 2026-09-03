@@ -52,6 +52,17 @@ def _validate_fold_table(
     if fold_metrics.duplicated([model_col, fold_col]).any():
         raise SchemaError("Each model/fold combination must appear at most once.")
 
+    fold_sets = {
+        str(model): frozenset(part[fold_col].tolist())
+        for model, part in fold_metrics.groupby(model_col, sort=False, dropna=False)
+    }
+    expected = next(iter(fold_sets.values()))
+    mismatched = [model for model, folds in fold_sets.items() if folds != expected]
+    if mismatched:
+        raise SchemaError(
+            "Paired model differences require identical validation-fold coverage across models."
+        )
+
 
 def _metric_direction(metric: str) -> int:
     if metric not in _METRIC_DIRECTIONS:
