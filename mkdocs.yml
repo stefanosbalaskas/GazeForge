@@ -81,6 +81,7 @@ nav:
       - VISUS model prediction intake: visus-prediction-intake.md
       - VISUS model validation: visus-model-validation.md
       - VISUS human agreement: visus-human-agreement.md
+      - VISUS validation suite: visus-validation-suite.md
   - API: api-reference.md
 
 plugins:
