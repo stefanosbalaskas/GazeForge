@@ -25,6 +25,41 @@ def test_cli_parses_sensitivity_grid():
     assert args.purities == (0.6, 0.75, 0.9)
 
 
+def test_cli_parses_fetch_selection():
+    args = cli.build_parser().parse_args(
+        [
+            "lund2013-fetch",
+            "/tmp/lund",
+            "--annotators",
+            "RA,MN",
+            "--families",
+            "dots,video",
+        ]
+    )
+    assert args.annotators == ("RA", "MN")
+    assert args.families == ("dots", "video")
+
+
+def test_cli_fetches_pinned_lund_dataset(monkeypatch, tmp_path, capsys):
+    manifest_path = tmp_path / "_gazeforge_source_manifest.json"
+    result = SimpleNamespace(
+        root=tmp_path,
+        files=(tmp_path / "a.mat", tmp_path / "b.mat"),
+        manifest_path=manifest_path,
+        manifest={"commit": "pinned-commit"},
+        manifest_fingerprint_sha256="f" * 64,
+    )
+    monkeypatch.setattr(cli, "fetch_lund2013_dataset", lambda *args, **kwargs: result)
+
+    code = cli.main(["lund2013-fetch", str(tmp_path), "--families", "dots,img"])
+
+    assert code == 0
+    captured = capsys.readouterr().out
+    assert '"file_count": 2' in captured
+    assert '"source_commit": "pinned-commit"' in captured
+    assert '"manifest_fingerprint_sha256": "' in captured
+
+
 def test_cli_freezes_benchmark_report(monkeypatch, tmp_path, capsys):
     report = {
         "benchmark": {"name": "Lund2013"},

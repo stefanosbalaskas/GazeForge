@@ -108,6 +108,15 @@ from .lund_benchmark import (
     prepare_lund2013_benchmark,
     run_lund2013_event_benchmark,
 )
+from .lund_fetch import (
+    LUND2013_ANNOTATORS,
+    LUND2013_COMMIT,
+    LUND2013_DATA_PATH,
+    LUND2013_FAMILIES,
+    LUND2013_REPOSITORY,
+    Lund2013FetchResult,
+    fetch_lund2013_dataset,
+)
 from .lund_sensitivity import Lund2013SensitivityRun, run_lund2013_sampling_sensitivity
 from .model_cards import ModelCard
 from .provenance import AuditTrail, ProvenanceRecord, fingerprint_frame
@@ -170,8 +179,14 @@ __all__ = [
     "HuggingFaceZeroShotAOIProvider",
     "HOLLYWOOD2_ANNOTATOR_COLUMNS",
     "HOLLYWOOD2_EVENT_LABELS",
+    "LUND2013_ANNOTATORS",
+    "LUND2013_COMMIT",
+    "LUND2013_DATA_PATH",
+    "LUND2013_FAMILIES",
     "LUND2013_LABELS",
+    "LUND2013_REPOSITORY",
     "Lund2013BenchmarkRun",
+    "Lund2013FetchResult",
     "Lund2013PreparedBenchmark",
     "Lund2013SensitivityRun",
     "ModelCard",
@@ -218,6 +233,7 @@ __all__ = [
     "evaluate_event_predictions",
     "evaluate_sampling_purity_sensitivity",
     "expected_calibration_error",
+    "fetch_lund2013_dataset",
     "fixation_assignment_agreement",
     "freeze_benchmark_report",
     "find_scanpath_motifs",

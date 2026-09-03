@@ -28,6 +28,8 @@ while validation evidence is being established.
 - Sampling-rate × label-purity sensitivity surfaces with complete ambiguity/retention ledgers,
   non-evaluable-setting provenance, and matched sample/event model metrics.
 - Lund2013 sampling-rate × label-purity sensitivity runner and frozen-report CLI.
+- Explicit pinned Lund2013 fetch/cache command with Git-blob SHA/size verification and a
+  fingerprinted local source manifest; raw benchmark files remain external.
 - Native Lund2013 MATLAB benchmark ingestion with original expert event-code mapping.
 - Label-purity-aware lower-rate benchmark resampling with explicit ambiguous boundary samples.
 - MN-vs-RA sample-label agreement and a fingerprinted Lund2013 60 Hz benchmark runner/CLI.
