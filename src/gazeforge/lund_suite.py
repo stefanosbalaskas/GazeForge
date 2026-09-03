@@ -246,9 +246,9 @@ def validate_lund2013_suite_manifest(
         relative_text = str(record.get("path", ""))
         claimed_child = str(record.get("report_fingerprint_sha256", ""))
         if not name or name in names:
-            raise BenchmarkIntegrityError("Lund2013 suite report names must be unique and non-empty.")
+            raise BenchmarkIntegrityError("Suite report names must be unique and non-empty.")
         if not relative_text or relative_text in paths:
-            raise BenchmarkIntegrityError("Lund2013 suite report paths must be unique and non-empty.")
+            raise BenchmarkIntegrityError("Suite report paths must be unique and non-empty.")
         if not claimed_child:
             raise BenchmarkIntegrityError("Lund2013 suite report row is missing its fingerprint.")
         names.add(name)
