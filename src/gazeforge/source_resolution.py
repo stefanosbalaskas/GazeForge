@@ -260,7 +260,9 @@ def validate_hollywood2_source_resolution_record(path: str | Path) -> dict[str, 
 
     publication = _require_mapping(payload, "authoritative_publication", dataset_key=dataset_key)
     if publication.get("doi") != "10.16910/jemr.13.4.5":
-        raise BenchmarkIntegrityError("Hollywood2EM source-resolution publication DOI is unexpected.")
+        raise BenchmarkIntegrityError(
+            "Hollywood2EM source-resolution publication DOI is unexpected."
+        )
     if publication.get("article_license_is_dataset_license") is not False:
         raise BenchmarkIntegrityError(
             "Hollywood2EM article licensing cannot be promoted into dataset-file licensing."
@@ -277,7 +279,8 @@ def validate_hollywood2_source_resolution_record(path: str | Path) -> dict[str, 
     annotation = _require_mapping(payload, "annotation_provenance", dataset_key=dataset_key)
     if annotation.get("expert_labels_are_corrections_of_student_work") is not True:
         raise BenchmarkIntegrityError(
-            "Hollywood2EM source-resolution must preserve the sequential expert-correction workflow."
+            "Hollywood2EM source-resolution must preserve the sequential "
+            "expert-correction workflow."
         )
     if annotation.get("independent_human_annotation_streams_verified") is not False:
         raise BenchmarkIntegrityError(
@@ -365,7 +368,8 @@ def validate_gaze_in_wild_source_resolution_record(path: str | Path) -> dict[str
     if not published_identifier or not institutional_listing or direct_endpoint:
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild v1 resolution must preserve the published distribution identity "
-            "and current institutional listing while keeping direct exact-copy retrieval unverified."
+            "and current institutional listing while keeping direct exact-copy retrieval "
+            "unverified."
         )
 
     publication = _require_mapping(payload, "authoritative_publication", dataset_key=dataset_key)
