@@ -71,6 +71,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Source-resolution discovery
+
+::: gazeforge.source_resolution_discovery
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Model comparison
 
 ::: gazeforge.comparison
