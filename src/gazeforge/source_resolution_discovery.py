@@ -24,7 +24,8 @@ def discover_source_resolution_paths(root: str | Path) -> tuple[Path, ...]:
     directory = Path(root)
     if directory.is_symlink():
         raise BenchmarkIntegrityError(
-            f"Source-resolution checkpoint discovery refuses symbolic-link directories: {directory}."
+            "Source-resolution checkpoint discovery refuses symbolic-link directories: "
+            f"{directory}."
         )
     if not directory.is_dir():
         raise NotADirectoryError(directory)
