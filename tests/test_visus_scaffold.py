@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from gazeforge import visus_cli
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.visus_audit import audit_visus_source, load_visus_source_audit_spec
 from gazeforge.visus_scaffold import (
@@ -121,3 +122,22 @@ def test_scaffold_writer_refuses_output_inside_snapshot_and_overwrite(tmp_path):
 
     write_visus_source_audit_scaffold(scaffold, output, overwrite=True)
     assert json.loads(output.read_text(encoding="utf-8")) == original
+
+
+def test_scaffold_cli_writes_only_template_inventory(tmp_path, capsys):
+    source = tmp_path / "candidate"
+    _candidate_tree(source)
+    output = tmp_path / "review" / "visus-template.json"
+
+    code = visus_cli.main(["scaffold", str(source), str(output)])
+
+    assert code == 0
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    assert payload["dataset_status"] == "template"
+    assert {row["role"] for row in payload["files"]} == {"other"}
+    assert all(row["stimulus_id"] is None for row in payload["files"])
+    message = capsys.readouterr().out
+    assert '"roles_inferred": false' in message
+    assert '"scientific_identities_inferred": false' in message
+    assert '"empirical_evidence_created": false' in message
+    assert '"inventory_fingerprint_sha256": "' in message
