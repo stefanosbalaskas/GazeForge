@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge import visus_evidence
+from gazeforge.exceptions import BenchmarkIntegrityError
 
 
 def _touch_manifests(root):
