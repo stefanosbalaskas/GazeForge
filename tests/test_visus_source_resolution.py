@@ -2,13 +2,8 @@ import json
 from pathlib import Path
 
 import pytest
-
+from gazeforge import visus_source_resolution, visus_source_resolution_cli
 from gazeforge.exceptions import BenchmarkIntegrityError
-from gazeforge.visus_source_resolution import (
-    load_visus_source_resolution_record,
-    validate_visus_source_resolution_record,
-)
-from gazeforge.visus_source_resolution_cli import main as source_resolution_main
 
 
 _RECORD = Path("validation/protocols/visus-source-resolution-2026-09-04.json")
@@ -25,7 +20,7 @@ def _write(tmp_path, payload):
 
 
 def test_repository_checkpoint_validates_and_stays_non_empirical():
-    summary = validate_visus_source_resolution_record(_RECORD)
+    summary = visus_source_resolution.validate_visus_source_resolution_record(_RECORD)
 
     assert summary["status"] == "current_authoritative_distribution_unresolved"
     assert summary["current_authoritative_download_found"] is False
@@ -39,7 +34,7 @@ def test_repository_checkpoint_validates_and_stays_non_empirical():
     assert summary["annotation_independence"]["human_human_agreement_ready"] is False
     assert len(summary["record_fingerprint_sha256"]) == 64
 
-    typed = load_visus_source_resolution_record(_RECORD)
+    typed = visus_source_resolution.load_visus_source_resolution_record(_RECORD)
     assert typed.status == summary["status"]
     assert typed.record_fingerprint_sha256 == summary["record_fingerprint_sha256"]
     assert typed.empirical_evidence_created is False
@@ -50,7 +45,7 @@ def test_unresolved_checkpoint_cannot_be_promoted_to_audit_ready(tmp_path):
     payload["source_audit_ready"] = True
 
     with pytest.raises(BenchmarkIntegrityError, match="unresolved VISUS distribution"):
-        validate_visus_source_resolution_record(_write(tmp_path, payload))
+        visus_source_resolution.validate_visus_source_resolution_record(_write(tmp_path, payload))
 
 
 def test_publication_copyright_cannot_be_promoted_to_dataset_license(tmp_path):
@@ -58,7 +53,7 @@ def test_publication_copyright_cannot_be_promoted_to_dataset_license(tmp_path):
     payload["rights"]["paper_copyright_notice_is_dataset_license"] = True
 
     with pytest.raises(BenchmarkIntegrityError, match="copyright notice"):
-        validate_visus_source_resolution_record(_write(tmp_path, payload))
+        visus_source_resolution.validate_visus_source_resolution_record(_write(tmp_path, payload))
 
 
 def test_human_agreement_requires_verified_independent_streams(tmp_path):
@@ -66,7 +61,7 @@ def test_human_agreement_requires_verified_independent_streams(tmp_path):
     payload["annotation_independence"]["human_human_agreement_ready"] = True
 
     with pytest.raises(BenchmarkIntegrityError, match="verified independent streams"):
-        validate_visus_source_resolution_record(_write(tmp_path, payload))
+        visus_source_resolution.validate_visus_source_resolution_record(_write(tmp_path, payload))
 
 
 def test_stored_fingerprint_is_verified_when_present(tmp_path):
@@ -74,11 +69,11 @@ def test_stored_fingerprint_is_verified_when_present(tmp_path):
     payload["record_fingerprint_sha256"] = "0" * 64
 
     with pytest.raises(BenchmarkIntegrityError, match="does not match"):
-        validate_visus_source_resolution_record(_write(tmp_path, payload))
+        visus_source_resolution.validate_visus_source_resolution_record(_write(tmp_path, payload))
 
 
 def test_source_resolution_cli_emits_json_summary(capsys):
-    code = source_resolution_main([str(_RECORD)])
+    code = visus_source_resolution_cli.main([str(_RECORD)])
     assert code == 0
 
     output = json.loads(capsys.readouterr().out)
