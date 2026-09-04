@@ -11,7 +11,16 @@ from typing import Any
 
 import pandas as pd
 
+from .exceptions import BenchmarkIntegrityError
 from .visus_audit import audit_visus_source, load_visus_source_audit_spec
+from .visus_execution import (
+    build_visus_execution_provenance,
+    snapshot_visus_execution_inputs,
+    validate_visus_execution_provenance,
+    verify_visus_execution_inputs_unchanged,
+    visus_execution_provenance_path,
+    write_visus_execution_provenance,
+)
 from .visus_intake import prepare_visus_canonical_aoi_intake
 from .visus_prediction import prepare_visus_dynamic_aoi_predictions
 from .visus_scaffold import (
@@ -190,7 +199,7 @@ def build_parser() -> argparse.ArgumentParser:
         "suite",
         help=(
             "Audit source, canonicalize human/model AOIs, consume a separately supplied timestamp "
-            "grid, and freeze the complete VISUS validation suite."
+            "grid, freeze the suite, and bind exact raw execution inputs to it."
         ),
     )
     suite.add_argument("source_root", type=Path)
@@ -238,6 +247,17 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate.add_argument("path", type=Path)
     validate.add_argument("--manifest-only", action="store_true")
+
+    execution_validate = subparsers.add_parser(
+        "execution-validate",
+        help="Verify frozen raw-input execution provenance and, by default, its sibling suite.",
+    )
+    execution_validate.add_argument("path", type=Path)
+    execution_validate.add_argument(
+        "--provenance-only",
+        action="store_true",
+        help="Validate only the provenance manifest without reopening the sibling suite reports.",
+    )
     return parser
 
 
@@ -301,6 +321,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     if args.command == "suite":
+        provenance_target = visus_execution_provenance_path(args.output_dir)
+        if provenance_target.exists() and not args.overwrite:
+            raise FileExistsError(provenance_target)
+        snapshots = snapshot_visus_execution_inputs(
+            source_audit_spec=args.spec,
+            human_aoi_table=args.human_table,
+            model_prediction_table=args.prediction_table,
+            timestamp_grid_json=args.timestamp_grids,
+        )
         audit = _load_audit(args.source_root, args.spec)
         reference = prepare_visus_canonical_aoi_intake(
             audit,
@@ -335,6 +364,27 @@ def main(argv: Sequence[str] | None = None) -> int:
             include_matches=args.include_matches,
             overwrite=args.overwrite,
         )
+        verify_visus_execution_inputs_unchanged(
+            snapshots,
+            source_audit_spec=args.spec,
+            human_aoi_table=args.human_table,
+            model_prediction_table=args.prediction_table,
+            timestamp_grid_json=args.timestamp_grids,
+        )
+        post_audit = _load_audit(args.source_root, args.spec)
+        if post_audit.report["report_fingerprint_sha256"] != audit.report[
+            "report_fingerprint_sha256"
+        ]:
+            raise BenchmarkIntegrityError(
+                "The audited VISUS source tree changed during suite execution."
+            )
+        provenance_manifest = build_visus_execution_provenance(audit, run, snapshots)
+        provenance = write_visus_execution_provenance(
+            provenance_manifest,
+            args.output_dir,
+            overwrite=args.overwrite,
+        )
+        validate_visus_execution_provenance(provenance.manifest_path, verify_suite=True)
         print(
             json.dumps(
                 {
@@ -347,6 +397,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "report_fingerprint_sha256"
                     ],
                     "suite_fingerprint_sha256": run.suite_fingerprint_sha256,
+                    "execution_provenance": str(provenance.manifest_path),
+                    "execution_fingerprint_sha256": (
+                        provenance.execution_fingerprint_sha256
+                    ),
                     "external_timestamp_grid_required": True,
                     "prediction_emission_grid_used": False,
                 },
@@ -359,6 +413,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         summary = validate_visus_dynamic_aoi_suite_manifest(
             args.path,
             verify_reports=not args.manifest_only,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
+        return 0
+
+    if args.command == "execution-validate":
+        summary = validate_visus_execution_provenance(
+            args.path,
+            verify_suite=not args.provenance_only,
         )
         print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
         return 0
