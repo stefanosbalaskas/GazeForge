@@ -64,6 +64,13 @@ The public API is intentionally organised around scientific workflow layers rath
 
 ## Validation modules
 
+### Source-resolution checkpoints
+
+::: gazeforge.source_resolution
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Model comparison
 
 ::: gazeforge.comparison

@@ -59,6 +59,7 @@ nav:
       - Calibration & dataset holdouts: calibration.md
   - Validation:
       - Validation status: validation-status.md
+      - Source-resolution contract: source-resolution-contract.md
       - Native 60 Hz event validation: native-60hz-validation.md
       - Native event validation suite: native-event-suite.md
       - Empirical execution: empirical-execution.md
