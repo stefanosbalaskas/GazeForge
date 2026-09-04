@@ -122,11 +122,12 @@ def _stamp_report(body):
 
 def _hollywood_report(template, authorization):
     spec = authorize_candidate_source_audit_template(template, authorization)
+    manifest_files = [spec.files[0].to_dict()]
     manifest = {
-        "file_count": 1,
+        "file_count": len(manifest_files),
         "exact_inventory_match": True,
-        "files": [spec.files[0].to_dict()],
-        "source_manifest_fingerprint_sha256": _SHA_B,
+        "files": manifest_files,
+        "source_manifest_fingerprint_sha256": benchmark_fingerprint(manifest_files),
     }
     body = {
         "audit": "Hollywood2EM-source-audit",
@@ -177,17 +178,19 @@ def _hollywood_report(template, authorization):
 
 def _gaze_report(template, authorization):
     spec = authorize_candidate_source_audit_template(template, authorization)
+    label_files = [spec.label_files[0].to_dict()]
+    process_files = [spec.process_files[0].to_dict()]
     label_inventory = {
-        "file_count": 1,
+        "file_count": len(label_files),
         "exact_inventory_match": True,
-        "files": [spec.label_files[0].to_dict()],
-        "manifest_fingerprint_sha256": _SHA_A,
+        "files": label_files,
+        "manifest_fingerprint_sha256": benchmark_fingerprint(label_files),
     }
     process_inventory = {
-        "file_count": 1,
+        "file_count": len(process_files),
         "exact_inventory_match": True,
-        "files": [spec.process_files[0].to_dict()],
-        "manifest_fingerprint_sha256": _SHA_B,
+        "files": process_files,
+        "manifest_fingerprint_sha256": benchmark_fingerprint(process_files),
     }
     body = {
         "audit": "Gaze-in-the-Wild-source-audit",
@@ -250,7 +253,9 @@ def test_hollywood_lineage_binds_all_upstream_fingerprints():
     assert receipt.dataset_key == "hollywood2em"
     assert receipt.audit_template_fingerprint_sha256 == source_audit_template_fingerprint(template)
     assert receipt.audit_report_fingerprint_sha256 == report["report_fingerprint_sha256"]
-    assert receipt.source_manifest_fingerprints_sha256 == {"source": _SHA_B}
+    assert receipt.source_manifest_fingerprints_sha256 == {
+        "source": report["source_inventory"]["source_manifest_fingerprint_sha256"]
+    }
     assert receipt.source_audit_verified is True
     assert receipt.lineage_verified is True
     assert receipt.to_dict()["scientific_boundary"]["creates_new_empirical_metrics"] is False
@@ -265,8 +270,8 @@ def test_gaze_lineage_preserves_separate_label_process_manifests():
 
     assert receipt.dataset_key == "gaze-in-the-wild"
     assert receipt.source_manifest_fingerprints_sha256 == {
-        "label": _SHA_A,
-        "process": _SHA_B,
+        "label": report["label_inventory"]["manifest_fingerprint_sha256"],
+        "process": report["process_inventory"]["manifest_fingerprint_sha256"],
     }
     assert receipt.source_revision == "source-revision-1"
 
@@ -318,6 +323,34 @@ def test_lineage_rejects_dataset_specific_audit_invariant_failure():
     report = _stamp_report(body)
 
     with pytest.raises(BenchmarkIntegrityError, match="shared gaze"):
+        build_source_audit_lineage_receipt(template, authorization, report)
+
+
+def test_lineage_rejects_nested_manifest_fingerprint_mismatch():
+    template = _gaze_template()
+    authorization = _authorization(template)
+    report = _gaze_report(template, authorization)
+    body = dict(report)
+    body.pop("report_fingerprint_sha256")
+    body["label_inventory"] = dict(body["label_inventory"])
+    body["label_inventory"]["manifest_fingerprint_sha256"] = _SHA_A
+    report = _stamp_report(body)
+
+    with pytest.raises(BenchmarkIntegrityError, match="manifest fingerprint mismatch"):
+        build_source_audit_lineage_receipt(template, authorization, report)
+
+
+def test_lineage_rejects_authorized_contract_drift_inside_report():
+    template = _hollywood_template()
+    authorization = _authorization(template)
+    report = _hollywood_report(template, authorization)
+    body = dict(report)
+    body.pop("report_fingerprint_sha256")
+    body["reuse"] = dict(body["reuse"])
+    body["reuse"]["redistribution_status"] = "permitted"
+    report = _stamp_report(body)
+
+    with pytest.raises(BenchmarkIntegrityError, match="reuse.redistribution_status"):
         build_source_audit_lineage_receipt(template, authorization, report)
 
 
