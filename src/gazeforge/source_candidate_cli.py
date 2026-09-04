@@ -1,0 +1,69 @@
+"""JSON-only CLI for exact non-empirical candidate source inventories."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from collections.abc import Sequence
+from pathlib import Path
+
+from .source_candidate import (
+    build_candidate_source_inventory,
+    validate_candidate_source_inventory,
+    write_candidate_source_inventory,
+)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Build the candidate source inventory parser."""
+    parser = argparse.ArgumentParser(
+        prog="gazeforge-source-candidate",
+        description=(
+            "Build or revalidate an exact non-empirical local inventory for a candidate "
+            "Hollywood2EM or Gaze-in-the-Wild source copy."
+        ),
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    build = subparsers.add_parser("build", help="Fingerprint one complete candidate source tree.")
+    build.add_argument(
+        "--dataset",
+        required=True,
+        choices=("gaze-in-the-wild", "hollywood2em"),
+        help="Reviewed benchmark identity for the candidate tree.",
+    )
+    build.add_argument("--root", required=True, type=Path, help="Candidate source directory.")
+    build.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="Inventory JSON path outside the candidate source directory.",
+    )
+    build.add_argument("--overwrite", action="store_true", help="Replace an existing output file.")
+
+    validate = subparsers.add_parser(
+        "validate",
+        help="Revalidate a saved candidate inventory against its complete current local tree.",
+    )
+    validate.add_argument("--inventory", required=True, type=Path, help="Saved inventory JSON.")
+    validate.add_argument("--root", required=True, type=Path, help="Candidate source directory.")
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run one candidate inventory operation and emit the validated inventory as JSON."""
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    if args.command == "build":
+        inventory = build_candidate_source_inventory(args.root, dataset_key=args.dataset)
+        write_candidate_source_inventory(inventory, args.output, overwrite=args.overwrite)
+    else:
+        inventory = validate_candidate_source_inventory(args.inventory, args.root)
+
+    print(json.dumps(inventory.to_dict(), indent=2, sort_keys=True, allow_nan=False))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
