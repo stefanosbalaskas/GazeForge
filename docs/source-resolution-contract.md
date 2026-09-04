@@ -17,21 +17,24 @@ article licenses, contributor counts, or secondary catalog metadata into stronge
 
 ## Unified command
 
-Validate one checkpoint:
+Validate one checkpoint explicitly:
 
 ```bash
 gazeforge-source-resolution \
   validation/protocols/hollywood2-source-resolution-2026-09-04.json
 ```
 
-Validate the current three-dataset resolution set together:
+For repository governance, discover and validate the complete committed checkpoint set instead of
+maintaining a date-specific file list:
 
 ```bash
-gazeforge-source-resolution \
-  validation/protocols/visus-source-resolution-2026-09-04.json \
-  validation/protocols/hollywood2-source-resolution-2026-09-04.json \
-  validation/protocols/gaze-in-wild-source-resolution-2026-09-04.json
+gazeforge-source-resolution --directory validation/protocols
 ```
+
+Directory mode considers every top-level `*-source-resolution-*.json` candidate. A matching file
+cannot silently disappear from governance because it is malformed: invalid JSON, a non-object JSON
+value, the wrong record type, a symbolic link, an unsupported dataset, or duplicate checkpoints for
+one dataset all fail validation. Explicit path mode remains available for focused review.
 
 The CLI emits JSON only. A multi-record invocation returns a deterministic
 `source-resolution-validation-bundle-v1` object containing each validated record fingerprint and a
@@ -42,15 +45,17 @@ single-record VISUS validation.
 
 ## Continuous-integration gate
 
-The main CI workflow executes the unified command against all three committed checkpoints in a
-separate `source-resolution-governance` job. A pull request therefore fails before merge if a status
-record drifts into an unsupported evidence state, promotes unresolved rights, weakens an
-annotation-independence guard, reconciles conflicting sampling-rate provenance without review, or
-otherwise violates the dataset-specific v1 contract.
+The main CI workflow executes directory discovery against `validation/protocols` in a separate
+`source-resolution-governance` job. It also verifies the expected current dataset identities. A pull
+request therefore fails before merge if a checkpoint is deleted, duplicated, malformed, renamed into
+the governed pattern with an invalid schema, drifts into an unsupported evidence state, promotes
+unresolved rights, weakens an annotation-independence guard, reconciles conflicting sampling-rate
+provenance without review, or otherwise violates the dataset-specific v1 contract.
 
-The clean-wheel smoke job also invokes `gazeforge-source-resolution` after installing the built
-wheel. This checks that the governance CLI is actually present in the distributable package rather
-than working only from an editable source checkout.
+The clean-wheel smoke job also invokes the installed `gazeforge-source-resolution --directory`
+command after installing the built wheel. This checks that both discovery mode and the governance
+CLI are actually present in the distributable package rather than working only from an editable
+source checkout.
 
 The CI-generated JSON is a validation summary, not frozen empirical evidence. It is not committed to
 the evidence tree and does not upgrade any benchmark's scientific status.
@@ -111,6 +116,10 @@ from gazeforge.source_resolution import (
     validate_source_resolution_record,
     validate_source_resolution_records,
 )
+from gazeforge.source_resolution_discovery import (
+    discover_source_resolution_paths,
+    validate_source_resolution_directory,
+)
 
 summary = validate_source_resolution_record(
     "validation/protocols/hollywood2-source-resolution-2026-09-04.json"
@@ -118,6 +127,7 @@ summary = validate_source_resolution_record(
 record = load_source_resolution_record(
     "validation/protocols/gaze-in-wild-source-resolution-2026-09-04.json"
 )
+repository_bundle = validate_source_resolution_directory("validation/protocols")
 ```
 
 Dataset-specific validators are also available for Hollywood2EM and Gaze-in-the-Wild. VISUS keeps
