@@ -84,6 +84,8 @@ jobs:
           /tmp/gazeforge-wheel-smoke/bin/python -m pip install dist/*.whl
           /tmp/gazeforge-wheel-smoke/bin/python -c "import gazeforge; print(gazeforge.__version__)"
           /tmp/gazeforge-wheel-smoke/bin/gazeforge --version
+          /tmp/gazeforge-wheel-smoke/bin/gazeforge-source-candidate --help \
+            > /tmp/gazeforge-source-candidate-help.txt
           /tmp/gazeforge-wheel-smoke/bin/gazeforge-source-resolution \
             --directory validation/protocols \
             --lock validation/governance/source-resolution-bundle-lock-v1.json \
