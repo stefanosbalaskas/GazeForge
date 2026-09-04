@@ -13,6 +13,7 @@ import pandas as pd
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
 from .lund_suite import validate_lund2013_suite_manifest
+from .visus_evidence import validate_visus_frozen_evidence_bundle
 from .visus_suite import validate_visus_dynamic_aoi_suite_manifest
 
 _REPORT_BODY_KEYS = ("benchmark", "model", "protocol", "metrics")
@@ -161,7 +162,7 @@ def discover_visus_dynamic_aoi_suite_manifests(
     *,
     recursive: bool = True,
 ) -> tuple[Path, ...]:
-    """Discover VISUS dynamic-AOI completion manifests for strict suite validation."""
+    """Discover VISUS dynamic-AOI completion manifests for strict evidence validation."""
     return _discover_named_suite_manifests(
         root,
         _VISUS_SUITE_MANIFEST_NAME,
@@ -254,6 +255,23 @@ def _validated_suite_records(
     return [(path, validator(path)) for path in paths]
 
 
+def _validate_visus_suite_for_dashboard(path: str | Path) -> dict[str, Any]:
+    """Require raw-execution provenance before surfacing a VISUS suite publicly."""
+    bundle = validate_visus_frozen_evidence_bundle(path)
+    summary = validate_visus_dynamic_aoi_suite_manifest(path, verify_reports=True)
+    if str(bundle["suite_fingerprint_sha256"]) != str(
+        summary["suite_fingerprint_sha256"]
+    ):
+        raise BenchmarkIntegrityError(
+            "VISUS Frozen Evidence bundle and dashboard suite fingerprints disagree."
+        )
+    if int(bundle["report_count"]) != int(summary["report_count"]):
+        raise BenchmarkIntegrityError(
+            "VISUS Frozen Evidence bundle and dashboard suite report counts disagree."
+        )
+    return summary
+
+
 def build_benchmark_dashboard(
     root: str | Path,
     *,
@@ -263,7 +281,9 @@ def build_benchmark_dashboard(
 
     Duplicate report and suite fingerprints are rejected so copied artifacts cannot inflate the
     apparent number of independent validation results or completed tranches on a public dashboard.
-    Provenance-only JSON children are never promoted to performance-report rows.
+    Provenance-only JSON children are never promoted to performance-report rows. VISUS suites are
+    surfaced only after the Frozen Evidence bundle gate verifies both the suite and its raw-execution
+    provenance manifest.
     """
     paths = discover_frozen_benchmark_reports(root, recursive=recursive)
     reports: list[dict[str, Any]] = []
@@ -297,7 +317,7 @@ def build_benchmark_dashboard(
         *_validated_suite_records(lund_paths, validate_lund2013_suite_manifest),
         *_validated_suite_records(
             visus_paths,
-            validate_visus_dynamic_aoi_suite_manifest,
+            _validate_visus_suite_for_dashboard,
         ),
     ]
     suite_records.sort(key=lambda item: str(item[0]))
@@ -387,7 +407,8 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
                 "## Verified report suites\n\n",
                 (
                     "A suite appears here only when its completion manifest and every "
-                    "referenced child report verify successfully.\n\n"
+                    "referenced child report verify successfully. VISUS suites additionally "
+                    "require a verified raw-execution provenance bundle.\n\n"
                 ),
                 _markdown_table(public_suites),
                 "\n\n",
