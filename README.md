@@ -91,9 +91,9 @@ AI outputs remain ordinary data structures with confidence, source, model, sampl
 | **Lund2013** | paired expert manual event labels | 500 Hz | **first frozen external evidence complete**: native/derived human agreement, derived 60 Hz matched-fold modelling, MN sensitivity, stimulus-family results, sampling×purity sensitivity |
 | **Hollywood2EM** | expert-corrected manual event labels | 500 Hz | adapter and Lund↔Hollywood cross-dataset infrastructure implemented; authoritative identity/coordinate audit still required |
 | **Gaze-in-the-Wild** | five trained human annotators | published 120 Hz acquisition | native human-reference adapter and protocol implemented; authoritative data audit pending |
-| **VISUS** | two human dynamic-AOI annotators | 60 Hz | dynamic-AOI evaluation infrastructure and candidate protocol implemented; authoritative current dataset copy pending |
+| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **infrastructure validated, empirical execution pending**: source-resolution checkpoint/validator, exact-source audit, canonical AOI/model intake, external-grid validation, and Frozen Evidence gates; current authoritative distribution/reuse terms unresolved |
 
-GazeForge never upgrades derived evidence into a stronger evidence category. Resampled 60 Hz results remain labelled **derived human-reference evidence**, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved.
+GazeForge never upgrades derived evidence into a stronger evidence category. Resampled 60 Hz results remain labelled **derived human-reference evidence**, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, contributor count is not treated as evidence of independent annotation streams; the current source-resolution state is documented separately in [VISUS source resolution](docs/visus-source-resolution.md).
 
 ## Installation
 
