@@ -217,6 +217,89 @@ def _review_file_from_payload(
         raise BenchmarkIntegrityError("Candidate source review file row is invalid.") from exc
 
 
+def _resolved_text(value: str | None) -> bool:
+    return value is not None and bool(value.strip())
+
+
+def _validate_review_semantics(
+    rows: tuple[CandidateSourceReviewFile, ...],
+    *,
+    dataset_key: str,
+) -> None:
+    for row in rows:
+        if row.include_in_audit and row.role in {"unresolved", "exclude"}:
+            raise BenchmarkIntegrityError(
+                "Included review rows must have a reviewed dataset-specific file role."
+            )
+
+    if dataset_key == "hollywood2em":
+        identities: list[tuple[str, str]] = []
+        for row in rows:
+            if row.role == "arff" and row.include_in_audit:
+                if not _resolved_text(row.participant_id) or not _resolved_text(row.trial_id):
+                    raise BenchmarkIntegrityError(
+                        "Included Hollywood2EM ARFF rows require participant_id and trial_id."
+                    )
+                if row.labeller_id is not None or row.process_path is not None:
+                    raise BenchmarkIntegrityError(
+                        "Hollywood2EM ARFF review rows cannot define labeller_id or process_path."
+                    )
+                identities.append((row.participant_id.strip(), row.trial_id.strip()))
+        if len(identities) != len(set(identities)):
+            raise BenchmarkIntegrityError(
+                "Included Hollywood2EM participant/trial review identities must be unique."
+            )
+        return
+
+    process_paths = {
+        row.path for row in rows if row.role == "process" and row.include_in_audit
+    }
+    label_identities: list[tuple[str, str, int]] = []
+    trial_process: dict[tuple[str, str], str] = {}
+    for row in rows:
+        if row.role == "process" and row.include_in_audit:
+            if any(
+                value is not None
+                for value in (
+                    row.participant_id,
+                    row.trial_id,
+                    row.labeller_id,
+                    row.process_path,
+                )
+            ):
+                raise BenchmarkIntegrityError(
+                    "Included Gaze-in-the-Wild process rows carry file identity only; participant, "
+                    "trial, labeller, and process_path belong on label rows."
+                )
+        if row.role != "label" or not row.include_in_audit:
+            continue
+        if not _resolved_text(row.participant_id) or not _resolved_text(row.trial_id):
+            raise BenchmarkIntegrityError(
+                "Included Gaze-in-the-Wild label rows require participant_id and trial_id."
+            )
+        if row.labeller_id is None or not _resolved_text(row.process_path):
+            raise BenchmarkIntegrityError(
+                "Included Gaze-in-the-Wild label rows require labeller_id and process_path."
+            )
+        if row.process_path not in process_paths:
+            raise BenchmarkIntegrityError(
+                "Each included Gaze-in-the-Wild label row must reference an included process row."
+            )
+        participant = row.participant_id.strip()
+        trial = row.trial_id.strip()
+        label_identities.append((participant, trial, row.labeller_id))
+        previous = trial_process.setdefault((participant, trial), row.process_path)
+        if previous != row.process_path:
+            raise BenchmarkIntegrityError(
+                "All included labellers for one Gaze-in-the-Wild participant/trial must reference "
+                "the same reviewed process file."
+            )
+    if len(label_identities) != len(set(label_identities)):
+        raise BenchmarkIntegrityError(
+            "Included Gaze-in-the-Wild participant/trial/labeller identities must be unique."
+        )
+
+
 def validate_candidate_source_review_scaffold(
     review_path: str | Path,
     inventory_path: str | Path,
@@ -225,7 +308,8 @@ def validate_candidate_source_review_scaffold(
     """Revalidate one manually editable review scaffold against the exact candidate copy.
 
     Scientific review fields may be edited, but exact file path/hash/size identity and the
-    non-empirical scientific boundary cannot change. The scaffold never becomes an audit approval.
+    non-empirical scientific boundary cannot change. Included rows must also form a coherent
+    dataset-specific manual mapping. The scaffold never becomes an audit approval.
     """
     inventory = validate_candidate_source_inventory(inventory_path, root)
     payload = _load_payload(Path(review_path))
@@ -251,11 +335,18 @@ def validate_candidate_source_review_scaffold(
     source_review = payload.get("source_review")
     if not isinstance(source_review, Mapping):
         raise BenchmarkIntegrityError("Candidate source review requires a source_review object.")
+    expected_review_keys = set(_blank_source_review(inventory.dataset_key))
+    if set(source_review) != expected_review_keys:
+        raise BenchmarkIntegrityError(
+            "Candidate source review must preserve the complete dataset-specific review schema."
+        )
     if source_review.get("dataset_status") != "template":
         raise BenchmarkIntegrityError(
             "Candidate source review dataset_status must remain 'template'; this scaffold cannot "
             "authorize empirical use."
         )
+    if not isinstance(source_review.get("notes"), list):
+        raise BenchmarkIntegrityError("Candidate source review notes must remain a JSON list.")
 
     raw_files = payload.get("files")
     if not isinstance(raw_files, list) or len(raw_files) != inventory.file_count:
@@ -274,6 +365,7 @@ def validate_candidate_source_review_scaffold(
         raise BenchmarkIntegrityError(
             "Candidate source review file path/hash/size identity must exactly match the inventory."
         )
+    _validate_review_semantics(rows, dataset_key=inventory.dataset_key)
 
     return CandidateSourceReviewScaffold(
         root=inventory.root,
