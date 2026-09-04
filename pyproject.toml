@@ -64,6 +64,7 @@ docs = [
 [project.scripts]
 gazeforge = "gazeforge.cli:main"
 gazeforge-visus = "gazeforge.visus_cli:main"
+gazeforge-visus-source-resolution = "gazeforge.visus_source_resolution_cli:main"
 
 [project.urls]
 Homepage = "https://github.com/stefanosbalaskas/GazeForge"
