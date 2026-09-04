@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-
 _RECORD = Path("validation/protocols/visus-source-resolution-2026-09-04.json")
 
 
