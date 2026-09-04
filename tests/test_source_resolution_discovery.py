@@ -40,11 +40,24 @@ def test_discovery_ignores_other_protocol_json_files(tmp_path):
     assert [path.name for path in paths] == [source.name]
 
 
+def test_discovery_refuses_empty_candidate_set(tmp_path):
+    with pytest.raises(BenchmarkIntegrityError, match="No source-resolution checkpoints"):
+        source_resolution_discovery.discover_source_resolution_paths(tmp_path)
+
+
 def test_discovery_refuses_malformed_matching_candidate(tmp_path):
     path = tmp_path / "broken-source-resolution-2026-09-04.json"
     path.write_text("{broken", encoding="utf-8")
 
-    with pytest.raises(BenchmarkIntegrityError, match="not valid JSON"):
+    with pytest.raises(BenchmarkIntegrityError, match="not valid UTF-8 JSON"):
+        source_resolution_discovery.discover_source_resolution_paths(tmp_path)
+
+
+def test_discovery_refuses_non_object_matching_candidate(tmp_path):
+    path = tmp_path / "list-source-resolution-2026-09-04.json"
+    path.write_text("[]", encoding="utf-8")
+
+    with pytest.raises(BenchmarkIntegrityError, match="must be a JSON object"):
         source_resolution_discovery.discover_source_resolution_paths(tmp_path)
 
 
@@ -79,4 +92,10 @@ def test_cli_rejects_directory_and_explicit_paths_together():
 
     with pytest.raises(SystemExit) as exc:
         source_resolution_cli.main(["--directory", str(_PROTOCOLS), str(source)])
+    assert exc.value.code == 2
+
+
+def test_cli_requires_explicit_paths_or_directory():
+    with pytest.raises(SystemExit) as exc:
+        source_resolution_cli.main([])
     assert exc.value.code == 2
