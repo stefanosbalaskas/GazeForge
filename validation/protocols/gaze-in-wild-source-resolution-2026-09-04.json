@@ -1,0 +1,135 @@
+{
+  "record_type": "source-resolution-status-v1",
+  "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
+  "checked_on": "2026-09-04",
+  "status": "published_distribution_identifier_established_current_direct_copy_unverified",
+  "empirical_evidence_created": false,
+  "source_audit_ready": false,
+  "published_distribution_identifier_found": true,
+  "current_direct_data_endpoint_verified": false,
+  "current_institutional_dataset_listing_found": true,
+  "authoritative_publication": {
+    "title": "Gaze-in-wild: A dataset for studying eye and head coordination in everyday activities",
+    "authors": [
+      "Rakshit Kothari",
+      "Zhizhuo Yang",
+      "Christopher Kanan",
+      "Reynold Bailey",
+      "Jeff B. Pelz",
+      "Gabriel J. Diaz"
+    ],
+    "year": 2020,
+    "doi": "10.1038/s41598-020-59251-5",
+    "published_dataset_description": {
+      "participant_count": 19,
+      "task_count": 4,
+      "tasks": [
+        "indoor navigation",
+        "ball catching",
+        "object search",
+        "tea making"
+      ],
+      "published_hardware_sampling_rate_hz": 120,
+      "eye_tracker": "binocular Pupil Labs eye tracking glasses",
+      "additional_sensors": [
+        "MPU-6050 6-axis IMU",
+        "ZED stereo RGB-D camera"
+      ],
+      "hand_labelled_duration_minutes_approx": 135,
+      "trained_annotator_count": 5,
+      "annotators_described_as_deciding_independently": true
+    },
+    "published_distribution_url": "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/",
+    "publication_states_compressed_data_and_code_publicly_available": true,
+    "article_license": "CC BY 4.0",
+    "article_license_is_dataset_license": false
+  },
+  "current_institutional_evidence": {
+    "source": "Rochester Institute of Technology Perception for Movement Lab",
+    "source_url": "https://www.rit.edu/science/perception-movement-lab",
+    "dataset_listed_under_software_data": true,
+    "dataset_link_target": "publication record rather than a direct data archive",
+    "direct_current_distribution_exposed_by_page": false
+  },
+  "later_distribution_evidence": [
+    {
+      "source": "Evaluating Eye Movement Event Detection: A Review of the State of the Art",
+      "repository": "https://github.com/r-zemblys/EM-event-detection-evaluation",
+      "reported_distribution_url": "http://www.cis.rit.edu/~rsk3900/gaze-in-wild",
+      "reports_independent_five_annotator_process": true,
+      "reports_nominal_rate_hz": 300,
+      "rate_interpretation": "secondary catalog value; not substituted for the publication's 120 Hz acquisition-hardware provenance"
+    },
+    {
+      "source": "Implementing mobile eye tracking in psychological research: A practical guide",
+      "year": 2024,
+      "reported_distribution_url": "https://www.cis.rit.edu/~rsk3900/gaze-in-wild/",
+      "describes_dataset_as_open_access_resource": true
+    }
+  ],
+  "current_resolution_checks": [
+    {
+      "target": "Authoritative 2020 Scientific Reports publication",
+      "outcome": "The publication explicitly identifies the RIT gaze-in-wild URL as the public location of compressed data and code and documents 120 Hz Pupil Labs acquisition hardware."
+    },
+    {
+      "target": "Current RIT Perception for Movement Lab page",
+      "outcome": "The institutional page currently lists The Gaze-In-Wild Dataset under Software/Data, but the surfaced link resolves to the publication record rather than a current direct dataset archive."
+    },
+    {
+      "target": "Published RIT gaze-in-wild data URL",
+      "outcome": "A current direct copy was not successfully retrieved in this resolution environment; this is recorded as unverified rather than as evidence that the dataset is unavailable."
+    },
+    {
+      "target": "Later methodological and replication literature",
+      "outcome": "Later sources continue to cite the same RIT distribution identifier, supporting its historical/canonical identity but not replacing exact current file and reuse-term verification."
+    }
+  ],
+  "rights": {
+    "analysis_use_terms_status": "unresolved",
+    "raw_data_redistribution_terms_status": "unresolved",
+    "article_cc_by_is_dataset_license": false,
+    "publication_public_availability_is_unrestricted_redistribution_permission": false,
+    "license_inference_permitted": false
+  },
+  "annotation_provenance": {
+    "published_trained_annotator_count": 5,
+    "publication_states_annotators_decided_independently": true,
+    "publication_independence_evidence_present": true,
+    "separately_recoverable_streams_verified_from_exact_copy": false,
+    "human_human_agreement_execution_ready": false,
+    "readiness_rule": "published independence is necessary context, but exact recoverable streams and shared gaze identity must be verified by the source audit before frozen agreement"
+  },
+  "sampling_rate_provenance": {
+    "published_acquisition_hardware_rate_hz": 120,
+    "secondary_evaluation_catalog_rate_hz": 300,
+    "rates_reconciled": false,
+    "distributed_file_analysis_cadence_verified": false,
+    "required_resolution_method": "infer each audited label stream from its timestamps and preserve published hardware rate separately"
+  },
+  "mapping_and_coordinates": {
+    "participant_task_mapping_verified_from_exact_copy": false,
+    "point_of_regard_coordinate_unit_verified_from_exact_copy": false,
+    "verification_requires_exact_obtained_copy": true
+  },
+  "claim_limits": [
+    "This record documents source-resolution research, not a completed Gaze-in-the-Wild source audit.",
+    "Failure to retrieve the historical RIT data URL in this environment is not evidence that no authoritative copy exists.",
+    "The Scientific Reports article's CC BY 4.0 license is not treated as the license of externally hosted dataset files.",
+    "Published public availability does not by itself establish unrestricted raw-data redistribution permission.",
+    "The publication's 120 Hz eye-tracker hardware rate is preserved separately from the 300 Hz value reported by a later evaluation catalog.",
+    "Published independent annotation decisions do not prove that every independent stream is separately recoverable in the exact current distribution.",
+    "No Gaze-in-the-Wild human-agreement or model-performance result is created or validated by this record.",
+    "Gaze-in-the-Wild remains naturalistic head-mounted evidence and is not Gazepoint GP3-equivalent validation."
+  ],
+  "next_required_actions": [
+    "Obtain an exact current copy from the published RIT distribution or an author-verified institutional source.",
+    "Verify analysis-use and raw-data redistribution terms from the exact obtained copy separately.",
+    "Inventory and SHA-256 fingerprint every LabelData and ProcessData file before setting source_audit_ready to true.",
+    "Verify participant/task identities and LabelData-to-ProcessData pairing from the authoritative structure.",
+    "Verify point-of-regard coordinate semantics before pixel-kinematic or cross-dataset modelling.",
+    "Infer observed analysis cadence independently from each audited LabelData timestamp stream rather than imposing 120 Hz or 300 Hz.",
+    "Verify separately recoverable independent labeller streams and identical underlying gaze before freezing human-human agreement.",
+    "Only after those gates pass, freeze participant-disjoint model validation and task/event-class sensitivity."
+  ]
+}
