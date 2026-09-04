@@ -20,11 +20,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install git-annex
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git-annex
-          git annex version
       - name: Probe canonical Hollywood2EM GIN repository
         run: python scripts/hollywood2_gin_live_probe.py
       - name: Summarize source-resolution result
@@ -34,14 +29,26 @@ jobs:
           from pathlib import Path
 
           record = json.loads(Path("hollywood2_gin_live_probe.json").read_text())
+          ground = record["ground_truth"]
+          comparison = ground["student_final_comparison"]
+          sampling = ground["sampling_rate"]
           print("HEAD:", record["head"]["commit_sha1"])
           print("default_ref:", record["remote"]["default_ref"])
           print("tree entries:", record["tree"]["entry_count"])
           print("ARFF paths:", record["tree"]["arff_path_count"])
-          print("annex entries:", record["annex"]["entry_count"])
-          print("annex ARFF entries:", record["annex"]["arff_entry_count"])
+          print("ground-truth files:", ground["file_count"])
+          print("ground-truth rows:", ground["total_rows"])
+          print("ground-truth bytes:", ground["total_bytes"])
+          print("splits:", ground["splits"])
+          print("clips:", ground["clip_count"])
+          print("file subject tokens:", ground["file_subject_token_count"])
+          print("schema signatures:", ground["schema_signatures"])
+          print("label counts:", ground["global_label_counts"])
+          print("student/final samples:", comparison["sample_count"])
+          print("student/final changed:", comparison["changed_sample_count"])
+          print("student/final raw agreement:", comparison["raw_agreement_fraction"])
+          print("median file rate assuming microseconds:", sampling["median_file_rate_hz_assuming_time_us"])
           print("license files:", [item["path"] for item in record["license_files"]])
-          print("payload recovered:", record["annex"]["payload_probe"]["payload_recovered"])
           print("fingerprint:", record["probe_fingerprint_sha256"])
           PY
       - name: Upload deterministic probe record
