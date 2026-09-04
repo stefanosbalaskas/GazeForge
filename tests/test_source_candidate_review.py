@@ -63,7 +63,7 @@ def test_review_scaffold_preserves_exact_identity_without_inference(tmp_path, da
     assert validated.files == scaffold.files
 
 
-def test_review_scaffold_allows_manual_semantic_edits_without_empirical_promotion(tmp_path):
+def test_review_scaffold_allows_coherent_manual_gaze_in_wild_mapping(tmp_path):
     root, inventory, inventory_path = _candidate(tmp_path, "gaze-in-the-wild")
     scaffold = build_candidate_source_review_scaffold(inventory)
     review_path = tmp_path / "review.json"
@@ -72,24 +72,54 @@ def test_review_scaffold_allows_manual_semantic_edits_without_empirical_promotio
     payload = json.loads(review_path.read_text(encoding="utf-8"))
     payload["source_review"]["authoritative_source"] = "manually reviewed source"
     payload["source_review"]["coordinate_unit"] = "pixels"
-    payload["files"][0].update(
+    process_row = payload["files"][0]
+    label_row = payload["files"][1]
+    process_row["role"] = "process"
+    process_row["include_in_audit"] = True
+    label_row.update(
         {
             "role": "label",
             "include_in_audit": True,
             "participant_id": "P01",
             "trial_id": "T01",
             "labeller_id": 1,
-            "process_path": "nested/opaque-2.mat",
+            "process_path": process_row["path"],
         }
     )
-    payload["files"][1]["role"] = "process"
-    payload["files"][1]["include_in_audit"] = True
     review_path.write_text(json.dumps(payload), encoding="utf-8")
 
     validated = validate_candidate_source_review_scaffold(review_path, inventory_path, root)
-    assert validated.files[0].role == "label"
-    assert validated.files[0].participant_id == "P01"
+    assert validated.files[0].role == "process"
+    assert validated.files[1].role == "label"
+    assert validated.files[1].participant_id == "P01"
     assert validated.source_review["dataset_status"] == "template"
+
+
+def test_review_scaffold_allows_coherent_manual_hollywood_mapping(tmp_path):
+    root, inventory, inventory_path = _candidate(tmp_path, "hollywood2em")
+    scaffold = build_candidate_source_review_scaffold(inventory)
+    review_path = tmp_path / "review.json"
+    write_candidate_source_review_scaffold(scaffold, review_path)
+
+    payload = json.loads(review_path.read_text(encoding="utf-8"))
+    arff_row = next(row for row in payload["files"] if row["path"].endswith(".arff"))
+    other_row = next(row for row in payload["files"] if not row["path"].endswith(".arff"))
+    arff_row.update(
+        {
+            "role": "arff",
+            "include_in_audit": True,
+            "participant_id": "P01",
+            "trial_id": "T01",
+        }
+    )
+    other_row["role"] = "exclude"
+    review_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    validated = validate_candidate_source_review_scaffold(review_path, inventory_path, root)
+    included = [row for row in validated.files if row.include_in_audit]
+    assert len(included) == 1
+    assert included[0].role == "arff"
+    assert included[0].participant_id == "P01"
 
 
 def test_review_scaffold_refuses_empirical_dataset_status(tmp_path):
@@ -131,6 +161,58 @@ def test_review_scaffold_refuses_unsupported_review_role(tmp_path):
     review_path.write_text(json.dumps(payload), encoding="utf-8")
 
     with pytest.raises(BenchmarkIntegrityError, match="Unsupported review role"):
+        validate_candidate_source_review_scaffold(review_path, inventory_path, root)
+
+
+def test_review_scaffold_refuses_included_unresolved_role(tmp_path):
+    root, inventory, inventory_path = _candidate(tmp_path, "hollywood2em")
+    scaffold = build_candidate_source_review_scaffold(inventory)
+    review_path = tmp_path / "review.json"
+    write_candidate_source_review_scaffold(scaffold, review_path)
+
+    payload = json.loads(review_path.read_text(encoding="utf-8"))
+    payload["files"][0]["include_in_audit"] = True
+    review_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(BenchmarkIntegrityError, match="dataset-specific file role"):
+        validate_candidate_source_review_scaffold(review_path, inventory_path, root)
+
+
+def test_review_scaffold_refuses_label_without_included_process(tmp_path):
+    root, inventory, inventory_path = _candidate(tmp_path, "gaze-in-the-wild")
+    scaffold = build_candidate_source_review_scaffold(inventory)
+    review_path = tmp_path / "review.json"
+    write_candidate_source_review_scaffold(scaffold, review_path)
+
+    payload = json.loads(review_path.read_text(encoding="utf-8"))
+    payload["files"][0]["role"] = "process"
+    payload["files"][1].update(
+        {
+            "role": "label",
+            "include_in_audit": True,
+            "participant_id": "P01",
+            "trial_id": "T01",
+            "labeller_id": 1,
+            "process_path": payload["files"][0]["path"],
+        }
+    )
+    review_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(BenchmarkIntegrityError, match="included process row"):
+        validate_candidate_source_review_scaffold(review_path, inventory_path, root)
+
+
+def test_review_scaffold_requires_complete_source_review_schema(tmp_path):
+    root, inventory, inventory_path = _candidate(tmp_path, "hollywood2em")
+    scaffold = build_candidate_source_review_scaffold(inventory)
+    review_path = tmp_path / "review.json"
+    write_candidate_source_review_scaffold(scaffold, review_path)
+
+    payload = json.loads(review_path.read_text(encoding="utf-8"))
+    payload["source_review"].pop("coordinate_verification_basis")
+    review_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(BenchmarkIntegrityError, match="complete dataset-specific review schema"):
         validate_candidate_source_review_scaffold(review_path, inventory_path, root)
 
 
