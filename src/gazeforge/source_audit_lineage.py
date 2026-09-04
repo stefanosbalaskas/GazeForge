@@ -151,6 +151,13 @@ def _validate_report_fingerprint(report: Mapping[str, Any]) -> str:
     return expected
 
 
+def _require_equal(actual: Any, expected: Any, *, field_name: str) -> None:
+    if actual != expected:
+        raise BenchmarkIntegrityError(
+            f"Audit report {field_name} does not match the exact authorized specification."
+        )
+
+
 def _validate_common_report(
     report: Mapping[str, Any],
     *,
@@ -174,33 +181,84 @@ def _validate_common_report(
         )
 
     dataset = _require_mapping(report.get("dataset"), field_name="dataset")
-    if dataset.get("source_revision") != authorized_spec.source_revision:
-        raise BenchmarkIntegrityError("Audit report source revision does not match the spec.")
+    expected_dataset = {
+        "name": authorized_spec.dataset_name,
+        "version": authorized_spec.dataset_version,
+        "source": authorized_spec.source,
+        "source_revision": authorized_spec.source_revision,
+        "license": authorized_spec.license,
+    }
+    for key, expected in expected_dataset.items():
+        _require_equal(dataset.get(key), expected, field_name=f"dataset.{key}")
+
     reuse = _require_mapping(report.get("reuse"), field_name="reuse")
+    _require_equal(
+        reuse.get("terms_source"),
+        authorized_spec.reuse_terms_source,
+        field_name="reuse.terms_source",
+    )
     if reuse.get("terms_verified") is not True or reuse.get("analysis_use_permitted") is not True:
         raise BenchmarkIntegrityError(
             "Audit lineage requires verified reuse terms and permitted analysis use."
         )
+    _require_equal(
+        reuse.get("redistribution_status"),
+        authorized_spec.redistribution_status,
+        field_name="reuse.redistribution_status",
+    )
+
     coordinates = _require_mapping(report.get("coordinates"), field_name="coordinates")
     if coordinates.get("verified") is not True:
         raise BenchmarkIntegrityError("Audit lineage requires verified coordinate units.")
+    _require_equal(
+        coordinates.get("unit"),
+        authorized_spec.coordinate_unit,
+        field_name="coordinates.unit",
+    )
+    if isinstance(authorized_spec, GazeInWildSourceAuditSpec):
+        _require_equal(
+            coordinates.get("pixel_kinematics_compatible"),
+            authorized_spec.pixel_kinematics_compatible,
+            field_name="coordinates.pixel_kinematics_compatible",
+        )
     return report_fingerprint
+
+
+def _validated_inventory_fingerprint(
+    inventory: Mapping[str, Any],
+    *,
+    fingerprint_key: str,
+    label: str,
+) -> str:
+    if inventory.get("exact_inventory_match") is not True:
+        raise BenchmarkIntegrityError(f"{label} audit report lacks an exact inventory match.")
+    files = inventory.get("files")
+    if not isinstance(files, list):
+        raise BenchmarkIntegrityError(f"{label} audit report files ledger must be a JSON list.")
+    if inventory.get("file_count") != len(files):
+        raise BenchmarkIntegrityError(f"{label} audit report file count does not match its ledger.")
+    observed = inventory.get(fingerprint_key)
+    if not isinstance(observed, str) or _SHA256_RE.fullmatch(observed.lower()) is None:
+        raise BenchmarkIntegrityError(f"{label} source manifest fingerprint is invalid.")
+    expected = benchmark_fingerprint(files)
+    if observed.lower() != expected:
+        raise BenchmarkIntegrityError(f"{label} source manifest fingerprint mismatch.")
+    return expected
 
 
 def _manifest_fingerprints(
     report: Mapping[str, Any],
     *,
     dataset_key: str,
+    authorized_spec: AuditTemplateSpec,
 ) -> dict[str, str]:
     if dataset_key == "hollywood2em":
         inventory = _require_mapping(report.get("source_inventory"), field_name="source_inventory")
-        if inventory.get("exact_inventory_match") is not True:
-            raise BenchmarkIntegrityError(
-                "Hollywood2EM audit report lacks an exact inventory match."
-            )
-        digest = inventory.get("source_manifest_fingerprint_sha256")
-        if not isinstance(digest, str) or _SHA256_RE.fullmatch(digest.lower()) is None:
-            raise BenchmarkIntegrityError("Hollywood2EM source manifest fingerprint is invalid.")
+        digest = _validated_inventory_fingerprint(
+            inventory,
+            fingerprint_key="source_manifest_fingerprint_sha256",
+            label="Hollywood2EM",
+        )
         annotations = _require_mapping(report.get("annotations"), field_name="annotations")
         if annotations.get("same_underlying_gaze_verified") is not True:
             raise BenchmarkIntegrityError(
@@ -216,19 +274,46 @@ def _manifest_fingerprints(
         sampling = _require_mapping(report.get("sampling"), field_name="sampling")
         if sampling.get("sampling_origin") != "native":
             raise BenchmarkIntegrityError("Hollywood2EM audit sampling must remain native.")
-        return {"source": digest.lower()}
+        assert isinstance(authorized_spec, Hollywood2SourceAuditSpec)
+        _require_equal(
+            sampling.get("expected_sampling_rate_hz"),
+            authorized_spec.expected_sampling_rate_hz,
+            field_name="sampling.expected_sampling_rate_hz",
+        )
+        _require_equal(
+            sampling.get("tolerance_fraction"),
+            authorized_spec.sampling_rate_tolerance_fraction,
+            field_name="sampling.tolerance_fraction",
+        )
+        try:
+            observed_rate = float(sampling["observed_sampling_rate_hz"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise BenchmarkIntegrityError(
+                "Hollywood2EM observed sampling rate is missing or invalid."
+            ) from exc
+        tolerance = authorized_spec.expected_sampling_rate_hz * (
+            authorized_spec.sampling_rate_tolerance_fraction
+        )
+        if abs(observed_rate - authorized_spec.expected_sampling_rate_hz) > tolerance:
+            raise BenchmarkIntegrityError(
+                "Hollywood2EM observed sampling rate falls outside the authorized contract."
+            )
+        return {"source": digest}
 
     label_inventory = _require_mapping(report.get("label_inventory"), field_name="label_inventory")
     process_inventory = _require_mapping(
         report.get("process_inventory"), field_name="process_inventory"
     )
-    if (
-        label_inventory.get("exact_inventory_match") is not True
-        or process_inventory.get("exact_inventory_match") is not True
-    ):
-        raise BenchmarkIntegrityError(
-            "Gaze-in-the-Wild audit report lacks exact label/process inventory matches."
-        )
+    label_digest = _validated_inventory_fingerprint(
+        label_inventory,
+        fingerprint_key="manifest_fingerprint_sha256",
+        label="Gaze-in-the-Wild label",
+    )
+    process_digest = _validated_inventory_fingerprint(
+        process_inventory,
+        fingerprint_key="manifest_fingerprint_sha256",
+        label="Gaze-in-the-Wild process",
+    )
     identity = _require_mapping(report.get("identity"), field_name="identity")
     if identity.get("participant_mapping_verified") is not True:
         raise BenchmarkIntegrityError(
@@ -239,15 +324,13 @@ def _manifest_fingerprints(
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild audit lineage must preserve timestamp-inferred file cadence."
         )
-    result: dict[str, str] = {}
-    for key, inventory in (("label", label_inventory), ("process", process_inventory)):
-        digest = inventory.get("manifest_fingerprint_sha256")
-        if not isinstance(digest, str) or _SHA256_RE.fullmatch(digest.lower()) is None:
-            raise BenchmarkIntegrityError(
-                f"Gaze-in-the-Wild {key} manifest fingerprint is invalid."
-            )
-        result[key] = digest.lower()
-    return result
+    assert isinstance(authorized_spec, GazeInWildSourceAuditSpec)
+    _require_equal(
+        sampling.get("published_hardware_sampling_rate_hz"),
+        authorized_spec.published_hardware_sampling_rate_hz,
+        field_name="sampling.published_hardware_sampling_rate_hz",
+    )
+    return {"label": label_digest, "process": process_digest}
 
 
 def build_source_audit_lineage_receipt(
@@ -278,7 +361,11 @@ def build_source_audit_lineage_receipt(
         authorized_spec=authorized_spec,
         dataset_key=dataset_key,
     )
-    manifests = _manifest_fingerprints(audit_report, dataset_key=dataset_key)
+    manifests = _manifest_fingerprints(
+        audit_report,
+        dataset_key=dataset_key,
+        authorized_spec=authorized_spec,
+    )
     template_fingerprint = source_audit_template_fingerprint(template_spec)
     authorization_fingerprint = benchmark_fingerprint(authorization.to_dict())
     authorized_spec_fingerprint = benchmark_fingerprint(authorized_spec.to_dict())
