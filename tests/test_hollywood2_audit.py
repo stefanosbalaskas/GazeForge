@@ -12,6 +12,7 @@ from gazeforge.hollywood2_audit import (
     audit_hollywood2_source,
     load_audited_hollywood2_directory,
 )
+from gazeforge.source_audit_lineage import SourceAuditLineageReceipt
 
 
 def _write_arff(path: Path) -> None:
@@ -85,6 +86,24 @@ def _identity_parser(spec: Hollywood2SourceAuditSpec):
     return parser
 
 
+def _lineage(gaze) -> SourceAuditLineageReceipt:
+    return SourceAuditLineageReceipt(
+        dataset_key="hollywood2em",
+        audit_template_fingerprint_sha256="a" * 64,
+        authorization_fingerprint_sha256="b" * 64,
+        authorized_spec_fingerprint_sha256=gaze.metadata[
+            "source_audit_spec_fingerprint_sha256"
+        ],
+        audit_report_fingerprint_sha256=gaze.metadata[
+            "source_audit_report_fingerprint_sha256"
+        ],
+        source_manifest_fingerprints_sha256={
+            "source": gaze.metadata["source_manifest_fingerprint_sha256"]
+        },
+        source_revision=gaze.metadata["source_revision"],
+    )
+
+
 def test_hollywood2_source_audit_verifies_inventory_identities_and_gaze(tmp_path):
     spec = _fixture(tmp_path)
     run = audit_hollywood2_source(tmp_path, spec)
@@ -111,7 +130,7 @@ def test_audited_loader_selects_expert_or_student_only_after_full_audit(tmp_path
         load_audited_hollywood2_directory(tmp_path, spec, annotator="third-labeller")
 
 
-def test_cross_dataset_hollywood2_requires_source_audit_not_only_pixel_assertion(tmp_path):
+def test_cross_dataset_hollywood2_requires_source_audit_and_lineage(tmp_path):
     spec = _fixture(tmp_path)
     direct = load_hollywood2_directory(
         tmp_path,
@@ -129,13 +148,24 @@ def test_cross_dataset_hollywood2_requires_source_audit_not_only_pixel_assertion
             target_sampling_rate_hz=500.0,
         )
 
+    with pytest.raises(SchemaError, match="lineage receipt"):
+        prepare_cross_dataset_event_benchmark(
+            {"Hollywood2EM": audited, "Other": other},
+            target_sampling_rate_hz=500.0,
+        )
+
+    lineage = _lineage(audited)
     prepared = prepare_cross_dataset_event_benchmark(
         {"Hollywood2EM": audited, "Other": other},
+        source_audit_lineages={"Hollywood2EM": lineage},
         target_sampling_rate_hz=500.0,
     )
     report = prepared.dataset_reports["Hollywood2EM"]
     assert report["source_audit_status"] == "verified"
     assert len(report["source_audit_report_fingerprint_sha256"]) == 64
+    assert report["source_audit_lineage_receipt_fingerprint_sha256"] == (
+        lineage.to_dict()["receipt_fingerprint_sha256"]
+    )
     assert prepared.design["require_source_audits"] is True
 
 
