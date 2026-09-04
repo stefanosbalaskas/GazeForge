@@ -24,11 +24,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install package
+        run: python -m pip install .
       - name: Run exact pinned-source probe
         run: python scripts/visus_public_partial_probe.py
       - name: Bind live probe to committed evidence
-        env:
-          PYTHONPATH: src
         run: |
           python - <<'PY'
           from gazeforge.visus_public_partial import validate_visus_public_partial_probe
