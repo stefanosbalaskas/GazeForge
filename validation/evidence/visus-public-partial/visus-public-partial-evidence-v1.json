@@ -1,0 +1,271 @@
+{
+  "aggregate": {
+    "fixation_duration_dynamic_aoi_fraction": 0.9352336784871866,
+    "fixation_duration_hitting_any_dynamic_aoi_ms": 70179,
+    "fixation_event_count": 185,
+    "fixation_event_dynamic_aoi_hit_fraction": 0.8972972972972973,
+    "fixation_events_by_aoi": {
+      "Red Car": 166,
+      "White Car": 5
+    },
+    "fixation_events_hitting_any_dynamic_aoi": 166,
+    "inferred_sampling_rate_hz": 60.150375939849624,
+    "sample_count": 4498,
+    "sample_dynamic_aoi_hit_fraction": 0.8179190751445087,
+    "samples_hitting_any_dynamic_aoi": 3679,
+    "total_fixation_duration_ms": 75039,
+    "valid_both_eye_fraction": 0.9557581147176523,
+    "valid_both_eye_samples": 4299
+  },
+  "aoi": {
+    "box_counts": {
+      "Red Car": 625,
+      "White Car": 38
+    },
+    "duration_seconds": 25.0,
+    "fps": 25.0,
+    "height": 1080,
+    "number_of_frames": 625,
+    "object_names": [
+      "Red Car",
+      "White Car"
+    ],
+    "object_spans": {
+      "Red Car": [
+        1,
+        625
+      ],
+      "White Car": [
+        553,
+        590
+      ]
+    },
+    "source_filename": "01-car pursuit.avi",
+    "width": 1920
+  },
+  "claim_limits": [
+    "Evidence covers exactly three public 60 Hz Tobii recordings and one VISUS stimulus.",
+    "This record does not resolve or replace the original full 25-participant by 11-stimulus VISUS benchmark.",
+    "The public VISUS-supervised derivative repository supports reproducible analysis of these pinned files; the original dataset license remains unresolved.",
+    "GazeForge does not redistribute the source TSV or XML bytes in this evidence record.",
+    "No human-human agreement is established by this record.",
+    "These are Tobii 60 Hz recordings, not native Gazepoint GP3 evidence.",
+    "This record does not establish model-validation or VISUS Frozen Evidence eligibility."
+  ],
+  "coverage": {
+    "full_visus_participant_count": 25,
+    "full_visus_recovered": false,
+    "full_visus_stimulus_count": 11,
+    "participant_count": 3,
+    "participants": [
+      "P1A",
+      "P2B",
+      "P9B"
+    ],
+    "stimuli": [
+      "01-car pursuit"
+    ],
+    "stimulus_count": 1
+  },
+  "evidence_fingerprint_sha256": "80e008228e39c2b17bae99a526e2a0157c2c850ebe803c5a370abe9167efde14",
+  "execution": {
+    "artifact_id": 9956210827,
+    "artifact_zip_sha256": "adb1aa1c32a980dbf298d9bd8878c1c723325234510737723eb5de041cc08e2c",
+    "probe_fingerprint_sha256": "b1a301151ffae7efefdfccce647f509ec2b7ffe911b88b4979834ca526d1d4b1",
+    "probe_head_sha": "6d6a80aa5ea9b0ae6ad1878786ecf5346ad7196b",
+    "probe_workflow_run_id": 33924318147
+  },
+  "participants": [
+    {
+      "first_data_timestamp_ms": 7018,
+      "first_stimulus_timestamp_ms": 7018,
+      "fixation_duration_by_aoi_ms": {
+        "Red Car": 22280,
+        "White Car": 1399
+      },
+      "fixation_duration_dynamic_aoi_fraction": 0.9196351178437281,
+      "fixation_duration_hitting_any_dynamic_aoi_ms": 22280,
+      "fixation_event_count": 77,
+      "fixation_event_dynamic_aoi_hit_fraction": 0.8701298701298701,
+      "fixation_events_by_aoi": {
+        "Red Car": 67,
+        "White Car": 2
+      },
+      "fixation_events_hitting_any_dynamic_aoi": 67,
+      "inferred_sampling_rate_hz": 60.150375939849624,
+      "last_data_timestamp_ms": 31960,
+      "last_stimulus_timestamp_ms": 31960,
+      "media_geometry": [
+        [
+          1920,
+          1080
+        ]
+      ],
+      "median_positive_sample_delta_us": 16625,
+      "multiple_aoi_hit_samples": 31,
+      "parser": {
+        "data_row_count": 1499,
+        "header_index_zero_based": 18,
+        "line_count": 1518,
+        "skipped_short_rows": 0
+      },
+      "participant": "P1A",
+      "sample_dynamic_aoi_hit_fraction": 0.7785190126751167,
+      "sample_hits_by_aoi": {
+        "Red Car": 1167,
+        "White Car": 31
+      },
+      "samples_hitting_any_dynamic_aoi": 1167,
+      "samples_within_625_frames": 1499,
+      "stimulus_span_ms": 24942,
+      "total_fixation_duration_ms": 24227,
+      "valid_both_eye_fraction": 0.9372915276851234,
+      "valid_both_eye_samples": 1405
+    },
+    {
+      "first_data_timestamp_ms": 1010406,
+      "first_stimulus_timestamp_ms": 1010406,
+      "fixation_duration_by_aoi_ms": {
+        "Red Car": 23903,
+        "White Car": 1216
+      },
+      "fixation_duration_dynamic_aoi_fraction": 0.9447079282270177,
+      "fixation_duration_hitting_any_dynamic_aoi_ms": 23903,
+      "fixation_event_count": 51,
+      "fixation_event_dynamic_aoi_hit_fraction": 0.9411764705882353,
+      "fixation_events_by_aoi": {
+        "Red Car": 48,
+        "White Car": 2
+      },
+      "fixation_events_hitting_any_dynamic_aoi": 48,
+      "inferred_sampling_rate_hz": 60.150375939849624,
+      "last_data_timestamp_ms": 1035370,
+      "last_stimulus_timestamp_ms": 1035370,
+      "media_geometry": [
+        [
+          1920,
+          1080
+        ]
+      ],
+      "median_positive_sample_delta_us": 16625.0,
+      "multiple_aoi_hit_samples": 24,
+      "parser": {
+        "data_row_count": 1499,
+        "header_index_zero_based": 18,
+        "line_count": 1518,
+        "skipped_short_rows": 0
+      },
+      "participant": "P2B",
+      "sample_dynamic_aoi_hit_fraction": 0.8905937291527685,
+      "sample_hits_by_aoi": {
+        "Red Car": 1335,
+        "White Car": 24
+      },
+      "samples_hitting_any_dynamic_aoi": 1335,
+      "samples_within_625_frames": 1499,
+      "stimulus_span_ms": 24964,
+      "total_fixation_duration_ms": 25302,
+      "valid_both_eye_fraction": 0.9639759839893263,
+      "valid_both_eye_samples": 1445
+    },
+    {
+      "first_data_timestamp_ms": 441707,
+      "first_stimulus_timestamp_ms": 441707,
+      "fixation_duration_by_aoi_ms": {
+        "Red Car": 23996,
+        "White Car": 1666
+      },
+      "fixation_duration_dynamic_aoi_fraction": 0.9406507252058016,
+      "fixation_duration_hitting_any_dynamic_aoi_ms": 23996,
+      "fixation_event_count": 57,
+      "fixation_event_dynamic_aoi_hit_fraction": 0.8947368421052632,
+      "fixation_events_by_aoi": {
+        "Red Car": 51,
+        "White Car": 1
+      },
+      "fixation_events_hitting_any_dynamic_aoi": 51,
+      "inferred_sampling_rate_hz": 60.150375939849624,
+      "last_data_timestamp_ms": 466662,
+      "last_stimulus_timestamp_ms": 466662,
+      "media_geometry": [
+        [
+          1920,
+          1080
+        ]
+      ],
+      "median_positive_sample_delta_us": 16625,
+      "multiple_aoi_hit_samples": 31,
+      "parser": {
+        "data_row_count": 1500,
+        "header_index_zero_based": 18,
+        "line_count": 1519,
+        "skipped_short_rows": 0
+      },
+      "participant": "P9B",
+      "sample_dynamic_aoi_hit_fraction": 0.7846666666666666,
+      "sample_hits_by_aoi": {
+        "Red Car": 1177,
+        "White Car": 31
+      },
+      "samples_hitting_any_dynamic_aoi": 1177,
+      "samples_within_625_frames": 1500,
+      "stimulus_span_ms": 24955,
+      "total_fixation_duration_ms": 25510,
+      "valid_both_eye_fraction": 0.966,
+      "valid_both_eye_samples": 1449
+    }
+  ],
+  "record_type": "visus-public-partial-evidence-v1",
+  "reuse_boundary": {
+    "analysis_use_basis": [
+      "The original VISUS benchmark publication presents the corpus as input for future visualization and analysis research and for developing new analysis techniques.",
+      "The pinned public derivative repository documents a VISUS, University of Stuttgart bachelor-thesis project supervised by Kuno Kurzhals."
+    ],
+    "analysis_use_basis_recorded": true,
+    "source_bytes_redistributed_by_gazeforge": false,
+    "source_license_resolved": false,
+    "unrestricted_redistribution_asserted": false
+  },
+  "scientific_boundary": {
+    "empirical_metrics_created": true,
+    "frozen_evidence_created": false,
+    "human_human_agreement_created": false,
+    "model_validation_created": false,
+    "native_gp3_evidence": false,
+    "original_full_visus_source_resolved": false,
+    "public_derivative_partial_corpus_only": true
+  },
+  "source_class": "public-visus-supervised-derivative-partial-corpus",
+  "status": "verified-partial-empirical",
+  "upstream": {
+    "commit": "a8ea2402936122f9e5c98152460bd16a4ba97740",
+    "files": {
+      "P1A": {
+        "bytes": 324647,
+        "git_blob_sha1": "52a613c44c9b68ee42c9ae1810cf0f375f60f649",
+        "path": "core/similarity-measures/util/test/res/P1A-01-car pursuit.tsv",
+        "sha256": "5aa3d52a61975d98764fecafa4cfe97aae3ceda1e17867a5aad021b2ef74752c"
+      },
+      "P2B": {
+        "bytes": 339198,
+        "git_blob_sha1": "81463dcfd65e99218eae08436db02b80bb65be71",
+        "path": "core/similarity-measures/util/test/res/P2B-01-car pursuit.tsv",
+        "sha256": "b8d4f3ff6f88071817972e7e07e138e24cbce7eafd31dd2882eb48117fdb7950"
+      },
+      "P9B": {
+        "bytes": 343583,
+        "git_blob_sha1": "54ed468b90bb99e74c29150563cb2750a59be7f6",
+        "path": "core/similarity-measures/util/test/res/P9B-01-car pursuit.tsv",
+        "sha256": "ddb387472349d13ad165d03216334bfdb26abdb4a58715fb4cbe6c99de4e76af"
+      },
+      "aoi": {
+        "bytes": 67618,
+        "git_blob_sha1": "10ccee08b5462892eab1506e0fbb455f253e75e9",
+        "path": "core/similarity-measures/util/test/res/01-car pursuit.xml",
+        "sha256": "891034bf11d8c5346716a8f8a156141e2b4edf756060fdda2aad2b2028164b23"
+      }
+    },
+    "introduction_commit": "7a3dc8277a8e74949a5f6f7ee24cf589da973db1",
+    "repository": "Maurice189/eye-slitscan"
+  }
+}

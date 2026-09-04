@@ -3,7 +3,14 @@ name: VISUS public partial probe
 on:
   push:
     branches:
+      - main
       - feat/visus-public-partial-probe
+    paths:
+      - '.github/workflows/visus-public-partial-probe.yml'
+      - 'scripts/visus_public_partial_probe.py'
+      - 'src/gazeforge/visus_public_partial.py'
+      - 'tests/test_visus_public_partial.py'
+      - 'validation/evidence/visus-public-partial/**'
   workflow_dispatch:
 
 permissions:
@@ -19,6 +26,18 @@ jobs:
           python-version: '3.12'
       - name: Run exact pinned-source probe
         run: python scripts/visus_public_partial_probe.py
+      - name: Bind live probe to committed evidence
+        env:
+          PYTHONPATH: src
+        run: |
+          python - <<'PY'
+          from gazeforge.visus_public_partial import validate_visus_public_partial_probe
+
+          validate_visus_public_partial_probe(
+              "visus_public_partial_probe.json",
+              "validation/evidence/visus-public-partial/visus-public-partial-evidence-v1.json",
+          )
+          PY
       - name: Upload deterministic probe record
         uses: actions/upload-artifact@v4
         with:
