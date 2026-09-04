@@ -12,6 +12,7 @@ from .source_resolution import (
     validate_source_resolution_records,
 )
 from .source_resolution_discovery import discover_source_resolution_paths
+from .source_resolution_lock import validate_source_resolution_bundle_lock
 
 _TABLE_HEADER = (
     "| Dataset | Checked | Resolution status | Analysis use | Raw redistribution | "
@@ -28,6 +29,10 @@ class SourceResolutionDashboard:
     rows: tuple[dict[str, str], ...]
     source_files: tuple[str, ...]
     bundle_fingerprint_sha256: str
+    reviewed_snapshot: bool = False
+    reviewed_on: str | None = None
+    lock_fingerprint_sha256: str | None = None
+    lock_source_file: str | None = None
 
 
 def _dashboard_row(summary: dict[str, Any], source_file: str) -> dict[str, str]:
@@ -54,8 +59,17 @@ def _dashboard_row(summary: dict[str, Any], source_file: str) -> dict[str, str]:
     }
 
 
-def build_source_resolution_dashboard(root: str | Path) -> SourceResolutionDashboard:
-    """Discover, validate, and prepare every source-resolution checkpoint under ``root``."""
+def build_source_resolution_dashboard(
+    root: str | Path,
+    *,
+    lock_path: str | Path | None = None,
+) -> SourceResolutionDashboard:
+    """Discover and validate source-resolution checkpoints and an optional reviewed lock.
+
+    Supplying ``lock_path`` upgrades only the dashboard's governance-integrity statement: the live
+    checkpoint bundle must exactly match the separately frozen reviewed snapshot. It does not
+    upgrade source authority, rights, source-audit readiness, or empirical status.
+    """
     directory = Path(root)
     paths = discover_source_resolution_paths(directory)
     bundle = validate_source_resolution_records(paths)
@@ -78,11 +92,32 @@ def build_source_resolution_dashboard(root: str | Path) -> SourceResolutionDashb
         _dashboard_row(record, source_by_dataset[str(record["dataset_key"])])
         for record in records
     )
+
+    reviewed_snapshot = False
+    reviewed_on: str | None = None
+    lock_fingerprint: str | None = None
+    lock_source_file: str | None = None
+    if lock_path is not None:
+        lock_source = Path(lock_path)
+        lock = validate_source_resolution_bundle_lock(lock_source, directory)
+        if str(lock["bundle_fingerprint_sha256"]) != str(bundle["bundle_fingerprint_sha256"]):
+            raise BenchmarkIntegrityError(
+                "Reviewed source-resolution lock does not identify the dashboard bundle."
+            )
+        reviewed_snapshot = True
+        reviewed_on = str(lock["reviewed_on"])
+        lock_fingerprint = str(lock["lock_fingerprint_sha256"])
+        lock_source_file = str(lock_source)
+
     return SourceResolutionDashboard(
         records=records,
         rows=rows,
         source_files=tuple(row["source_file"] for row in rows),
         bundle_fingerprint_sha256=str(bundle["bundle_fingerprint_sha256"]),
+        reviewed_snapshot=reviewed_snapshot,
+        reviewed_on=reviewed_on,
+        lock_fingerprint_sha256=lock_fingerprint,
+        lock_source_file=lock_source_file,
     )
 
 
@@ -141,6 +176,35 @@ def render_source_resolution_dashboard_markdown(
             "malformed governed files, unsupported datasets, or unsupported evidence-state",
             "transitions fail before this page is generated.",
             "",
+        ]
+    )
+
+    if dashboard.reviewed_snapshot:
+        if dashboard.reviewed_on is None or dashboard.lock_fingerprint_sha256 is None:
+            raise BenchmarkIntegrityError(
+                "Reviewed source-resolution dashboard is missing reviewed lock metadata."
+            )
+        lines.extend(
+            [
+                "## Reviewed governance snapshot",
+                "",
+                "The live validation bundle exactly matches the separately frozen reviewed",
+                f"source-resolution snapshot dated **{dashboard.reviewed_on}**.",
+                "",
+                "Reviewed lock fingerprint:",
+                "",
+                f"`{dashboard.lock_fingerprint_sha256}`",
+                "",
+                "This lock confirms only that the public status page matches the checkpoint",
+                "contents intentionally reviewed for repository governance. It does **not**",
+                "authorize a source-status upgrade, source-audit readiness, empirical evidence,",
+                "dataset analysis or redistribution rights, or Frozen Evidence publication.",
+                "",
+            ]
+        )
+
+    lines.extend(
+        [
             "## Scientific boundary",
             "",
             "Source resolution precedes source audit. The Frozen Evidence layer remains a separate",
