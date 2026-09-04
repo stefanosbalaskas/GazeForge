@@ -1,0 +1,106 @@
+{
+  "record_type": "source-resolution-status-v1",
+  "dataset": "Hollywood2EM eye-movement event benchmark",
+  "checked_on": "2026-09-04",
+  "status": "canonical_distribution_identifier_established_current_copy_unverified",
+  "empirical_evidence_created": false,
+  "source_audit_ready": false,
+  "canonical_distribution_identifier_found": true,
+  "current_retrievable_copy_verified": false,
+  "authoritative_publication": {
+    "title": "Two hours in Hollywood: A manually annotated ground truth data set of eye movements during movie clip watching",
+    "authors": [
+      "Ioannis Agtzidis",
+      "Mikhail Startsev",
+      "Michael Dorr"
+    ],
+    "year": 2020,
+    "doi": "10.16910/jemr.13.4.5",
+    "published_dataset_description": {
+      "annotated_duration_minutes_approx": 130,
+      "observer_count": 16,
+      "annotated_training_clip_count": 6,
+      "annotated_test_clip_count": 50,
+      "native_sampling_rate_hz": 500,
+      "eye_tracker": "SMI Hi-Speed 1250",
+      "event_classes": [
+        "fixation",
+        "saccade",
+        "smooth pursuit",
+        "noise"
+      ]
+    },
+    "published_distribution_url": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em",
+    "publication_states_dataset_available_at_distribution_url": true,
+    "article_license": "CC BY 4.0",
+    "article_license_is_dataset_license": false
+  },
+  "independent_distribution_evidence": [
+    {
+      "source": "Evaluating Eye Movement Event Detection: A Review of the State of the Art",
+      "year": 2022,
+      "repository": "https://github.com/r-zemblys/EM-event-detection-evaluation",
+      "reported_distribution_url": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em",
+      "reported_as_download_source_for_replication": true
+    },
+    {
+      "source": "Towards a better understanding of eye movements in natural contexts",
+      "year": 2020,
+      "source_url": "https://mediatum.ub.tum.de/doc/1538004/1538004.pdf",
+      "reported_distribution_url": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em",
+      "describes_dataset_as_publicly_available_with_open_source_license": true,
+      "exact_dataset_license_verified_from_repository": false
+    }
+  ],
+  "current_resolution_checks": [
+    {
+      "target": "Authoritative 2020 Journal of Eye Movement Research publication",
+      "outcome": "The publication identifies the GIN repository as the Hollywood2EM data distribution location."
+    },
+    {
+      "target": "Later event-detection evaluation code and documentation",
+      "outcome": "The replication instructions independently direct users to the same GIN Hollywood2EM repository."
+    },
+    {
+      "target": "Current direct retrieval of the GIN repository during this resolution pass",
+      "outcome": "A current exact repository copy and repository-level license text were not independently retrieved in this execution environment; current file identity and terms therefore remain unverified."
+    }
+  ],
+  "rights": {
+    "analysis_use_terms_status": "unresolved",
+    "raw_data_redistribution_terms_status": "unresolved",
+    "article_cc_by_is_dataset_license": false,
+    "open_source_description_is_exact_license_text": false,
+    "license_inference_permitted": false
+  },
+  "annotation_provenance": {
+    "published_process": "Algorithmically pre-labelled gaze was reviewed by a paid novice/student annotator and subsequently corrected by an expert annotator.",
+    "student_labels_reported_available": true,
+    "expert_labels_are_corrections_of_student_work": true,
+    "independent_human_annotation_streams_verified": false,
+    "student_expert_comparison_interpretation": "annotation sensitivity, not independent human-human reliability"
+  },
+  "mapping_and_units": {
+    "participant_identity_mapping_verified": false,
+    "trial_identity_mapping_verified": false,
+    "coordinate_unit_verified": false,
+    "verification_requires_exact_obtained_copy": true
+  },
+  "claim_limits": [
+    "This record documents source-resolution research, not a completed Hollywood2EM source audit.",
+    "The canonical GIN distribution identifier is established by the publication and replication literature, but the exact current repository copy was not retrieved and fingerprinted here.",
+    "The CC BY 4.0 license of the article is not treated as the license of the dataset files.",
+    "A general description of the data as openly licensed does not replace exact repository-level license verification.",
+    "The student and expert labels arise from a sequential correction workflow and are not treated as independent human annotation streams.",
+    "No Hollywood2EM model-performance or cross-dataset result is created or validated by this record."
+  ],
+  "next_required_actions": [
+    "Obtain an exact current copy from the canonical GIN repository or an author-verified institutional copy.",
+    "Verify the repository-level analysis-use and raw-data redistribution terms from that exact copy.",
+    "Inventory and SHA-256 fingerprint every expected ARFF file before setting source_audit_ready to true.",
+    "Verify participant and trial identities from the authoritative directory/file structure.",
+    "Verify gaze coordinate units from authoritative dataset metadata before unit-sensitive cross-dataset modelling.",
+    "Freeze student-vs-expert annotation sensitivity separately from model generalisation.",
+    "Run Lund-to-Hollywood2 and Hollywood2-to-Lund held-out modelling only after all provenance gates pass."
+  ]
+}

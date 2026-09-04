@@ -6,6 +6,19 @@ that observer identities are mapped correctly, that `x`/`y` are in comparable un
 current reuse terms permit the intended analysis. Frozen cross-dataset evidence should therefore
 use an audited source manifest rather than a bare loader call.
 
+## Current source-resolution checkpoint
+
+A dated public-source resolution pass is recorded in
+[`hollywood2-source-resolution.md`](hollywood2-source-resolution.md) and in the machine-readable
+checkpoint `validation/protocols/hollywood2-source-resolution-2026-09-04.json`.
+
+That checkpoint establishes the canonical GIN distribution identifier from the authoritative
+publication and later replication material, but it does **not** claim that an exact current copy has
+been retrieved, fingerprinted, or licensed for the intended analysis. Repository-level analysis-use
+and redistribution terms, participant/trial mapping, and coordinate units therefore remain blocked
+until an exact obtained copy is reviewed. The article's CC BY 4.0 license is not silently promoted
+to the dataset files.
+
 ## What the audit certifies
 
 `Hollywood2SourceAuditSpec` binds each expected ARFF file to:

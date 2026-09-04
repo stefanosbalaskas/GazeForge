@@ -71,6 +71,7 @@ nav:
       - Lund2013 benchmark: lund2013-benchmark.md
       - Lund2013 sensitivity: lund-sensitivity.md
       - Hollywood2EM: hollywood2-benchmark.md
+      - Hollywood2 source resolution: hollywood2-source-resolution.md
       - Hollywood2 source audit: hollywood2-source-audit.md
       - Gaze-in-the-Wild: gaze-in-wild-benchmark.md
       - Gaze-in-the-Wild source audit: gaze-in-wild-source-audit.md
