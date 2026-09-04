@@ -1,0 +1,53 @@
+name: Hollywood2 GIN live source probe
+
+on:
+  push:
+    branches:
+      - research/hollywood2-gin-live-probe
+    paths:
+      - "scripts/hollywood2_gin_live_probe.py"
+      - ".github/workflows/hollywood2-gin-live-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install git-annex
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-annex
+          git annex version
+      - name: Probe canonical Hollywood2EM GIN repository
+        run: python scripts/hollywood2_gin_live_probe.py
+      - name: Summarize source-resolution result
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(Path("hollywood2_gin_live_probe.json").read_text())
+          print("HEAD:", record["head"]["commit_sha1"])
+          print("default_ref:", record["remote"]["default_ref"])
+          print("tree entries:", record["tree"]["entry_count"])
+          print("ARFF paths:", record["tree"]["arff_path_count"])
+          print("annex entries:", record["annex"]["entry_count"])
+          print("annex ARFF entries:", record["annex"]["arff_entry_count"])
+          print("license files:", [item["path"] for item in record["license_files"]])
+          print("payload recovered:", record["annex"]["payload_probe"]["payload_recovered"])
+          print("fingerprint:", record["probe_fingerprint_sha256"])
+          PY
+      - name: Upload deterministic probe record
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-gin-live-probe
+          path: hollywood2_gin_live_probe.json
+          if-no-files-found: error
+          retention-days: 30
