@@ -15,8 +15,17 @@ def _normalise_fingerprints(values: Mapping[str, Any], *, field_name: str) -> di
     if not isinstance(values, Mapping):
         raise TypeError(f"{field_name} must be a mapping.")
     normalized = {str(key): str(value).strip().lower() for key, value in values.items()}
-    if any(len(value) != 64 for value in normalized.values()):
-        raise BenchmarkIntegrityError(f"{field_name} contains an invalid SHA-256 fingerprint.")
+    for value in normalized.values():
+        if len(value) != 64:
+            raise BenchmarkIntegrityError(
+                f"{field_name} contains an invalid SHA-256 fingerprint."
+            )
+        try:
+            int(value, 16)
+        except ValueError as exc:
+            raise BenchmarkIntegrityError(
+                f"{field_name} contains an invalid SHA-256 fingerprint."
+            ) from exc
     return normalized
 
 
