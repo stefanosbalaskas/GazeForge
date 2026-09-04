@@ -115,7 +115,8 @@ def validate_visus_source_resolution_record(path: str | Path) -> dict[str, Any]:
     ).strip()
     if analysis_rights not in _RIGHTS_STATES or redistribution_rights not in _RIGHTS_STATES:
         raise BenchmarkIntegrityError(
-            "VISUS source-resolution rights statuses must be unresolved, verified, or not_permitted."
+            "VISUS source-resolution rights statuses must be unresolved, verified, "
+            "or not_permitted."
         )
     if rights.get("paper_copyright_notice_is_dataset_license") is not False:
         raise BenchmarkIntegrityError(
