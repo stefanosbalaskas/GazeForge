@@ -7,8 +7,17 @@ from pathlib import Path
 from typing import Any
 
 from .exceptions import BenchmarkIntegrityError
-from .source_resolution import validate_source_resolution_record, validate_source_resolution_records
+from .source_resolution import (
+    validate_source_resolution_record,
+    validate_source_resolution_records,
+)
 from .source_resolution_discovery import discover_source_resolution_paths
+
+_TABLE_HEADER = (
+    "| Dataset | Checked | Resolution status | Analysis use | Raw redistribution | "
+    "Audit ready | Empirical evidence | Record fingerprint |"
+)
+_TABLE_SEPARATOR = "| --- | --- | --- | --- | --- | --- | --- | --- |"
 
 
 @dataclass(frozen=True, slots=True)
@@ -97,8 +106,8 @@ def render_source_resolution_dashboard_markdown(
         "The table is generated from the committed `source-resolution-status-v1` JSON records and",
         "their dataset-specific validators. Values are not transcribed by hand.",
         "",
-        "| Dataset | Checked | Resolution status | Analysis use | Raw redistribution | Audit ready | Empirical evidence | Record fingerprint |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        _TABLE_HEADER,
+        _TABLE_SEPARATOR,
     ]
     for row in dashboard.rows:
         lines.append(
