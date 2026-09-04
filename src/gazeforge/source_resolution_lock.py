@@ -46,9 +46,13 @@ def _require_hex(value: Any, *, field: str) -> str:
 
 def _require_review_basis(value: Any) -> tuple[str, ...]:
     if not isinstance(value, list) or not value:
-        raise BenchmarkIntegrityError("Source-resolution bundle lock requires review_basis entries.")
+        raise BenchmarkIntegrityError(
+            "Source-resolution bundle lock requires review_basis entries."
+        )
     if not all(isinstance(item, str) and item.strip() for item in value):
-        raise BenchmarkIntegrityError("Source-resolution lock review_basis must be non-empty strings.")
+        raise BenchmarkIntegrityError(
+            "Source-resolution lock review_basis must be non-empty strings."
+        )
     return tuple(str(item).strip() for item in value)
 
 
@@ -114,7 +118,9 @@ def build_source_resolution_bundle_lock(
     try:
         date.fromisoformat(reviewed_on)
     except ValueError as exc:
-        raise BenchmarkIntegrityError("Source-resolution lock reviewed_on must be an ISO date.") from exc
+        raise BenchmarkIntegrityError(
+            "Source-resolution lock reviewed_on must be an ISO date."
+        ) from exc
 
     review_items = tuple(str(item).strip() for item in review_basis)
     if not review_items or not all(review_items):
@@ -155,7 +161,9 @@ def validate_source_resolution_bundle_lock(
     try:
         payload = json.loads(source.read_text(encoding="utf-8"))
     except (UnicodeError, json.JSONDecodeError) as exc:
-        raise BenchmarkIntegrityError("Source-resolution bundle lock must be valid UTF-8 JSON.") from exc
+        raise BenchmarkIntegrityError(
+            "Source-resolution bundle lock must be valid UTF-8 JSON."
+        ) from exc
     if not isinstance(payload, Mapping):
         raise BenchmarkIntegrityError("Source-resolution bundle lock must be a JSON object.")
     if payload.get("lock_type") != _LOCK_TYPE:
@@ -167,7 +175,9 @@ def validate_source_resolution_bundle_lock(
     try:
         date.fromisoformat(reviewed_on)
     except ValueError as exc:
-        raise BenchmarkIntegrityError("Source-resolution lock reviewed_on must be an ISO date.") from exc
+        raise BenchmarkIntegrityError(
+            "Source-resolution lock reviewed_on must be an ISO date."
+        ) from exc
 
     review_basis = _require_review_basis(payload.get("review_basis"))
     boundary = payload.get("scientific_boundary")
@@ -180,7 +190,9 @@ def validate_source_resolution_bundle_lock(
     records = _validated_lock_records(payload.get("records"))
     record_count = payload.get("record_count")
     if not isinstance(record_count, int) or isinstance(record_count, bool) or record_count <= 0:
-        raise BenchmarkIntegrityError("Source-resolution lock record_count must be a positive integer.")
+        raise BenchmarkIntegrityError(
+            "Source-resolution lock record_count must be a positive integer."
+        )
     if record_count != len(records):
         raise BenchmarkIntegrityError(
             "Source-resolution lock record_count does not match its record identity list."
