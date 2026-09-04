@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from gazeforge.dashboard import build_benchmark_dashboard, render_benchmark_dashboard_markdown
+from gazeforge.dashboard import build_benchmark_dashboard
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.visus_audit import (
     VisusSourceAuditSpec,
@@ -213,9 +213,9 @@ def test_visus_suite_freezes_and_revalidates_model_human_tranche(tmp_path):
     assert verified["reports_verified"] is True
 
 
-def test_visus_suite_dashboard_discovers_only_benchmark_children_and_verified_suite(tmp_path):
+def test_visus_suite_dashboard_blocks_suite_without_execution_provenance(tmp_path):
     audit, reference, prediction, timestamps = _inputs(tmp_path / "source", independent=False)
-    run = run_visus_dynamic_aoi_validation_suite(
+    run_visus_dynamic_aoi_validation_suite(
         audit,
         reference,
         prediction,
@@ -226,20 +226,8 @@ def test_visus_suite_dashboard_discovers_only_benchmark_children_and_verified_su
         max_interpolation_gap_ms=100.0,
     )
 
-    dashboard = build_benchmark_dashboard(tmp_path / "evidence")
-    assert len(dashboard.suites) == 1
-    assert dashboard.suite_table.iloc[0]["suite"] == "visus-dynamic-aoi-validation-v1"
-    assert dashboard.suite_table.iloc[0]["model"] == "fixture-detector 1.0.0"
-    assert dashboard.suite_table.iloc[0]["reference_stream_id"] == "annotator_a"
-    assert dashboard.suite_table.iloc[0]["human_human_agreement_included"] == "false"
-    assert dashboard.suite_source_files == (str(run.manifest_path),)
-    assert len(dashboard.reports) == 1
-    assert dashboard.reports[0]["benchmark"]["task"] == (
-        "dynamic video AOI detection and fixation-to-AOI assignment"
-    )
-    markdown = render_benchmark_dashboard_markdown(dashboard)
-    assert "visus-dynamic-aoi-validation-v1" in markdown
-    assert run.suite_fingerprint_sha256[:12] in markdown
+    with pytest.raises(BenchmarkIntegrityError, match="raw-execution provenance"):
+        build_benchmark_dashboard(tmp_path / "evidence")
 
 
 def test_visus_suite_requires_human_agreement_when_independent_streams_exist(tmp_path):
