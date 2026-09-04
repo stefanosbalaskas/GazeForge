@@ -39,6 +39,11 @@ FILES: dict[str, dict[str, Any]] = {
         "bytes": 86,
         "git_blob_sha1": "03bedf17e307276eb8d9aad5f7f8070f8121f9c5",
     },
+    "upstream_test_source": {
+        "path": "core/importer/eye-tracker-output/test/test.cc",
+        "bytes": 6081,
+        "git_blob_sha1": "d5f681eb4cc7b90c6078dc1fb7ceeccb4cc03c41",
+    },
 }
 
 PARTICIPANT_KEYS = ("P5B", "P3A")
@@ -99,9 +104,15 @@ def _metadata(lines: list[str]) -> dict[str, str]:
     for line in lines:
         if line.startswith("Timestamp\t"):
             break
-        if "\t" not in line:
+        stripped = line.strip()
+        if not stripped:
             continue
-        key, value = line.split("\t", 1)
+        if "\t" in line:
+            key, value = line.split("\t", 1)
+        elif ":" in stripped:
+            key, value = stripped.split(":", 1)
+        else:
+            continue
         key = key.strip().rstrip(":")
         value = value.strip()
         if key and value:
@@ -125,6 +136,21 @@ def _parse_export(path: Path, expected_participant: str) -> dict[str, Any]:
         raise RuntimeError(
             f"Unexpected recording resolution for {expected_participant}: "
             f"{metadata.get('Recording resolution')}"
+        )
+    expected_filter_metadata = {
+        "Eye": "Average",
+        "Validity": "Normal",
+        "Fixation filter": "Tobii fixation filter",
+        "Velocity threshold": "35",
+        "Distance threshold": "35",
+    }
+    observed_filter_metadata = {
+        key: metadata.get(key) for key in expected_filter_metadata
+    }
+    if observed_filter_metadata != expected_filter_metadata:
+        raise RuntimeError(
+            f"Unexpected Tobii filter metadata for {expected_participant}: "
+            f"{observed_filter_metadata}"
         )
 
     header_index = next(i for i, line in enumerate(lines) if line.startswith("Timestamp\t"))
@@ -214,11 +240,11 @@ def _parse_export(path: Path, expected_participant: str) -> dict[str, Any]:
         "participant": expected_participant,
         "recording_name": metadata["Recording name"],
         "recording_resolution": metadata["Recording resolution"],
-        "eye": metadata.get("Eye"),
-        "validity_filter": metadata.get("Validity"),
-        "fixation_filter": metadata.get("Fixation filter"),
-        "velocity_threshold": _to_int(metadata.get("Velocity threshold", "")),
-        "distance_threshold": _to_int(metadata.get("Distance threshold", "")),
+        "eye": metadata["Eye"],
+        "validity_filter": metadata["Validity"],
+        "fixation_filter": metadata["Fixation filter"],
+        "velocity_threshold": _to_int(metadata["Velocity threshold"]),
+        "distance_threshold": _to_int(metadata["Distance threshold"]),
         "movie_start_timestamp_ms": start_ms,
         "movie_end_timestamp_ms": end_ms,
         "movie_span_ms": end_ms - start_ms,
@@ -258,6 +284,33 @@ def _parse_lock(path: Path, key: str) -> dict[str, Any]:
     }
 
 
+def _validate_test_source(path: Path) -> dict[str, Any]:
+    text = path.read_text(encoding="utf-8-sig")
+    required_fragments = {
+        "P5B_file": 'Tobii_exports/01-OK.tsv',
+        "P3A_file": 'Tobii_exports/02-OK.tsv',
+        "P5B_movie_start": 'EXPECT_EQ(exportData[0].timestamp, 911097)',
+        "P5B_duration": 'EXPECT_EQ(exportData[1].fixationDuration, 766)',
+        "P5B_fixation_index": 'EXPECT_EQ(exportData[1].fixationIndex, 2349)',
+        "P3A_movie_start": 'EXPECT_EQ(exportData[0].timestamp, 16102)',
+        "P3A_duration": 'EXPECT_EQ(exportData[1].fixationDuration, 466)',
+        "P3A_fixation_index": 'EXPECT_EQ(exportData[1].fixationIndex, 47)',
+        "P5B_last_timestamp": 'EXPECT_EQ(exportData.back().timestamp, 930160)',
+        "P3A_last_timestamp": 'EXPECT_EQ(exportData.back().timestamp, 35171)',
+    }
+    missing = [name for name, fragment in required_fragments.items() if fragment not in text]
+    if missing:
+        raise RuntimeError(f"Upstream Tobii unit-test provenance drifted: {missing}")
+    return {
+        "path": FILES["upstream_test_source"]["path"],
+        "valid_export_filenames": ["Tobii_exports/01-OK.tsv", "Tobii_exports/02-OK.tsv"],
+        "row_value_assertions_verified": True,
+        "required_assertion_count": len(required_fragments),
+        "provenance_only": True,
+        "empirical_data": False,
+    }
+
+
 def main() -> None:
     root = Path(".visus-public-event-extension-probe")
     root.mkdir(exist_ok=True)
@@ -269,6 +322,7 @@ def main() -> None:
 
     participants = [_parse_export(local_paths[key], key) for key in PARTICIPANT_KEYS]
     locks = [_parse_lock(local_paths[key], key) for key in LOCK_KEYS]
+    unit_test_provenance = _validate_test_source(local_paths["upstream_test_source"])
 
     durations = [row["movie_span_seconds"] for row in participants]
     dialog_duration_match = all(
@@ -302,6 +356,7 @@ def main() -> None:
             "repository": UPSTREAM_REPO,
             "commit": UPSTREAM_COMMIT,
             "files": source_files,
+            "unit_test_provenance": unit_test_provenance,
         },
         "coverage": {
             "participants": list(PARTICIPANT_KEYS),
