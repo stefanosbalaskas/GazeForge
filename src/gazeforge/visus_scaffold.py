@@ -76,6 +76,11 @@ def build_visus_source_audit_scaffold(root: str | Path) -> VisusSourceAuditScaff
     fields before :func:`gazeforge.audit_visus_source` can accept the copy as empirical evidence.
     """
     root_path = Path(root)
+    if root_path.is_symlink():
+        raise BenchmarkIntegrityError(
+            "VISUS source scaffold refuses a symbolic-link root because snapshot identity must "
+            "refer to the reviewed directory itself."
+        )
     if not root_path.is_dir():
         raise FileNotFoundError(f"VISUS candidate source directory does not exist: {root_path}")
     resolved_root = root_path.resolve()
