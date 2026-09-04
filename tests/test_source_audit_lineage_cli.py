@@ -68,6 +68,8 @@ def test_candidate_cli_builds_verified_source_audit_lineage_receipt(tmp_path, ca
     authorization_path.write_text(json.dumps(authorization.to_dict()), encoding="utf-8")
 
     spec = authorize_candidate_source_audit_template(template, authorization)
+    manifest_files = [spec.files[0].to_dict()]
+    manifest_fingerprint = benchmark_fingerprint(manifest_files)
     body = {
         "audit": "Hollywood2EM-source-audit",
         "status": "verified",
@@ -109,10 +111,10 @@ def test_candidate_cli_builds_verified_source_audit_lineage_receipt(tmp_path, ca
             "row_count_per_stream": 10,
         },
         "source_inventory": {
-            "file_count": 1,
+            "file_count": len(manifest_files),
             "exact_inventory_match": True,
-            "files": [spec.files[0].to_dict()],
-            "source_manifest_fingerprint_sha256": "b" * 64,
+            "files": manifest_files,
+            "source_manifest_fingerprint_sha256": manifest_fingerprint,
         },
         "spec_fingerprint_sha256": benchmark_fingerprint(spec.to_dict()),
         "claim_limits": ["source/provenance only"],
@@ -145,6 +147,8 @@ def test_candidate_cli_builds_verified_source_audit_lineage_receipt(tmp_path, ca
     assert receipt["source_audit_verified"] is True
     assert receipt["lineage_verified"] is True
     assert receipt["audit_report_fingerprint_sha256"] == report["report_fingerprint_sha256"]
-    assert receipt["source_manifest_fingerprints_sha256"] == {"source": "b" * 64}
+    assert receipt["source_manifest_fingerprints_sha256"] == {
+        "source": manifest_fingerprint
+    }
     assert receipt["scientific_boundary"]["creates_new_empirical_metrics"] is False
     assert json.loads(receipt_path.read_text(encoding="utf-8")) == receipt
