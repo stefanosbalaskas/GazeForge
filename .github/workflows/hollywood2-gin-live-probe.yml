@@ -10,6 +10,7 @@ on:
       - "src/gazeforge/hollywood2_evidence.py"
       - "tests/test_hollywood2_evidence.py"
       - "validation/evidence/hollywood2/**"
+      - "docs/api-reference.md"
       - ".github/workflows/hollywood2-gin-live-probe.yml"
   workflow_dispatch:
 
