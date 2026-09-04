@@ -24,6 +24,17 @@ _INPUT_ROLES = (
     "model_prediction_table",
     "timestamp_grid_json",
 )
+_SOURCE_KEYS = (
+    "source_audit_report_fingerprint_sha256",
+    "source_audit_spec_fingerprint_sha256",
+    "source_manifest_fingerprint_sha256",
+)
+_PARSED_FINGERPRINT_KEYS = (
+    "human_input_table_fingerprint_sha256",
+    "human_canonical_table_fingerprint_sha256",
+    "model_input_table_fingerprint_sha256",
+    "model_canonical_table_fingerprint_sha256",
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,6 +55,16 @@ class VisusExecutionProvenanceRun:
     manifest_path: Path
     manifest: dict[str, Any]
     execution_fingerprint_sha256: str
+
+
+def _valid_sha256(value: Any) -> bool:
+    if not isinstance(value, str) or len(value) != 64:
+        return False
+    try:
+        int(value, 16)
+    except ValueError:
+        return False
+    return True
 
 
 def _sha256(path: Path) -> str:
@@ -72,6 +93,12 @@ def _snapshot_file(
         raise BenchmarkIntegrityError(
             f"VISUS execution input {role!r} must be a non-empty regular file."
         )
+    if semantic_fingerprint_sha256 is not None and not _valid_sha256(
+        semantic_fingerprint_sha256
+    ):
+        raise BenchmarkIntegrityError(
+            f"VISUS execution input {role!r} has an invalid semantic fingerprint."
+        )
     return VisusExecutionInputSnapshot(
         role=role,
         filename=source.name,
@@ -94,14 +121,18 @@ def snapshot_visus_execution_inputs(
     :class:`~gazeforge.visus_audit.VisusSourceAuditSpec`, allowing the execution manifest to prove
     that the exact raw JSON corresponds to the specification used by the source audit.
     """
+    source_spec_snapshot = _snapshot_file("source_audit_spec", source_audit_spec)
     parsed_spec = load_visus_source_audit_spec(source_audit_spec)
     spec_semantic = benchmark_fingerprint(parsed_spec.to_dict())
+    source_spec_snapshot = VisusExecutionInputSnapshot(
+        role=source_spec_snapshot.role,
+        filename=source_spec_snapshot.filename,
+        sha256=source_spec_snapshot.sha256,
+        bytes=source_spec_snapshot.bytes,
+        semantic_fingerprint_sha256=spec_semantic,
+    )
     return (
-        _snapshot_file(
-            "source_audit_spec",
-            source_audit_spec,
-            semantic_fingerprint_sha256=spec_semantic,
-        ),
+        source_spec_snapshot,
         _snapshot_file("human_aoi_table", human_aoi_table),
         _snapshot_file("model_prediction_table", model_prediction_table),
         _snapshot_file("timestamp_grid_json", timestamp_grid_json),
@@ -133,30 +164,38 @@ def verify_visus_execution_inputs_unchanged(
 def _audit_source_identity(audit: VisusSourceAuditRun) -> dict[str, str]:
     if not isinstance(audit, VisusSourceAuditRun):
         raise TypeError("audit must be a VisusSourceAuditRun instance.")
+    if audit.report.get("status") != "verified":
+        raise BenchmarkIntegrityError("VISUS execution provenance requires a verified source audit.")
     claimed = str(audit.report.get("report_fingerprint_sha256", ""))
     body = {
         key: value
         for key, value in audit.report.items()
         if key != "report_fingerprint_sha256"
     }
-    if len(claimed) != 64 or benchmark_fingerprint(body) != claimed:
+    if not _valid_sha256(claimed) or benchmark_fingerprint(body) != claimed:
         raise BenchmarkIntegrityError(
             "VISUS execution provenance received a source audit with an invalid fingerprint."
         )
-    identity = {
-        "source_audit_report_fingerprint_sha256": claimed,
-        "source_audit_spec_fingerprint_sha256": str(
-            audit.report.get("spec_fingerprint_sha256", "")
-        ),
-        "source_manifest_fingerprint_sha256": str(
-            audit.report.get("inventory", {}).get("manifest_fingerprint_sha256", "")
-        ),
-    }
-    if any(len(value) != 64 for value in identity.values()):
+    spec_fingerprint = str(audit.report.get("spec_fingerprint_sha256", ""))
+    if (
+        not _valid_sha256(spec_fingerprint)
+        or benchmark_fingerprint(audit.spec.to_dict()) != spec_fingerprint
+    ):
         raise BenchmarkIntegrityError(
-            "VISUS execution provenance received incomplete source-audit identity."
+            "VISUS execution provenance received a source audit with an invalid spec fingerprint."
         )
-    return identity
+    manifest_fingerprint = str(
+        audit.report.get("inventory", {}).get("manifest_fingerprint_sha256", "")
+    )
+    if not _valid_sha256(manifest_fingerprint):
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance received incomplete source-manifest identity."
+        )
+    return {
+        "source_audit_report_fingerprint_sha256": claimed,
+        "source_audit_spec_fingerprint_sha256": spec_fingerprint,
+        "source_manifest_fingerprint_sha256": manifest_fingerprint,
+    }
 
 
 def _input_rows(
@@ -172,6 +211,68 @@ def _input_rows(
             "VISUS execution provenance requires exactly one snapshot for each raw input role."
         )
     return [asdict(by_role[role]) for role in _INPUT_ROLES]
+
+
+def _load_suite_children(
+    suite_root: Path,
+    verified_suite: dict[str, Any],
+) -> dict[str, dict[str, Any]]:
+    children: dict[str, dict[str, Any]] = {}
+    for record in verified_suite["reports"]:
+        name = str(record["name"])
+        relative = Path(str(record["path"]))
+        child_path = suite_root / relative
+        child = json.loads(child_path.read_text(encoding="utf-8"))
+        if not isinstance(child, dict):
+            raise BenchmarkIntegrityError(
+                f"VISUS execution provenance child {name!r} must be a JSON object."
+            )
+        children[name] = child
+    return children
+
+
+def _parsed_input_binding(
+    reference: dict[str, Any],
+    prediction: dict[str, Any],
+    protocol: dict[str, Any],
+) -> dict[str, Any]:
+    binding = {
+        "human_input_table_fingerprint_sha256": reference.get(
+            "input_table_fingerprint_sha256"
+        ),
+        "human_canonical_table_fingerprint_sha256": reference.get(
+            "canonical_table_fingerprint_sha256"
+        ),
+        "model_input_table_fingerprint_sha256": prediction.get(
+            "input_table_fingerprint_sha256"
+        ),
+        "model_canonical_table_fingerprint_sha256": prediction.get(
+            "canonical_table_fingerprint_sha256"
+        ),
+        "timestamp_grids": protocol.get("timestamp_grids"),
+        "timestamp_grid_basis": protocol.get("timestamp_grid_basis"),
+        "prediction_emission_grid_used": protocol.get("prediction_emission_grid_used"),
+    }
+    if any(not _valid_sha256(binding.get(key)) for key in _PARSED_FINGERPRINT_KEYS):
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance is missing canonical intake fingerprints."
+        )
+    if not isinstance(binding.get("timestamp_grids"), dict) or not binding[
+        "timestamp_grids"
+    ]:
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance requires frozen external timestamp-grid fingerprints."
+        )
+    basis = binding.get("timestamp_grid_basis")
+    if not isinstance(basis, str) or not basis.strip():
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance requires an explicit timestamp-grid basis."
+        )
+    if binding.get("prediction_emission_grid_used") is not False:
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance refuses a suite that uses prediction emissions as the grid."
+        )
+    return binding
 
 
 def build_visus_execution_provenance(
@@ -209,12 +310,17 @@ def build_visus_execution_provenance(
             "Raw VISUS source-audit JSON does not semantically match the audited specification."
         )
 
-    reference = suite.reports.get("human_reference_intake")
-    prediction = suite.reports.get("model_prediction_intake")
+    children = _load_suite_children(suite.manifest_path.parent, verified_suite)
+    reference = children.get("human_reference_intake")
+    prediction = children.get("model_prediction_intake")
     if not isinstance(reference, dict) or not isinstance(prediction, dict):
         raise BenchmarkIntegrityError(
             "VISUS execution provenance requires both verified intake reports."
         )
+    protocol = verified_suite["protocol"]
+    if not isinstance(protocol, dict):
+        raise BenchmarkIntegrityError("VISUS suite protocol must be a dictionary.")
+    parsed_inputs = _parsed_input_binding(reference, prediction, protocol)
 
     body = {
         "schema": _EXECUTION_SCHEMA,
@@ -222,27 +328,7 @@ def build_visus_execution_provenance(
         "provenance_scope": "exact-raw-input-files-to-frozen-visus-suite",
         "source": source_identity,
         "raw_inputs": rows,
-        "parsed_inputs": {
-            "human_input_table_fingerprint_sha256": reference.get(
-                "input_table_fingerprint_sha256"
-            ),
-            "human_canonical_table_fingerprint_sha256": reference.get(
-                "canonical_table_fingerprint_sha256"
-            ),
-            "model_input_table_fingerprint_sha256": prediction.get(
-                "input_table_fingerprint_sha256"
-            ),
-            "model_canonical_table_fingerprint_sha256": prediction.get(
-                "canonical_table_fingerprint_sha256"
-            ),
-            "timestamp_grids": verified_suite["protocol"].get("timestamp_grids"),
-            "timestamp_grid_basis": verified_suite["protocol"].get(
-                "timestamp_grid_basis"
-            ),
-            "prediction_emission_grid_used": verified_suite["protocol"].get(
-                "prediction_emission_grid_used"
-            ),
-        },
+        "parsed_inputs": parsed_inputs,
         "suite": {
             "manifest_filename": suite.manifest_path.name,
             "suite_fingerprint_sha256": suite.suite_fingerprint_sha256,
@@ -250,27 +336,21 @@ def build_visus_execution_provenance(
             "reports_verified": True,
         },
         "claim_limits": [
-            "This manifest binds raw execution files to a verified suite; it does not validate the dataset independently.",
-            "Analysis-use permission and raw-data redistribution rights remain separate source-audit evidence fields.",
+            (
+                "This manifest binds raw execution files to a verified suite; it does not "
+                "validate the dataset independently."
+            ),
+            (
+                "Analysis-use permission and raw-data redistribution rights remain separate "
+                "source-audit evidence fields."
+            ),
             "Model-emission frames are not an evaluation timestamp grid.",
-            "Human-human agreement remains conditional on independently verified annotation streams.",
+            (
+                "Human-human agreement remains conditional on independently verified "
+                "annotation streams."
+            ),
         ],
     }
-    parsed = body["parsed_inputs"]
-    required_parsed = (
-        "human_input_table_fingerprint_sha256",
-        "human_canonical_table_fingerprint_sha256",
-        "model_input_table_fingerprint_sha256",
-        "model_canonical_table_fingerprint_sha256",
-    )
-    if any(not isinstance(parsed.get(key), str) or len(parsed[key]) != 64 for key in required_parsed):
-        raise BenchmarkIntegrityError(
-            "VISUS execution provenance is missing canonical intake fingerprints."
-        )
-    if parsed.get("prediction_emission_grid_used") is not False:
-        raise BenchmarkIntegrityError(
-            "VISUS execution provenance refuses a suite that uses prediction emissions as the grid."
-        )
     return {
         **body,
         "execution_fingerprint_sha256": benchmark_fingerprint(body),
@@ -297,7 +377,7 @@ def write_visus_execution_provenance(
         for key, value in manifest.items()
         if key != "execution_fingerprint_sha256"
     }
-    if len(claimed) != 64 or benchmark_fingerprint(body) != claimed:
+    if not _valid_sha256(claimed) or benchmark_fingerprint(body) != claimed:
         raise BenchmarkIntegrityError(
             "VISUS execution provenance fingerprint does not revalidate before writing."
         )
@@ -316,6 +396,99 @@ def write_visus_execution_provenance(
     )
 
 
+def _validate_internal_manifest(manifest: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    if manifest.get("schema") != _EXECUTION_SCHEMA or manifest.get("status") != "complete":
+        raise BenchmarkIntegrityError("VISUS execution provenance identity/status is invalid.")
+    if manifest.get("provenance_scope") != "exact-raw-input-files-to-frozen-visus-suite":
+        raise BenchmarkIntegrityError("VISUS execution provenance scope is invalid.")
+
+    source = manifest.get("source")
+    if not isinstance(source, dict) or any(not _valid_sha256(source.get(key)) for key in _SOURCE_KEYS):
+        raise BenchmarkIntegrityError("VISUS execution provenance source identity is invalid.")
+
+    rows = manifest.get("raw_inputs")
+    if not isinstance(rows, list) or len(rows) != len(_INPUT_ROLES):
+        raise BenchmarkIntegrityError("VISUS execution provenance raw-input inventory is invalid.")
+    roles = [str(row.get("role", "")) for row in rows if isinstance(row, dict)]
+    if roles != list(_INPUT_ROLES):
+        raise BenchmarkIntegrityError("VISUS execution provenance raw-input roles are invalid.")
+    for row in rows:
+        if not isinstance(row, dict):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance contains a non-object raw-input record."
+            )
+        filename = row.get("filename")
+        if (
+            not isinstance(filename, str)
+            or not filename
+            or Path(filename).name != filename
+            or not _valid_sha256(row.get("sha256"))
+            or not isinstance(row.get("bytes"), int)
+            or row["bytes"] <= 0
+        ):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance contains an invalid raw-input record."
+            )
+    spec_row = rows[0]
+    if not _valid_sha256(spec_row.get("semantic_fingerprint_sha256")):
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance source-spec semantic fingerprint is invalid."
+        )
+    if spec_row["semantic_fingerprint_sha256"] != source[
+        "source_audit_spec_fingerprint_sha256"
+    ]:
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance source-spec semantic binding is inconsistent."
+        )
+    if any(row.get("semantic_fingerprint_sha256") is not None for row in rows[1:]):
+        raise BenchmarkIntegrityError(
+            "Only the source-audit JSON may carry a semantic raw-input fingerprint."
+        )
+
+    parsed = manifest.get("parsed_inputs")
+    if not isinstance(parsed, dict):
+        raise BenchmarkIntegrityError("VISUS execution provenance parsed-input binding is invalid.")
+    _parsed_input_binding(
+        {
+            "input_table_fingerprint_sha256": parsed.get(
+                "human_input_table_fingerprint_sha256"
+            ),
+            "canonical_table_fingerprint_sha256": parsed.get(
+                "human_canonical_table_fingerprint_sha256"
+            ),
+        },
+        {
+            "input_table_fingerprint_sha256": parsed.get(
+                "model_input_table_fingerprint_sha256"
+            ),
+            "canonical_table_fingerprint_sha256": parsed.get(
+                "model_canonical_table_fingerprint_sha256"
+            ),
+        },
+        {
+            "timestamp_grids": parsed.get("timestamp_grids"),
+            "timestamp_grid_basis": parsed.get("timestamp_grid_basis"),
+            "prediction_emission_grid_used": parsed.get("prediction_emission_grid_used"),
+        },
+    )
+
+    suite = manifest.get("suite")
+    if not isinstance(suite, dict):
+        raise BenchmarkIntegrityError("VISUS execution provenance suite binding is invalid.")
+    filename = suite.get("manifest_filename")
+    if (
+        not isinstance(filename, str)
+        or not filename
+        or Path(filename).name != filename
+        or not _valid_sha256(suite.get("suite_fingerprint_sha256"))
+        or not isinstance(suite.get("report_count"), int)
+        or suite["report_count"] <= 0
+        or suite.get("reports_verified") is not True
+    ):
+        raise BenchmarkIntegrityError("VISUS execution provenance suite binding is incomplete.")
+    return rows, suite
+
+
 def validate_visus_execution_provenance(
     path: str | Path,
     *,
@@ -323,9 +496,7 @@ def validate_visus_execution_provenance(
 ) -> dict[str, Any]:
     """Validate a frozen raw-input provenance manifest and optionally its sibling suite."""
     source = Path(path)
-    manifest_path = (
-        source / _EXECUTION_MANIFEST_NAME if source.is_dir() else source
-    )
+    manifest_path = source / _EXECUTION_MANIFEST_NAME if source.is_dir() else source
     if not manifest_path.is_file():
         raise FileNotFoundError(manifest_path)
     try:
@@ -342,55 +513,63 @@ def validate_visus_execution_provenance(
         for key, value in manifest.items()
         if key != "execution_fingerprint_sha256"
     }
-    if len(claimed) != 64 or benchmark_fingerprint(body) != claimed:
+    if not _valid_sha256(claimed) or benchmark_fingerprint(body) != claimed:
         raise BenchmarkIntegrityError("VISUS execution provenance fingerprint mismatch.")
-    if manifest.get("schema") != _EXECUTION_SCHEMA or manifest.get("status") != "complete":
-        raise BenchmarkIntegrityError("VISUS execution provenance identity/status is invalid.")
 
-    rows = manifest.get("raw_inputs")
-    if not isinstance(rows, list) or len(rows) != len(_INPUT_ROLES):
-        raise BenchmarkIntegrityError("VISUS execution provenance raw-input inventory is invalid.")
-    roles = [str(row.get("role", "")) for row in rows if isinstance(row, dict)]
-    if roles != list(_INPUT_ROLES):
-        raise BenchmarkIntegrityError("VISUS execution provenance raw-input roles are invalid.")
-    for row in rows:
-        if (
-            not isinstance(row.get("filename"), str)
-            or not row["filename"]
-            or not isinstance(row.get("sha256"), str)
-            or len(row["sha256"]) != 64
-            or not isinstance(row.get("bytes"), int)
-            or row["bytes"] <= 0
-        ):
-            raise BenchmarkIntegrityError(
-                "VISUS execution provenance contains an invalid raw-input record."
-            )
-
-    suite = manifest.get("suite")
-    if not isinstance(suite, dict):
-        raise BenchmarkIntegrityError("VISUS execution provenance suite binding is invalid.")
+    rows, suite = _validate_internal_manifest(manifest)
     if verify_suite:
-        filename = str(suite.get("manifest_filename", ""))
-        relative = Path(filename)
-        if not filename or relative.is_absolute() or len(relative.parts) != 1:
-            raise BenchmarkIntegrityError(
-                "VISUS execution provenance contains an unsafe suite-manifest filename."
-            )
         summary = validate_visus_dynamic_aoi_suite_manifest(
-            manifest_path.parent / relative,
+            manifest_path.parent / str(suite["manifest_filename"]),
             verify_reports=True,
         )
-        if summary["suite_fingerprint_sha256"] != suite.get(
-            "suite_fingerprint_sha256"
-        ):
+        if summary["suite_fingerprint_sha256"] != suite["suite_fingerprint_sha256"]:
             raise BenchmarkIntegrityError(
                 "VISUS execution provenance/suite fingerprint mismatch."
             )
+        if int(summary["report_count"]) != int(suite["report_count"]):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance/suite report-count mismatch."
+            )
+        observed_source = {
+            key: str(summary["source"].get(key, "")) for key in _SOURCE_KEYS
+        }
+        if observed_source != manifest["source"]:
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance/suite source identity mismatch."
+            )
+        protocol = summary["protocol"]
+        parsed = manifest["parsed_inputs"]
+        if parsed["timestamp_grids"] != protocol.get("timestamp_grids"):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance/suite timestamp-grid fingerprints mismatch."
+            )
+        if parsed["timestamp_grid_basis"] != protocol.get("timestamp_grid_basis"):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance/suite timestamp-grid basis mismatch."
+            )
+        if protocol.get("prediction_emission_grid_used") is not False:
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance refuses a suite using prediction emissions as grid."
+            )
+
+        children = _load_suite_children(manifest_path.parent, summary)
+        reference = children.get("human_reference_intake")
+        prediction = children.get("model_prediction_intake")
+        if not isinstance(reference, dict) or not isinstance(prediction, dict):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance cannot recover verified intake children."
+            )
+        observed_parsed = _parsed_input_binding(reference, prediction, protocol)
+        if observed_parsed != parsed:
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance parsed-input binding does not match suite children."
+            )
+
     return {
         "schema": _EXECUTION_SCHEMA,
         "status": "complete",
         "input_count": len(rows),
-        "suite_fingerprint_sha256": suite.get("suite_fingerprint_sha256"),
+        "suite_fingerprint_sha256": suite["suite_fingerprint_sha256"],
         "execution_fingerprint_sha256": claimed,
         "suite_verified": bool(verify_suite),
         "manifest_path": str(manifest_path),
