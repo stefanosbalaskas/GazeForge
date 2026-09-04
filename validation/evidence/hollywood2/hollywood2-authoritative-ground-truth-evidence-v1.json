@@ -1,0 +1,120 @@
+{
+  "coverage": {
+    "clip_count": 56,
+    "file_subject_token_count": 16,
+    "file_subject_tokens": ["001", "002", "003", "004", "005", "006", "008", "010", "011", "012", "013", "014", "015", "017", "018", "019"],
+    "ground_truth_file_count": 697,
+    "ground_truth_total_bytes": 137328178,
+    "ground_truth_total_samples": 3871580,
+    "splits": {"test": 642, "train": 55}
+  },
+  "dataset": "Hollywood2EM eye-movement event benchmark",
+  "evidence_fingerprint_sha256": "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea",
+  "execution": {
+    "artifact_id": 9958310010,
+    "artifact_zip_sha256": "7cc9dfe5e9f7130b202874d9b53ee3c0606eb3579c2c4e43b98ba5ab635835da",
+    "probe_fingerprint_sha256": "b3137d6bc4ff049802e6cdc62f6e9d3b8e490fe42384d501f789ba3bacb691dd",
+    "probe_head_sha": "0278e32efcef4269ab41a576033e8f2a88aecc30",
+    "probe_workflow_run_id": 33930322027
+  },
+  "final_labels": {
+    "counts": {"FIX": 2414211, "NOISE": 167248, "SACCADE": 353208, "SP": 936913},
+    "fractions": {"FIX": 0.6235725466088781, "NOISE": 0.04319890070720481, "SACCADE": 0.09123097030153064, "SP": 0.24199758238238653},
+    "publication_crosscheck": {
+      "counts_reproduce_reported_rounding": true,
+      "reported_fixation_fraction_rounded": 0.624,
+      "reported_pursuit_fraction_rounded": 0.242,
+      "reported_saccade_fraction_rounded": 0.091
+    }
+  },
+  "format_semantics": {
+    "author_implementation_commit_sha1": "9a345a37aab47ac6780ce0d4b5798cc15291c75b",
+    "author_implementation_readme_git_blob_sha1": "112f5f2a235f059ac2394db3180956474e644c06",
+    "author_implementation_repository": "MikhailStartsev/deep_em_classifier",
+    "coordinate_unit": "pixels",
+    "native_sampling_rate_hz_publication": 500.0,
+    "observed_maximum_file_rate_hz": 500.0,
+    "observed_median_file_rate_hz": 500.0,
+    "observed_minimum_file_rate_hz": 499.7501249375312,
+    "semantics_source": "author implementation documenting the ARFF input convention referenced by the Hollywood2 labelling paper",
+    "time_unit": "microseconds"
+  },
+  "observed_signal": {
+    "numeric_ranges": {"confidence": [0.0, 1.0], "x": [-1644.25, 1993.31], "y": [-1483.56, 3567.08]},
+    "zero_xy_pair_count": 94711
+  },
+  "record_type": "hollywood2-authoritative-ground-truth-evidence-v1",
+  "rights": {
+    "analysis_use_terms_status": "unresolved",
+    "article_cc_by_is_dataset_license": false,
+    "dataset_specific_license_verified": false,
+    "raw_data_redistribution_terms_status": "unresolved",
+    "repository_license_file_recovered": false,
+    "source_bytes_redistributed_by_gazeforge": false
+  },
+  "schema": {
+    "attributes": [
+      {"name": "time", "type": "INTEGER"},
+      {"name": "x", "type": "NUMERIC"},
+      {"name": "y", "type": "NUMERIC"},
+      {"name": "confidence", "type": "NUMERIC"},
+      {"name": "handlabeller_1", "type": "{UNKNOWN,FIX,SACCADE,SP,NOISE}"},
+      {"name": "handlabeller_final", "type": "{UNKNOWN,FIX,SACCADE,SP,NOISE}"}
+    ],
+    "relation": "gaze_labels",
+    "schema_signature_file_count": 697,
+    "schema_signature_sha256": "31a6db306fded47592ad4c1647da8df3413df970a2b8abcba91e23d6261881c0"
+  },
+  "scientific_boundary": {
+    "authoritative_ground_truth_blobs_recovered": true,
+    "authoritative_repository_revision_resolved": true,
+    "coordinate_unit_verified": true,
+    "cross_dataset_validation_created": false,
+    "file_subject_tokens_recovered": true,
+    "frozen_evidence_created": false,
+    "full_original_hollywood2_video_dataset_recovered": false,
+    "ground_truth_source_identity_ledger_created": true,
+    "independent_human_human_agreement_created": false,
+    "model_validation_created": false,
+    "participant_identity_mapping_verified": false,
+    "student_vs_expert_corrected_sensitivity_created": true,
+    "time_unit_verified": true,
+    "trial_clip_identity_file_bound": true
+  },
+  "source_class": "canonical-gin-hand-labelled-ground-truth",
+  "source_ledger": {
+    "derivation": "SHA-256 of canonical JSON over the 697-entry ordered source_identity_ledger emitted by the pinned live probe",
+    "entries_fingerprint_sha256": "51dd0883cf5b7966a4caea94fb9ac97e43bee6cf716423f26f268810041d3030",
+    "entry_count": 697,
+    "raw_entry_ledger_committed": false,
+    "regenerable_from_pinned_upstream_commit": true
+  },
+  "status": "verified-authoritative-empirical",
+  "student_vs_expert_corrected_sensitivity": {
+    "changed_sample_count": 291315,
+    "confusion": {
+      "FIX->FIX": 2169287, "FIX->NOISE": 8334, "FIX->SACCADE": 4249, "FIX->SP": 8179,
+      "NOISE->FIX": 1621, "NOISE->NOISE": 150316, "NOISE->SACCADE": 119, "NOISE->SP": 434,
+      "SACCADE->FIX": 41644, "SACCADE->NOISE": 7796, "SACCADE->SACCADE": 347066, "SACCADE->SP": 14701,
+      "SP->FIX": 201659, "SP->NOISE": 800, "SP->SACCADE": 1774, "SP->SP": 913596,
+      "UNKNOWN->NOISE": 2, "UNKNOWN->SP": 3
+    },
+    "equal_sample_count": 3580265,
+    "interpretation": "novice/student coding followed by expert-corrected final coding; sensitivity, not independent human-human reliability",
+    "raw_agreement_fraction": 0.9247555261676111,
+    "sample_count": 3871580
+  },
+  "upstream": {
+    "commit_author_date": "2020-02-19T16:56:44+01:00",
+    "commit_message": "Added sp_tool smoothed files",
+    "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "default_ref": "refs/heads/master",
+    "readme": {
+      "bytes": 2808,
+      "git_blob_sha1": "c8b7d126295e5f52a7748533952f044228423bf8",
+      "path": "README.md",
+      "sha256": "97f839bda127674b5de1eb5d8c3b1d2c82d65e7c6c1708c2e9f9711170ada383"
+    },
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
+  }
+}
