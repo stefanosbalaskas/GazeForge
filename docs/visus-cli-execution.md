@@ -1,6 +1,6 @@
 # VISUS empirical execution CLI
 
-GazeForge provides a dedicated `gazeforge-visus` command for running the audited VISUS dynamic-AOI workflow from local reviewed files. The command is deliberately stricter than a convenience loader: it preserves the source-audit, human-intake, model-intake, external-grid, and suite boundaries already used by the Python APIs.
+GazeForge provides a dedicated `gazeforge-visus` command for running the audited VISUS dynamic-AOI workflow from local reviewed files. The command is deliberately stricter than a convenience loader: it preserves the source-audit, human-intake, model-intake, external-grid, suite, and raw-execution-provenance boundaries already used by the Python APIs.
 
 This interface is **execution infrastructure, not empirical evidence by itself**. A successful command only becomes an empirical VISUS result when the source specification describes a real authoritative copy, reuse and analysis permission are reviewed, the exact file manifest verifies, the human AOI extraction is reviewed, and the model output is generated from the exact audited videos.
 
@@ -101,7 +101,9 @@ gazeforge-visus suite \
   --max-interpolation-gap-ms 100
 ```
 
-The command re-runs the source audit, human canonical intake, and model prediction intake before calling the atomic VISUS suite. The suite completion manifest is written only after all required children are computed, frozen, fingerprint-checked, and cross-checked against the same source identity.
+The command snapshots the four raw execution inputs before execution, re-runs the source audit, human canonical intake, and model prediction intake, then calls the atomic VISUS suite. The suite completion manifest is written only after all required children are computed, frozen, fingerprint-checked, and cross-checked against the same source identity.
+
+After the suite has completed, the CLI fingerprints the four raw inputs again and re-runs the exact source audit. Any change to the raw input files or audited source tree blocks raw-execution provenance freezing. A successful run writes `visus-execution-provenance.json` alongside the suite manifest and child reports.
 
 If the source audit genuinely verifies two separately recoverable independent annotation streams, a complete suite must also include them:
 
@@ -123,6 +125,22 @@ For manifest-only inspection without opening referenced child reports:
 gazeforge-visus suite-validate /path/to/frozen-visus-suite --manifest-only
 ```
 
+## 7. Revalidate raw execution provenance
+
+```bash
+gazeforge-visus execution-validate /path/to/frozen-visus-suite
+```
+
+By default this verifies the execution-provenance fingerprint and structure, reopens the sibling suite and all child reports, and checks source identity, suite fingerprint, report count, parsed human/model table fingerprints, canonical fingerprints, and external timestamp-grid provenance.
+
+For provenance-file inspection without reopening the sibling suite:
+
+```bash
+gazeforge-visus execution-validate /path/to/frozen-visus-suite --provenance-only
+```
+
+The provenance-only mode does not establish that the currently adjacent suite files still match the recorded binding.
+
 ## Scientific boundaries
 
 The CLI does not relax the VISUS evidence policy:
@@ -133,4 +151,5 @@ The CLI does not relax the VISUS evidence policy:
 - detector/tracker emission frames never define the evaluation timestamp grid;
 - raw ViPER XML parsing is not claimed unless an authoritative schema/sample is separately reviewed;
 - analysis-use permission and raw-data redistribution rights remain separate provenance fields;
-- no VISUS performance result should enter Frozen Evidence until the authoritative source, reviewed human extraction, model output, and external grid have all passed the suite and scientific review.
+- exact raw-input fingerprints do not prove that a local VISUS copy is authoritative;
+- no VISUS performance result should enter Frozen Evidence until the authoritative source, reviewed human extraction, model output, external grid, suite, and scientific review have all been completed.
