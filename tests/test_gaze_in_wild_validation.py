@@ -17,6 +17,7 @@ from gazeforge.gaze_in_wild_validation import (
     prepare_gaze_in_wild_benchmark,
     run_gaze_in_wild_model_validation,
 )
+from gazeforge.source_audit_lineage import SourceAuditLineageReceipt
 
 
 def _write_process(path: Path, *, n: int = 60) -> None:
@@ -105,6 +106,25 @@ def _fixture(
     return audit_gaze_in_wild_source(label_root, process_root, spec)
 
 
+def _lineage(audit, *, report_fingerprint: str | None = None) -> SourceAuditLineageReceipt:
+    return SourceAuditLineageReceipt(
+        dataset_key="gaze-in-the-wild",
+        audit_template_fingerprint_sha256="a" * 64,
+        authorization_fingerprint_sha256="b" * 64,
+        authorized_spec_fingerprint_sha256=audit.report["spec_fingerprint_sha256"],
+        audit_report_fingerprint_sha256=(
+            audit.report["report_fingerprint_sha256"]
+            if report_fingerprint is None
+            else report_fingerprint
+        ),
+        source_manifest_fingerprints_sha256={
+            "label": audit.report["label_inventory"]["manifest_fingerprint_sha256"],
+            "process": audit.report["process_inventory"]["manifest_fingerprint_sha256"],
+        },
+        source_revision=audit.spec.source_revision,
+    )
+
+
 def _task_mapping() -> pd.DataFrame:
     return pd.DataFrame(
         {
@@ -117,8 +137,10 @@ def _task_mapping() -> pd.DataFrame:
 
 def test_prepare_gaze_in_wild_uses_each_file_rate_before_common_downsampling(tmp_path):
     audit = _fixture(tmp_path)
+    lineage = _lineage(audit)
     prepared = prepare_gaze_in_wild_benchmark(
         audit,
+        lineage,
         labeller_id=1,
         target_sampling_rate_hz=60.0,
         min_label_purity=0.60,
@@ -136,6 +158,11 @@ def test_prepare_gaze_in_wild_uses_each_file_rate_before_common_downsampling(tmp
     assert set(prepared.data["task_label"]) == {"indoor", "outdoor"}
     assert len(report["task_mapping"]["mapping_fingerprint_sha256"]) == 64
     assert report["task_mapping"]["task_labels_inferred_from_filenames"] is False
+    lineage_fingerprint = lineage.to_dict()["receipt_fingerprint_sha256"]
+    assert report["source_audit_lineage_receipt_fingerprint_sha256"] == lineage_fingerprint
+    assert set(prepared.data["source_audit_lineage_receipt_fingerprint_sha256"]) == {
+        lineage_fingerprint
+    }
     assert all(
         item["resampling"]["invalid_source_samples_are_not_bridged"]
         for item in report["files"]
@@ -144,8 +171,10 @@ def test_prepare_gaze_in_wild_uses_each_file_rate_before_common_downsampling(tmp
 
 def test_model_validation_is_participant_disjoint_and_reports_class_and_task_sensitivity(tmp_path):
     audit = _fixture(tmp_path)
+    lineage = _lineage(audit)
     run = run_gaze_in_wild_model_validation(
         audit,
+        lineage,
         labeller_id=1,
         target_sampling_rate_hz=60.0,
         min_label_purity=0.60,
@@ -172,6 +201,12 @@ def test_model_validation_is_participant_disjoint_and_reports_class_and_task_sen
     assert run.task_performance.design["models_refit_by_stratum"] is False
     assert run.report["protocol"]["event_class_sensitivity"]["models_refit_by_event_class"] is False
     assert len(run.report["report_fingerprint_sha256"]) == 64
+    assert (
+        run.report["protocol"]["preparation"][
+            "source_audit_lineage_receipt_fingerprint_sha256"
+        ]
+        == lineage.to_dict()["receipt_fingerprint_sha256"]
+    )
 
     for _, part in run.comparison.predictions.groupby("comparison_model"):
         counts = part.groupby("participant_id")["validation_fold"].nunique()
@@ -183,6 +218,7 @@ def test_prepare_rejects_upsampling_any_selected_file(tmp_path):
     with pytest.raises(SchemaError, match="refuses upsampling"):
         prepare_gaze_in_wild_benchmark(
             audit,
+            _lineage(audit),
             labeller_id=1,
             target_sampling_rate_hz=110.0,
         )
@@ -195,7 +231,7 @@ def test_prepare_requires_verified_pixel_kinematics_compatibility(tmp_path):
         pixel_kinematics_compatible=False,
     )
     with pytest.raises(SchemaError, match="pixel-kinematics"):
-        prepare_gaze_in_wild_benchmark(audit, labeller_id=1)
+        prepare_gaze_in_wild_benchmark(audit, _lineage(audit), labeller_id=1)
 
 
 def test_task_mapping_must_exactly_cover_selected_trials(tmp_path):
@@ -204,6 +240,7 @@ def test_task_mapping_must_exactly_cover_selected_trials(tmp_path):
     with pytest.raises(SchemaError, match="exactly cover"):
         prepare_gaze_in_wild_benchmark(
             audit,
+            _lineage(audit),
             labeller_id=1,
             task_mapping=incomplete,
         )
@@ -211,6 +248,14 @@ def test_task_mapping_must_exactly_cover_selected_trials(tmp_path):
 
 def test_model_preparation_revalidates_source_audit_fingerprint(tmp_path):
     audit = _fixture(tmp_path)
+    lineage = _lineage(audit)
     audit.report["identity"]["participant_count"] = 999
     with pytest.raises(BenchmarkIntegrityError, match="fingerprint"):
-        prepare_gaze_in_wild_benchmark(audit, labeller_id=1)
+        prepare_gaze_in_wild_benchmark(audit, lineage, labeller_id=1)
+
+
+def test_model_preparation_rejects_detached_lineage_receipt(tmp_path):
+    audit = _fixture(tmp_path)
+    detached = _lineage(audit, report_fingerprint="c" * 64)
+    with pytest.raises(BenchmarkIntegrityError, match="lineage report fingerprint"):
+        prepare_gaze_in_wild_benchmark(audit, detached, labeller_id=1)
