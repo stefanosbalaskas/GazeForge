@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -108,6 +109,24 @@ def _snapshot_file(
     )
 
 
+def _snapshot_source_spec(path: str | Path) -> VisusExecutionInputSnapshot:
+    before = _snapshot_file("source_audit_spec", path)
+    parsed_spec = load_visus_source_audit_spec(path)
+    semantic = benchmark_fingerprint(parsed_spec.to_dict())
+    after = _snapshot_file("source_audit_spec", path)
+    if before != after:
+        raise BenchmarkIntegrityError(
+            "VISUS source-audit JSON changed while its semantic fingerprint was being computed."
+        )
+    return VisusExecutionInputSnapshot(
+        role=before.role,
+        filename=before.filename,
+        sha256=before.sha256,
+        bytes=before.bytes,
+        semantic_fingerprint_sha256=semantic,
+    )
+
+
 def snapshot_visus_execution_inputs(
     *,
     source_audit_spec: str | Path,
@@ -121,18 +140,8 @@ def snapshot_visus_execution_inputs(
     :class:`~gazeforge.visus_audit.VisusSourceAuditSpec`, allowing the execution manifest to prove
     that the exact raw JSON corresponds to the specification used by the source audit.
     """
-    source_spec_snapshot = _snapshot_file("source_audit_spec", source_audit_spec)
-    parsed_spec = load_visus_source_audit_spec(source_audit_spec)
-    spec_semantic = benchmark_fingerprint(parsed_spec.to_dict())
-    source_spec_snapshot = VisusExecutionInputSnapshot(
-        role=source_spec_snapshot.role,
-        filename=source_spec_snapshot.filename,
-        sha256=source_spec_snapshot.sha256,
-        bytes=source_spec_snapshot.bytes,
-        semantic_fingerprint_sha256=spec_semantic,
-    )
     return (
-        source_spec_snapshot,
+        _snapshot_source_spec(source_audit_spec),
         _snapshot_file("human_aoi_table", human_aoi_table),
         _snapshot_file("model_prediction_table", model_prediction_table),
         _snapshot_file("timestamp_grid_json", timestamp_grid_json),
@@ -233,6 +242,46 @@ def _load_suite_children(
     return children
 
 
+def _validate_timestamp_grid_ledgers(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list) or not value:
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance requires a non-empty timestamp-grid ledger."
+        )
+    ledgers: list[dict[str, Any]] = []
+    stimulus_ids: set[str] = set()
+    for record in value:
+        if not isinstance(record, dict):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance timestamp-grid ledger records must be objects."
+            )
+        stimulus_id = str(record.get("stimulus_id", "")).strip()
+        n_timestamps = record.get("n_timestamps")
+        first = record.get("first_timestamp_ms")
+        last = record.get("last_timestamp_ms")
+        fingerprint = record.get("timestamp_grid_fingerprint_sha256")
+        if (
+            not stimulus_id
+            or stimulus_id in stimulus_ids
+            or not isinstance(n_timestamps, int)
+            or isinstance(n_timestamps, bool)
+            or n_timestamps <= 0
+            or not isinstance(first, (int, float))
+            or isinstance(first, bool)
+            or not math.isfinite(float(first))
+            or not isinstance(last, (int, float))
+            or isinstance(last, bool)
+            or not math.isfinite(float(last))
+            or float(last) < float(first)
+            or not _valid_sha256(fingerprint)
+        ):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance contains an invalid timestamp-grid ledger record."
+            )
+        stimulus_ids.add(stimulus_id)
+        ledgers.append(dict(record))
+    return ledgers
+
+
 def _parsed_input_binding(
     reference: dict[str, Any],
     prediction: dict[str, Any],
@@ -251,19 +300,15 @@ def _parsed_input_binding(
         "model_canonical_table_fingerprint_sha256": prediction.get(
             "canonical_table_fingerprint_sha256"
         ),
-        "timestamp_grids": protocol.get("timestamp_grids"),
+        "timestamp_grids": _validate_timestamp_grid_ledgers(
+            protocol.get("timestamp_grids")
+        ),
         "timestamp_grid_basis": protocol.get("timestamp_grid_basis"),
         "prediction_emission_grid_used": protocol.get("prediction_emission_grid_used"),
     }
     if any(not _valid_sha256(binding.get(key)) for key in _PARSED_FINGERPRINT_KEYS):
         raise BenchmarkIntegrityError(
             "VISUS execution provenance is missing canonical intake fingerprints."
-        )
-    if not isinstance(binding.get("timestamp_grids"), dict) or not binding[
-        "timestamp_grids"
-    ]:
-        raise BenchmarkIntegrityError(
-            "VISUS execution provenance requires frozen external timestamp-grid fingerprints."
         )
     basis = binding.get("timestamp_grid_basis")
     if not isinstance(basis, str) or not basis.strip():
@@ -431,6 +476,7 @@ def _validate_internal_manifest(
             or Path(filename).name != filename
             or not _valid_sha256(row.get("sha256"))
             or not isinstance(row.get("bytes"), int)
+            or isinstance(row.get("bytes"), bool)
             or row["bytes"] <= 0
         ):
             raise BenchmarkIntegrityError(
@@ -489,6 +535,7 @@ def _validate_internal_manifest(
         or Path(filename).name != filename
         or not _valid_sha256(suite.get("suite_fingerprint_sha256"))
         or not isinstance(suite.get("report_count"), int)
+        or isinstance(suite.get("report_count"), bool)
         or suite["report_count"] <= 0
         or suite.get("reports_verified") is not True
     ):
