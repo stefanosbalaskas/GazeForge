@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import gazeforge
-
 from gazeforge import visus_cli
 
 
