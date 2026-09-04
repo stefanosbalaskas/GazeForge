@@ -64,7 +64,13 @@ as empirical evidence.
     (root / "docs" / "frozen-evidence.md").write_text(content, encoding="utf-8")
 
     source_resolution_dashboard = build_source_resolution_dashboard(
-        root / "validation" / "protocols"
+        root / "validation" / "protocols",
+        lock_path=(
+            root
+            / "validation"
+            / "governance"
+            / "source-resolution-bundle-lock-v1.json"
+        ),
     )
     source_resolution_content = render_source_resolution_dashboard_markdown(
         source_resolution_dashboard
