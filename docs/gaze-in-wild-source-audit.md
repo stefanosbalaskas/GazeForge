@@ -10,6 +10,23 @@ analysis.
 The source-audit layer therefore verifies those claims before any Gaze-in-the-Wild result is treated
 as frozen empirical evidence.
 
+## Current source-resolution checkpoint
+
+A dated public-source resolution pass is recorded in
+[`gaze-in-wild-source-resolution.md`](gaze-in-wild-source-resolution.md) and the machine-readable
+checkpoint `validation/protocols/gaze-in-wild-source-resolution-2026-09-04.json`.
+
+The authoritative paper establishes the historical RIT distribution identifier and the current RIT
+Perception for Movement Lab still lists the dataset, but this resolution pass did **not** obtain and
+fingerprint an exact current dataset copy or verify repository-level reuse terms. The source audit
+therefore remains blocked. Published CC BY 4.0 applies to the article and is not silently promoted to
+externally hosted dataset files.
+
+The checkpoint also keeps rate provenance explicit: the primary publication describes 120 Hz Pupil
+Labs acquisition hardware, while a later event-detection catalog reports 300 Hz. Neither nominal
+value is imposed on the files. An empirical audit must infer each reviewed `LabelData` stream's
+observed cadence from its timestamps and preserve hardware provenance separately.
+
 ## What the audit binds
 
 `GazeInWildSourceAuditSpec` separates the distributed corpus into two exact manifests.
@@ -48,13 +65,17 @@ replacing the timestamps actually present in the reviewed files.
 
 ## Multi-labeller gaze identity
 
+The authoritative publication reports five trained annotators and states that each labeller made
+decisions independently. That published independence is meaningful provenance, but the exact current
+copy must still establish that the independent streams are separately recoverable and comparable.
+
 When two or more audited label files describe the same participant/trial, every stream must point to
 the same audited `ProcessData` file. The audit then verifies equality of participant/trial identity,
 timestamps, point-of-regard samples, validity, and confidence before those streams are eligible for
 human-human annotation analysis.
 
 Labels themselves are not required to agree. Their disagreement is the empirical quantity that a
-later labeller-agreement analysis should measure.
+later labeller-agreement analysis should measure, and it is not an error-free ground-truth ceiling.
 
 ## Non-executable template
 
