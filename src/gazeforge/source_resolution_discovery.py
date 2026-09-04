@@ -22,6 +22,10 @@ def discover_source_resolution_paths(root: str | Path) -> tuple[Path, ...]:
     disappearing from the governance gate.
     """
     directory = Path(root)
+    if directory.is_symlink():
+        raise BenchmarkIntegrityError(
+            f"Source-resolution checkpoint discovery refuses symbolic-link directories: {directory}."
+        )
     if not directory.is_dir():
         raise NotADirectoryError(directory)
 
@@ -42,9 +46,9 @@ def discover_source_resolution_paths(root: str | Path) -> tuple[Path, ...]:
             )
         try:
             payload: Any = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as exc:
+        except (UnicodeError, json.JSONDecodeError) as exc:
             raise BenchmarkIntegrityError(
-                f"Source-resolution checkpoint candidate is not valid JSON: {path}."
+                f"Source-resolution checkpoint candidate is not valid UTF-8 JSON: {path}."
             ) from exc
         if not isinstance(payload, Mapping):
             raise BenchmarkIntegrityError(
