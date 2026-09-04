@@ -51,7 +51,10 @@ def test_gaze_in_wild_article_license_is_not_promoted_to_dataset_license():
     assert publication["article_license"] == "CC BY 4.0"
     assert publication["article_license_is_dataset_license"] is False
     assert rights["article_cc_by_is_dataset_license"] is False
-    assert rights["publication_public_availability_is_unrestricted_redistribution_permission"] is False
+    assert (
+        rights["publication_public_availability_is_unrestricted_redistribution_permission"]
+        is False
+    )
     assert rights["license_inference_permitted"] is False
     assert rights["analysis_use_terms_status"] == "unresolved"
     assert rights["raw_data_redistribution_terms_status"] == "unresolved"
@@ -65,10 +68,13 @@ def test_gaze_in_wild_mapping_and_coordinates_wait_for_exact_copy():
     assert mapping["verification_requires_exact_obtained_copy"] is True
 
 
-def test_gaze_in_wild_resolution_docs_keep_gp3_boundary_explicit():
+def test_gaze_in_wild_resolution_docs_keep_rate_and_gp3_boundaries_explicit():
     text = Path("docs/gaze-in-wild-source-resolution.md").read_text(encoding="utf-8")
+    homepage = Path("docs/index.md").read_text(encoding="utf-8")
 
     assert "not Gazepoint GP3" in text
     assert "120 Hz" in text
     assert "300 Hz" in text
     assert "actual analysis cadence from timestamps" in text
+    assert "published 120 Hz acquisition" in homepage
+    assert "published 120 Hz hardware provenance is kept separate" in homepage
