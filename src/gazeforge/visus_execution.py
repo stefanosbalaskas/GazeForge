@@ -165,7 +165,9 @@ def _audit_source_identity(audit: VisusSourceAuditRun) -> dict[str, str]:
     if not isinstance(audit, VisusSourceAuditRun):
         raise TypeError("audit must be a VisusSourceAuditRun instance.")
     if audit.report.get("status") != "verified":
-        raise BenchmarkIntegrityError("VISUS execution provenance requires a verified source audit.")
+        raise BenchmarkIntegrityError(
+            "VISUS execution provenance requires a verified source audit."
+        )
     claimed = str(audit.report.get("report_fingerprint_sha256", ""))
     body = {
         key: value
@@ -396,14 +398,19 @@ def write_visus_execution_provenance(
     )
 
 
-def _validate_internal_manifest(manifest: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _validate_internal_manifest(
+    manifest: dict[str, Any],
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     if manifest.get("schema") != _EXECUTION_SCHEMA or manifest.get("status") != "complete":
         raise BenchmarkIntegrityError("VISUS execution provenance identity/status is invalid.")
     if manifest.get("provenance_scope") != "exact-raw-input-files-to-frozen-visus-suite":
         raise BenchmarkIntegrityError("VISUS execution provenance scope is invalid.")
 
     source = manifest.get("source")
-    if not isinstance(source, dict) or any(not _valid_sha256(source.get(key)) for key in _SOURCE_KEYS):
+    invalid_source = not isinstance(source, dict) or any(
+        not _valid_sha256(source.get(key)) for key in _SOURCE_KEYS
+    )
+    if invalid_source:
         raise BenchmarkIntegrityError("VISUS execution provenance source identity is invalid.")
 
     rows = manifest.get("raw_inputs")
