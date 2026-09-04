@@ -161,8 +161,9 @@ def build_candidate_source_inventory(
     """Fingerprint a candidate Hollywood2EM or Gaze-in-the-Wild copy without inferring semantics.
 
     The inventory deliberately records only safe relative paths, byte sizes, and SHA-256 digests.
-    File names, directory names, extensions, and apparent structure are not converted into participant,
-    trial, annotator, coordinate, licensing, source-authority, or empirical-evidence claims.
+    File names, directory names, extensions, and apparent structure are not converted into
+    participant, trial, annotator, coordinate, licensing, source-authority, or empirical-evidence
+    claims.
     """
     key = _dataset_key(dataset_key)
     source = Path(root)
