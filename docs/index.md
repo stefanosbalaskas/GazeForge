@@ -114,13 +114,13 @@ The package does **not** infer diagnoses, emotions, personality, protected trait
 | **Lund2013** | paired expert event labels | 500 Hz | **frozen external event evidence available**; native/derived human agreement, derived 60 Hz modelling, annotator and sampling/purity sensitivity |
 | **Hollywood2EM** | expert-corrected event labels | 500 Hz | external cross-dataset candidate after coordinate/identity audit |
 | **Gaze-in-the-Wild** | five trained annotators | published 120 Hz | native naturalistic human-reference candidate; authoritative audit pending |
-| **VISUS** | two dynamic-AOI annotators | 60 Hz | native dynamic-AOI candidate |
+| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **infrastructure validated, empirical execution pending**; current authoritative distribution and reuse terms unresolved |
 
 </div>
 
-GazeForge never silently upgrades evidence strength. Resampled lower-rate evidence remains labelled as derived, human-human agreement is not treated as an error-free ceiling, and unresolved coordinate or identity evidence blocks stronger cross-dataset claims.
+GazeForge never silently upgrades evidence strength. Resampled lower-rate evidence remains labelled as derived, human-human agreement is not treated as an error-free ceiling, and unresolved coordinate or identity evidence blocks stronger cross-dataset claims. For VISUS, two contributors to one curation process are not treated as two independent annotation streams.
 
-[See the full validation matrix →](validation-status.md) · [See frozen empirical evidence →](frozen-evidence.md)
+[See the full validation matrix →](validation-status.md) · [VISUS source-resolution status →](visus-source-resolution.md) · [See frozen empirical evidence →](frozen-evidence.md)
 
 ## Quick start
 
