@@ -1,0 +1,93 @@
+{
+  "record_type": "source-resolution-status-v1",
+  "dataset": "VISUS dynamic-video eye-tracking benchmark",
+  "checked_on": "2026-09-04",
+  "status": "current_authoritative_distribution_unresolved",
+  "empirical_evidence_created": false,
+  "source_audit_ready": false,
+  "current_authoritative_download_found": false,
+  "authoritative_publication": {
+    "title": "Benchmark Data for Evaluating Visualization and Analysis Techniques for Eye Tracking for Video Stimuli",
+    "authors": [
+      "Kuno Kurzhals",
+      "Cyrill Fabian Bopp",
+      "Jochen Baessler",
+      "Felix Ebinger",
+      "Daniel Weiskopf"
+    ],
+    "year": 2014,
+    "doi": "10.1145/2669557.2669558",
+    "published_dataset_description": {
+      "video_count": 11,
+      "participant_count": 25,
+      "eye_tracker": "Tobii T60 XL",
+      "eye_tracking_sampling_rate_hz": 60,
+      "video_resolution_px": [1920, 1080],
+      "video_frame_rate_hz": 25,
+      "components": [
+        "video stimuli",
+        "eye-tracking data",
+        "dynamic AOI annotations"
+      ]
+    },
+    "original_distribution_url": "http://go.visus.uni-stuttgart.de/eyetrackingBenchmark",
+    "publication_describes_data_as_publicly_available": true,
+    "publication_states_dataset_license": false
+  },
+  "historical_distribution_evidence": [
+    {
+      "source": "Automatic Visual Attention Detection for Mobile Eye Tracking Using Pre-Trained Computer Vision Models and Human Gaze",
+      "year": 2021,
+      "doi": "10.3390/s21124143",
+      "reported_distribution_url": "https://www.visus.uni-stuttgart.de/publikationen/benchmark-eyetracking",
+      "reported_access_date": "2021-04-12",
+      "reported_as_downloadable": true
+    }
+  ],
+  "current_resolution_checks": [
+    {
+      "target": "University of Stuttgart VISUS public site and indexed publication pages",
+      "outcome": "The 2014 publication is currently listed, but a current authoritative dataset download endpoint was not located in the public-site search performed for this record."
+    },
+    {
+      "target": "Historical benchmark-eyetracking and eyetrackingBenchmark URL identifiers",
+      "outcome": "Historical distribution identifiers remain documented by the 2014 and 2021 publications, but a current retrievable authoritative distribution was not established by the search performed for this record."
+    },
+    {
+      "target": "University of Stuttgart DaRUS VISUS dataverse",
+      "outcome": "Current VISUS eye-tracking datasets are present, but no DaRUS record matching the 2014 benchmark title or DOI was located by the search performed for this record."
+    },
+    {
+      "target": "ACM DOI/publication record and general public web indexing",
+      "outcome": "The publication record is available, but no separate current dataset DOI, authoritative mirror, or explicit dataset reuse license was located by the search performed for this record."
+    }
+  ],
+  "rights": {
+    "analysis_use_terms_status": "unresolved",
+    "raw_data_redistribution_terms_status": "unresolved",
+    "paper_copyright_notice_is_dataset_license": false,
+    "license_inference_permitted": false
+  },
+  "annotation_independence": {
+    "status": "not_established",
+    "published_contributor_count": 2,
+    "published_process_summary": "The first contributor performed the main annotation; the second added annotations and refined existing annotations.",
+    "independent_annotation_streams_verified": false,
+    "human_human_agreement_ready": false
+  },
+  "claim_limits": [
+    "This record documents source-resolution research, not a source audit.",
+    "Failure to locate a current authoritative download is not evidence that no such copy exists.",
+    "The 2014 paper copyright notice is not treated as a license for the dataset files.",
+    "Historical public availability does not establish current analysis-use or redistribution permission.",
+    "Two contributors to one curation process do not establish two independent annotation streams.",
+    "No empirical VISUS performance result is created or validated by this record."
+  ],
+  "next_required_actions": [
+    "Obtain a current authoritative dataset copy directly from VISUS or an author-verified institutional distribution.",
+    "Obtain explicit current evidence for analysis use and raw-data redistribution terms separately.",
+    "Inventory and fingerprint the exact obtained files before changing source_audit_ready to true.",
+    "Inspect the obtained AOI materials to determine whether separately recoverable independent annotation streams actually exist.",
+    "Only after those gates pass, run the reviewed AOI/model/external-grid validation workflow."
+  ]
+}
