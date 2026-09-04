@@ -1,0 +1,49 @@
+name: VISUS public partial probe
+
+on:
+  push:
+    branches:
+      - main
+      - feat/visus-public-partial-probe
+    paths:
+      - '.github/workflows/visus-public-partial-probe.yml'
+      - 'scripts/visus_public_partial_probe.py'
+      - 'src/gazeforge/visus_public_partial.py'
+      - 'tests/test_visus_public_partial.py'
+      - 'validation/evidence/visus-public-partial/**'
+      - 'docs/visus-public-partial-evidence.md'
+      - 'docs/api-reference.md'
+      - 'mkdocs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install package
+        run: python -m pip install .
+      - name: Run exact pinned-source probe
+        run: python scripts/visus_public_partial_probe.py
+      - name: Bind live probe to committed evidence
+        run: |
+          python - <<'PY'
+          from gazeforge.visus_public_partial import validate_visus_public_partial_probe
+
+          validate_visus_public_partial_probe(
+              "visus_public_partial_probe.json",
+              "validation/evidence/visus-public-partial/visus-public-partial-evidence-v1.json",
+          )
+          PY
+      - name: Upload deterministic probe record
+        uses: actions/upload-artifact@v4
+        with:
+          name: visus-public-partial-probe
+          path: visus_public_partial_probe.json
+          if-no-files-found: error
