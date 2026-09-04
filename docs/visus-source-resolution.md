@@ -42,6 +42,21 @@ Accordingly, GazeForge records:
 
 Failure to locate a current distribution is not evidence that no authoritative copy exists. It means the public evidence available in this resolution pass is insufficient for GazeForge's empirical source gate.
 
+## Validate the checkpoint
+
+The checkpoint has a dedicated JSON-only validator:
+
+```bash
+gazeforge-visus-source-resolution \
+  validation/protocols/visus-source-resolution-2026-09-04.json
+```
+
+The validator checks the record type, benchmark identity, ISO check date, current-source/audit/empirical flags, publication DOI, rights fields, annotation-independence gate, explicit claim limits, and a deterministic canonical SHA-256 fingerprint. If a future checkpoint stores `record_fingerprint_sha256`, the stored value must match the checkpoint content.
+
+The current unresolved status is fail-closed: it cannot simultaneously claim that a current authoritative download was found, that the source is audit-ready, that empirical evidence was created, that analysis or redistribution rights are resolved, or that independent human annotation streams are verified.
+
+This validation is still **not** a source audit. It verifies the internal integrity and conservative semantics of the source-resolution record only.
+
 ## Copyright is not treated as a dataset license
 
 The ACM paper contains its publication copyright/permissions notice. GazeForge does **not** reinterpret that notice as a license covering the benchmark's raw video, gaze, or AOI files. Similarly, the paper's description of the dataset as publicly available establishes historical availability, not unrestricted redistribution.
