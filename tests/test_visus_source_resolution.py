@@ -33,7 +33,9 @@ def test_repository_checkpoint_validates_and_stays_non_empirical():
     assert summary["empirical_evidence_created"] is False
     assert summary["rights"]["analysis_use_terms_status"] == "unresolved"
     assert summary["rights"]["raw_data_redistribution_terms_status"] == "unresolved"
-    assert summary["annotation_independence"]["independent_annotation_streams_verified"] is False
+    assert (
+        summary["annotation_independence"]["independent_annotation_streams_verified"] is False
+    )
     assert summary["annotation_independence"]["human_human_agreement_ready"] is False
     assert len(summary["record_fingerprint_sha256"]) == 64
 
