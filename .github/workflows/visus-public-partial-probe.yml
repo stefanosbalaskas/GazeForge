@@ -11,6 +11,9 @@ on:
       - 'src/gazeforge/visus_public_partial.py'
       - 'tests/test_visus_public_partial.py'
       - 'validation/evidence/visus-public-partial/**'
+      - 'docs/visus-public-partial-evidence.md'
+      - 'docs/api-reference.md'
+      - 'mkdocs.yml'
   workflow_dispatch:
 
 permissions:
