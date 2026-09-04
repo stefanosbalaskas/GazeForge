@@ -21,6 +21,14 @@ The suite validator reopens and verifies every required child report. The execut
 
 A successful result has `status="verified-bundle"` and `frozen_evidence_eligible_for_scientific_review=true`.
 
+## Public Frozen Evidence dashboard
+
+The public dashboard enforces the same bundle gate. When `build_benchmark_dashboard()` discovers a VISUS suite manifest, it does not surface that suite merely because the completion manifest and child reports are internally valid. The adjacent `visus-execution-provenance.json` must also exist and pass full bundle validation.
+
+A suite-only VISUS directory therefore fails closed with `BenchmarkIntegrityError` and is not publication-ready. After the bundle passes, the dashboard revalidates the suite summary used for the public row and cross-checks its suite fingerprint and report count against the verified bundle. This additional dashboard gate applies to VISUS evidence; the existing Lund suite validation path is unchanged.
+
+This enforcement changes publication eligibility, not scientific status. Passing the dashboard gate does not establish source authority, reuse permission, annotation independence, detector validity, or any new empirical result.
+
 ## What eligibility means
 
 Eligibility is intentionally narrower than empirical validity. It means that the artifacts satisfy the integrity contract required before a VISUS result can be considered for the public evidence layer. It does **not** mean that GazeForge has independently established that:
