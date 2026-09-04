@@ -6,6 +6,10 @@ from pathlib import Path
 
 from gazeforge.dashboard import build_benchmark_dashboard, render_benchmark_dashboard_markdown
 from gazeforge.evidence_details import render_validated_report_detail_markdown
+from gazeforge.source_resolution_dashboard import (
+    build_source_resolution_dashboard,
+    render_source_resolution_dashboard_markdown,
+)
 
 
 def _project_root(config) -> Path:
@@ -16,7 +20,7 @@ def _project_root(config) -> Path:
 
 
 def on_pre_build(config) -> None:
-    """Regenerate the public frozen-evidence page from integrity-checked reports."""
+    """Regenerate public evidence and source-resolution pages from validated JSON."""
     root = _project_root(config)
     dashboard = build_benchmark_dashboard(root / "validation")
     content = render_benchmark_dashboard_markdown(dashboard)
@@ -58,3 +62,14 @@ exist in the repository. See the [validation status](validation-status.md) and
 as empirical evidence.
 """
     (root / "docs" / "frozen-evidence.md").write_text(content, encoding="utf-8")
+
+    source_resolution_dashboard = build_source_resolution_dashboard(
+        root / "validation" / "protocols"
+    )
+    source_resolution_content = render_source_resolution_dashboard_markdown(
+        source_resolution_dashboard
+    )
+    (root / "docs" / "source-resolution-status.md").write_text(
+        source_resolution_content,
+        encoding="utf-8",
+    )
