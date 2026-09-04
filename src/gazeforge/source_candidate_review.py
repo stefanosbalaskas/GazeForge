@@ -213,6 +213,8 @@ def _review_file_from_payload(
                 None if item.get("process_path") is None else str(item["process_path"])
             ),
         )
+    except BenchmarkIntegrityError:
+        raise
     except (KeyError, TypeError, ValueError) as exc:
         raise BenchmarkIntegrityError("Candidate source review file row is invalid.") from exc
 
