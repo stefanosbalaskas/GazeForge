@@ -43,19 +43,51 @@ bundle fingerprint.
 The existing `gazeforge-visus-source-resolution` command remains available for backward-compatible
 single-record VISUS validation.
 
+## Reviewed bundle lock
+
+Schema validation alone answers whether each checkpoint is scientifically admissible under the
+current v1 rules. It does not answer whether a newly edited but still schema-valid checkpoint has
+been intentionally reviewed. GazeForge therefore also freezes the currently reviewed checkpoint set
+in:
+
+`validation/governance/source-resolution-bundle-lock-v1.json`
+
+The lock binds all three dataset keys, their current resolution statuses, their exact deterministic
+record fingerprints, and the complete validation-bundle fingerprint. It also carries its own
+fingerprint and an explicit scientific boundary stating that the lock is non-empirical governance
+only and cannot authorize a checkpoint status upgrade, source-audit readiness, empirical evidence,
+or Frozen Evidence publication.
+
+Repository-level validation can require both the live directory and the reviewed lock:
+
+```bash
+gazeforge-source-resolution \
+  --directory validation/protocols \
+  --lock validation/governance/source-resolution-bundle-lock-v1.json
+```
+
+With `--lock`, the JSON output contains both `validation_bundle` and `bundle_lock`. Validation fails
+if any governed checkpoint changes while the reviewed lock remains unchanged, even when that edit
+would otherwise still satisfy the dataset-specific schema. A future legitimate update must therefore
+change the checkpoint **and intentionally replace the lock after scientific review**.
+
+The lock is not an approval shortcut. Regenerating or replacing it cannot make a source authoritative,
+verify rights, create independent annotation streams, reconcile sampling-rate provenance, or create
+empirical evidence. Those claims still require the appropriate source-audit and empirical workflows.
+
 ## Continuous-integration gate
 
 The main CI workflow executes directory discovery against `validation/protocols` in a separate
-`source-resolution-governance` job. It also verifies the expected current dataset identities. A pull
-request therefore fails before merge if a checkpoint is deleted, duplicated, malformed, renamed into
-the governed pattern with an invalid schema, drifts into an unsupported evidence state, promotes
-unresolved rights, weakens an annotation-independence guard, reconciles conflicting sampling-rate
-provenance without review, or otherwise violates the dataset-specific v1 contract.
+`source-resolution-governance` job and requires the committed reviewed bundle lock to match the
+current validated directory exactly. A pull request therefore fails before merge if a checkpoint is
+deleted, duplicated, malformed, renamed into the governed pattern with an invalid schema, drifts into
+an unsupported evidence state, promotes unresolved rights, weakens an annotation-independence guard,
+reconciles conflicting sampling-rate provenance without review, or changes any other fingerprinted
+checkpoint content without an intentional lock replacement.
 
-The clean-wheel smoke job also invokes the installed `gazeforge-source-resolution --directory`
-command after installing the built wheel. This checks that both discovery mode and the governance
-CLI are actually present in the distributable package rather than working only from an editable
-source checkout.
+The clean-wheel smoke job also invokes the installed `gazeforge-source-resolution` command with both
+`--directory` and `--lock`. This checks that discovery mode, lock validation, and the governance CLI
+are present in the distributable package rather than working only from an editable source checkout.
 
 The CI-generated JSON is a validation summary, not frozen empirical evidence. It is not committed to
 the evidence tree and does not upgrade any benchmark's scientific status.
@@ -76,6 +108,8 @@ Every accepted checkpoint must:
 
 Unknown datasets are rejected rather than accepted under a generic permissive schema. Moving a
 benchmark to a new source-resolution state therefore requires an explicit reviewed validator change.
+The reviewed bundle lock adds a second gate: even schema-valid content changes must be accompanied by
+an intentional replacement of the frozen reviewed snapshot.
 
 ## Dataset-specific safeguards
 
@@ -120,6 +154,11 @@ from gazeforge.source_resolution_discovery import (
     discover_source_resolution_paths,
     validate_source_resolution_directory,
 )
+from gazeforge.source_resolution_lock import (
+    build_source_resolution_bundle_lock,
+    load_source_resolution_bundle_lock,
+    validate_source_resolution_bundle_lock,
+)
 
 summary = validate_source_resolution_record(
     "validation/protocols/hollywood2-source-resolution-2026-09-04.json"
@@ -128,7 +167,15 @@ record = load_source_resolution_record(
     "validation/protocols/gaze-in-wild-source-resolution-2026-09-04.json"
 )
 repository_bundle = validate_source_resolution_directory("validation/protocols")
+reviewed_lock = validate_source_resolution_bundle_lock(
+    "validation/governance/source-resolution-bundle-lock-v1.json",
+    "validation/protocols",
+)
 ```
+
+`build_source_resolution_bundle_lock()` is provided to construct a proposed replacement snapshot
+from a fully validated directory. Its output remains explicitly non-empirical and should be committed
+only after review of the checkpoint changes that motivated the replacement.
 
 Dataset-specific validators are also available for Hollywood2EM and Gaze-in-the-Wild. VISUS keeps
 its existing `validate_visus_source_resolution_record()` implementation and the unified dispatcher
@@ -137,10 +184,12 @@ calls it directly.
 ## Scientific boundary
 
 Passing this validator means only that the **status checkpoint itself is internally consistent with
-GazeForge's current governance rules**. It does not prove that the external dataset has been
-obtained, that its exact files have been fingerprinted, that analysis use is permitted, that raw-data
-redistribution is permitted, that coordinate semantics have been verified, or that any model or
-human-agreement metric is empirically valid.
+GazeForge's current governance rules**. Passing the reviewed bundle lock additionally means that the
+current checkpoint contents match the snapshot intentionally frozen for repository governance. It
+does not prove that the external dataset has been obtained, that its exact files have been
+fingerprinted, that analysis use is permitted, that raw-data redistribution is permitted, that
+coordinate semantics have been verified, or that any model or human-agreement metric is empirically
+valid.
 
 Those stronger claims remain the responsibility of the dataset-specific source audit and subsequent
 frozen empirical workflow.
