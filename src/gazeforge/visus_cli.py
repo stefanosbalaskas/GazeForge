@@ -13,6 +13,7 @@ import pandas as pd
 
 from .exceptions import BenchmarkIntegrityError
 from .visus_audit import audit_visus_source, load_visus_source_audit_spec
+from .visus_evidence import validate_visus_frozen_evidence_bundle
 from .visus_execution import (
     build_visus_execution_provenance,
     snapshot_visus_execution_inputs,
@@ -258,6 +259,15 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Validate only the provenance manifest without reopening the sibling suite reports.",
     )
+
+    evidence_validate = subparsers.add_parser(
+        "evidence-validate",
+        help=(
+            "Verify the complete VISUS Frozen Evidence publication bundle: suite children plus "
+            "raw-execution provenance."
+        ),
+    )
+    evidence_validate.add_argument("path", type=Path)
     return parser
 
 
@@ -422,6 +432,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.path,
             verify_suite=not args.provenance_only,
         )
+        print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
+        return 0
+
+    if args.command == "evidence-validate":
+        summary = validate_visus_frozen_evidence_bundle(args.path)
         print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
         return 0
 

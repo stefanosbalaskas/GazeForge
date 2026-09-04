@@ -222,6 +222,11 @@ from .visus_audit import (
     audit_visus_source,
     load_visus_source_audit_spec,
 )
+from .visus_evidence import (
+    VisusFrozenEvidenceBundle,
+    load_visus_frozen_evidence_bundle,
+    validate_visus_frozen_evidence_bundle,
+)
 from .visus_intake import (
     VisusCanonicalAOIIntakeRun,
     prepare_visus_canonical_aoi_intake,
@@ -307,6 +312,7 @@ __all__ = [
     "VisusDynamicAOIModelValidationRun",
     "VisusDynamicAOIPredictionIntakeRun",
     "VisusDynamicAOIValidationSuiteRun",
+    "VisusFrozenEvidenceBundle",
     "VisusSourceAuditRun",
     "VisusSourceAuditSpec",
     "VisusSourceFileRecord",
@@ -383,6 +389,7 @@ __all__ = [
     "load_lund2013_mat",
     "load_native_event_spec",
     "load_native_event_table",
+    "load_visus_frozen_evidence_bundle",
     "load_visus_source_audit_spec",
     "map_fixations_to_aois",
     "map_fixations_to_dynamic_aois",
@@ -431,5 +438,6 @@ __all__ = [
     "validate_lund2013_suite_manifest",
     "validate_native_event_suite_manifest",
     "validate_visus_dynamic_aoi_suite_manifest",
+    "validate_visus_frozen_evidence_bundle",
     "visus_dynamic_aoi_card",
 ]

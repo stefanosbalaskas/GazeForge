@@ -2,13 +2,26 @@
 
 A completed VISUS validation suite is not, by itself, sufficient for publication in GazeForge's Frozen Evidence layer. The bundle gate requires the suite to be paired with the raw-execution provenance manifest produced by the guarded VISUS execution workflow.
 
-The Python entry point is:
+The public Python entry points are:
 
 ```python
-from gazeforge.visus_evidence import validate_visus_frozen_evidence_bundle
+from gazeforge import (
+    VisusFrozenEvidenceBundle,
+    load_visus_frozen_evidence_bundle,
+    validate_visus_frozen_evidence_bundle,
+)
 
 summary = validate_visus_frozen_evidence_bundle("path/to/visus-suite")
+bundle = load_visus_frozen_evidence_bundle("path/to/visus-suite")
 ```
+
+The strict command-line review path is:
+
+```bash
+gazeforge-visus evidence-validate /path/to/visus-suite
+```
+
+`evidence-validate` deliberately has no manifest-only or provenance-only mode. It always requires the complete suite children and raw-execution provenance to verify together. The lower-level `suite-validate --manifest-only` and `execution-validate --provenance-only` commands remain available for diagnostic inspection, but they are not substitutes for the publication gate.
 
 ## Required bundle
 

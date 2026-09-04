@@ -141,6 +141,16 @@ gazeforge-visus execution-validate /path/to/frozen-visus-suite --provenance-only
 
 The provenance-only mode does not establish that the currently adjacent suite files still match the recorded binding.
 
+## 8. Run the final Frozen Evidence publication gate
+
+```bash
+gazeforge-visus evidence-validate /path/to/frozen-visus-suite
+```
+
+This command always validates the complete Frozen Evidence bundle: the suite manifest and every required child report, the raw-execution provenance, the exact four-input execution contract, and the shared source/suite identities. It intentionally exposes no manifest-only or provenance-only switch. The lower-level validation commands above are useful diagnostics, but they cannot substitute for this final publication-integrity check.
+
+A successful `evidence-validate` result means only that the bundle satisfies the integrity contract required before scientific review. It does not itself make the VISUS result empirically valid.
+
 ## Scientific boundaries
 
 The CLI does not relax the VISUS evidence policy:
