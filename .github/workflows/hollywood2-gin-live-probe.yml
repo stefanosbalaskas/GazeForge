@@ -3,9 +3,17 @@ name: Hollywood2 GIN live source probe
 on:
   push:
     branches:
+      - main
       - research/hollywood2-gin-live-probe
     paths:
       - "scripts/hollywood2_gin_live_probe.py"
+      - "src/gazeforge/hollywood2_evidence.py"
+      - "tests/test_hollywood2_evidence.py"
+      - "validation/evidence/hollywood2/**"
+      - "validation/protocols/hollywood2-source-resolution-*.json"
+      - "docs/hollywood2-authoritative-evidence.md"
+      - "docs/api-reference.md"
+      - "mkdocs.yml"
       - ".github/workflows/hollywood2-gin-live-probe.yml"
   workflow_dispatch:
 
@@ -22,6 +30,24 @@ jobs:
           python-version: "3.12"
       - name: Probe canonical Hollywood2EM GIN repository
         run: python scripts/hollywood2_gin_live_probe.py
+      - name: Install package
+        run: python -m pip install .
+      - name: Bind live source audit to frozen evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_evidence import validate_hollywood2_gin_probe
+
+          validate_hollywood2_gin_probe(
+              Path("hollywood2_gin_live_probe.json"),
+              Path(
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-authoritative-ground-truth-evidence-v1.json"
+              ),
+          )
+          print("Hollywood2 authoritative live probe is bound to frozen evidence.")
+          PY
       - name: Summarize source-resolution result
         run: |
           python - <<'PY'
@@ -47,7 +73,10 @@ jobs:
           print("student/final samples:", comparison["sample_count"])
           print("student/final changed:", comparison["changed_sample_count"])
           print("student/final raw agreement:", comparison["raw_agreement_fraction"])
-          print("median file rate assuming microseconds:", sampling["median_file_rate_hz_assuming_time_us"])
+          print(
+              "median file rate assuming microseconds:",
+              sampling["median_file_rate_hz_assuming_time_us"],
+          )
           print("license files:", [item["path"] for item in record["license_files"]])
           print("fingerprint:", record["probe_fingerprint_sha256"])
           PY
