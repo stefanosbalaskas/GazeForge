@@ -1,0 +1,32 @@
+name: VISUS public event extension probe
+
+on:
+  push:
+    branches:
+      - main
+      - feat/visus-public-event-extension
+    paths:
+      - "scripts/visus_public_event_extension_probe.py"
+      - ".github/workflows/visus-public-event-extension-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run exact pinned-source event probe
+        run: python scripts/visus_public_event_extension_probe.py
+      - name: Upload deterministic probe record
+        uses: actions/upload-artifact@v4
+        with:
+          name: visus-public-event-extension-probe
+          path: visus_public_event_extension_probe.json
+          if-no-files-found: error
+          retention-days: 30
