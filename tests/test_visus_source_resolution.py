@@ -2,9 +2,9 @@ import json
 from pathlib import Path
 
 import pytest
+
 from gazeforge import visus_source_resolution, visus_source_resolution_cli
 from gazeforge.exceptions import BenchmarkIntegrityError
-
 
 _RECORD = Path("validation/protocols/visus-source-resolution-2026-09-04.json")
 
