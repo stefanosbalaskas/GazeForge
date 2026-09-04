@@ -81,7 +81,11 @@ def _require_review_ready(scaffold: CandidateSourceReviewScaffold) -> dict[str, 
 
     allowed_roles = _AUDIT_ROLES[scaffold.dataset_key]
     unexpected = sorted(
-        {row.role for row in scaffold.files if row.include_in_audit and row.role not in allowed_roles}
+        {
+            row.role
+            for row in scaffold.files
+            if row.include_in_audit and row.role not in allowed_roles
+        }
     )
     if unexpected:
         raise BenchmarkIntegrityError(
@@ -215,7 +219,9 @@ def _compile_gaze_in_wild(
     )
     coordinate_unit = str(review.get("coordinate_unit", "unverified")).strip()
     if not coordinate_unit:
-        raise BenchmarkIntegrityError("Reviewed Gaze-in-the-Wild coordinate_unit must not be empty.")
+        raise BenchmarkIntegrityError(
+            "Reviewed Gaze-in-the-Wild coordinate_unit must not be empty."
+        )
     return GazeInWildSourceAuditSpec(
         dataset_name="Gaze-in-the-Wild",
         dataset_version=_reviewed_text(review, "dataset_version"),
