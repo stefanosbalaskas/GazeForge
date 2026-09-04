@@ -62,15 +62,25 @@ def _dataset(name: str) -> GazeFrame:
     return GazeFrame(data=pd.DataFrame(rows), sampling_rate_hz=rate, metadata=metadata)
 
 
-def _hollywood_lineage(*, report_fingerprint: str = _REPORT) -> SourceAuditLineageReceipt:
+def _hollywood_lineage(
+    *,
+    dataset_key: str = "hollywood2em",
+    report_fingerprint: str = _REPORT,
+    spec_fingerprint: str = _SPEC,
+    source_revision: str = _REVISION,
+) -> SourceAuditLineageReceipt:
     return SourceAuditLineageReceipt(
-        dataset_key="hollywood2em",
+        dataset_key=dataset_key,
         audit_template_fingerprint_sha256="d" * 64,
         authorization_fingerprint_sha256="e" * 64,
-        authorized_spec_fingerprint_sha256=_SPEC,
+        authorized_spec_fingerprint_sha256=spec_fingerprint,
         audit_report_fingerprint_sha256=report_fingerprint,
-        source_manifest_fingerprints_sha256={"source": _MANIFEST},
-        source_revision=_REVISION,
+        source_manifest_fingerprints_sha256=(
+            {"source": _MANIFEST}
+            if dataset_key == "hollywood2em"
+            else {"label": _MANIFEST, "process": "f" * 64}
+        ),
+        source_revision=source_revision,
     )
 
 
@@ -109,6 +119,26 @@ def test_hollywood_cross_dataset_preparation_rejects_detached_lineage():
         )
 
 
+@pytest.mark.parametrize(
+    ("lineage", "message"),
+    [
+        (_hollywood_lineage(dataset_key="gaze-in-the-wild"), "lineage dataset"),
+        (_hollywood_lineage(spec_fingerprint="0" * 64), "authorized-spec fingerprint"),
+        (_hollywood_lineage(source_revision="other-revision"), "source revision"),
+    ],
+)
+def test_generic_lineage_binding_rejects_identity_contract_mismatch(lineage, message):
+    with pytest.raises(BenchmarkIntegrityError, match=message):
+        validate_source_audit_lineage_binding(
+            lineage,
+            dataset_key="hollywood2em",
+            audit_report_fingerprint_sha256=_REPORT,
+            authorized_spec_fingerprint_sha256=_SPEC,
+            source_manifest_fingerprints_sha256={"source": _MANIFEST},
+            source_revision=_REVISION,
+        )
+
+
 def test_generic_lineage_binding_rejects_manifest_substitution():
     lineage = _hollywood_lineage()
     with pytest.raises(BenchmarkIntegrityError, match="manifest fingerprints"):
@@ -118,5 +148,17 @@ def test_generic_lineage_binding_rejects_manifest_substitution():
             audit_report_fingerprint_sha256=_REPORT,
             authorized_spec_fingerprint_sha256=_SPEC,
             source_manifest_fingerprints_sha256={"source": "0" * 64},
+            source_revision=_REVISION,
+        )
+
+
+def test_generic_lineage_binding_rejects_non_hex_manifest_fingerprint():
+    with pytest.raises(BenchmarkIntegrityError, match="invalid SHA-256"):
+        validate_source_audit_lineage_binding(
+            _hollywood_lineage(),
+            dataset_key="hollywood2em",
+            audit_report_fingerprint_sha256=_REPORT,
+            authorized_spec_fingerprint_sha256=_SPEC,
+            source_manifest_fingerprints_sha256={"source": "z" * 64},
             source_revision=_REVISION,
         )
