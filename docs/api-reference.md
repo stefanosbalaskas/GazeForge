@@ -85,6 +85,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Candidate source audit authorization
+
+::: gazeforge.source_candidate_authorization
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Source-resolution checkpoints
 
 ::: gazeforge.source_resolution
