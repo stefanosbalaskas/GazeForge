@@ -12,10 +12,12 @@ from sklearn.metrics import accuracy_score, f1_score, recall_score
 
 from .benchmarks import benchmark_fingerprint
 from .calibration import evaluate_event_calibration
+from .downstream_lineage import validate_hollywood2_gaze_lineage
 from .event_evaluation import evaluate_sample_event_predictions
 from .exceptions import SchemaError
 from .resampling import resample_labeled_gaze
 from .schema import GazeFrame
+from .source_audit_lineage import SourceAuditLineageReceipt
 from .validation import (
     ValidationResult,
     dataset_holdout_context_event_validate,
@@ -102,10 +104,14 @@ def _is_sha256(value: Any) -> bool:
     return True
 
 
-def _require_source_audit(name: str, gaze: GazeFrame) -> None:
-    """Require dataset-specific provenance gates where frozen use needs them."""
+def _require_source_audit(
+    name: str,
+    gaze: GazeFrame,
+    lineage: SourceAuditLineageReceipt | None,
+) -> str | None:
+    """Require dataset-specific source audit and lineage where frozen use needs them."""
     if name != "Hollywood2EM":
-        return
+        return None
     if gaze.metadata.get("source_audit_status") != "verified":
         raise SchemaError(
             "Hollywood2EM must pass the reviewed source-audit workflow before cross-dataset "
@@ -126,6 +132,12 @@ def _require_source_audit(name: str, gaze: GazeFrame) -> None:
         raise SchemaError("Hollywood2EM reuse terms are not verified for audited analysis.")
     if gaze.metadata.get("analysis_use_permitted") is not True:
         raise SchemaError("Hollywood2EM analysis-use permission is not verified.")
+    if lineage is None:
+        raise SchemaError(
+            "Hollywood2EM cross-dataset preparation requires its matching source-audit "
+            "lineage receipt."
+        )
+    return validate_hollywood2_gaze_lineage(gaze, lineage)
 
 
 def _normalise_label(value: Any) -> str:
@@ -135,6 +147,7 @@ def _normalise_label(value: Any) -> str:
 def prepare_cross_dataset_event_benchmark(
     datasets: Mapping[str, GazeFrame],
     *,
+    source_audit_lineages: Mapping[str, SourceAuditLineageReceipt] | None = None,
     target_sampling_rate_hz: float = 60.0,
     common_labels: Sequence[str] = ("fixation", "saccade", "pursuit"),
     min_label_purity: float = 0.75,
@@ -149,8 +162,8 @@ def prepare_cross_dataset_event_benchmark(
     Each source is independently resampled to the requested rate using the benchmark resampling
     guardrails. Participant and trial identifiers are namespaced by dataset after source identities
     have been checked, preventing accidental collisions across independently collected corpora.
-    Dataset-specific provenance gates, currently Hollywood2EM, are required by default for frozen
-    cross-dataset preparation rather than trusting a caller-supplied coordinate declaration alone.
+    External sources with a reviewed source-audit contract must also supply the matching lineage
+    receipt before their data may enter cross-dataset modelling.
     """
     if len(datasets) < 2:
         raise ValueError("At least two datasets are required for cross-dataset validation.")
@@ -160,6 +173,7 @@ def prepare_cross_dataset_event_benchmark(
     labels = tuple(dict.fromkeys(_normalise_label(label) for label in common_labels))
     if len(labels) < 2:
         raise ValueError("common_labels must contain at least two distinct labels.")
+    lineage_map = {} if source_audit_lineages is None else dict(source_audit_lineages)
 
     output_parts: list[pd.DataFrame] = []
     reports: dict[str, dict[str, Any]] = {}
@@ -176,8 +190,13 @@ def prepare_cross_dataset_event_benchmark(
             _require_resolved_participants(dataset_id, gaze)
         if require_verified_coordinates:
             _require_verified_coordinates(dataset_id, gaze)
+        lineage_fingerprint: str | None = None
         if require_source_audits:
-            _require_source_audit(dataset_id, gaze)
+            lineage_fingerprint = _require_source_audit(
+                dataset_id,
+                gaze,
+                lineage_map.get(dataset_id),
+            )
         if "event_label" not in gaze.data.columns:
             raise SchemaError(f"Dataset {dataset_id!r} has no event_label column.")
 
@@ -253,6 +272,8 @@ def prepare_cross_dataset_event_benchmark(
         sampled["participant_id"] = dataset_id + "::" + sampled["source_participant_id"]
         sampled["trial_id"] = dataset_id + "::" + sampled["source_trial_id"]
         sampled["dataset_id"] = dataset_id
+        if lineage_fingerprint is not None:
+            sampled["source_audit_lineage_receipt_fingerprint_sha256"] = lineage_fingerprint
         output_parts.append(sampled)
 
         reports[dataset_id] = {
@@ -266,6 +287,7 @@ def prepare_cross_dataset_event_benchmark(
                 {"__unresolved__", "unknown"}
             ).any(),
             "source_audit_status": gaze.metadata.get("source_audit_status"),
+            "source_audit_lineage_receipt_fingerprint_sha256": lineage_fingerprint,
             "source_audit_report_fingerprint_sha256": gaze.metadata.get(
                 "source_audit_report_fingerprint_sha256"
             ),
@@ -292,6 +314,9 @@ def prepare_cross_dataset_event_benchmark(
         "require_resolved_participants": bool(require_resolved_participants),
         "require_verified_coordinates": bool(require_verified_coordinates),
         "require_source_audits": bool(require_source_audits),
+        "source_audit_lineage_policy": (
+            "required_for_external_audited_datasets" if require_source_audits else "disabled"
+        ),
         "require_all_common_labels": bool(require_all_common_labels),
         "participant_namespace_policy": "dataset_id::source_participant_id",
         "trial_namespace_policy": "dataset_id::source_trial_id",
