@@ -37,27 +37,34 @@ jobs:
           python-version: "3.12"
       - name: Install package
         run: python -m pip install -U pip && python -m pip install -e .
-      - name: Validate committed source-resolution checkpoints
+      - name: Validate committed source-resolution checkpoints and reviewed lock
         shell: bash
         run: |
           gazeforge-source-resolution \
             --directory validation/protocols \
+            --lock validation/governance/source-resolution-bundle-lock-v1.json \
             > source-resolution-validation.json
           python - <<'PY'
           import json
           from pathlib import Path
 
           payload = json.loads(Path("source-resolution-validation.json").read_text())
-          assert payload["bundle_type"] == "source-resolution-validation-bundle-v1"
-          assert payload["record_count"] == 3
-          assert {row["dataset_key"] for row in payload["records"]} == {
+          bundle = payload["validation_bundle"]
+          lock = payload["bundle_lock"]
+          assert bundle["bundle_type"] == "source-resolution-validation-bundle-v1"
+          assert bundle["record_count"] == 3
+          assert {row["dataset_key"] for row in bundle["records"]} == {
               "gaze-in-the-wild",
               "hollywood2em",
               "visus",
           }
-          assert len(payload["bundle_fingerprint_sha256"]) == 64
-          assert all(not row["source_audit_ready"] for row in payload["records"])
-          assert all(not row["empirical_evidence_created"] for row in payload["records"])
+          assert len(bundle["bundle_fingerprint_sha256"]) == 64
+          assert all(not row["source_audit_ready"] for row in bundle["records"])
+          assert all(not row["empirical_evidence_created"] for row in bundle["records"])
+          assert lock["matches_current_bundle"] is True
+          assert lock["bundle_fingerprint_sha256"] == bundle["bundle_fingerprint_sha256"]
+          assert lock["scientific_boundary"]["non_empirical_governance_only"] is True
+          assert lock["scientific_boundary"]["authorizes_empirical_evidence"] is False
           PY
 
   package-smoke:
@@ -79,4 +86,5 @@ jobs:
           /tmp/gazeforge-wheel-smoke/bin/gazeforge --version
           /tmp/gazeforge-wheel-smoke/bin/gazeforge-source-resolution \
             --directory validation/protocols \
+            --lock validation/governance/source-resolution-bundle-lock-v1.json \
             > /tmp/gazeforge-source-resolution-smoke.json

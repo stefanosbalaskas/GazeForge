@@ -85,6 +85,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Source-resolution reviewed bundle lock
+
+::: gazeforge.source_resolution_lock
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Model comparison
 
 ::: gazeforge.comparison
