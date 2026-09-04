@@ -195,6 +195,29 @@ from .scanpath import (
 )
 from .schema import GazeFrame, canonicalize_gaze, infer_sampling_rate_hz
 from .simulate import simulate_gaze
+from .source_resolution import (
+    SourceResolutionRecord,
+    load_source_resolution_record,
+    validate_gaze_in_wild_source_resolution_record,
+    validate_hollywood2_source_resolution_record,
+    validate_source_resolution_record,
+    validate_source_resolution_records,
+)
+from .source_resolution_dashboard import (
+    SourceResolutionDashboard,
+    build_source_resolution_dashboard,
+    render_source_resolution_dashboard_markdown,
+)
+from .source_resolution_discovery import (
+    discover_source_resolution_paths,
+    validate_source_resolution_directory,
+)
+from .source_resolution_lock import (
+    SourceResolutionBundleLock,
+    build_source_resolution_bundle_lock,
+    load_source_resolution_bundle_lock,
+    validate_source_resolution_bundle_lock,
+)
 from .stratified import StratifiedEventPerformance, summarize_event_predictions_by_stratum
 from .temporal import (
     TemporalContextModel,
@@ -304,6 +327,9 @@ __all__ = [
     "ProvenanceRecord",
     "SamplingSensitivityResult",
     "ScanpathEmbeddingModel",
+    "SourceResolutionBundleLock",
+    "SourceResolutionDashboard",
+    "SourceResolutionRecord",
     "StratifiedEventPerformance",
     "TemporalContextModel",
     "VisusAuditedFile",
@@ -336,6 +362,8 @@ __all__ = [
     "build_benchmark_dashboard",
     "build_dynamic_aoi_benchmark_report",
     "build_benchmark_report",
+    "build_source_resolution_bundle_lock",
+    "build_source_resolution_dashboard",
     "canonicalize_gaze",
     "cluster_scanpaths_ai",
     "compare_event_models_grouped",
@@ -347,6 +375,7 @@ __all__ = [
     "detect_semantic_aois",
     "discover_frozen_benchmark_reports",
     "discover_lund2013_suite_manifests",
+    "discover_source_resolution_paths",
     "discover_visus_dynamic_aoi_suite_manifests",
     "dynamic_aoi_snapshot",
     "dynamic_aois_from_frame",
@@ -389,6 +418,8 @@ __all__ = [
     "load_lund2013_mat",
     "load_native_event_spec",
     "load_native_event_table",
+    "load_source_resolution_bundle_lock",
+    "load_source_resolution_record",
     "load_visus_frozen_evidence_bundle",
     "load_visus_source_audit_spec",
     "map_fixations_to_aois",
@@ -406,6 +437,7 @@ __all__ = [
     "prepare_visus_canonical_aoi_intake",
     "prepare_visus_dynamic_aoi_predictions",
     "render_benchmark_dashboard_markdown",
+    "render_source_resolution_dashboard_markdown",
     "resample_labeled_gaze",
     "run_gaze_in_wild_labeller_agreement",
     "run_gaze_in_wild_model_validation",
@@ -434,9 +466,15 @@ __all__ = [
     "train_context_event_classifier",
     "train_event_classifier",
     "validate_frozen_benchmark_report",
+    "validate_gaze_in_wild_source_resolution_record",
+    "validate_hollywood2_source_resolution_record",
     "validate_lund2013_source_manifest",
     "validate_lund2013_suite_manifest",
     "validate_native_event_suite_manifest",
+    "validate_source_resolution_bundle_lock",
+    "validate_source_resolution_directory",
+    "validate_source_resolution_record",
+    "validate_source_resolution_records",
     "validate_visus_dynamic_aoi_suite_manifest",
     "validate_visus_frozen_evidence_bundle",
     "visus_dynamic_aoi_card",
