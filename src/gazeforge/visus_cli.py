@@ -14,6 +14,10 @@ import pandas as pd
 from .visus_audit import audit_visus_source, load_visus_source_audit_spec
 from .visus_intake import prepare_visus_canonical_aoi_intake
 from .visus_prediction import prepare_visus_dynamic_aoi_predictions
+from .visus_scaffold import (
+    build_visus_source_audit_scaffold,
+    write_visus_source_audit_scaffold,
+)
 from .visus_suite import (
     run_visus_dynamic_aoi_validation_suite,
     validate_visus_dynamic_aoi_suite_manifest,
@@ -134,6 +138,17 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command")
 
+    scaffold = subparsers.add_parser(
+        "scaffold",
+        help=(
+            "Inventory a candidate VISUS tree into a deliberately non-empirical review template "
+            "without inferring scientific file roles or identities."
+        ),
+    )
+    scaffold.add_argument("source_root", type=Path)
+    scaffold.add_argument("output", type=Path)
+    scaffold.add_argument("--overwrite", action="store_true")
+
     audit = subparsers.add_parser(
         "audit",
         help="Verify one exact empirical VISUS snapshot against a reviewed JSON source spec.",
@@ -229,6 +244,30 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     """Execute one guarded VISUS command."""
     args = build_parser().parse_args(argv)
+
+    if args.command == "scaffold":
+        run = build_visus_source_audit_scaffold(args.source_root)
+        target = write_visus_source_audit_scaffold(
+            run,
+            args.output,
+            overwrite=args.overwrite,
+        )
+        print(
+            json.dumps(
+                {
+                    "dataset": "VISUS",
+                    "status": "template",
+                    "output": str(target),
+                    "file_count": run.file_count,
+                    "inventory_fingerprint_sha256": run.inventory_fingerprint_sha256,
+                    "roles_inferred": False,
+                    "scientific_identities_inferred": False,
+                    "empirical_evidence_created": False,
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
 
     if args.command == "audit":
         run = _load_audit(args.source_root, args.spec)
