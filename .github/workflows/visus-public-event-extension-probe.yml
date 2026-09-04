@@ -7,6 +7,9 @@ on:
       - feat/visus-public-event-extension
     paths:
       - "scripts/visus_public_event_extension_probe.py"
+      - "src/gazeforge/visus_public_event_extension.py"
+      - "validation/evidence/visus-public-event-extension/**"
+      - "tests/test_visus_public_event_extension.py"
       - ".github/workflows/visus-public-event-extension-probe.yml"
   workflow_dispatch:
 
@@ -21,8 +24,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install package
+        run: python -m pip install .
       - name: Run exact pinned-source event probe
         run: python scripts/visus_public_event_extension_probe.py
+      - name: Bind live probe to committed evidence
+        run: |
+          python - <<'PY'
+          from gazeforge.visus_public_event_extension import validate_visus_public_event_extension_probe
+
+          record = validate_visus_public_event_extension_probe(
+              "visus_public_event_extension_probe.json",
+              "validation/evidence/visus-public-event-extension/visus-public-event-extension-evidence-v1.json",
+          )
+          print(record["evidence_fingerprint_sha256"])
+          PY
       - name: Upload deterministic probe record
         uses: actions/upload-artifact@v4
         with:
