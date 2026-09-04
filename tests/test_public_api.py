@@ -44,6 +44,31 @@ def test_paired_model_differences_are_exposed_from_top_level_api():
     assert "paired_model_metric_differences" in gazeforge.__all__
 
 
+def test_source_resolution_governance_is_exposed_from_top_level_api():
+    assert gazeforge.SourceResolutionRecord.__name__ == "SourceResolutionRecord"
+    assert gazeforge.SourceResolutionDashboard.__name__ == "SourceResolutionDashboard"
+    assert gazeforge.SourceResolutionBundleLock.__name__ == "SourceResolutionBundleLock"
+    for name in (
+        "load_source_resolution_record",
+        "validate_source_resolution_record",
+        "validate_source_resolution_records",
+        "validate_hollywood2_source_resolution_record",
+        "validate_gaze_in_wild_source_resolution_record",
+        "discover_source_resolution_paths",
+        "validate_source_resolution_directory",
+        "build_source_resolution_dashboard",
+        "render_source_resolution_dashboard_markdown",
+        "build_source_resolution_bundle_lock",
+        "load_source_resolution_bundle_lock",
+        "validate_source_resolution_bundle_lock",
+    ):
+        assert callable(getattr(gazeforge, name))
+        assert name in gazeforge.__all__
+    assert "SourceResolutionRecord" in gazeforge.__all__
+    assert "SourceResolutionDashboard" in gazeforge.__all__
+    assert "SourceResolutionBundleLock" in gazeforge.__all__
+
+
 def test_hollywood2_source_audit_is_exposed_from_top_level_api():
     assert gazeforge.Hollywood2SourceAuditSpec.__name__ == "Hollywood2SourceAuditSpec"
     assert gazeforge.Hollywood2SourceFileRecord.__name__ == "Hollywood2SourceFileRecord"
