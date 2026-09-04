@@ -84,6 +84,7 @@ nav:
       - VISUS human agreement: visus-human-agreement.md
       - VISUS validation suite: visus-validation-suite.md
       - VISUS execution CLI: visus-cli-execution.md
+      - VISUS execution provenance: visus-execution-provenance.md
   - API: api-reference.md
 
 plugins:
