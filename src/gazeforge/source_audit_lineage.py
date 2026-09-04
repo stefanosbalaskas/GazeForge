@@ -195,7 +195,9 @@ def _manifest_fingerprints(
     if dataset_key == "hollywood2em":
         inventory = _require_mapping(report.get("source_inventory"), field_name="source_inventory")
         if inventory.get("exact_inventory_match") is not True:
-            raise BenchmarkIntegrityError("Hollywood2EM audit report lacks an exact inventory match.")
+            raise BenchmarkIntegrityError(
+                "Hollywood2EM audit report lacks an exact inventory match."
+            )
         digest = inventory.get("source_manifest_fingerprint_sha256")
         if not isinstance(digest, str) or _SHA256_RE.fullmatch(digest.lower()) is None:
             raise BenchmarkIntegrityError("Hollywood2EM source manifest fingerprint is invalid.")
