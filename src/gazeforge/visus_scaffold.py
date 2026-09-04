@@ -71,9 +71,10 @@ def build_visus_source_audit_scaffold(root: str | Path) -> VisusSourceAuditScaff
     """Inventory a candidate local VISUS tree without inferring scientific identities.
 
     Every file is intentionally emitted with ``role='other'`` and without stimulus, participant,
-    or annotation-stream identities. The returned specification remains ``dataset_status='template'``
-    with all empirical evidence gates unresolved. A researcher must manually review and edit those
-    fields before :func:`gazeforge.audit_visus_source` can accept the copy as empirical evidence.
+    or annotation-stream identities. The returned specification remains
+    ``dataset_status='template'`` with all empirical evidence gates unresolved. A researcher must
+    manually review and edit those fields before :func:`gazeforge.audit_visus_source` can accept
+    the copy as empirical evidence.
     """
     root_path = Path(root)
     if root_path.is_symlink():
