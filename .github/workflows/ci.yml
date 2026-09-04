@@ -41,9 +41,7 @@ jobs:
         shell: bash
         run: |
           gazeforge-source-resolution \
-            validation/protocols/visus-source-resolution-2026-09-04.json \
-            validation/protocols/hollywood2-source-resolution-2026-09-04.json \
-            validation/protocols/gaze-in-wild-source-resolution-2026-09-04.json \
+            --directory validation/protocols \
             > source-resolution-validation.json
           python - <<'PY'
           import json
@@ -52,6 +50,11 @@ jobs:
           payload = json.loads(Path("source-resolution-validation.json").read_text())
           assert payload["bundle_type"] == "source-resolution-validation-bundle-v1"
           assert payload["record_count"] == 3
+          assert {row["dataset_key"] for row in payload["records"]} == {
+              "gaze-in-the-wild",
+              "hollywood2em",
+              "visus",
+          }
           assert len(payload["bundle_fingerprint_sha256"]) == 64
           assert all(not row["source_audit_ready"] for row in payload["records"])
           assert all(not row["empirical_evidence_created"] for row in payload["records"])
@@ -75,7 +78,5 @@ jobs:
           /tmp/gazeforge-wheel-smoke/bin/python -c "import gazeforge; print(gazeforge.__version__)"
           /tmp/gazeforge-wheel-smoke/bin/gazeforge --version
           /tmp/gazeforge-wheel-smoke/bin/gazeforge-source-resolution \
-            validation/protocols/visus-source-resolution-2026-09-04.json \
-            validation/protocols/hollywood2-source-resolution-2026-09-04.json \
-            validation/protocols/gaze-in-wild-source-resolution-2026-09-04.json \
+            --directory validation/protocols \
             > /tmp/gazeforge-source-resolution-smoke.json
