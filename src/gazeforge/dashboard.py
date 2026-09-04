@@ -282,8 +282,8 @@ def build_benchmark_dashboard(
     Duplicate report and suite fingerprints are rejected so copied artifacts cannot inflate the
     apparent number of independent validation results or completed tranches on a public dashboard.
     Provenance-only JSON children are never promoted to performance-report rows. VISUS suites are
-    surfaced only after the Frozen Evidence bundle gate verifies both the suite and its raw-execution
-    provenance manifest.
+    surfaced only after the Frozen Evidence bundle gate verifies both the suite and its
+    raw-execution provenance manifest.
     """
     paths = discover_frozen_benchmark_reports(root, recursive=recursive)
     reports: list[dict[str, Any]] = []
