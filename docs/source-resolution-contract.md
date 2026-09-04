@@ -40,6 +40,21 @@ bundle fingerprint.
 The existing `gazeforge-visus-source-resolution` command remains available for backward-compatible
 single-record VISUS validation.
 
+## Continuous-integration gate
+
+The main CI workflow executes the unified command against all three committed checkpoints in a
+separate `source-resolution-governance` job. A pull request therefore fails before merge if a status
+record drifts into an unsupported evidence state, promotes unresolved rights, weakens an
+annotation-independence guard, reconciles conflicting sampling-rate provenance without review, or
+otherwise violates the dataset-specific v1 contract.
+
+The clean-wheel smoke job also invokes `gazeforge-source-resolution` after installing the built
+wheel. This checks that the governance CLI is actually present in the distributable package rather
+than working only from an editable source checkout.
+
+The CI-generated JSON is a validation summary, not frozen empirical evidence. It is not committed to
+the evidence tree and does not upgrade any benchmark's scientific status.
+
 ## What the common validator enforces
 
 Every accepted checkpoint must:
