@@ -41,6 +41,10 @@ _DATASET_REVIEW_FIELDS = {
         "timestamp_sampling_basis",
     ),
 }
+_AUDIT_ROLES = {
+    "hollywood2em": {"arff"},
+    "gaze-in-the-wild": {"label", "process"},
+}
 
 
 def _reviewed_text(review: dict[str, Any], field_name: str) -> str:
@@ -74,6 +78,16 @@ def _require_review_ready(scaffold: CandidateSourceReviewScaffold) -> dict[str, 
     for field_name in _COMMON_REVIEW_FIELDS + _DATASET_REVIEW_FIELDS[scaffold.dataset_key]:
         _reviewed_text(review, field_name)
     _review_notes(scaffold)
+
+    allowed_roles = _AUDIT_ROLES[scaffold.dataset_key]
+    unexpected = sorted(
+        {row.role for row in scaffold.files if row.include_in_audit and row.role not in allowed_roles}
+    )
+    if unexpected:
+        raise BenchmarkIntegrityError(
+            "Candidate audit-template compilation refuses included file roles outside the "
+            f"dataset audit contract: {unexpected}."
+        )
     return review
 
 
@@ -130,6 +144,10 @@ def _compile_hollywood2(
         [
             f"Annotation-column review: {review['annotation_columns_review']}",
             f"Sampling-rate review: {review['sampling_rate_review']}",
+            (
+                "The compiled template carries the existing Hollywood2EM audit-contract default "
+                "expected_sampling_rate_hz=500.0; this compiler does not verify observed cadence."
+            ),
         ]
     )
     return Hollywood2SourceAuditSpec(
@@ -188,6 +206,11 @@ def _compile_gaze_in_wild(
             f"Label/process mapping review: {review['label_process_mapping_basis']}",
             f"Labeller mapping review: {review['labeller_mapping_basis']}",
             f"Timestamp/sampling review: {review['timestamp_sampling_basis']}",
+            (
+                "The compiled template carries the existing Gaze-in-the-Wild audit-contract "
+                "published_hardware_sampling_rate_hz=120.0; the compiler does not equate this "
+                "with timestamp-inferred file cadence."
+            ),
         ]
     )
     coordinate_unit = str(review.get("coordinate_unit", "unverified")).strip()
