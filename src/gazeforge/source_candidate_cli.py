@@ -1,14 +1,19 @@
-"""JSON-only CLI for candidate source intake, review, templates, and authorization."""
+"""JSON-only CLI for candidate source intake, review, authorization, and lineage."""
 
 from __future__ import annotations
 
 import argparse
 import json
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
+from .exceptions import BenchmarkIntegrityError
 from .gaze_in_wild_audit import load_gaze_in_wild_source_audit_spec
 from .hollywood2_audit import load_hollywood2_source_audit_spec
+from .source_audit_lineage import (
+    build_source_audit_lineage_receipt,
+    write_source_audit_lineage_receipt,
+)
 from .source_candidate import (
     build_candidate_source_inventory,
     validate_candidate_source_inventory,
@@ -49,13 +54,25 @@ def _load_audit_spec(path: Path, dataset: str):
     return load_gaze_in_wild_source_audit_spec(path)
 
 
+def _load_json_object(path: Path, *, label: str) -> Mapping[str, object]:
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise BenchmarkIntegrityError(f"{label} must be valid UTF-8 JSON.") from exc
+    if not isinstance(payload, Mapping):
+        raise BenchmarkIntegrityError(f"{label} must contain one JSON object.")
+    return payload
+
+
 def build_parser() -> argparse.ArgumentParser:
-    """Build the candidate source intake/review/authorization parser."""
+    """Build the candidate source intake/review/authorization/lineage parser."""
     parser = argparse.ArgumentParser(
         prog="gazeforge-source-candidate",
         description=(
             "Fingerprint candidate benchmark copies, scaffold manual scientific review, compile "
-            "non-empirical audit templates, and apply separate human authorization decisions."
+            "audit templates, apply separate human authorization, and verify source-audit lineage."
         ),
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -197,6 +214,34 @@ def build_parser() -> argparse.ArgumentParser:
     authorization_apply.add_argument(
         "--overwrite", action="store_true", help="Replace an existing output file."
     )
+
+    lineage = subparsers.add_parser(
+        "lineage",
+        help=(
+            "Verify an audit report against the exact reviewed template and authorization, then "
+            "write a fingerprinted lineage receipt."
+        ),
+    )
+    _add_dataset_argument(lineage)
+    lineage.add_argument(
+        "--template", required=True, type=Path, help="Original non-empirical audit-template JSON."
+    )
+    lineage.add_argument(
+        "--authorization", required=True, type=Path, help="Authorized decision JSON."
+    )
+    lineage.add_argument(
+        "--audit-report", required=True, type=Path, help="Verified source-audit report JSON."
+    )
+    lineage.add_argument("--root", required=True, type=Path, help="Candidate source directory.")
+    lineage.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="Lineage receipt JSON path outside the candidate source directory.",
+    )
+    lineage.add_argument(
+        "--overwrite", action="store_true", help="Replace an existing output file."
+    )
     return parser
 
 
@@ -248,7 +293,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.authorization,
             template,
         )
-    else:
+    elif args.command == "authorization-apply":
         template = _load_audit_spec(args.template, args.dataset)
         authorization_record = validate_candidate_source_audit_authorization(
             args.authorization,
@@ -256,6 +301,24 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         result = authorize_candidate_source_audit_template(template, authorization_record)
         write_authorized_source_audit_spec(
+            result,
+            args.output,
+            candidate_root=args.root,
+            overwrite=args.overwrite,
+        )
+    else:
+        template = _load_audit_spec(args.template, args.dataset)
+        authorization_record = validate_candidate_source_audit_authorization(
+            args.authorization,
+            template,
+        )
+        audit_report = _load_json_object(args.audit_report, label="Source-audit report")
+        result = build_source_audit_lineage_receipt(
+            template,
+            authorization_record,
+            audit_report,
+        )
+        write_source_audit_lineage_receipt(
             result,
             args.output,
             candidate_root=args.root,
