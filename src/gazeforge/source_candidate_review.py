@@ -330,7 +330,9 @@ def validate_candidate_source_review_scaffold(
             "Candidate source review is not bound to the current candidate inventory fingerprint."
         )
     if payload.get("candidate_file_count") != inventory.file_count:
-        raise BenchmarkIntegrityError("Candidate source review file count does not match inventory.")
+        raise BenchmarkIntegrityError(
+            "Candidate source review file count does not match inventory."
+        )
 
     source_review = payload.get("source_review")
     if not isinstance(source_review, Mapping):
