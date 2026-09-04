@@ -85,6 +85,7 @@ nav:
       - VISUS validation suite: visus-validation-suite.md
       - VISUS execution CLI: visus-cli-execution.md
       - VISUS execution provenance: visus-execution-provenance.md
+      - VISUS Frozen Evidence gate: visus-frozen-evidence-gate.md
   - API: api-reference.md
 
 plugins:
