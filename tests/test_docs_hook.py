@@ -1,4 +1,5 @@
 import json
+import shutil
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from types import SimpleNamespace
@@ -15,9 +16,18 @@ def _load_on_pre_build():
     return module.on_pre_build
 
 
+def _copy_source_resolution_protocols(root: Path) -> None:
+    source_root = Path(__file__).parents[1] / "validation" / "protocols"
+    target_root = root / "validation" / "protocols"
+    target_root.mkdir(parents=True, exist_ok=True)
+    for source in source_root.glob("*-source-resolution-*.json"):
+        shutil.copy2(source, target_root / source.name)
+
+
 def test_mkdocs_hook_generates_conservative_empty_evidence_page(tmp_path):
     (tmp_path / "validation").mkdir()
     (tmp_path / "docs").mkdir()
+    _copy_source_resolution_protocols(tmp_path)
     config = SimpleNamespace(config_file_path=str(tmp_path / "mkdocs.yml"))
 
     _load_on_pre_build()(config)
@@ -27,11 +37,18 @@ def test_mkdocs_hook_generates_conservative_empty_evidence_page(tmp_path):
     assert "do **not** become empirical validation" in page
     assert "validation-status.md" in page
 
+    source_page = (tmp_path / "docs" / "source-resolution-status.md").read_text(
+        encoding="utf-8"
+    )
+    assert "Non-empirical governance status" in source_page
+    assert "Gaze-in-the-Wild naturalistic eye-head event benchmark" in source_page
+
 
 def test_mkdocs_hook_renders_details_from_validated_frozen_report(tmp_path):
     validation = tmp_path / "validation"
     validation.mkdir()
     (tmp_path / "docs").mkdir()
+    _copy_source_resolution_protocols(tmp_path)
     card = BenchmarkDatasetCard(
         name="Hook-test-benchmark",
         version="1",
