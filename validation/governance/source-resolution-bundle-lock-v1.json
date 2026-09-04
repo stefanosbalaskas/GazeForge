@@ -1,0 +1,35 @@
+{
+  "lock_type": "source-resolution-bundle-lock-v1",
+  "reviewed_on": "2026-09-04",
+  "record_count": 3,
+  "bundle_fingerprint_sha256": "543bc47b29074049eb3f94a93a4ee952ccadc56b2d15347ff736da1f7127261c",
+  "records": [
+    {
+      "dataset_key": "gaze-in-the-wild",
+      "status": "published_distribution_identifier_established_current_direct_copy_unverified",
+      "record_fingerprint_sha256": "19025848e69d20fb36c13ba7f10fea47b141b959db93ea9aa2b88ea0c9ccc881"
+    },
+    {
+      "dataset_key": "hollywood2em",
+      "status": "canonical_distribution_identifier_established_current_copy_unverified",
+      "record_fingerprint_sha256": "5cabe4f572a9aaf1e509dfa764d8caa35301a16f26df07e5f44dbee3eb811920"
+    },
+    {
+      "dataset_key": "visus",
+      "status": "current_authoritative_distribution_unresolved",
+      "record_fingerprint_sha256": "6196ebdb9a5ad201d8d44fa5edbc6ffcf2c0a91e0ce4ed9c299f148815219913"
+    }
+  ],
+  "review_basis": [
+    "Reviewed unresolved source-resolution checkpoint set for VISUS, Hollywood2EM, and Gaze-in-the-Wild.",
+    "Any checkpoint-content or evidence-state change requires intentional lock replacement and scientific review before merge."
+  ],
+  "scientific_boundary": {
+    "non_empirical_governance_only": true,
+    "authorizes_checkpoint_status_upgrade": false,
+    "authorizes_source_audit_ready": false,
+    "authorizes_empirical_evidence": false,
+    "authorizes_frozen_evidence_publication": false
+  },
+  "lock_fingerprint_sha256": "f68ad9d2ff7f4348049a9342c9d787f08dfc31e01d7507a6f3e0fcb2ca46528d"
+}
