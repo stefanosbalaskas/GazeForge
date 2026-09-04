@@ -96,5 +96,6 @@ def test_cli_can_require_reviewed_bundle_lock(capsys):
 
 
 def test_cli_lock_requires_directory():
+    checkpoint = PROTOCOLS / "visus-source-resolution-2026-09-04.json"
     with pytest.raises(SystemExit):
-        source_resolution_main([str(PROTOCOLS / "visus-source-resolution-2026-09-04.json"), "--lock", str(LOCK)])
+        source_resolution_main([str(checkpoint), "--lock", str(LOCK)])
