@@ -135,6 +135,16 @@ def test_suite_command_uses_separate_grid_and_preserves_guards(monkeypatch, tmp_
 
     monkeypatch.setattr(visus_cli, "_load_audit", lambda *args: audit)
     monkeypatch.setattr(visus_cli, "_read_table", lambda path: pd.DataFrame({"x": [1]}))
+    monkeypatch.setattr(
+        visus_cli,
+        "snapshot_visus_execution_inputs",
+        lambda **kwargs: ("raw-input-snapshot",),
+    )
+    monkeypatch.setattr(
+        visus_cli,
+        "verify_visus_execution_inputs_unchanged",
+        lambda *args, **kwargs: None,
+    )
 
     def fake_reference(audit_arg, table, **kwargs):
         assert audit_arg is audit
@@ -169,6 +179,27 @@ def test_suite_command_uses_separate_grid_and_preserves_guards(monkeypatch, tmp_
         return suite_result
 
     monkeypatch.setattr(visus_cli, "run_visus_dynamic_aoi_validation_suite", fake_suite)
+    monkeypatch.setattr(
+        visus_cli,
+        "build_visus_execution_provenance",
+        lambda audit_arg, suite_arg, snapshots: {
+            "execution_fingerprint_sha256": "f" * 64
+        },
+    )
+    provenance_result = SimpleNamespace(
+        manifest_path=output / "visus-execution-provenance.json",
+        execution_fingerprint_sha256="f" * 64,
+    )
+    monkeypatch.setattr(
+        visus_cli,
+        "write_visus_execution_provenance",
+        lambda manifest, output_dir, overwrite=False: provenance_result,
+    )
+    monkeypatch.setattr(
+        visus_cli,
+        "validate_visus_execution_provenance",
+        lambda path, verify_suite=True: {"status": "complete"},
+    )
 
     code = visus_cli.main(
         [
@@ -226,6 +257,7 @@ def test_suite_command_uses_separate_grid_and_preserves_guards(monkeypatch, tmp_
     assert '"external_timestamp_grid_required": true' in output_text
     assert '"prediction_emission_grid_used": false' in output_text
     assert '"suite_fingerprint_sha256": "' in output_text
+    assert '"execution_fingerprint_sha256": "' in output_text
 
 
 def test_suite_validate_manifest_only(monkeypatch, tmp_path, capsys):
