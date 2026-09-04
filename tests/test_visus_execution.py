@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 
 from gazeforge.benchmarks import benchmark_fingerprint
+from gazeforge.dashboard import build_benchmark_dashboard
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.visus_audit import (
     VisusSourceAuditSpec,
@@ -238,6 +239,14 @@ def test_execution_provenance_binds_raw_inputs_to_verified_suite(tmp_path):
     assert manifest["source"]["source_audit_spec_fingerprint_sha256"] == (
         manifest["raw_inputs"][0]["semantic_fingerprint_sha256"]
     )
+
+    dashboard = build_benchmark_dashboard(tmp_path)
+    assert len(dashboard.suites) == 1
+    assert dashboard.suite_table.iloc[0]["suite"] == "visus-dynamic-aoi-validation-v1"
+    assert dashboard.suite_table.iloc[0]["model"] == "fixture-detector 1.0.0"
+    assert dashboard.suite_table.iloc[0]["reference_stream_id"] == "annotator_a"
+    assert dashboard.suite_source_files == (str(suite.manifest_path),)
+    assert len(dashboard.reports) == 1
 
 
 def test_execution_provenance_refuses_raw_input_mutation(tmp_path):
