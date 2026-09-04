@@ -11,11 +11,13 @@ from sklearn.metrics import precision_recall_fscore_support
 
 from .benchmarks import BenchmarkDatasetCard, benchmark_fingerprint, build_benchmark_report
 from .comparison import EventModelComparison, compare_event_models_grouped
+from .downstream_lineage import validate_gaze_in_wild_audit_lineage
 from .event_evaluation import evaluate_sample_event_predictions
 from .exceptions import BenchmarkIntegrityError, SchemaError
 from .gaze_in_wild_audit import GazeInWildAuditedFile, GazeInWildSourceAuditRun
 from .paired import PairedModelDifferences, paired_model_metric_differences
 from .resampling import resample_labeled_gaze
+from .source_audit_lineage import SourceAuditLineageReceipt
 from .stratified import StratifiedEventPerformance, summarize_event_predictions_by_stratum
 
 _DEFAULT_EXCLUDED_LABELS = ("ambiguous", "unlabelled", "undefined")
@@ -44,7 +46,10 @@ class GazeInWildModelValidationRun:
     report: dict[str, Any]
 
 
-def _verify_audit_integrity(audit: GazeInWildSourceAuditRun) -> None:
+def _verify_audit_integrity(
+    audit: GazeInWildSourceAuditRun,
+    lineage: SourceAuditLineageReceipt,
+) -> str:
     if not isinstance(audit, GazeInWildSourceAuditRun):
         raise TypeError("audit must be a GazeInWildSourceAuditRun instance.")
     if audit.report.get("status") != "verified":
@@ -76,6 +81,7 @@ def _verify_audit_integrity(audit: GazeInWildSourceAuditRun) -> None:
             raise BenchmarkIntegrityError(
                 "An audited gaze stream does not match the source-audit specification fingerprint."
             )
+    return validate_gaze_in_wild_audit_lineage(audit, lineage)
 
 
 def _json_safe_records(frame: pd.DataFrame) -> list[dict[str, Any]]:
@@ -296,6 +302,7 @@ def _attach_task_mapping(
 
 def prepare_gaze_in_wild_benchmark(
     audit: GazeInWildSourceAuditRun,
+    lineage: SourceAuditLineageReceipt,
     *,
     labeller_id: int,
     target_sampling_rate_hz: float = 60.0,
@@ -305,8 +312,8 @@ def prepare_gaze_in_wild_benchmark(
     task_mapping: pd.DataFrame | None = None,
     task_col: str = "task_label",
 ) -> GazeInWildPreparedBenchmark:
-    """Prepare one audited human labeller for leakage-safe event-model validation."""
-    _verify_audit_integrity(audit)
+    """Prepare one lineage-bound audited human labeller for event-model validation."""
+    lineage_fingerprint = _verify_audit_integrity(audit, lineage)
     coordinates = audit.report.get("coordinates", {})
     if (
         coordinates.get("verified") is not True
@@ -342,6 +349,7 @@ def prepare_gaze_in_wild_benchmark(
         file_reports.append(report)
 
     prepared = pd.concat(file_parts, ignore_index=True)
+    prepared["source_audit_lineage_receipt_fingerprint_sha256"] = lineage_fingerprint
     unknown_labels = sorted(
         label
         for label in prepared["event_label"].astype(str).str.lower().unique()
@@ -395,6 +403,7 @@ def prepare_gaze_in_wild_benchmark(
     preparation_report: dict[str, Any] = {
         "dataset": audit.spec.dataset_name,
         "labeller_id": int(labeller_id),
+        "source_audit_lineage_receipt_fingerprint_sha256": lineage_fingerprint,
         "source_audit_report_fingerprint_sha256": audit_fingerprint,
         "source_audit_spec_fingerprint_sha256": spec_fingerprint,
         "label_manifest_fingerprint_sha256": audit.report["label_inventory"][
@@ -429,6 +438,7 @@ def prepare_gaze_in_wild_benchmark(
         "task_mapping": task_report,
         "claim_limits": [
             "The selected human labeller is an explicit reference stream, not ground truth.",
+            "The source audit must remain bound to its exact reviewed authorization lineage.",
             "Files are never upsampled; any lower-rate preparation is explicitly derived.",
             (
                 "Published 120 Hz hardware provenance is not substituted for "
@@ -448,7 +458,7 @@ def prepare_gaze_in_wild_benchmark(
         participant_count=participant_count,
         stimulus_count=int(analysis[list(_TASK_COLUMNS)].drop_duplicates().shape[0]),
         split_unit="participant_id",
-        validation_scope="audited-source-participant-held-out-model-validation",
+        validation_scope="lineage-bound-audited-source-participant-held-out-model-validation",
         annotation_origin="human-manual",
         sampling_origin=sampling_origin,
         reference_strength=reference_strength,
@@ -458,6 +468,7 @@ def prepare_gaze_in_wild_benchmark(
         ),
         notes=[
             "One audited labeller is selected explicitly before modelling.",
+            "The exact source-audit lineage receipt is verified before preparation.",
             "Participant identity is the protected cross-validation split unit.",
             (
                 "Pixel-space kinematics are allowed only after an explicit "
@@ -527,6 +538,7 @@ def _event_class_sensitivity(
 
 def run_gaze_in_wild_model_validation(
     audit: GazeInWildSourceAuditRun,
+    lineage: SourceAuditLineageReceipt,
     *,
     labeller_id: int,
     target_sampling_rate_hz: float = 60.0,
@@ -548,9 +560,10 @@ def run_gaze_in_wild_model_validation(
     calibration_bins: int = 10,
     event_min_iou: float = 0.50,
 ) -> GazeInWildModelValidationRun:
-    """Run participant-disjoint I-VT/RF/ContextMLP validation on audited Gaze-in-the-Wild."""
+    """Run lineage-bound participant-disjoint validation on audited Gaze-in-the-Wild."""
     prepared = prepare_gaze_in_wild_benchmark(
         audit,
+        lineage,
         labeller_id=labeller_id,
         target_sampling_rate_hz=target_sampling_rate_hz,
         min_label_purity=min_label_purity,
