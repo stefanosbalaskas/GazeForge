@@ -164,6 +164,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### VISUS source inventory scaffold
+
+::: gazeforge.visus_scaffold
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### VISUS source audit
 
 ::: gazeforge.visus_audit
