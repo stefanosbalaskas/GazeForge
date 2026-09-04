@@ -219,3 +219,10 @@ The public API is intentionally organised around scientific workflow layers rath
     options:
       show_root_heading: true
       show_source: false
+
+### VISUS Frozen Evidence bundle gate
+
+::: gazeforge.visus_evidence
+    options:
+      show_root_heading: true
+      show_source: false
