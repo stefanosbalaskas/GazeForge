@@ -1,4 +1,4 @@
-"""JSON-only CLI for exact non-empirical candidate source inventories and review scaffolds."""
+"""JSON-only CLI for candidate inventories, review scaffolds, and audit templates."""
 
 from __future__ import annotations
 
@@ -12,6 +12,10 @@ from .source_candidate import (
     validate_candidate_source_inventory,
     write_candidate_source_inventory,
 )
+from .source_candidate_audit_template import (
+    compile_candidate_source_audit_template,
+    write_candidate_source_audit_template,
+)
 from .source_candidate_review import (
     build_candidate_source_review_scaffold,
     validate_candidate_source_review_scaffold,
@@ -20,12 +24,13 @@ from .source_candidate_review import (
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Build the candidate source inventory/review parser."""
+    """Build the candidate source inventory/review/template parser."""
     parser = argparse.ArgumentParser(
         prog="gazeforge-source-candidate",
         description=(
-            "Build or revalidate exact non-empirical local inventories and manual-review "
-            "scaffolds for candidate Hollywood2EM or Gaze-in-the-Wild source copies."
+            "Build or revalidate exact non-empirical local inventories, manual-review scaffolds, "
+            "and non-empirical audit-spec templates for candidate Hollywood2EM or "
+            "Gaze-in-the-Wild source copies."
         ),
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -86,11 +91,37 @@ def build_parser() -> argparse.ArgumentParser:
     review_validate.add_argument(
         "--root", required=True, type=Path, help="Candidate source directory."
     )
+
+    audit_template = subparsers.add_parser(
+        "audit-template",
+        help=(
+            "Compile a completed candidate review into a dataset-specific audit specification "
+            "that remains dataset_status='template'."
+        ),
+    )
+    audit_template.add_argument(
+        "--review", required=True, type=Path, help="Completed review-scaffold JSON."
+    )
+    audit_template.add_argument(
+        "--inventory", required=True, type=Path, help="Saved exact candidate inventory JSON."
+    )
+    audit_template.add_argument(
+        "--root", required=True, type=Path, help="Candidate source directory."
+    )
+    audit_template.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="Dataset-specific audit-template JSON outside the candidate source directory.",
+    )
+    audit_template.add_argument(
+        "--overwrite", action="store_true", help="Replace an existing output file."
+    )
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Run one candidate inventory/review operation and emit validated JSON."""
+    """Run one candidate source operation and emit deterministic JSON."""
     parser = build_parser()
     args = parser.parse_args(argv)
 
@@ -103,11 +134,24 @@ def main(argv: Sequence[str] | None = None) -> int:
         inventory = validate_candidate_source_inventory(args.inventory, args.root)
         result = build_candidate_source_review_scaffold(inventory)
         write_candidate_source_review_scaffold(result, args.output, overwrite=args.overwrite)
-    else:
+    elif args.command == "review-validate":
         result = validate_candidate_source_review_scaffold(
             args.review,
             args.inventory,
             args.root,
+        )
+    else:
+        scaffold = validate_candidate_source_review_scaffold(
+            args.review,
+            args.inventory,
+            args.root,
+        )
+        result = compile_candidate_source_audit_template(scaffold)
+        write_candidate_source_audit_template(
+            result,
+            args.output,
+            candidate_root=args.root,
+            overwrite=args.overwrite,
         )
 
     print(json.dumps(result.to_dict(), indent=2, sort_keys=True, allow_nan=False))
