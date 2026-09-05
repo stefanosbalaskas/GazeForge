@@ -34,8 +34,7 @@ class _LinkParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag.lower() != "a":
             return
-        attributes = dict(attrs)
-        href = attributes.get("href")
+        href = dict(attrs).get("href")
         self._href = href.strip() if isinstance(href, str) and href.strip() else None
         self._text = []
 
@@ -62,11 +61,28 @@ def _canonical_bytes(value: Any) -> bytes:
     ).encode("utf-8")
 
 
-def probe_fingerprint(payload: dict[str, Any]) -> str:
-    """Return the canonical fingerprint of a normalized live listing probe."""
+def _sha256(value: Any) -> str:
+    return hashlib.sha256(_canonical_bytes(value)).hexdigest()
+
+
+def listing_state_fingerprint(payload: dict[str, Any]) -> str:
+    """Fingerprint only review-relevant first-party listing state and claim boundaries."""
+    state = {
+        "record_type": payload["record_type"],
+        "current_first_party_page": payload["current_first_party_page"],
+        "review_trigger": payload["review_trigger"],
+        "scientific_boundary": payload["scientific_boundary"],
+        "claim_limit": payload["claim_limit"],
+    }
+    return _sha256(state)
+
+
+def observation_fingerprint(payload: dict[str, Any]) -> str:
+    """Fingerprint the complete dated transport observation for provenance only."""
     body = dict(payload)
-    body.pop("probe_fingerprint_sha256", None)
-    return hashlib.sha256(_canonical_bytes(body)).hexdigest()
+    body.pop("listing_state_fingerprint_sha256", None)
+    body.pop("observation_fingerprint_sha256", None)
+    return _sha256(body)
 
 
 def _request(url: str, *, timeout: float = 20.0) -> tuple[int, bytes]:
@@ -97,8 +113,7 @@ def _historical_endpoint_observation(*, timeout: float = 20.0) -> dict[str, Any]
         effective_status = int(exc.code)
         exc.read()
     except urllib.error.URLError as exc:
-        reason = exc.reason
-        if not isinstance(reason, ssl.SSLCertVerificationError):
+        if not isinstance(exc.reason, ssl.SSLCertVerificationError):
             raise ProbeError(
                 f"Historical endpoint failed before an HTTP status was observable: {exc}"
             ) from exc
@@ -131,6 +146,7 @@ def _historical_endpoint_observation(*, timeout: float = 20.0) -> dict[str, Any]
         "tls_unverified_fallback_used": insecure_fallback_used,
         "observed_http_status": effective_status,
         "retrieval_succeeded": effective_status == 200,
+        "transport_status_is_source_identity_or_rights_evidence": False,
         "tls_unverified_fallback_is_source_authentication_evidence": False,
         "observation_is_global_unavailability_proof": False,
         "observation_is_exact_copy_identity_evidence": False,
@@ -164,14 +180,13 @@ def _target_class(url: str) -> str:
 
 
 def build_probe() -> dict[str, Any]:
-    """Build a normalized live-state record whose changes require reviewed evidence work."""
+    """Build normalized listing state plus a non-gating transport diagnostic."""
     listing_status, listing_html = _request(RIT_LAB_URL)
     if listing_status != 200:
         raise ProbeError(f"Current RIT lab page returned HTTP {listing_status}.")
     target = _listing_target(listing_html)
     target_class = _target_class(target)
 
-    historical = _historical_endpoint_observation()
     payload: dict[str, Any] = {
         "record_type": "gaze-in-wild-current-first-party-listing-probe-v1",
         "current_first_party_page": {
@@ -185,7 +200,7 @@ def build_probe() -> dict[str, Any]:
             "listing_target_is_direct_dataset_archive_verified": False,
             "dataset_file_rights_terms_found_on_listing": False,
         },
-        "historical_endpoint_observation": historical,
+        "historical_endpoint_observation": _historical_endpoint_observation(),
         "review_trigger": {
             "listing_target_changed_from_expected_publication": (
                 target != EXPECTED_PUBLICATION_TARGET
@@ -193,14 +208,9 @@ def build_probe() -> dict[str, Any]:
             "listing_target_is_first_party_rit_candidate": (
                 target_class == "first_party_rit_candidate"
             ),
-            "historical_endpoint_status_changed_from_reviewed_502": (
-                historical["observed_http_status"] != 502
-            ),
-            "requires_human_evidence_review": (
-                target != EXPECTED_PUBLICATION_TARGET
-                or historical["observed_http_status"] != 502
-            ),
+            "requires_human_evidence_review": target != EXPECTED_PUBLICATION_TARGET,
             "automatic_source_or_rights_promotion_permitted": False,
+            "historical_transport_observation_is_review_gate": False,
         },
         "scientific_boundary": {
             "current_first_party_listing_verified": True,
@@ -219,16 +229,17 @@ def build_probe() -> dict[str, Any]:
             "frozen_evidence_performance_claim_created": False,
         },
         "claim_limit": (
-            "This probe records the current first-party RIT listing target and one bounded "
-            "historical-endpoint HTTP observation. If secure certificate verification fails, a "
-            "TLS-unverified fallback may observe HTTP status only; that fallback is not source-"
-            "authentication evidence. Any listing or endpoint-state change triggers human review "
-            "and never automatically establishes an exact dataset copy, dataset-file rights, "
-            "participant/task mappings, labeller recoverability, agreement, model performance, "
-            "cross-dataset validity, or Gazepoint GP3 validity."
+            "The current first-party RIT listing is the review gate. The historical endpoint "
+            "probe is a transport diagnostic only because HTTP/TLS outcomes can vary by network "
+            "environment. A TLS-unverified fallback may observe HTTP status only and is not "
+            "source-authentication evidence. Neither listing nor endpoint observations can "
+            "automatically establish an exact dataset copy, dataset-file rights, participant/task "
+            "mappings, labeller recoverability, agreement, model performance, cross-dataset "
+            "validity, or Gazepoint GP3 validity."
         ),
     }
-    payload["probe_fingerprint_sha256"] = probe_fingerprint(payload)
+    payload["listing_state_fingerprint_sha256"] = listing_state_fingerprint(payload)
+    payload["observation_fingerprint_sha256"] = observation_fingerprint(payload)
     return payload
 
 
@@ -261,7 +272,10 @@ def main() -> int:
                 "requires_human_evidence_review": payload["review_trigger"][
                     "requires_human_evidence_review"
                 ],
-                "probe_fingerprint_sha256": payload["probe_fingerprint_sha256"],
+                "listing_state_fingerprint_sha256": payload[
+                    "listing_state_fingerprint_sha256"
+                ],
+                "observation_fingerprint_sha256": payload["observation_fingerprint_sha256"],
             },
             sort_keys=True,
         )
