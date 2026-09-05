@@ -1,0 +1,141 @@
+name: Gaze-in-the-Wild repository history probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-repository-history
+    paths:
+      - "scripts/probe_gaze_in_wild_repository_history.py"
+      - "src/gazeforge/gaze_in_wild_history_evidence.py"
+      - "tests/test_gaze_in_wild_history_evidence.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-repository-history-evidence-v1.json"
+      - "docs/gaze-in-wild-source-resolution.md"
+      - ".github/workflows/gaze-in-wild-repository-history-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Clone pinned first-author processing repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5; do
+            rm -rf _gaze_in_wild
+            if git clone --quiet https://github.com/RSKothari/Gaze-in-Wild.git _gaze_in_wild; then
+              git -C _gaze_in_wild checkout --quiet 52262d44e366a53369e10ca73c5f41daf0e8f1e5
+              test "$(git -C _gaze_in_wild rev-parse HEAD)" = "52262d44e366a53369e10ca73c5f41daf0e8f1e5"
+              exit 0
+            fi
+            if [ "$attempt" -eq 5 ]; then
+              echo "Gaze-in-the-Wild clone failed after bounded retries." >&2
+              exit 1
+            fi
+            delay=$((attempt * 10))
+            echo "Clone attempt ${attempt} failed; retrying after ${delay}s." >&2
+            sleep "$delay"
+          done
+      - name: Run deterministic complete-history probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_repository_history.py \
+            _gaze_in_wild \
+            --output gaze-in-wild-repository-history-probe-v1.json
+      - name: Revalidate conservative claim boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("gaze-in-wild-repository-history-probe-v1.json")
+          record = json.loads(path.read_text(encoding="utf-8"))
+          assert record["record_type"] == "gaze-in-wild-official-repository-history-probe-v1"
+          assert record["repository"] == "https://github.com/RSKothari/Gaze-in-Wild"
+          assert record["pinned_commit_sha1"] == "52262d44e366a53369e10ca73c5f41daf0e8f1e5"
+          assert record["reachable_commit_count"] == 56
+          assert record["root_commit_sha1"] == "054c99d3b88f0ad46cbd0b7d66f4fc38718046f5"
+          assert record["software_license_history"]["license_file_identifies_mit"] is True
+          assert record["repository_tree"]["distributed_process_or_label_mat_path_count"] == 0
+          boundary = record["scientific_boundary"]
+          assert boundary["official_first_author_repository_history_verified"] is True
+          assert boundary["exact_external_dataset_copy_obtained"] is False
+          assert boundary["external_dataset_file_rights_resolved"] is False
+          assert boundary["software_mit_is_external_dataset_license"] is False
+          assert boundary["published_distribution_url_is_current_direct_copy_verified"] is False
+          assert boundary["participant_identity_mapping_from_history_verified"] is False
+          assert boundary["complete_trial_to_task_mapping_from_history_verified"] is False
+          assert boundary["human_human_agreement_created"] is False
+          assert boundary["participant_disjoint_model_validation_created"] is False
+          assert boundary["frozen_evidence_performance_claim_created"] is False
+          assert record["repository_tree"]["repository_is_exact_compressed_dataset_copy"] is False
+          print("Conservative Gaze-in-the-Wild repository-history boundary revalidated.")
+          PY
+      - name: Install package and test dependencies
+        run: python -m pip install ".[dev]"
+      - name: Bind live history probe to frozen reviewed evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_history_evidence import (
+              validate_gaze_in_wild_repository_history_probe,
+          )
+
+          validate_gaze_in_wild_repository_history_probe(
+              Path("gaze-in-wild-repository-history-probe-v1.json"),
+              Path(
+                  "validation/evidence/gaze-in-wild/"
+                  "gaze-in-wild-repository-history-evidence-v1.json"
+              ),
+          )
+          print("Live Gaze-in-the-Wild repository history is bound to frozen evidence.")
+          PY
+      - name: Run focused history-evidence tests
+        run: python -m pytest -q tests/test_gaze_in_wild_history_evidence.py
+      - name: Summarize complete-history probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(
+              Path("gaze-in-wild-repository-history-probe-v1.json").read_text(encoding="utf-8")
+          )
+          print("HEAD:", record["pinned_commit_sha1"])
+          print("root commit:", record["root_commit_sha1"])
+          print("reachable commits:", record["reachable_commit_count"])
+          print("authors:", record["author_names"])
+          print("README unique blobs:", record["readme_history"]["unique_blob_count"])
+          print("MIT file first seen:", record["software_license_history"]["license_file_first_seen_commit_sha1"])
+          print("tracked paths at pinned HEAD:", record["repository_tree"]["tracked_path_count"])
+          print("distributed ProcessData/LabelData-like .mat paths:", record["repository_tree"]["distributed_process_or_label_mat_path_count"])
+          print("fingerprint:", record["probe_fingerprint_sha256"])
+          PY
+      - name: Upload deterministic aggregate history record
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-repository-history-probe
+          path: gaze-in-wild-repository-history-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
