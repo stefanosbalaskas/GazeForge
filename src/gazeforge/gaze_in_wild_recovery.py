@@ -19,6 +19,13 @@ from .exceptions import BenchmarkIntegrityError
 
 RECORD_TYPE = "gaze-in-wild-recovery-candidate-review-v1"
 CANDIDATE_STATUS = "quarantined"
+CLAIM_LIMIT = (
+    "This record fingerprints an unverified recovery candidate for review only. "
+    "It does not establish source authority, exact original distribution identity, "
+    "dataset-file rights, participant/task/labeller identities, coordinate units, "
+    "sampling cadence, independent annotation streams, empirical source-audit "
+    "eligibility, agreement, model performance, cross-dataset validity, or GP3 validity."
+)
 _ALLOWED_CANDIDATE_KINDS = {
     "unknown_recovered_copy",
     "candidate_original_layout_unverified",
@@ -181,13 +188,7 @@ def build_gaze_in_wild_recovery_candidate_review(
             "candidate_can_materialize_empirical_audit_spec": False,
         },
         "scientific_boundary": dict(_SCIENTIFIC_BOUNDARY),
-        "claim_limit": (
-            "This record fingerprints an unverified recovery candidate for review only. "
-            "It does not establish source authority, exact original distribution identity, "
-            "dataset-file rights, participant/task/labeller identities, coordinate units, "
-            "sampling cadence, independent annotation streams, empirical source-audit "
-            "eligibility, agreement, model performance, cross-dataset validity, or GP3 validity."
-        ),
+        "claim_limit": CLAIM_LIMIT,
     }
     payload["record_fingerprint_sha256"] = recovery_candidate_record_fingerprint(payload)
     return payload
@@ -249,6 +250,7 @@ def validate_gaze_in_wild_recovery_candidate_review(
         raise BenchmarkIntegrityError("Recovery candidate inventory must contain files.")
     paths: list[str] = []
     total_bytes = 0
+    extensions: Counter[str] = Counter()
     for item in files:
         if not isinstance(item, Mapping):
             raise BenchmarkIntegrityError("Recovery candidate file entries must be mappings.")
@@ -256,6 +258,8 @@ def validate_gaze_in_wild_recovery_candidate_review(
         if not file_path or file_path.startswith("/") or ".." in Path(file_path).parts:
             raise BenchmarkIntegrityError("Recovery candidate file path is unsafe.")
         paths.append(file_path)
+        suffix = Path(file_path).suffix.lower() or "<none>"
+        extensions[suffix] += 1
         size = item.get("bytes")
         if not isinstance(size, int) or size < 0:
             raise BenchmarkIntegrityError("Recovery candidate file byte size is invalid.")
@@ -275,6 +279,8 @@ def validate_gaze_in_wild_recovery_candidate_review(
         raise BenchmarkIntegrityError("Recovery candidate file count drifted.")
     if inventory.get("total_bytes") != total_bytes:
         raise BenchmarkIntegrityError("Recovery candidate total byte count drifted.")
+    if inventory.get("extension_counts") != dict(sorted(extensions.items())):
+        raise BenchmarkIntegrityError("Recovery candidate extension inventory drifted.")
     observed_tree = _tree_fingerprint([dict(item) for item in files])
     if inventory.get("tree_fingerprint_sha256") != observed_tree:
         raise BenchmarkIntegrityError("Recovery candidate tree fingerprint drifted.")
@@ -299,6 +305,8 @@ def validate_gaze_in_wild_recovery_candidate_review(
         raise BenchmarkIntegrityError(
             "Recovery candidate scientific boundary cannot be promoted."
         )
+    if record.get("claim_limit") != CLAIM_LIMIT:
+        raise BenchmarkIntegrityError("Recovery candidate claim limit drifted.")
     observed_record = recovery_candidate_record_fingerprint(record)
     stored_record = record.get("record_fingerprint_sha256")
     if stored_record != observed_record:
@@ -343,10 +351,10 @@ def write_gaze_in_wild_recovery_candidate_review(
     candidate_root: str | Path,
     overwrite: bool = False,
 ) -> Path:
-    """Write a validated review outside the candidate tree."""
+    """Write a validated, tree-reverified review outside the candidate tree."""
 
-    validate_gaze_in_wild_recovery_candidate_review(record)
     root = _check_root(candidate_root)
+    verify_gaze_in_wild_recovery_candidate_tree(root, record)
     target = Path(path)
     resolved_target = target.resolve(strict=False)
     if resolved_target == root or root in resolved_target.parents:
