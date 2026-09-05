@@ -51,10 +51,13 @@ def test_mkdocs_hook_generates_conservative_empty_evidence_page(tmp_path):
     source_page = (tmp_path / "docs" / "source-resolution-status.md").read_text(
         encoding="utf-8"
     )
-    assert "Non-empirical governance status" in source_page
+    assert "Governance status, not performance evidence" in source_page
+    assert "separately frozen empirical source evidence" in source_page
     assert "## Reviewed governance snapshot" in source_page
-    assert "f68ad9d2ff7f" in source_page
+    assert "e18f0bd4a6a6" in source_page
     assert "Gaze-in-the-Wild naturalistic eye-head event benchmark" in source_page
+    assert "Hollywood2EM eye-movement event benchmark" in source_page
+    assert "canonical_repository_and_ground_truth_recovered" in source_page
 
 
 def test_mkdocs_hook_renders_details_from_validated_frozen_report(tmp_path):
