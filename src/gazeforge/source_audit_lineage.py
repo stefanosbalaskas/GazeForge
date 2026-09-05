@@ -110,6 +110,8 @@ class SourceAuditLineageReceipt:
     def to_dict(self) -> dict[str, Any]:
         """Return a deterministic JSON-compatible receipt."""
         payload = asdict(self)
+        if self.dataset_key == "hollywood2em":
+            payload.pop("quarantine_exit_fingerprint_sha256", None)
         payload["record_type"] = _RECORD_TYPE
         payload["source_manifest_fingerprints_sha256"] = dict(
             self.source_manifest_fingerprints_sha256
