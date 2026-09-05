@@ -18,10 +18,26 @@ def _write_pair(root: Path, recording="P01_task", labeller=2, n=6, confidence=No
     label = label_root / f"{recording}_Lbr_{labeller}.mat"
     process = process_root / f"{recording}.mat"
     savemat(label, {"LabelData": {"T": times, "Labels": labels, "LbrIdx": labeller}})
-    por = np.vstack([np.arange(n, dtype=float), np.arange(n, dtype=float) + 10])
+    por = np.vstack(
+        [
+            np.linspace(0.10, 0.60, n, dtype=float),
+            np.linspace(0.20, 0.70, n, dtype=float),
+        ]
+    )
     if confidence is None:
         confidence = np.ones(n, dtype=float)
-    savemat(process, {"ProcessData": {"ETG": {"POR": por, "Confidence": confidence}}})
+    savemat(
+        process,
+        {
+            "ProcessData": {
+                "ETG": {
+                    "POR": por,
+                    "Confidence": confidence,
+                    "SceneResolution": np.array([1920, 1080], dtype=float),
+                }
+            }
+        },
+    )
     return label, process, label_root, process_root
 
 
@@ -38,9 +54,15 @@ def test_load_infers_rate_maps_labels_and_applies_trackloss(tmp_path):
         "vor",
         "unlabelled",
     ]
+    assert frame.data.loc[0, "x_px"] == pytest.approx(192.0)
+    assert frame.data.loc[0, "y_px"] == pytest.approx(216.0)
     assert np.isnan(frame.data.loc[1, "x_px"])
     assert not bool(frame.data.loc[1, "validity"])
-    assert frame.metadata["coordinate_unit_verified"] is False
+    assert frame.screen_size_px == (1920, 1080)
+    assert frame.metadata["coordinate_source_unit"].startswith("normalized Pupil")
+    assert frame.metadata["coordinate_output_unit"] == "pixels"
+    assert frame.metadata["coordinate_unit_verified"] is True
+    assert frame.metadata["official_processed_target_rate_hz"] == 300.0
     assert frame.metadata["participant_identity_resolved"] is False
 
 
@@ -50,6 +72,8 @@ def test_label_only_loading_is_supported(tmp_path):
     assert frame.data["x_px"].isna().all()
     assert frame.data["y_px"].isna().all()
     assert not frame.data["validity"].any()
+    assert frame.screen_size_px is None
+    assert frame.metadata["coordinate_unit_verified"] is False
     assert frame.metadata["participant_identity_resolved"] is True
 
 
@@ -67,9 +91,52 @@ def test_process_length_mismatch_is_rejected(tmp_path):
     label, process, _, _ = _write_pair(tmp_path)
     savemat(
         process,
-        {"ProcessData": {"ETG": {"POR": np.ones((2, 5)), "Confidence": np.ones(5)}}},
+        {
+            "ProcessData": {
+                "ETG": {
+                    "POR": np.ones((2, 5)),
+                    "Confidence": np.ones(5),
+                    "SceneResolution": [1920, 1080],
+                }
+            }
+        },
     )
     with pytest.raises(SchemaError, match="POR shape"):
+        load_gaze_in_wild_mat(label, process_path=process)
+
+
+def test_process_requires_scene_resolution_for_pixel_conversion(tmp_path):
+    label, process, _, _ = _write_pair(tmp_path)
+    savemat(
+        process,
+        {
+            "ProcessData": {
+                "ETG": {
+                    "POR": np.ones((2, 6)) * 0.5,
+                    "Confidence": np.ones(6),
+                }
+            }
+        },
+    )
+    with pytest.raises(SchemaError, match="SceneResolution"):
+        load_gaze_in_wild_mat(label, process_path=process)
+
+
+def test_invalid_scene_resolution_is_rejected(tmp_path):
+    label, process, _, _ = _write_pair(tmp_path)
+    savemat(
+        process,
+        {
+            "ProcessData": {
+                "ETG": {
+                    "POR": np.ones((2, 6)) * 0.5,
+                    "Confidence": np.ones(6),
+                    "SceneResolution": [1920.5, 1080],
+                }
+            }
+        },
+    )
+    with pytest.raises(SchemaError, match="positive integer pixels"):
         load_gaze_in_wild_mat(label, process_path=process)
 
 
@@ -87,6 +154,8 @@ def test_directory_loader_requires_explicit_identity_parser(tmp_path):
     _, _, label_root, process_root = _write_pair(tmp_path, recording="P01_task")
     frame = load_gaze_in_wild_directory(label_root, process_root=process_root)
     assert set(frame.data["participant_id"]) == {"__unresolved__"}
+    assert frame.screen_size_px == (1920, 1080)
+    assert frame.metadata["coordinate_unit_verified"] is True
     resolved = load_gaze_in_wild_directory(
         label_root,
         process_root=process_root,

@@ -112,13 +112,13 @@ The package does **not** infer diagnoses, emotions, personality, protected trait
 | Benchmark | Human reference | Native rate | Current role |
 | --- | --- | ---: | --- |
 | **Lund2013** | paired expert event labels | 500 Hz | **frozen external event evidence available**; native/derived human agreement, derived 60 Hz modelling, annotator and sampling/purity sensitivity |
-| **Hollywood2EM** | expert-corrected event labels | 500 Hz | external cross-dataset candidate after coordinate/identity audit |
-| **Gaze-in-the-Wild** | five trained independent annotators in the publication | published 120 Hz acquisition | **source-resolution checkpoint available**; historical RIT distribution identity established, but exact current copy/reuse terms, file cadence, coordinates, and empirical execution remain unverified |
+| **Hollywood2EM** | sequential student labels with expert-corrected final labels | ≈500 Hz | **reviewed aggregate source-token-held-out evidence available**; token-disjoint only, not participant-disjoint; exact annotation-repository licence and token→participant mapping remain unresolved |
+| **Gaze-in-the-Wild** | five trained independent annotators in the publication | 120 Hz acquisition; 300 Hz processed-stream target | **official processing provenance pinned**; normalized POR semantics and 1920×1080 conversion basis verified in source code, while exact dataset copy/reuse terms, published participant/task mapping, actual analysis cadence from timestamps, and empirical execution remain pending |
 | **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **infrastructure validated, empirical execution pending**; current authoritative distribution and reuse terms unresolved |
 
 </div>
 
-GazeForge never silently upgrades evidence strength. Resampled lower-rate evidence remains labelled as derived, human-human agreement is not treated as an error-free ceiling, and unresolved coordinate or identity evidence blocks stronger cross-dataset claims. For Gaze-in-the-Wild, published 120 Hz hardware provenance is kept separate from distributed-file cadence; for VISUS, two contributors to one curation process are not treated as two independent annotation streams.
+GazeForge never silently upgrades evidence strength. Resampled lower-rate evidence remains labelled as derived, human-human agreement is not treated as an error-free ceiling, and unresolved coordinate or identity evidence blocks stronger cross-dataset claims. For Gaze-in-the-Wild, published 120 Hz acquisition provenance is kept separate from the official 300 Hz processed-stream target and from actual analysis cadence from timestamps; for VISUS, two contributors to one curation process are not treated as two independent annotation streams.
 
 [See the full validation matrix →](validation-status.md) · [Gaze-in-the-Wild source-resolution status →](gaze-in-wild-source-resolution.md) · [VISUS source-resolution status →](visus-source-resolution.md) · [See frozen empirical evidence →](frozen-evidence.md)
 

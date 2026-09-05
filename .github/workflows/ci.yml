@@ -64,7 +64,7 @@ jobs:
               "visus",
           }
           assert bundle["bundle_fingerprint_sha256"] == (
-              "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe"
+              "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758"
           )
           assert all(not row["source_audit_ready"] for row in records.values())
           assert records["visus"]["empirical_evidence_created"] is False

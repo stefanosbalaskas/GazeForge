@@ -19,14 +19,26 @@ from gazeforge.gaze_in_wild_audit import (
 
 def _write_process(path: Path, n: int = 8) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    sample = np.arange(n, dtype=float)
     por = np.vstack(
         [
-            np.arange(n, dtype=float) + 100.0,
-            np.arange(n, dtype=float) + 200.0,
+            0.25 + sample * 0.01,
+            0.40 + sample * 0.01,
         ]
     )
     confidence = np.linspace(1.0, 0.65, n)
-    savemat(path, {"ProcessData": {"ETG": {"POR": por, "Confidence": confidence}}})
+    savemat(
+        path,
+        {
+            "ProcessData": {
+                "ETG": {
+                    "POR": por,
+                    "Confidence": confidence,
+                    "SceneResolution": np.array([1920, 1080], dtype=float),
+                }
+            }
+        },
+    )
 
 
 def _write_label(
@@ -121,7 +133,10 @@ def _fixture(root: Path) -> tuple[Path, Path, GazeInWildSourceAuditSpec]:
         participant_mapping_basis="Fixture filename-to-participant/task manifest.",
         coordinate_unit="pixels",
         coordinate_unit_verified=True,
-        coordinate_verification_basis="Fixture POR values are defined as pixels.",
+        coordinate_verification_basis=(
+            "Fixture uses official normalized ProcessData.ETG.POR plus SceneResolution and "
+            "loads to canonical pixels."
+        ),
         pixel_kinematics_compatible=True,
         label_files=label_files,
         process_files=process_files,

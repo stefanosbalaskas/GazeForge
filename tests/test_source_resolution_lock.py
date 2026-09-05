@@ -18,8 +18,10 @@ PROTOCOLS = ROOT / "validation" / "protocols"
 LOCK = ROOT / "validation" / "governance" / "source-resolution-bundle-lock-v1.json"
 REVIEW_BASIS = [
     "Reviewed current source-resolution checkpoint set for VISUS, Hollywood2EM, and "
-    "Gaze-in-the-Wild; Hollywood2EM now references separately frozen empirical source "
-    "evidence while rights and source-audit readiness remain unresolved.",
+    "Gaze-in-the-Wild; Hollywood2EM references separately frozen empirical source "
+    "evidence and Gaze-in-the-Wild now binds first-author processing provenance while "
+    "exact dataset copy, rights, participant/task mapping, and source-audit readiness "
+    "remain unresolved.",
     "This governance lock snapshots checkpoint identities only; it does not authorize "
     "empirical evidence, rights, source-audit readiness, or Frozen Evidence publication.",
 ]
@@ -35,10 +37,10 @@ def test_builder_reproduces_committed_reviewed_lock():
 
     assert built == committed
     assert built["bundle_fingerprint_sha256"] == (
-        "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe"
+        "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758"
     )
     assert built["lock_fingerprint_sha256"] == (
-        "e18f0bd4a6a6dcc6f87de50751850546ea7c790c4312a944b091da1801941362"
+        "1616af4fdce05e184db2efcef9ac60ce53a64523ba72f8bb723706bf077bce58"
     )
     assert built["scientific_boundary"]["non_empirical_governance_only"] is True
     assert built["scientific_boundary"]["authorizes_empirical_evidence"] is False
