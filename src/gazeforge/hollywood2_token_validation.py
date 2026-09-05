@@ -312,8 +312,7 @@ def _verify_pinned_checkout(root: Path) -> dict[str, Any]:
             args,
             cwd=root,
             text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             check=False,
         )
         if result.returncode != 0:
@@ -465,7 +464,11 @@ def _load_and_prepare_files(
             "method": "linear_coordinates_majority_window_labels",
             "target_sampling_rate_hz": float(target_sampling_rate_hz),
             "min_label_purity": float(min_label_purity),
-            "max_interpolation_gap_ms": max_interpolation_gap_ms,
+            "max_interpolation_gap_ms": (
+                float(max_interpolation_gap_ms)
+                if max_interpolation_gap_ms is not None
+                else 2.0 * (1000.0 / float(target_sampling_rate_hz))
+            ),
             "source_rows": int(resampling_totals["source_rows"]),
             "target_rows": target_rows,
             "ambiguous_rows": ambiguous_rows,

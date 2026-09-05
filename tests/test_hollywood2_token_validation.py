@@ -22,7 +22,6 @@ from gazeforge.hollywood2_token_validation import (
     validate_hollywood2_source_token_validation_report,
 )
 
-
 AUTH_PATH = Path(
     "validation/governance/hollywood2-source-token-analysis-authorization-v1.json"
 )
