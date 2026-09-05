@@ -110,7 +110,9 @@ def _authorized(pending: GazeInWildQuarantineExitAuthorization):
         analysis_use_evidence="analysis use explicitly permitted by reviewed terms",
         redistribution_status="restricted",
         redistribution_evidence="redistribution restrictions explicitly reviewed",
-        authorization_basis="authority, exact-copy identity, and current rights independently reviewed",
+        authorization_basis=(
+            "authority, exact-copy identity, and current rights independently reviewed"
+        ),
         notes=("quarantine exit authorization test fixture",),
     )
 
