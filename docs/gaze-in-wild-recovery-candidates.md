@@ -86,6 +86,16 @@ write_gaze_in_wild_recovery_candidate_review(
 
 The resulting record is a **quarantine identity**, not an empirical evidence artifact.
 
+## Reviewed secondary recovery leads
+
+The secondary-lead provenance probe deliberately distinguishes two kinds of evidence that must not be collapsed into a recovered authoritative copy.
+
+At pinned `Morris88826/awesome-eye-data` commit `4c6a58ef5be5693e08adac33e8768a3b88ddf8ac`, the repository describes itself as a collection unified under a common format and advertises processed Gaze-in-the-Wild material through an external Google Drive folder. Its documented processed layout uses chunked annotation CSV files and MP4 video clips. The pinned repository tree does not expose official-layout `ProcessData`/`LabelData` paths. GazeForge therefore classifies this lead as `external_transformed_collection_advertisement`; the external folder contents are not treated as obtained or audited by this probe, and equivalence to the original distribution remains unverified.
+
+At pinned `George614/edit_distance_gpu` commit `01711b11556c271a7a15e566935089bb2775121b`, `levenGPU_demo.py` and `levenSequential.py` reference `LabellerIdx_7_PrIdx_1_TrIdx_1.mat` and `LabellerIdx_8_PrIdx_1_TrIdx_1.mat` through local paths. Those `.mat` files are not repository-resident at the pinned tree. GazeForge therefore classifies this lead as `local_path_reference_only`. The filenames establish a provenance lead only; they do not recover two independent annotation streams or make human-human agreement eligible.
+
+The reviewed live-probe contract is bound to SHA-256 fingerprint `89714d8ab6dee18385f27cf609e99bd857048898aee699cc38ee3c7a195ad9dd`. The corresponding frozen secondary-lead evidence record is bound to SHA-256 fingerprint `e312079108f8b50ddedd6f361272218fc8665c880b147797aee5bb434ebc8c29`.
+
 ## What must happen before empirical use
 
 A candidate can leave quarantine only through a separate, independently reviewed evidence transition. That later work would need authoritative source provenance and exact-copy identity, dataset-file analysis/reuse terms, participant/trial/task interpretation, coordinate semantics, timestamp-derived cadence, and annotation-stream provenance sufficient for the intended analysis.
