@@ -20,6 +20,7 @@ LICENSE_URL = "https://vision.imar.ro/eyetracking/license.php"
 RECORD_TYPE = "hollywood2-underlying-source-live-probe-v1"
 USER_AGENT = "GazeForge/0.1 source-resolution audit (+https://github.com/stefanosbalaskas/GazeForge)"
 _ALLOWED_DOWNLOAD_HOSTS = {"vision.imar.ro", "www.vision.imar.ro"}
+_ALLOWED_DOWNLOAD_SCHEMES = {"http", "https"}
 
 
 class _PageParser(HTMLParser):
@@ -82,7 +83,7 @@ def _request(url: str, *, method: str = "GET", headers: dict[str, str] | None = 
     if headers:
         request_headers.update(headers)
     request = urllib.request.Request(url, headers=request_headers, method=method)
-    return urllib.request.urlopen(request, timeout=60)  # noqa: S310 - fixed audited HTTPS origins.
+    return urllib.request.urlopen(request, timeout=60)  # noqa: S310 - fixed audited institutional origins.
 
 
 def _fetch_page(url: str) -> dict[str, Any]:
@@ -122,6 +123,16 @@ def _contains_all(text: str, phrases: list[str], *, label: str) -> None:
         raise RuntimeError(f"{label} is missing required authoritative text: {missing}")
 
 
+def _validate_download_url(url: str, *, label: str) -> urllib.parse.ParseResult:
+    parsed = urllib.parse.urlparse(url)
+    if (
+        parsed.scheme not in _ALLOWED_DOWNLOAD_SCHEMES
+        or parsed.hostname not in _ALLOWED_DOWNLOAD_HOSTS
+    ):
+        raise RuntimeError(f"{label}: {url}")
+    return parsed
+
+
 def _resolve_download_link(description: dict[str, Any]) -> str:
     candidates = [
         item
@@ -133,13 +144,12 @@ def _resolve_download_link(description: dict[str, Any]) -> str:
             "Institutional description page must expose exactly one Hollywood-2 gaze data link."
         )
     url = candidates[0]["href"]
-    parsed = urllib.parse.urlparse(url)
-    if parsed.scheme != "https" or parsed.hostname not in _ALLOWED_DOWNLOAD_HOSTS:
-        raise RuntimeError(f"Unexpected Hollywood-2 download origin: {url}")
+    _validate_download_url(url, label="Unexpected Hollywood-2 download origin")
     return url
 
 
 def _probe_download_endpoint(url: str) -> dict[str, Any]:
+    published = _validate_download_url(url, label="Unexpected Hollywood-2 download origin")
     method = "HEAD"
     try:
         response = _request(url, method="HEAD", headers={"Accept": "*/*"})
@@ -150,15 +160,19 @@ def _probe_download_endpoint(url: str) -> dict[str, Any]:
         response = _request(url, headers={"Accept": "*/*", "Range": "bytes=0-0"})
     with response:
         final_url = response.geturl()
-        parsed = urllib.parse.urlparse(final_url)
-        if parsed.scheme != "https" or parsed.hostname not in _ALLOWED_DOWNLOAD_HOSTS:
-            raise RuntimeError(f"Hollywood-2 download redirected outside audited origin: {final_url}")
+        final = _validate_download_url(
+            final_url,
+            label="Hollywood-2 download redirected outside audited origin",
+        )
         status = int(getattr(response, "status", 200))
         headers = response.headers
         sampled = b"" if method == "HEAD" else response.read(1)
     return {
         "requested_url": url,
+        "published_link_scheme": published.scheme,
         "final_url": final_url,
+        "final_scheme": final.scheme,
+        "transport_encrypted": final.scheme == "https",
         "probe_method": method,
         "http_status": status,
         "content_type": headers.get("Content-Type"),
