@@ -1,0 +1,117 @@
+{
+  "checked_on": "2026-09-05",
+  "claim_limits": [
+    "The full reachable Git history is provenance for the first-author processing repository, not an exact copy of the externally hosted ProcessData/LabelData distribution.",
+    "The repository MIT licence is scoped to software and associated documentation files and is not promoted to external dataset-file rights.",
+    "The historical RIT download statement does not establish that the historical endpoint is currently retrievable or that a current exact dataset copy has been obtained.",
+    "Repository participant/trial code context is not promoted to exact distributed-file participant identities or a complete TrIdx-to-task mapping.",
+    "No human-human agreement, participant-disjoint model validation, cross-dataset validation, GP3 validity, or Frozen Evidence performance claim is created."
+  ],
+  "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
+  "evidence_fingerprint_sha256": "800d84d71d1d4b1a07e3b6d07c3bb7093c679284f49db0930a9836d77da30ad3",
+  "execution": {
+    "artifact_digest_sha256": "b801ada9755b64da0d87a016b35a472d3fc51606e85a2d476e4e5d25edcac11b",
+    "artifact_id": 9973226510,
+    "live_probe_file_sha256": "bf1078de1a83518afe43b200949089be09f10ee2b8a0809c9a4f489e8d2ceaf2",
+    "live_probe_fingerprint_sha256": "d0cc0212d77e24f07412ddb22e7743c9e9621be8d2ec73ef087b231c77893f11",
+    "live_probe_record_type": "gaze-in-wild-official-repository-history-probe-v1",
+    "workflow_head_sha": "4c45e355426e7cfb4345213312d3ffc6e86eead9",
+    "workflow_run_id": 33979183226
+  },
+  "key_path_history": {
+    "DataExtraction/GetParticipantInfo.m": {
+      "first_seen_commit_sha1": "8f020ed82f456769cea4a1f6a37ce901c08620f7",
+      "pinned_blob_sha1": "6c21df7554891015a1ae09182867b5d707b6a505",
+      "present_at_pinned_head": true
+    },
+    "DataExtraction/ReadData_function.m": {
+      "first_seen_commit_sha1": "8f020ed82f456769cea4a1f6a37ce901c08620f7",
+      "pinned_blob_sha1": "36d81839fb9f9eadb1274b998d2a8652fb0840ca",
+      "present_at_pinned_head": true
+    },
+    "License.md": {
+      "first_seen_commit_sha1": "76dc9cd3a276252ef1913ef1b70e4e001dd76cdf",
+      "pinned_blob_sha1": "b6f41e2ee0550feabd3938efc7d93ae24c491903",
+      "present_at_pinned_head": true
+    },
+    "PlotLabels.m": {
+      "first_seen_commit_sha1": "7758a63f9876a00136fbd44901fcecd12d05081f",
+      "pinned_blob_sha1": "511581250e04c62037c71d2da16271be4979d434",
+      "present_at_pinned_head": true
+    },
+    "README.md": {
+      "first_seen_commit_sha1": "7758a63f9876a00136fbd44901fcecd12d05081f",
+      "pinned_blob_sha1": "5b8536d0166d8c58e33d908fccd9c3f9c2b59a12",
+      "present_at_pinned_head": true
+    },
+    "key_path_inventory_fingerprint_sha256": "3f03b2fb6c524484509378c934389345fb38b191aa665e5ab8016cacb27b2815"
+  },
+  "next_required_actions": [
+    "Obtain and fingerprint an exact current or preserved authoritative copy of the compressed ProcessData/LabelData distribution.",
+    "Resolve reuse/analysis and redistribution terms for the distributed dataset files rather than the processing software.",
+    "After exact-copy acquisition, audit timestamps, participant/trial identities, task mapping, point-of-regard coordinates, and separately recoverable labeller streams."
+  ],
+  "readme_history": {
+    "pinned_all_data_files_download_webpage_statement_present": true,
+    "pinned_distribution_url_present": true,
+    "pinned_raw_data_contact_authors_statement_present": true,
+    "pinned_raw_data_over_14tb_statement_present": true,
+    "revision_blob_sha1s": [
+      "c7854ed43f8a853a36826dd06e436cbd7fb99482",
+      "17c6cb4410604f5fd456e1d88853712533a37cdd",
+      "f5d15043ae19251301a489dd03e907744fde0325",
+      "37514d43b60ee31a4f074e9cf0f8dd096e77d535",
+      "dba6c087af461b03d838a46bd30b5ee5f4a6a6a6",
+      "5b8536d0166d8c58e33d908fccd9c3f9c2b59a12"
+    ],
+    "revision_inventory_fingerprint_sha256": "b791c8127efac5801b1a5c74cc42edb4a800b009aff3f8f049c1bd39e4a8825e",
+    "unique_blob_count": 6
+  },
+  "record_type": "gaze-in-wild-repository-history-evidence-v1",
+  "repository_history": {
+    "author_names": [
+      "RSKothari",
+      "rakshit"
+    ],
+    "commit_ledger_fingerprint_sha256": "736ec7c33336f5495ab1dff02745481c92526f87aec015102edddc486492ef13",
+    "head_commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "reachable_commit_count": 56,
+    "root_commit_sha1": "054c99d3b88f0ad46cbd0b7d66f4fc38718046f5"
+  },
+  "repository_tree": {
+    "distributed_process_or_label_mat_path_count": 0,
+    "repository_is_exact_compressed_dataset_copy": false,
+    "tracked_path_count": 178
+  },
+  "scientific_boundary": {
+    "complete_reachable_repository_history_audited": true,
+    "complete_trial_to_task_mapping_from_history_verified": false,
+    "cross_dataset_validation_created": false,
+    "exact_external_dataset_copy_obtained": false,
+    "external_dataset_file_license_verified": false,
+    "external_dataset_file_rights_resolved": false,
+    "frozen_evidence_performance_claim_created": false,
+    "gp3_validity_claim_created": false,
+    "human_human_agreement_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_identity_mapping_from_history_verified": false,
+    "published_distribution_url_is_current_direct_copy_verified": false,
+    "repository_mit_license_verified_for_software": true,
+    "software_mit_is_external_dataset_license": false
+  },
+  "scope": {
+    "history_scope": "all 56 commits reachable from the pinned first-author processing-repository HEAD",
+    "pinned_commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "pinned_root_tree_sha1": "c0fa1ae13c101a8d95b09370970a6012ea97a3d9",
+    "repository": "https://github.com/RSKothari/Gaze-in-Wild"
+  },
+  "software_license_history": {
+    "license_file_blob_sha1": "b6f41e2ee0550feabd3938efc7d93ae24c491903",
+    "license_file_first_seen_commit_sha1": "76dc9cd3a276252ef1913ef1b70e4e001dd76cdf",
+    "license_file_identifies_mit": true,
+    "license_file_present_at_pinned_head": true,
+    "license_scope": "software and associated documentation files",
+    "license_scope_promoted_to_external_dataset_files": false
+  },
+  "status": "verified_complete_reachable_first_author_repository_history_dataset_copy_and_rights_unresolved"
+}
