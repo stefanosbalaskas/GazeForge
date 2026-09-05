@@ -32,7 +32,7 @@ def test_repository_source_resolution_bundle_validates_all_three_checkpoints():
     assert summary["bundle_type"] == "source-resolution-validation-bundle-v1"
     assert summary["record_count"] == 3
     assert summary["bundle_fingerprint_sha256"] == (
-        "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe"
+        "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758"
     )
     records = {record["dataset_key"]: record for record in summary["records"]}
     assert set(records) == {"visus", "hollywood2em", "gaze-in-the-wild"}
@@ -42,6 +42,9 @@ def test_repository_source_resolution_bundle_validates_all_three_checkpoints():
     assert records["hollywood2em"]["empirical_evidence_created"] is True
     assert records["hollywood2em"]["record_fingerprint_sha256"] == (
         "cd08d220357fe0cf8a44a9fc7aa2ea76df95bd155de1977ab51ccfb734ef5ca5"
+    )
+    assert records["gaze-in-the-wild"]["record_fingerprint_sha256"] == (
+        "581b9e83fab3aac51bdb506613928c86bb81a661da61a790eba91d5c5e70d2f0"
     )
 
 
@@ -160,5 +163,5 @@ def test_unified_source_resolution_cli_emits_json_bundle(capsys):
     assert output["bundle_type"] == "source-resolution-validation-bundle-v1"
     assert output["record_count"] == 3
     assert output["bundle_fingerprint_sha256"] == (
-        "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe"
+        "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758"
     )
