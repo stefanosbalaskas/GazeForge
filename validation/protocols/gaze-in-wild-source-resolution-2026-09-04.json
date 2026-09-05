@@ -68,6 +68,10 @@
       "DataExtraction/ReadData_function.m": {
         "git_blob_sha1": "36d81839fb9f9eadb1274b998d2a8652fb0840ca",
         "role": "authoritative ProcessData generation and ETG.POR semantics"
+      },
+      "PlotLabels.m": {
+        "git_blob_sha1": "511581250e04c62037c71d2da16271be4979d434",
+        "role": "official visualization code with an Indoor_Walk TrIdx=1 processing context"
       }
     },
     "readme_processing_facts": {
@@ -80,8 +84,46 @@
       "raw_data_online": false,
       "raw_data_size_gt_tb": 14,
       "raw_data_contact_authors_required": true,
-      "historical_compressed_data_url_matches_publication": true
+      "historical_compressed_data_url_matches_publication": true,
+      "readme_points_to_publication_supplement_for_official_participant_task_label_status": true
     }
+  },
+  "supplementary_identity_evidence": {
+    "record_type": "gaze-in-wild-supplementary-identity-evidence-v1",
+    "path": "validation/evidence/gaze-in-wild/gaze-in-wild-supplementary-identity-evidence-v1.json",
+    "evidence_fingerprint_sha256": "a84d64342b6001adb4a2b5893db0da5ae997f6a9067d22f8cb8c72c5dcaf4db3",
+    "supplementary_information_url": "https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs41598-020-59251-5/MediaObjects/41598_2020_59251_MOESM1_ESM.pdf",
+    "authoritative_supplement_bytes_fingerprinted": false,
+    "published_person_numbers": [
+      1,
+      2,
+      3,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      22,
+      23
+    ],
+    "published_task_columns": [
+      "Indoor navigation",
+      "Ball catching",
+      "Visual search",
+      "Tea making"
+    ],
+    "published_included_participant_set_verified": true,
+    "published_person_number_to_exact_distributed_participant_identity_verified": false,
+    "complete_tridx_to_task_mapping_verified": false
   },
   "current_institutional_evidence": {
     "source": "Rochester Institute of Technology Perception for Movement Lab",
@@ -112,8 +154,12 @@
       "outcome": "The publication explicitly identifies the RIT gaze-in-wild URL as the public location of compressed data and code and documents 120 Hz Pupil Labs acquisition hardware."
     },
     {
+      "target": "Publication Supplementary Table 1 identity context",
+      "outcome": "The published supplementary table identifies the 19 person numbers as 1,2,3,6,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23 and names four task columns: Indoor navigation, Ball catching, Visual search, and Tea making. This resolves the publication-level included set but not file-level participant identity or complete TrIdx-to-task mapping."
+    },
+    {
       "target": "First-author Gaze-in-Wild GitHub repository at pinned commit 52262d44e...",
-      "outcome": "The repository is authoritative for the processing code and documents gaze/IMU upsampling to 300 Hz, ProcessData/LabelData structure, the historical compressed-data URL, and raw-data access by contacting the authors."
+      "outcome": "The repository is authoritative for the processing code and documents gaze/IMU upsampling to 300 Hz, ProcessData/LabelData structure, the historical compressed-data URL, raw-data access by contacting the authors, and the publication supplement as the official participant/task/label-status reference."
     },
     {
       "target": "Official ReadData_function.m coordinate construction",
@@ -121,7 +167,11 @@
     },
     {
       "target": "Official GetParticipantInfo.m identity metadata",
-      "outcome": "The code defines numeric PrIdx/TrIdx acquisition identities and participant metadata through PrIdx 23. Because the publication reports 19 participants, this processing metadata alone does not identify the exact published-benchmark included participant set or map trial numbers to the four task names."
+      "outcome": "The code defines numeric PrIdx/TrIdx acquisition identities and participant metadata through PrIdx 23. Cross-source comparison with the published 19-person table leaves processing indices 4, 5, 7, and 21 outside the published table. Participant 18 age also differs between the supplementary table (34) and processing metadata (45), so age cannot be used as an identity join."
+    },
+    {
+      "target": "Official PlotLabels.m task context",
+      "outcome": "The pinned script contains an Indoor_Walk processing path while setting TrIdx=1. This is preserved as source-code context only and is insufficient to infer a complete global TrIdx-to-task mapping."
     },
     {
       "target": "Current RIT Perception for Movement Lab page",
@@ -166,9 +216,49 @@
     "official_participant_trial_index_scheme_verified": true,
     "official_processing_code_highest_participant_index": 23,
     "published_participant_count": 19,
-    "published_included_participant_set_verified": false,
+    "published_included_participant_set_verified": true,
+    "published_included_participant_ids": [
+      1,
+      2,
+      3,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      22,
+      23
+    ],
+    "processing_indices_absent_from_published_included_set": [
+      4,
+      5,
+      7,
+      21
+    ],
+    "published_task_columns_verified": true,
+    "published_task_columns": [
+      "Indoor navigation",
+      "Ball catching",
+      "Visual search",
+      "Tea making"
+    ],
+    "published_person_number_to_exact_distributed_participant_identity_verified": false,
     "trial_index_to_published_task_mapping_verified": false,
     "participant_task_mapping_verified_from_exact_copy": false,
+    "participant_18_age_metadata_discrepancy": {
+      "supplementary_table_age": 34,
+      "processing_metadata_age": 45,
+      "identity_mapping_from_age_permitted": false
+    },
     "point_of_regard_coordinate_semantics_verified_from_official_processing_code": true,
     "point_of_regard_source_unit": "normalized Pupil scene-camera coordinates",
     "point_of_regard_y_transform": "1 - norm_pos_y",
@@ -187,8 +277,9 @@
     "Failure to retrieve the historical RIT data URL in this environment is not evidence that no authoritative copy exists.",
     "The Scientific Reports article's CC BY 4.0 license is not treated as the license of externally hosted dataset files.",
     "The first-author GitHub repository's MIT license is recorded for its software and associated documentation and is not silently promoted to the external dataset archive.",
+    "The publication-level 19-person included set and four supplementary task columns are now verified, but published person numbers are not promoted to exact distributed-file participant identities and a complete TrIdx-to-task mapping remains unresolved.",
+    "The participant-18 age discrepancy between supplementary and processing metadata is preserved rather than repaired or used as an identity join.",
     "The publication's 120 Hz acquisition hardware rate and official repository's 300 Hz processed-stream target refer to different stages; empirical analysis cadence must still be inferred from exact LabelData timestamps.",
-    "Official PrIdx/TrIdx processing metadata is not promoted to the 19-participant published benchmark inclusion set or task-name mapping without exact distribution/supplementary verification.",
     "Official processing code verifies ETG.POR normalized scene-camera semantics and the 1920x1080 pixel-conversion basis, but exact distributed ProcessData files remain unaudited.",
     "Published independent annotation decisions and documented multiple-labeller LabelData do not prove that every independent stream is separately recoverable in the exact current distribution.",
     "No Gaze-in-the-Wild human-agreement or model-performance result is created or validated by this record.",
@@ -198,7 +289,7 @@
     "Obtain an exact current compressed-data copy from the published RIT distribution or an author-verified institutional source.",
     "Verify dataset-file analysis-use and raw-data redistribution terms from the exact obtained copy separately from the repository software license.",
     "Inventory and SHA-256 fingerprint every LabelData and ProcessData file before setting source_audit_ready to true.",
-    "Resolve the exact 19-participant published-benchmark inclusion set and map PrIdx/TrIdx to published task identities from authoritative distribution or supplementary evidence.",
+    "Bind the publication-level person numbers to exact distributed participant/file identities and verify the complete TrIdx-to-task mapping from authoritative data without using age as an identity join.",
     "Verify LabelData-to-ProcessData pairing and confirm ETG.POR/SceneResolution fields in the exact obtained files against the pinned official processing schema.",
     "Infer observed analysis cadence independently from each audited LabelData timestamp stream rather than imposing 120 Hz or 300 Hz.",
     "Verify separately recoverable independent labeller streams and identical underlying gaze before freezing human-human agreement.",

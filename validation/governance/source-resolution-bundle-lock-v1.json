@@ -2,12 +2,12 @@
   "lock_type": "source-resolution-bundle-lock-v1",
   "reviewed_on": "2026-09-05",
   "record_count": 3,
-  "bundle_fingerprint_sha256": "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758",
+  "bundle_fingerprint_sha256": "57064fea405e4a2e944bb066dd2dd7bff919ec12fb380d9cc1a8ba67d3bbbc5a",
   "records": [
     {
       "dataset_key": "gaze-in-the-wild",
       "status": "published_distribution_identifier_established_current_direct_copy_unverified",
-      "record_fingerprint_sha256": "581b9e83fab3aac51bdb506613928c86bb81a661da61a790eba91d5c5e70d2f0"
+      "record_fingerprint_sha256": "22bbdef6e6f2823d10c84fd099596700d9db19c54aecfb76484c7625fd9ebb08"
     },
     {
       "dataset_key": "hollywood2em",
@@ -21,7 +21,7 @@
     }
   ],
   "review_basis": [
-    "Reviewed current source-resolution checkpoint set for VISUS, Hollywood2EM, and Gaze-in-the-Wild; Hollywood2EM references separately frozen empirical source evidence and Gaze-in-the-Wild now binds first-author processing provenance while exact dataset copy, rights, participant/task mapping, and source-audit readiness remain unresolved.",
+    "Reviewed current source-resolution checkpoint set for VISUS, Hollywood2EM, and Gaze-in-the-Wild; Hollywood2EM references separately frozen empirical source evidence and Gaze-in-the-Wild now binds first-author processing provenance plus publication-level Supplementary Table 1 participant/task context while exact dataset copy, rights, distributed-file identity, complete trial-to-task mapping, and source-audit readiness remain unresolved.",
     "This governance lock snapshots checkpoint identities only; it does not authorize empirical evidence, rights, source-audit readiness, or Frozen Evidence publication."
   ],
   "scientific_boundary": {
@@ -31,5 +31,5 @@
     "authorizes_empirical_evidence": false,
     "authorizes_frozen_evidence_publication": false
   },
-  "lock_fingerprint_sha256": "1616af4fdce05e184db2efcef9ac60ce53a64523ba72f8bb723706bf077bce58"
+  "lock_fingerprint_sha256": "705fab1f67b564da5deef8c004822c424e714037ec4e0067831fad8cbee3e713"
 }

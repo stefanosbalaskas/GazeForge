@@ -30,18 +30,21 @@ def test_source_resolution_dashboard_uses_complete_validated_repository_set():
         "visus-source-resolution-2026-09-04.json",
     )
     assert dashboard.bundle_fingerprint_sha256 == (
-        "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758"
+        "57064fea405e4a2e944bb066dd2dd7bff919ec12fb380d9cc1a8ba67d3bbbc5a"
     )
     assert dashboard.reviewed_snapshot is True
     assert dashboard.reviewed_on == "2026-09-05"
     assert dashboard.lock_fingerprint_sha256 == (
-        "1616af4fdce05e184db2efcef9ac60ce53a64523ba72f8bb723706bf077bce58"
+        "705fab1f67b564da5deef8c004822c424e714037ec4e0067831fad8cbee3e713"
     )
     assert dashboard.lock_source_file == str(_LOCK)
     rows = {row["dataset_key"]: row for row in dashboard.rows}
     assert all(row["source_audit_ready"] == "false" for row in rows.values())
     assert rows["hollywood2em"]["empirical_evidence_created"] == "true"
     assert rows["gaze-in-the-wild"]["empirical_evidence_created"] == "false"
+    assert rows["gaze-in-the-wild"]["record_fingerprint_sha256"] == (
+        "22bbdef6e6f2823d10c84fd099596700d9db19c54aecfb76484c7625fd9ebb08"
+    )
     assert rows["visus"]["empirical_evidence_created"] == "false"
     assert all(row["analysis_use_terms_status"] == "unresolved" for row in rows.values())
     assert all(

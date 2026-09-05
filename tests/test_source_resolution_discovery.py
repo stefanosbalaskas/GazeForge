@@ -83,7 +83,7 @@ def test_directory_mode_cli_emits_complete_repository_bundle(capsys):
     output = json.loads(capsys.readouterr().out)
     assert output["record_count"] == 3
     assert output["bundle_fingerprint_sha256"] == (
-        "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758"
+        "57064fea405e4a2e944bb066dd2dd7bff919ec12fb380d9cc1a8ba67d3bbbc5a"
     )
 
 
