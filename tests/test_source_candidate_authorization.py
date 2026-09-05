@@ -8,6 +8,7 @@ from gazeforge.gaze_in_wild_audit import (
     GazeInWildProcessFileRecord,
     GazeInWildSourceAuditSpec,
 )
+from gazeforge.gaze_in_wild_quarantine_exit import GazeInWildQuarantineExitAuthorization
 from gazeforge.hollywood2_audit import Hollywood2SourceAuditSpec, Hollywood2SourceFileRecord
 from gazeforge.source_candidate_authorization import (
     CandidateSourceAuditAuthorization,
@@ -21,6 +22,8 @@ from gazeforge.source_candidate_authorization import (
 
 _SHA_A = "a" * 64
 _SHA_B = "b" * 64
+_SHA_C = "c" * 64
+_SHA_D = "d" * 64
 
 
 def _hollywood_template():
@@ -111,6 +114,34 @@ def _authorized(spec, *, pixel_kinematics_compatible=False):
         pixel_kinematics_compatible=pixel_kinematics_compatible,
         authorization_basis="all required source-audit gates independently reviewed",
         notes=("manual authorization note",),
+    )
+
+
+def _gaze_exit(spec):
+    return GazeInWildQuarantineExitAuthorization(
+        recovery_candidate_kind="candidate_original_layout_unverified",
+        recovery_record_fingerprint_sha256=_SHA_A,
+        recovery_tree_fingerprint_sha256=_SHA_B,
+        candidate_inventory_fingerprint_sha256=_SHA_C,
+        audit_template_fingerprint_sha256=source_audit_template_fingerprint(spec),
+        decision="authorized",
+        reviewer="independent recovery reviewer",
+        reviewed_at="2026-09-05",
+        source_authority_verified=True,
+        authoritative_source="authoritative distribution",
+        authoritative_source_revision="verified revision",
+        source_authority_evidence="source authority independently verified",
+        exact_copy_identity_verified=True,
+        exact_copy_identity_evidence="exact candidate copy matched authoritative identity",
+        dataset_file_rights_resolved=True,
+        reuse_terms_verified=True,
+        reuse_terms_source="current first-party terms",
+        rights_evidence="dataset-file rights independently reviewed",
+        analysis_use_permitted=True,
+        analysis_use_evidence="analysis use explicitly permitted",
+        redistribution_status="restricted",
+        redistribution_evidence="redistribution restriction reviewed",
+        authorization_basis="authority, exact-copy identity, and rights reviewed",
     )
 
 
@@ -207,13 +238,30 @@ def test_gaze_pixel_kinematics_requires_pixel_coordinate_contract():
     authorization = _authorized(template, pixel_kinematics_compatible=True)
 
     with pytest.raises(BenchmarkIntegrityError, match="verified pixel units"):
+        authorize_candidate_source_audit_template(
+            template,
+            authorization,
+            gaze_in_wild_quarantine_exit=_gaze_exit(template),
+        )
+
+
+def test_gaze_authorization_requires_separate_quarantine_exit():
+    template = _gaze_template(coordinate_unit="pixels")
+    authorization = _authorized(template)
+
+    with pytest.raises(BenchmarkIntegrityError, match="quarantine-exit"):
         authorize_candidate_source_audit_template(template, authorization)
 
 
 def test_gaze_authorization_preserves_mapping_and_controls_pixel_kinematics():
     template = _gaze_template(coordinate_unit="pixels")
     authorization = _authorized(template, pixel_kinematics_compatible=True)
-    spec = authorize_candidate_source_audit_template(template, authorization)
+    exit_record = _gaze_exit(template)
+    spec = authorize_candidate_source_audit_template(
+        template,
+        authorization,
+        gaze_in_wild_quarantine_exit=exit_record,
+    )
 
     assert isinstance(spec, GazeInWildSourceAuditSpec)
     assert spec.dataset_status == "empirical"
@@ -223,6 +271,37 @@ def test_gaze_authorization_preserves_mapping_and_controls_pixel_kinematics():
     assert spec.label_files[0].process_path == "process.mat"
     assert spec.label_files[0].sha256 == _SHA_A
     assert spec.process_files[0].sha256 == _SHA_B
+    assert any(
+        f"GIW quarantine-exit record fingerprint: {exit_record.record_fingerprint_sha256}" == note
+        for note in spec.notes
+    )
+
+
+def test_gaze_quarantine_exit_must_match_exact_template():
+    template = _gaze_template(coordinate_unit="pixels")
+    authorization = _authorized(template)
+    exit_record = _gaze_exit(template)
+    changed = _gaze_template(coordinate_unit="pixels")
+    changed.notes.append("template drift")
+    changed_authorization = _authorized(changed)
+
+    with pytest.raises(BenchmarkIntegrityError, match="not bound to this exact audit template"):
+        authorize_candidate_source_audit_template(
+            changed,
+            changed_authorization,
+            gaze_in_wild_quarantine_exit=exit_record,
+        )
+
+
+def test_hollywood_refuses_gaze_quarantine_exit_record():
+    hollywood = _hollywood_template()
+    gaze = _gaze_template()
+    with pytest.raises(BenchmarkIntegrityError, match="cannot authorize a Hollywood2EM"):
+        authorize_candidate_source_audit_template(
+            hollywood,
+            _authorized(hollywood),
+            gaze_in_wild_quarantine_exit=_gaze_exit(gaze),
+        )
 
 
 def test_authorization_boundary_tamper_is_rejected(tmp_path):
