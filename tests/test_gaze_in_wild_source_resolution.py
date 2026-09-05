@@ -14,7 +14,7 @@ def test_gaze_in_wild_source_resolution_stays_non_empirical():
     assert record["record_type"] == "source-resolution-status-v1"
     assert record["dataset"] == "Gaze-in-the-Wild naturalistic eye-head event benchmark"
     assert record["status"] == (
-        "authoritative_processing_repository_verified_direct_dataset_copy_unverified"
+        "published_distribution_identifier_established_current_direct_copy_unverified"
     )
     assert record["published_distribution_identifier_found"] is True
     assert record["current_institutional_dataset_listing_found"] is True
@@ -45,15 +45,18 @@ def test_gaze_in_wild_binds_first_author_repository_to_exact_revision():
     )
 
 
-def test_gaze_in_wild_reconciles_acquisition_and_processing_rates_without_imposition():
+def test_gaze_in_wild_stage_rates_are_resolved_without_imposing_file_cadence():
     provenance = _load_record()["sampling_rate_provenance"]
 
     assert provenance["published_acquisition_hardware_rate_hz"] == 120
     assert provenance["official_processing_target_rate_hz"] == 300
     assert provenance["secondary_evaluation_catalog_rate_hz"] == 300
-    assert provenance["rates_reconciled"] is True
+    assert provenance["acquisition_processing_stage_relationship_verified"] is True
+    assert provenance["rates_reconciled"] is False
     assert provenance["distributed_file_analysis_cadence_verified"] is False
     assert "timestamps" in provenance["required_resolution_method"]
+    assert "120 Hz" in provenance["reconciliation"]
+    assert "300 Hz" in provenance["reconciliation"]
 
 
 def test_gaze_in_wild_published_independence_does_not_skip_file_verification():
@@ -110,6 +113,8 @@ def test_gaze_in_wild_por_semantics_are_verified_without_claiming_file_audit():
     assert mapping["scene_resolution_px"] == [1920, 1080]
     assert mapping["canonical_pixel_conversion_basis_verified"] is True
     assert mapping["exact_distributed_file_point_of_regard_audited"] is False
+    assert mapping["point_of_regard_coordinate_unit_verified_from_exact_copy"] is False
+    assert mapping["verification_requires_exact_obtained_copy"] is True
     assert mapping["verification_requires_exact_obtained_copy_for_empirical_source_audit"]
 
 
