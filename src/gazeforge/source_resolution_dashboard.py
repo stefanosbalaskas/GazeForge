@@ -1,4 +1,4 @@
-"""Public non-empirical status dashboard for benchmark source-resolution checkpoints."""
+"""Public governance dashboard for benchmark source-resolution checkpoints."""
 
 from __future__ import annotations
 
@@ -68,7 +68,7 @@ def build_source_resolution_dashboard(
 
     Supplying ``lock_path`` upgrades only the dashboard's governance-integrity statement: the live
     checkpoint bundle must exactly match the separately frozen reviewed snapshot. It does not
-    upgrade source authority, rights, source-audit readiness, or empirical status.
+    itself upgrade source authority, rights, source-audit readiness, or empirical status.
     """
     directory = Path(root)
     paths = discover_source_resolution_paths(directory)
@@ -128,15 +128,16 @@ def _escape_cell(value: str) -> str:
 def render_source_resolution_dashboard_markdown(
     dashboard: SourceResolutionDashboard,
 ) -> str:
-    """Render an explicitly non-empirical Markdown status page from validated checkpoints."""
+    """Render governance status without conflating it with performance evidence."""
     lines = [
         "# Source-resolution status",
         "",
-        "!!! warning \"Non-empirical governance status\"",
-        "    This page reports validated source-resolution checkpoints only. Passing a",
-        "    checkpoint does **not** mean that the external dataset has been obtained,",
-        "    source-audited, licensed for analysis or redistribution, or used to create",
-        "    model-performance or human-agreement evidence.",
+        "!!! warning \"Governance status, not performance evidence\"",
+        "    This page reports integrity-checked source-resolution checkpoints. A row may",
+        "    reference separately frozen empirical source evidence when that evidence has",
+        "    actually been created, but the dashboard itself does **not** establish model",
+        "    performance, human-human reliability, analysis rights, redistribution rights,",
+        "    source-audit readiness, or Frozen Evidence publication.",
         "",
         "The table is generated from the committed `source-resolution-status-v1` JSON records and",
         "their dataset-specific validators. Values are not transcribed by hand.",
@@ -197,8 +198,10 @@ def render_source_resolution_dashboard_markdown(
                 "",
                 "This lock confirms only that the public status page matches the checkpoint",
                 "contents intentionally reviewed for repository governance. It does **not**",
-                "authorize a source-status upgrade, source-audit readiness, empirical evidence,",
+                "authorize source-status upgrades, source-audit readiness, empirical evidence,",
                 "dataset analysis or redistribution rights, or Frozen Evidence publication.",
+                "A checkpoint may point to empirical evidence only when that evidence is",
+                "independently frozen and validated outside the governance lock.",
                 "",
             ]
         )
@@ -207,10 +210,12 @@ def render_source_resolution_dashboard_markdown(
         [
             "## Scientific boundary",
             "",
-            "Source resolution precedes source audit. The Frozen Evidence layer remains a separate",
-            "publication gate and is the only public dashboard intended to surface validated",
-            "performance evidence. A source-resolution row must never be interpreted as benchmark",
-            "accuracy, human reliability, GP3 validity, or permission to redistribute raw data.",
+            "Source resolution and source evidence do not automatically imply source-audit",
+            "readiness or benchmark performance. The Frozen Evidence layer remains a separate",
+            "publication gate for validated performance results. A source-resolution row must",
+            "never be interpreted as benchmark accuracy, independent human reliability, GP3",
+            "validity, or permission to redistribute raw data unless those claims are separately",
+            "supported and frozen.",
             "",
         ]
     )
