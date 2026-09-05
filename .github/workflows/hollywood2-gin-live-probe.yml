@@ -1,0 +1,124 @@
+name: Hollywood2 GIN live source probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/hollywood2-gin-live-probe
+    paths:
+      - "scripts/hollywood2_gin_live_probe.py"
+      - "src/gazeforge/hollywood2_evidence.py"
+      - "src/gazeforge/source_resolution.py"
+      - "src/gazeforge/source_resolution_dashboard.py"
+      - "tests/test_hollywood2_evidence.py"
+      - "tests/test_hollywood2_source_resolution.py"
+      - "tests/test_docs_hook.py"
+      - "tests/test_source_resolution*.py"
+      - "validation/evidence/hollywood2/**"
+      - "validation/protocols/hollywood2-source-resolution-*.json"
+      - "validation/history/source-resolution/hollywood2-source-resolution-*.json"
+      - "validation/governance/source-resolution-bundle-lock-v1.json"
+      - "docs/hollywood2-authoritative-evidence.md"
+      - "docs/hollywood2-source-resolution.md"
+      - "docs/source-resolution-status.md"
+      - "docs/api-reference.md"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/docs.yml"
+      - ".github/workflows/hollywood2-gin-live-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Configure anonymous GIN transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global \
+            url."https://gin.g-node.org/ioannis.agtzidis/hollywood2_em".insteadOf \
+            "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
+      - name: Probe canonical Hollywood2EM GIN repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5; do
+            if python scripts/hollywood2_gin_live_probe.py; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 5 ]; then
+              echo "Canonical GIN probe failed after bounded retries." >&2
+              exit 1
+            fi
+            delay=$((attempt * 20))
+            echo "GIN probe attempt ${attempt} failed; retrying after ${delay}s." >&2
+            sleep "$delay"
+          done
+      - name: Install package
+        run: python -m pip install .
+      - name: Bind live source audit to frozen evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_evidence import validate_hollywood2_gin_probe
+
+          validate_hollywood2_gin_probe(
+              Path("hollywood2_gin_live_probe.json"),
+              Path(
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-authoritative-ground-truth-evidence-v1.json"
+              ),
+          )
+          print("Hollywood2 authoritative live probe is bound to frozen evidence.")
+          PY
+      - name: Summarize source-resolution result
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(Path("hollywood2_gin_live_probe.json").read_text())
+          ground = record["ground_truth"]
+          comparison = ground["student_final_comparison"]
+          sampling = ground["sampling_rate"]
+          print("HEAD:", record["head"]["commit_sha1"])
+          print("default_ref:", record["remote"]["default_ref"])
+          print("tree entries:", record["tree"]["entry_count"])
+          print("ARFF paths:", record["tree"]["arff_path_count"])
+          print("ground-truth files:", ground["file_count"])
+          print("ground-truth rows:", ground["total_rows"])
+          print("ground-truth bytes:", ground["total_bytes"])
+          print("splits:", ground["splits"])
+          print("clips:", ground["clip_count"])
+          print("file subject tokens:", ground["file_subject_token_count"])
+          print("schema signatures:", ground["schema_signatures"])
+          print("label counts:", ground["global_label_counts"])
+          print("student/final samples:", comparison["sample_count"])
+          print("student/final changed:", comparison["changed_sample_count"])
+          print("student/final raw agreement:", comparison["raw_agreement_fraction"])
+          print(
+              "median file rate assuming microseconds:",
+              sampling["median_file_rate_hz_assuming_time_us"],
+          )
+          print("license files:", [item["path"] for item in record["license_files"]])
+          print("fingerprint:", record["probe_fingerprint_sha256"])
+          PY
+      - name: Upload deterministic probe record
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-gin-live-probe
+          path: hollywood2_gin_live_probe.json
+          if-no-files-found: error
+          retention-days: 30

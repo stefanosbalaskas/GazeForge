@@ -1,0 +1,91 @@
+{
+  "record_type": "source-resolution-status-v1",
+  "dataset": "Hollywood2EM eye-movement event benchmark",
+  "checked_on": "2026-09-05",
+  "supersedes": "validation/history/source-resolution/hollywood2-source-resolution-2026-09-04.json",
+  "status": "canonical_repository_and_ground_truth_recovered_terms_and_participant_mapping_unresolved",
+  "empirical_evidence_created": true,
+  "source_audit_ready": false,
+  "canonical_distribution_identifier_found": true,
+  "current_retrievable_copy_verified": true,
+  "authoritative_repository": {
+    "url": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "default_ref": "refs/heads/master",
+    "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "commit_author_date": "2020-02-19T16:56:44+01:00",
+    "readme_git_blob_sha1": "c8b7d126295e5f52a7748533952f044228423bf8",
+    "readme_sha256": "97f839bda127674b5de1eb5d8c3b1d2c82d65e7c6c1708c2e9f9711170ada383",
+    "repository_license_file_recovered": false
+  },
+  "authoritative_ground_truth": {
+    "file_count": 697,
+    "total_bytes": 137328178,
+    "sample_count": 3871580,
+    "test_file_count": 642,
+    "train_file_count": 55,
+    "clip_count": 56,
+    "file_subject_token_count": 16,
+    "source_identity_ledger_fingerprint_sha256": "51dd0883cf5b7966a4caea94fb9ac97e43bee6cf716423f26f268810041d3030",
+    "schema_signature_sha256": "31a6db306fded47592ad4c1647da8df3413df970a2b8abcba91e23d6261881c0",
+    "schema_uniform_across_all_files": true,
+    "final_label_counts": {
+      "FIX": 2414211,
+      "SACCADE": 353208,
+      "SP": 936913,
+      "NOISE": 167248
+    },
+    "student_vs_expert_corrected": {
+      "sample_count": 3871580,
+      "changed_sample_count": 291315,
+      "raw_agreement_fraction": 0.9247555261676111,
+      "interpretation": "annotation sensitivity from a sequential novice/student-to-expert correction workflow, not independent human-human reliability"
+    }
+  },
+  "format_and_units": {
+    "arff_relation": "gaze_labels",
+    "attributes": ["time", "x", "y", "confidence", "handlabeller_1", "handlabeller_final"],
+    "time_unit": "microseconds",
+    "coordinate_unit": "pixels",
+    "native_sampling_rate_hz": 500.0,
+    "observed_median_file_rate_hz": 500.0,
+    "unit_semantics_basis": "Pinned author implementation MikhailStartsev/deep_em_classifier@9a345a37aab47ac6780ce0d4b5798cc15291c75b documents the shared ARFF convention as time in microseconds and x/y in pixels; the Hollywood2 paper states that the hand-labelled data use this ARFF format.",
+    "coordinate_unit_verified": true,
+    "time_unit_verified": true
+  },
+  "mapping": {
+    "trial_clip_identity_file_bound": true,
+    "trial_identity_mapping_verified": true,
+    "file_subject_tokens_recovered": true,
+    "file_subject_tokens": ["001", "002", "003", "004", "005", "006", "008", "010", "011", "012", "013", "014", "015", "017", "018", "019"],
+    "participant_identity_mapping_verified": false,
+    "participant_mapping_note": "The 16 filename tokens match the published observer count, but this checkpoint does not promote the token semantics to verified participant identities without an authoritative mapping statement."
+  },
+  "rights": {
+    "analysis_use_terms_status": "unresolved",
+    "raw_data_redistribution_terms_status": "unresolved",
+    "article_cc_by_is_dataset_license": false,
+    "repository_license_file_recovered": false,
+    "dataset_specific_license_verified": false,
+    "open_source_description_is_exact_license_text": false,
+    "license_inference_permitted": false
+  },
+  "evidence": {
+    "record": "validation/evidence/hollywood2/hollywood2-authoritative-ground-truth-evidence-v1.json",
+    "evidence_fingerprint_sha256": "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea",
+    "live_probe_record_type": "hollywood2-gin-live-probe-v2",
+    "live_probe_fingerprint_sha256": "b3137d6bc4ff049802e6cdc62f6e9d3b8e490fe42384d501f789ba3bacb691dd"
+  },
+  "claim_limits": [
+    "This checkpoint resolves the canonical repository revision and the complete hand-labelled ground-truth subset present in that revision; it does not recover the full original Hollywood2 video corpus.",
+    "No repository LICENSE/COPYING file was present, so dataset-specific reuse and redistribution terms remain unresolved.",
+    "The 16 filename subject tokens are preserved as file-bound tokens and are not yet promoted to verified participant identities.",
+    "The novice/student and expert-final labels are sequential, not independent annotation streams.",
+    "No model-performance, participant-disjoint validation, cross-dataset validation, or canonical Frozen Evidence claim is created here."
+  ],
+  "next_required_actions": [
+    "Resolve exact dataset-specific analysis-use and redistribution terms from an author-verified or institutional source.",
+    "Resolve the semantic mapping of the 16 filename subject tokens to observer identities before participant-held-out validation.",
+    "Run the planned student-vs-expert sensitivity analyses using the frozen authoritative source ledger.",
+    "Run Hollywood2 model and Lund↔Hollywood2 cross-dataset validation only after the remaining provenance gates pass."
+  ]
+}
