@@ -1,13 +1,14 @@
 {
   "record_type": "source-resolution-status-v1",
   "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
-  "checked_on": "2026-09-04",
-  "status": "published_distribution_identifier_established_current_direct_copy_unverified",
+  "checked_on": "2026-09-05",
+  "status": "authoritative_processing_repository_verified_direct_dataset_copy_unverified",
   "empirical_evidence_created": false,
   "source_audit_ready": false,
   "published_distribution_identifier_found": true,
   "current_direct_data_endpoint_verified": false,
   "current_institutional_dataset_listing_found": true,
+  "official_processing_repository_verified": true,
   "authoritative_publication": {
     "title": "Gaze-in-wild: A dataset for studying eye and head coordination in everyday activities",
     "authors": [
@@ -44,6 +45,44 @@
     "article_license": "CC BY 4.0",
     "article_license_is_dataset_license": false
   },
+  "authoritative_processing_repository": {
+    "repository": "https://github.com/RSKothari/Gaze-in-Wild",
+    "owner_is_dataset_first_author": true,
+    "pinned_commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "root_tree_sha1": "c0fa1ae13c101a8d95b09370970a6012ea97a3d9",
+    "default_branch": "master",
+    "files": {
+      "README.md": {
+        "git_blob_sha1": "5b8536d0166d8c58e33d908fccd9c3f9c2b59a12",
+        "bytes": 5464,
+        "role": "authoritative processing and distribution documentation"
+      },
+      "License.md": {
+        "git_blob_sha1": "b6f41e2ee0550feabd3938efc7d93ae24c491903",
+        "role": "MIT license for repository software and associated documentation"
+      },
+      "DataExtraction/GetParticipantInfo.m": {
+        "git_blob_sha1": "6c21df7554891015a1ae09182867b5d707b6a505",
+        "role": "authoritative acquisition participant/trial metadata"
+      },
+      "DataExtraction/ReadData_function.m": {
+        "git_blob_sha1": "36d81839fb9f9eadb1274b998d2a8652fb0840ca",
+        "role": "authoritative ProcessData generation and ETG.POR semantics"
+      }
+    },
+    "readme_processing_facts": {
+      "pupil_gaze_collected_with_pupil_labs": true,
+      "gaze_processed_target_rate_hz": 300,
+      "imu_processed_target_rate_hz": 300,
+      "processed_streams_time_synchronised_in_processdata": true,
+      "labeldata_may_be_absent_partial_or_have_multiple_labellers": true,
+      "zed_scene_depth_rate_hz": 30,
+      "raw_data_online": false,
+      "raw_data_size_gt_tb": 14,
+      "raw_data_contact_authors_required": true,
+      "historical_compressed_data_url_matches_publication": true
+    }
+  },
   "current_institutional_evidence": {
     "source": "Rochester Institute of Technology Perception for Movement Lab",
     "source_url": "https://www.rit.edu/science/perception-movement-lab",
@@ -58,7 +97,7 @@
       "reported_distribution_url": "http://www.cis.rit.edu/~rsk3900/gaze-in-wild",
       "reports_independent_five_annotator_process": true,
       "reports_nominal_rate_hz": 300,
-      "rate_interpretation": "secondary catalog value; not substituted for the publication's 120 Hz acquisition-hardware provenance"
+      "rate_interpretation": "secondary catalog value consistent with the official processing repository's 300 Hz upsampling target, not the 120 Hz acquisition hardware rate"
     },
     {
       "source": "Implementing mobile eye tracking in psychological research: A practical guide",
@@ -73,16 +112,24 @@
       "outcome": "The publication explicitly identifies the RIT gaze-in-wild URL as the public location of compressed data and code and documents 120 Hz Pupil Labs acquisition hardware."
     },
     {
+      "target": "First-author Gaze-in-Wild GitHub repository at pinned commit 52262d44e...",
+      "outcome": "The repository is authoritative for the processing code and documents gaze/IMU upsampling to 300 Hz, ProcessData/LabelData structure, the historical compressed-data URL, and raw-data access by contacting the authors."
+    },
+    {
+      "target": "Official ReadData_function.m coordinate construction",
+      "outcome": "The code assigns ETG.POR from Pupil norm_pos_x/norm_pos_y, flips y as 1 - norm_pos_y for MATLAB image coordinates, and stores ETG.SceneResolution = [1920, 1080]. This establishes the official processed POR coordinate semantics and pixel-conversion basis."
+    },
+    {
+      "target": "Official GetParticipantInfo.m identity metadata",
+      "outcome": "The code defines numeric PrIdx/TrIdx acquisition identities and participant metadata through PrIdx 23. Because the publication reports 19 participants, this processing metadata alone does not identify the exact published-benchmark included participant set or map trial numbers to the four task names."
+    },
+    {
       "target": "Current RIT Perception for Movement Lab page",
       "outcome": "The institutional page currently lists The Gaze-In-Wild Dataset under Software/Data, but the surfaced link resolves to the publication record rather than a current direct dataset archive."
     },
     {
       "target": "Published RIT gaze-in-wild data URL",
       "outcome": "A current direct copy was not successfully retrieved in this resolution environment; this is recorded as unverified rather than as evidence that the dataset is unavailable."
-    },
-    {
-      "target": "Later methodological and replication literature",
-      "outcome": "Later sources continue to cite the same RIT distribution identifier, supporting its historical/canonical identity but not replacing exact current file and reuse-term verification."
     }
   ],
   "rights": {
@@ -90,44 +137,66 @@
     "raw_data_redistribution_terms_status": "unresolved",
     "article_cc_by_is_dataset_license": false,
     "publication_public_availability_is_unrestricted_redistribution_permission": false,
+    "official_repository_license_identifier": "MIT",
+    "official_repository_license_scope": "software and associated documentation files",
+    "repository_mit_promoted_to_external_dataset_files": false,
+    "external_dataset_file_license_status": "unresolved",
     "license_inference_permitted": false
   },
   "annotation_provenance": {
     "published_trained_annotator_count": 5,
     "publication_states_annotators_decided_independently": true,
     "publication_independence_evidence_present": true,
+    "official_repository_documents_multiple_labellers_possible": true,
     "separately_recoverable_streams_verified_from_exact_copy": false,
     "human_human_agreement_execution_ready": false,
-    "readiness_rule": "published independence is necessary context, but exact recoverable streams and shared gaze identity must be verified by the source audit before frozen agreement"
+    "readiness_rule": "published independence and official LabelData structure are necessary context, but exact recoverable streams and shared gaze identity must be verified by the source audit before frozen agreement"
   },
   "sampling_rate_provenance": {
     "published_acquisition_hardware_rate_hz": 120,
+    "official_processing_target_rate_hz": 300,
     "secondary_evaluation_catalog_rate_hz": 300,
-    "rates_reconciled": false,
+    "rates_reconciled": true,
+    "reconciliation": "120 Hz is eye-tracker acquisition hardware provenance; the first-author processing repository documents gaze/IMU upsampling to 300 Hz, which explains the later processed-benchmark 300 Hz description.",
     "distributed_file_analysis_cadence_verified": false,
-    "required_resolution_method": "infer each audited label stream from its timestamps and preserve published hardware rate separately"
+    "required_resolution_method": "infer each audited LabelData stream from its timestamps; never substitute either the 120 Hz acquisition rate or 300 Hz processing target for measured file cadence"
   },
   "mapping_and_coordinates": {
+    "official_participant_trial_index_scheme_verified": true,
+    "official_processing_code_highest_participant_index": 23,
+    "published_participant_count": 19,
+    "published_included_participant_set_verified": false,
+    "trial_index_to_published_task_mapping_verified": false,
     "participant_task_mapping_verified_from_exact_copy": false,
-    "point_of_regard_coordinate_unit_verified_from_exact_copy": false,
-    "verification_requires_exact_obtained_copy": true
+    "point_of_regard_coordinate_semantics_verified_from_official_processing_code": true,
+    "point_of_regard_source_unit": "normalized Pupil scene-camera coordinates",
+    "point_of_regard_y_transform": "1 - norm_pos_y",
+    "scene_resolution_px": [
+      1920,
+      1080
+    ],
+    "canonical_pixel_conversion_basis_verified": true,
+    "exact_distributed_file_point_of_regard_audited": false,
+    "verification_requires_exact_obtained_copy_for_empirical_source_audit": true
   },
   "claim_limits": [
-    "This record documents source-resolution research, not a completed Gaze-in-the-Wild source audit.",
+    "This record documents authoritative source/provenance resolution, not a completed Gaze-in-the-Wild empirical source audit.",
     "Failure to retrieve the historical RIT data URL in this environment is not evidence that no authoritative copy exists.",
     "The Scientific Reports article's CC BY 4.0 license is not treated as the license of externally hosted dataset files.",
-    "Published public availability does not by itself establish unrestricted raw-data redistribution permission.",
-    "The publication's 120 Hz eye-tracker hardware rate is preserved separately from the 300 Hz value reported by a later evaluation catalog.",
-    "Published independent annotation decisions do not prove that every independent stream is separately recoverable in the exact current distribution.",
+    "The first-author GitHub repository's MIT license is recorded for its software and associated documentation and is not silently promoted to the external dataset archive.",
+    "The publication's 120 Hz acquisition hardware rate and official repository's 300 Hz processed-stream target refer to different stages; empirical analysis cadence must still be inferred from exact LabelData timestamps.",
+    "Official PrIdx/TrIdx processing metadata is not promoted to the 19-participant published benchmark inclusion set or task-name mapping without exact distribution/supplementary verification.",
+    "Official processing code verifies ETG.POR normalized scene-camera semantics and the 1920x1080 pixel-conversion basis, but exact distributed ProcessData files remain unaudited.",
+    "Published independent annotation decisions and documented multiple-labeller LabelData do not prove that every independent stream is separately recoverable in the exact current distribution.",
     "No Gaze-in-the-Wild human-agreement or model-performance result is created or validated by this record.",
     "Gaze-in-the-Wild remains naturalistic head-mounted evidence and is not Gazepoint GP3-equivalent validation."
   ],
   "next_required_actions": [
-    "Obtain an exact current copy from the published RIT distribution or an author-verified institutional source.",
-    "Verify analysis-use and raw-data redistribution terms from the exact obtained copy separately.",
+    "Obtain an exact current compressed-data copy from the published RIT distribution or an author-verified institutional source.",
+    "Verify dataset-file analysis-use and raw-data redistribution terms from the exact obtained copy separately from the repository software license.",
     "Inventory and SHA-256 fingerprint every LabelData and ProcessData file before setting source_audit_ready to true.",
-    "Verify participant/task identities and LabelData-to-ProcessData pairing from the authoritative structure.",
-    "Verify point-of-regard coordinate semantics before pixel-kinematic or cross-dataset modelling.",
+    "Resolve the exact 19-participant published-benchmark inclusion set and map PrIdx/TrIdx to published task identities from authoritative distribution or supplementary evidence.",
+    "Verify LabelData-to-ProcessData pairing and confirm ETG.POR/SceneResolution fields in the exact obtained files against the pinned official processing schema.",
     "Infer observed analysis cadence independently from each audited LabelData timestamp stream rather than imposing 120 Hz or 300 Hz.",
     "Verify separately recoverable independent labeller streams and identical underlying gaze before freezing human-human agreement.",
     "Only after those gates pass, freeze participant-disjoint model validation and task/event-class sensitivity."
