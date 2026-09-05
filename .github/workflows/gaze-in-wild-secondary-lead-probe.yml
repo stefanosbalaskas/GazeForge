@@ -1,0 +1,127 @@
+name: Gaze-in-the-Wild secondary lead provenance probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-secondary-lead-provenance
+    paths:
+      - "scripts/probe_gaze_in_wild_secondary_leads.py"
+      - "src/gazeforge/gaze_in_wild_secondary_leads.py"
+      - "tests/test_gaze_in_wild_secondary_leads.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-secondary-recovery-lead-evidence-v1.json"
+      - "docs/gaze-in-wild-recovery-candidates.md"
+      - ".github/workflows/gaze-in-wild-secondary-lead-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Clone exact secondary leads
+        shell: bash
+        run: |
+          set -euo pipefail
+          clone_exact() {
+            local repo="$1"
+            local commit="$2"
+            local dest="$3"
+            for attempt in 1 2 3 4 5; do
+              rm -rf "$dest"
+              if git clone --quiet "$repo" "$dest"; then
+                git -C "$dest" checkout --quiet "$commit"
+                test "$(git -C "$dest" rev-parse HEAD)" = "$commit"
+                return 0
+              fi
+              if [ "$attempt" -eq 5 ]; then
+                echo "Clone failed after bounded retries: $repo" >&2
+                return 1
+              fi
+              sleep $((attempt * 5))
+            done
+          }
+          clone_exact \
+            https://github.com/Morris88826/awesome-eye-data.git \
+            4c6a58ef5be5693e08adac33e8768a3b88ddf8ac \
+            _awesome_eye_data
+          clone_exact \
+            https://github.com/George614/edit_distance_gpu.git \
+            01711b11556c271a7a15e566935089bb2775121b \
+            _edit_distance_gpu
+      - name: Run exact-commit secondary-lead probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_secondary_leads.py \
+            _awesome_eye_data \
+            _edit_distance_gpu \
+            --output gaze-in-wild-secondary-lead-probe-v1.json
+      - name: Revalidate closed scientific boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(
+              Path("gaze-in-wild-secondary-lead-probe-v1.json").read_text(encoding="utf-8")
+          )
+          assert record["probe_fingerprint_sha256"] == "89714d8ab6dee18385f27cf609e99bd857048898aee699cc38ee3c7a195ad9dd"
+          transformed = record["sources"]["transformed_collection_lead"]
+          labeller = record["sources"]["labeller_filename_lead"]
+          assert transformed["classification"] == "external_transformed_collection_advertisement"
+          assert transformed["tracked_official_process_or_label_paths"] == []
+          assert transformed["external_collection_contents_obtained_by_this_probe"] is False
+          assert transformed["authoritative_original_distribution_equivalence_verified"] is False
+          assert labeller["classification"] == "local_path_reference_only"
+          assert labeller["reference_code_paths"] == ["levenGPU_demo.py", "levenSequential.py"]
+          assert labeller["referenced_labeller_files_repository_resident"] is False
+          assert labeller["independent_annotation_streams_recovered"] is False
+          assert labeller["human_human_agreement_eligible"] is False
+          assert not any(record["scientific_boundary"].values())
+          print("Secondary recovery leads remain provenance-only and empirically closed.")
+          PY
+      - name: Install package and test dependencies
+        run: python -m pip install ".[dev]"
+      - name: Bind live probe to frozen evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from gazeforge.gaze_in_wild_secondary_leads import (
+              validate_gaze_in_wild_secondary_lead_evidence,
+          )
+
+          validated = validate_gaze_in_wild_secondary_lead_evidence(
+              Path("gaze-in-wild-secondary-lead-probe-v1.json"),
+              Path(
+                  "validation/evidence/gaze-in-wild/"
+                  "gaze-in-wild-secondary-recovery-lead-evidence-v1.json"
+              ),
+          )
+          print("probe fingerprint:", validated.probe_fingerprint_sha256)
+          print("evidence fingerprint:", validated.evidence_fingerprint_sha256)
+          PY
+      - name: Run focused secondary-lead tests
+        run: python -m pytest -q tests/test_gaze_in_wild_secondary_leads.py
+      - name: Upload deterministic provenance probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-secondary-lead-provenance-probe
+          path: gaze-in-wild-secondary-lead-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
