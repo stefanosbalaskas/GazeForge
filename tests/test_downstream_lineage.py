@@ -12,6 +12,7 @@ _REPORT = "a" * 64
 _SPEC = "b" * 64
 _MANIFEST = "c" * 64
 _REVISION = "reviewed-revision"
+_GIW_EXIT = "9" * 64
 
 
 def _dataset(name: str) -> GazeFrame:
@@ -81,6 +82,9 @@ def _hollywood_lineage(
             else {"label": _MANIFEST, "process": "f" * 64}
         ),
         source_revision=source_revision,
+        quarantine_exit_fingerprint_sha256=(
+            _GIW_EXIT if dataset_key == "gaze-in-the-wild" else None
+        ),
     )
 
 

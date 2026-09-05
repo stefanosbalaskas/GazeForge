@@ -11,6 +11,10 @@ from typing import Any
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
 from .gaze_in_wild_audit import GazeInWildSourceAuditSpec
+from .gaze_in_wild_quarantine_exit import (
+    GazeInWildQuarantineExitAuthorization,
+    require_authorized_gaze_in_wild_quarantine_exit,
+)
 from .hollywood2_audit import Hollywood2SourceAuditSpec
 
 AuditTemplateSpec = Hollywood2SourceAuditSpec | GazeInWildSourceAuditSpec
@@ -302,11 +306,15 @@ def _validate_authorization_binding(
 def authorize_candidate_source_audit_template(
     spec: AuditTemplateSpec,
     authorization: CandidateSourceAuditAuthorization,
+    *,
+    gaze_in_wild_quarantine_exit: GazeInWildQuarantineExitAuthorization | None = None,
 ) -> AuditTemplateSpec:
-    """Materialize an empirical audit spec from a separately reviewed authorization decision.
+    """Materialize an empirical audit spec from separately reviewed authorization decisions.
 
     This function authorizes execution of the existing source audit. It does not execute that
     audit, does not verify the local data copy, and does not create agreement or model evidence.
+    Recovered Gaze-in-the-Wild candidates additionally require a separately reviewed quarantine-
+    exit authorization bound to the exact same audit template.
     """
     if not isinstance(authorization, CandidateSourceAuditAuthorization):
         raise TypeError("authorization must be a CandidateSourceAuditAuthorization instance.")
@@ -316,6 +324,30 @@ def authorize_candidate_source_audit_template(
             "Only an explicit decision='authorized' can materialize an empirical audit spec."
         )
     _require_authorized_fields(authorization)
+
+    quarantine_exit_fingerprint: str | None = None
+    if isinstance(spec, GazeInWildSourceAuditSpec):
+        if gaze_in_wild_quarantine_exit is None:
+            raise BenchmarkIntegrityError(
+                "Gaze-in-the-Wild recovery candidates require a separately authorized quarantine-"
+                "exit record before an empirical source-audit spec can be materialized."
+            )
+        require_authorized_gaze_in_wild_quarantine_exit(
+            gaze_in_wild_quarantine_exit,
+            spec,
+        )
+        if authorization.redistribution_status != (
+            gaze_in_wild_quarantine_exit.redistribution_status
+        ):
+            raise BenchmarkIntegrityError(
+                "Gaze-in-the-Wild source-audit authorization redistribution status conflicts "
+                "with the reviewed recovery-quarantine exit."
+            )
+        quarantine_exit_fingerprint = gaze_in_wild_quarantine_exit.record_fingerprint_sha256
+    elif gaze_in_wild_quarantine_exit is not None:
+        raise BenchmarkIntegrityError(
+            "A Gaze-in-the-Wild quarantine-exit record cannot authorize a Hollywood2EM template."
+        )
 
     authorization_fingerprint = benchmark_fingerprint(authorization.to_dict())
     notes = list(spec.notes)
@@ -346,6 +378,30 @@ def authorize_candidate_source_audit_template(
             f"Authorization basis: {authorization.authorization_basis}",
         ]
     )
+    if quarantine_exit_fingerprint is not None:
+        assert gaze_in_wild_quarantine_exit is not None
+        notes.extend(
+            [
+                (
+                    "Gaze-in-the-Wild recovery quarantine was exited through a separately "
+                    "reviewed authority/exact-copy/rights gate. This still does not mean the "
+                    "source audit has passed."
+                ),
+                f"GIW quarantine-exit record fingerprint: {quarantine_exit_fingerprint}",
+                (
+                    "GIW quarantine-exit recovery record fingerprint: "
+                    f"{gaze_in_wild_quarantine_exit.recovery_record_fingerprint_sha256}"
+                ),
+                (
+                    "GIW quarantine-exit recovery tree fingerprint: "
+                    f"{gaze_in_wild_quarantine_exit.recovery_tree_fingerprint_sha256}"
+                ),
+                (
+                    "GIW quarantine-exit candidate inventory fingerprint: "
+                    f"{gaze_in_wild_quarantine_exit.candidate_inventory_fingerprint_sha256}"
+                ),
+            ]
+        )
 
     payload = spec.to_dict()
     payload.update(

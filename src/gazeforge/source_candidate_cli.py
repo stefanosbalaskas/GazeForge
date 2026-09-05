@@ -8,7 +8,16 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from .exceptions import BenchmarkIntegrityError
-from .gaze_in_wild_audit import load_gaze_in_wild_source_audit_spec
+from .gaze_in_wild_audit import (
+    GazeInWildSourceAuditSpec,
+    load_gaze_in_wild_source_audit_spec,
+)
+from .gaze_in_wild_quarantine_exit import (
+    build_gaze_in_wild_quarantine_exit_authorization,
+    load_gaze_in_wild_quarantine_exit_authorization,
+    validate_gaze_in_wild_quarantine_exit_authorization,
+    write_gaze_in_wild_quarantine_exit_authorization,
+)
 from .hollywood2_audit import load_hollywood2_source_audit_spec
 from .source_audit_lineage import (
     build_source_audit_lineage_receipt,
@@ -64,6 +73,30 @@ def _load_json_object(path: Path, *, label: str) -> Mapping[str, object]:
     if not isinstance(payload, Mapping):
         raise BenchmarkIntegrityError(f"{label} must contain one JSON object.")
     return payload
+
+
+def _require_giw_template(path: Path) -> GazeInWildSourceAuditSpec:
+    spec = load_gaze_in_wild_source_audit_spec(path)
+    if not isinstance(spec, GazeInWildSourceAuditSpec):
+        raise BenchmarkIntegrityError(
+            "Gaze-in-the-Wild quarantine exit requires a GazeInWildSourceAuditSpec."
+        )
+    return spec
+
+
+def _require_giw_apply_inputs(args: argparse.Namespace) -> tuple[Path, Path, Path]:
+    missing = [
+        name
+        for name in ("quarantine_exit", "recovery_review", "inventory")
+        if getattr(args, name, None) is None
+    ]
+    if missing:
+        flags = ", ".join(f"--{name.replace('_', '-')}" for name in missing)
+        raise BenchmarkIntegrityError(
+            "Gaze-in-the-Wild authorization application requires the complete recovery "
+            f"quarantine lineage: {flags}."
+        )
+    return args.quarantine_exit, args.recovery_review, args.inventory
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -155,6 +188,79 @@ def build_parser() -> argparse.ArgumentParser:
         "--overwrite", action="store_true", help="Replace an existing output file."
     )
 
+    quarantine_exit = subparsers.add_parser(
+        "quarantine-exit",
+        help=(
+            "Create a pending Gaze-in-the-Wild recovery-quarantine exit record bound to the "
+            "exact recovery review, candidate inventory, and audit template."
+        ),
+    )
+    quarantine_exit.add_argument(
+        "--recovery-review",
+        required=True,
+        type=Path,
+        help="Saved Gaze-in-the-Wild recovery-candidate review JSON.",
+    )
+    quarantine_exit.add_argument(
+        "--inventory",
+        required=True,
+        type=Path,
+        help="Saved exact generic candidate inventory JSON.",
+    )
+    quarantine_exit.add_argument(
+        "--template",
+        required=True,
+        type=Path,
+        help="Saved non-empirical Gaze-in-the-Wild audit-template JSON.",
+    )
+    quarantine_exit.add_argument(
+        "--root", required=True, type=Path, help="Candidate source directory."
+    )
+    quarantine_exit.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="Quarantine-exit JSON path outside the candidate source directory.",
+    )
+    quarantine_exit.add_argument(
+        "--overwrite", action="store_true", help="Replace an existing output file."
+    )
+
+    quarantine_exit_validate = subparsers.add_parser(
+        "quarantine-exit-validate",
+        help=(
+            "Validate an edited Gaze-in-the-Wild quarantine-exit decision against the exact "
+            "candidate tree, recovery review, inventory, and audit template."
+        ),
+    )
+    quarantine_exit_validate.add_argument(
+        "--quarantine-exit",
+        required=True,
+        type=Path,
+        help="Edited quarantine-exit decision JSON.",
+    )
+    quarantine_exit_validate.add_argument(
+        "--recovery-review",
+        required=True,
+        type=Path,
+        help="Saved Gaze-in-the-Wild recovery-candidate review JSON.",
+    )
+    quarantine_exit_validate.add_argument(
+        "--inventory",
+        required=True,
+        type=Path,
+        help="Saved exact generic candidate inventory JSON.",
+    )
+    quarantine_exit_validate.add_argument(
+        "--template",
+        required=True,
+        type=Path,
+        help="Saved non-empirical Gaze-in-the-Wild audit-template JSON.",
+    )
+    quarantine_exit_validate.add_argument(
+        "--root", required=True, type=Path, help="Candidate source directory."
+    )
+
     authorization = subparsers.add_parser(
         "authorization",
         help="Create a pending human authorization record bound to one exact audit template.",
@@ -192,7 +298,8 @@ def build_parser() -> argparse.ArgumentParser:
         "authorization-apply",
         help=(
             "Apply an explicit authorized decision to materialize an empirical audit spec; this "
-            "does not execute the source audit."
+            "does not execute the source audit. Recovered Gaze-in-the-Wild candidates also require "
+            "their exact quarantine-exit lineage."
         ),
     )
     _add_dataset_argument(authorization_apply)
@@ -204,6 +311,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     authorization_apply.add_argument(
         "--root", required=True, type=Path, help="Candidate source directory."
+    )
+    authorization_apply.add_argument(
+        "--quarantine-exit",
+        type=Path,
+        help="Authorized Gaze-in-the-Wild recovery-quarantine exit JSON.",
+    )
+    authorization_apply.add_argument(
+        "--recovery-review",
+        type=Path,
+        help="Gaze-in-the-Wild recovery-candidate review JSON used by the exit decision.",
+    )
+    authorization_apply.add_argument(
+        "--inventory",
+        type=Path,
+        help="Exact generic candidate inventory JSON used by the exit decision.",
     )
     authorization_apply.add_argument(
         "--output",
@@ -234,6 +356,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     lineage.add_argument("--root", required=True, type=Path, help="Candidate source directory.")
     lineage.add_argument(
+        "--quarantine-exit",
+        type=Path,
+        help="Authorized Gaze-in-the-Wild recovery-quarantine exit JSON.",
+    )
+    lineage.add_argument(
+        "--recovery-review",
+        type=Path,
+        help="Gaze-in-the-Wild recovery-candidate review JSON used by the exit decision.",
+    )
+    lineage.add_argument(
+        "--inventory",
+        type=Path,
+        help="Exact generic candidate inventory JSON used by the exit decision.",
+    )
+    lineage.add_argument(
         "--output",
         required=True,
         type=Path,
@@ -243,6 +380,22 @@ def build_parser() -> argparse.ArgumentParser:
         "--overwrite", action="store_true", help="Replace an existing output file."
     )
     return parser
+
+
+def _validated_giw_exit_for_args(
+    args: argparse.Namespace,
+    template: GazeInWildSourceAuditSpec,
+):
+    quarantine_exit_path, recovery_review, inventory_path = _require_giw_apply_inputs(args)
+    inventory = validate_candidate_source_inventory(inventory_path, args.root)
+    exit_record = load_gaze_in_wild_quarantine_exit_authorization(quarantine_exit_path)
+    return validate_gaze_in_wild_quarantine_exit_authorization(
+        exit_record,
+        root=args.root,
+        recovery_record_or_path=recovery_review,
+        inventory=inventory,
+        spec=template,
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -278,6 +431,31 @@ def main(argv: Sequence[str] | None = None) -> int:
             candidate_root=args.root,
             overwrite=args.overwrite,
         )
+    elif args.command == "quarantine-exit":
+        inventory = validate_candidate_source_inventory(args.inventory, args.root)
+        template = _require_giw_template(args.template)
+        result = build_gaze_in_wild_quarantine_exit_authorization(
+            args.root,
+            args.recovery_review,
+            inventory,
+            template,
+        )
+        write_gaze_in_wild_quarantine_exit_authorization(
+            result,
+            args.output,
+            candidate_root=args.root,
+            overwrite=args.overwrite,
+        )
+    elif args.command == "quarantine-exit-validate":
+        inventory = validate_candidate_source_inventory(args.inventory, args.root)
+        template = _require_giw_template(args.template)
+        result = validate_gaze_in_wild_quarantine_exit_authorization(
+            args.quarantine_exit,
+            root=args.root,
+            recovery_record_or_path=args.recovery_review,
+            inventory=inventory,
+            spec=template,
+        )
     elif args.command == "authorization":
         template = _load_audit_spec(args.template, args.dataset)
         result = build_candidate_source_audit_authorization(template)
@@ -299,7 +477,22 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.authorization,
             template,
         )
-        result = authorize_candidate_source_audit_template(template, authorization_record)
+        exit_record = None
+        if args.dataset == "gaze-in-the-wild":
+            assert isinstance(template, GazeInWildSourceAuditSpec)
+            exit_record = _validated_giw_exit_for_args(args, template)
+        elif any(
+            value is not None
+            for value in (args.quarantine_exit, args.recovery_review, args.inventory)
+        ):
+            raise BenchmarkIntegrityError(
+                "Gaze-in-the-Wild recovery-lineage arguments cannot be used for Hollywood2EM."
+            )
+        result = authorize_candidate_source_audit_template(
+            template,
+            authorization_record,
+            gaze_in_wild_quarantine_exit=exit_record,
+        )
         write_authorized_source_audit_spec(
             result,
             args.output,
@@ -312,11 +505,23 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.authorization,
             template,
         )
+        exit_record = None
+        if args.dataset == "gaze-in-the-wild":
+            assert isinstance(template, GazeInWildSourceAuditSpec)
+            exit_record = _validated_giw_exit_for_args(args, template)
+        elif any(
+            value is not None
+            for value in (args.quarantine_exit, args.recovery_review, args.inventory)
+        ):
+            raise BenchmarkIntegrityError(
+                "Gaze-in-the-Wild recovery-lineage arguments cannot be used for Hollywood2EM."
+            )
         audit_report = _load_json_object(args.audit_report, label="Source-audit report")
         result = build_source_audit_lineage_receipt(
             template,
             authorization_record,
             audit_report,
+            gaze_in_wild_quarantine_exit=exit_record,
         )
         write_source_audit_lineage_receipt(
             result,

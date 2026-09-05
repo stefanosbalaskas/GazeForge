@@ -9,6 +9,7 @@ from gazeforge.gaze_in_wild_audit import (
     GazeInWildProcessFileRecord,
     GazeInWildSourceAuditSpec,
 )
+from gazeforge.gaze_in_wild_quarantine_exit import GazeInWildQuarantineExitAuthorization
 from gazeforge.hollywood2_audit import Hollywood2SourceAuditSpec, Hollywood2SourceFileRecord
 from gazeforge.source_audit_lineage import (
     SourceAuditLineageReceipt,
@@ -24,6 +25,7 @@ from gazeforge.source_candidate_authorization import (
 
 _SHA_A = "a" * 64
 _SHA_B = "b" * 64
+_SHA_C = "c" * 64
 
 
 def _hollywood_template():
@@ -116,6 +118,36 @@ def _authorization(template, *, pixel_kinematics_compatible=False):
     )
 
 
+def _gaze_exit(template):
+    record = GazeInWildQuarantineExitAuthorization(
+        recovery_candidate_kind="candidate_original_layout_unverified",
+        recovery_record_fingerprint_sha256=_SHA_A,
+        recovery_tree_fingerprint_sha256=_SHA_B,
+        candidate_inventory_fingerprint_sha256=_SHA_C,
+        audit_template_fingerprint_sha256=source_audit_template_fingerprint(template),
+        decision="authorized",
+        reviewer="recovery reviewer",
+        reviewed_at="2026-09-05",
+        source_authority_verified=True,
+        authoritative_source=template.source,
+        authoritative_source_revision=template.source_revision,
+        source_authority_evidence="authority evidence reviewed",
+        exact_copy_identity_verified=True,
+        exact_copy_identity_evidence="exact-copy identity reviewed",
+        dataset_file_rights_resolved=True,
+        reuse_terms_verified=True,
+        reuse_terms_source=template.reuse_terms_source,
+        rights_evidence="dataset-file rights reviewed",
+        analysis_use_permitted=True,
+        analysis_use_evidence="analysis use permitted",
+        redistribution_status="restricted",
+        redistribution_evidence="redistribution restrictions reviewed",
+        authorization_basis="authority, exact-copy identity, and rights reviewed",
+    )
+    object.__setattr__(record, "_binding_validated", True)
+    return record
+
+
 def _stamp_report(body):
     return {**body, "report_fingerprint_sha256": benchmark_fingerprint(body)}
 
@@ -176,8 +208,12 @@ def _hollywood_report(template, authorization):
     return _stamp_report(body)
 
 
-def _gaze_report(template, authorization):
-    spec = authorize_candidate_source_audit_template(template, authorization)
+def _gaze_report(template, authorization, exit_record):
+    spec = authorize_candidate_source_audit_template(
+        template,
+        authorization,
+        gaze_in_wild_quarantine_exit=exit_record,
+    )
     label_files = [spec.label_files[0].to_dict()]
     process_files = [spec.process_files[0].to_dict()]
     label_inventory = {
@@ -251,6 +287,7 @@ def test_hollywood_lineage_binds_all_upstream_fingerprints():
     receipt = build_source_audit_lineage_receipt(template, authorization, report)
 
     assert receipt.dataset_key == "hollywood2em"
+    assert receipt.quarantine_exit_fingerprint_sha256 is None
     assert receipt.audit_template_fingerprint_sha256 == source_audit_template_fingerprint(template)
     assert receipt.audit_report_fingerprint_sha256 == report["report_fingerprint_sha256"]
     assert receipt.source_manifest_fingerprints_sha256 == {
@@ -261,19 +298,36 @@ def test_hollywood_lineage_binds_all_upstream_fingerprints():
     assert receipt.to_dict()["scientific_boundary"]["creates_new_empirical_metrics"] is False
 
 
-def test_gaze_lineage_preserves_separate_label_process_manifests():
+def test_gaze_lineage_preserves_quarantine_exit_and_separate_manifests():
     template = _gaze_template()
     authorization = _authorization(template, pixel_kinematics_compatible=True)
-    report = _gaze_report(template, authorization)
+    exit_record = _gaze_exit(template)
+    report = _gaze_report(template, authorization, exit_record)
 
-    receipt = build_source_audit_lineage_receipt(template, authorization, report)
+    receipt = build_source_audit_lineage_receipt(
+        template,
+        authorization,
+        report,
+        gaze_in_wild_quarantine_exit=exit_record,
+    )
 
     assert receipt.dataset_key == "gaze-in-the-wild"
+    assert receipt.quarantine_exit_fingerprint_sha256 == exit_record.record_fingerprint_sha256
     assert receipt.source_manifest_fingerprints_sha256 == {
         "label": report["label_inventory"]["manifest_fingerprint_sha256"],
         "process": report["process_inventory"]["manifest_fingerprint_sha256"],
     }
     assert receipt.source_revision == "source-revision-1"
+
+
+def test_gaze_lineage_requires_quarantine_exit():
+    template = _gaze_template()
+    authorization = _authorization(template)
+    exit_record = _gaze_exit(template)
+    report = _gaze_report(template, authorization, exit_record)
+
+    with pytest.raises(BenchmarkIntegrityError, match="quarantine-exit"):
+        build_source_audit_lineage_receipt(template, authorization, report)
 
 
 def test_lineage_rejects_report_fingerprint_tampering():
@@ -329,7 +383,8 @@ def test_lineage_rejects_dataset_specific_audit_invariant_failure():
 def test_lineage_rejects_nested_manifest_fingerprint_mismatch():
     template = _gaze_template()
     authorization = _authorization(template)
-    report = _gaze_report(template, authorization)
+    exit_record = _gaze_exit(template)
+    report = _gaze_report(template, authorization, exit_record)
     body = dict(report)
     body.pop("report_fingerprint_sha256")
     body["label_inventory"] = dict(body["label_inventory"])
@@ -337,7 +392,12 @@ def test_lineage_rejects_nested_manifest_fingerprint_mismatch():
     report = _stamp_report(body)
 
     with pytest.raises(BenchmarkIntegrityError, match="manifest fingerprint mismatch"):
-        build_source_audit_lineage_receipt(template, authorization, report)
+        build_source_audit_lineage_receipt(
+            template,
+            authorization,
+            report,
+            gaze_in_wild_quarantine_exit=exit_record,
+        )
 
 
 def test_lineage_rejects_authorized_contract_drift_inside_report():
@@ -357,10 +417,12 @@ def test_lineage_rejects_authorized_contract_drift_inside_report():
 def test_lineage_receipt_round_trip_and_tamper_detection(tmp_path):
     template = _gaze_template()
     authorization = _authorization(template)
+    exit_record = _gaze_exit(template)
     receipt = build_source_audit_lineage_receipt(
         template,
         authorization,
-        _gaze_report(template, authorization),
+        _gaze_report(template, authorization, exit_record),
+        gaze_in_wild_quarantine_exit=exit_record,
     )
     candidate_root = tmp_path / "candidate"
     candidate_root.mkdir()
@@ -412,5 +474,18 @@ def test_receipt_constructor_refuses_wrong_manifest_shape():
             authorized_spec_fingerprint_sha256=_SHA_A,
             audit_report_fingerprint_sha256=_SHA_A,
             source_manifest_fingerprints_sha256={"label": _SHA_A},
+            source_revision="revision",
+        )
+
+
+def test_gaze_receipt_constructor_requires_exit_fingerprint():
+    with pytest.raises(ValueError, match="quarantine-exit fingerprint"):
+        SourceAuditLineageReceipt(
+            dataset_key="gaze-in-the-wild",
+            audit_template_fingerprint_sha256=_SHA_A,
+            authorization_fingerprint_sha256=_SHA_A,
+            authorized_spec_fingerprint_sha256=_SHA_A,
+            audit_report_fingerprint_sha256=_SHA_A,
+            source_manifest_fingerprints_sha256={"label": _SHA_A, "process": _SHA_B},
             source_revision="revision",
         )

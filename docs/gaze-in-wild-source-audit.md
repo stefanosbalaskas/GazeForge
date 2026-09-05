@@ -27,6 +27,33 @@ Labs acquisition hardware, while a later event-detection catalog reports 300 Hz.
 value is imposed on the files. An empirical audit must infer each reviewed `LabelData` stream's
 observed cadence from its timestamps and preserve hardware provenance separately.
 
+## Recovery quarantine must be exited first
+
+A recovered local copy does not enter this source audit merely because its filenames or MATLAB
+structure resemble the historical distribution. The [recovery-candidate quarantine](gaze-in-wild-recovery-candidates.md)
+now has an explicit exit gate.
+
+For a recovered candidate, the transition to an empirical **audit specification** requires two
+separate reviewed decisions:
+
+1. a GIW recovery-quarantine exit bound to the exact recovery review, recovery tree, generic
+   candidate inventory, and non-empirical audit template; and
+2. the existing generic source-audit authorization bound to that same audit-template fingerprint.
+
+The quarantine exit requires affirmative independent evidence for source authority, exact-copy
+identity, dataset-file rights, reuse terms, analysis-use permission, and redistribution status. Its
+authoritative source, source revision, and reuse-terms source must match the exact template, and its
+redistribution decision must agree with the generic authorization.
+
+This is an **audit-entry control**, not a source-audit result. Even an authorized exit does not verify
+participant mapping, coordinate semantics, sampling cadence, independent labeller streams,
+human-human agreement, model validation, cross-dataset performance, or GP3 validity. The actual
+`audit_gaze_in_wild_source()` call still has to pass all dataset-specific source-audit invariants.
+
+The currently reviewed secondary leads do not satisfy this exit gate. No authoritative current
+`ProcessData`/`LabelData` copy or applicable dataset-file reuse terms have been established by those
+leads.
+
 ## What the audit binds
 
 `GazeInWildSourceAuditSpec` separates the distributed corpus into two exact manifests.
@@ -150,13 +177,14 @@ adds no model-performance or labeller-agreement result.
 The remaining empirical sequence is:
 
 1. obtain and review the authoritative current distribution and reuse terms;
-2. populate the exact label/process manifests and participant/task mapping;
-3. verify `ETG.POR` coordinate semantics and whether pixel-based kinematics are scientifically
+2. pass the recovery-quarantine exit if the source arrived through a recovery path;
+3. populate and independently review the exact label/process manifests and participant/task mapping;
+4. verify `ETG.POR` coordinate semantics and whether pixel-based kinematics are scientifically
    comparable;
-4. run and freeze the source audit and per-file sampling-rate ledger;
-5. quantify labeller-to-labeller sample-level and event-level agreement on verified overlapping
+5. run and freeze the source audit and per-file sampling-rate ledger;
+6. quantify labeller-to-labeller sample-level and event-level agreement on verified overlapping
    streams; and
-6. run participant-disjoint model validation with task/event-class sensitivity.
+7. run participant-disjoint model validation with task/event-class sensitivity.
 
 Even after those steps, Gaze-in-the-Wild remains complementary naturalistic head-mounted evidence.
 It is **not Gazepoint GP3-specific validation** and should not be presented as a substitute for a

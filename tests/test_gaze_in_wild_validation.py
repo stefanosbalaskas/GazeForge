@@ -19,6 +19,8 @@ from gazeforge.gaze_in_wild_validation import (
 )
 from gazeforge.source_audit_lineage import SourceAuditLineageReceipt
 
+_QUARANTINE_EXIT = "c" * 64
+
 
 def _write_process(path: Path, *, n: int = 60) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -141,6 +143,7 @@ def _lineage(audit, *, report_fingerprint: str | None = None) -> SourceAuditLine
             "process": audit.report["process_inventory"]["manifest_fingerprint_sha256"],
         },
         source_revision=audit.spec.source_revision,
+        quarantine_exit_fingerprint_sha256=_QUARANTINE_EXIT,
     )
 
 
