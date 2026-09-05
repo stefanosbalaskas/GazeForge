@@ -24,6 +24,7 @@ on:
       - "tests/test_resampling.py"
       - "validation/governance/hollywood2-source-token-analysis-authorization-v1.json"
       - "validation/evidence/hollywood2/**"
+      - "docs/hollywood2-authoritative-evidence.md"
       - ".github/workflows/hollywood2-source-token-validation.yml"
   workflow_dispatch:
 
@@ -126,11 +127,13 @@ jobs:
             --context-hidden 32,16 \
             --context-max-iter 50 \
             --output hollywood2-source-token-validation-v1.json
-      - name: Revalidate aggregate-only claim boundary and numeric canonicalization
+      - name: Bind live aggregate report to frozen evidence
         run: |
           python - <<'PY'
+          import hashlib
           from pathlib import Path
 
+          from gazeforge.dashboard import load_frozen_benchmark_report
           from gazeforge.hollywood2_token_evidence import (
               HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION,
           )
@@ -138,11 +141,22 @@ jobs:
               validate_hollywood2_source_token_validation_report,
           )
 
-          path = Path("hollywood2-source-token-validation-v1.json")
-          report = validate_hollywood2_source_token_validation_report(path)
-          text = path.read_text(encoding="utf-8")
+          report_path = Path("hollywood2-source-token-validation-v1.json")
+          frozen_path = Path(
+              "validation/evidence/hollywood2/"
+              "hollywood2-source-token-60hz-frozen-summary-v1.json"
+          )
+          report = validate_hollywood2_source_token_validation_report(report_path)
+          frozen = load_frozen_benchmark_report(frozen_path)
+          text = report_path.read_text(encoding="utf-8")
+
           protocol = report["protocol"]
           boundary = protocol["scientific_boundary"]
+          frozen_protocol = frozen["protocol"]
+          frozen_preparation = frozen_protocol["preparation"]
+          preparation = protocol["preparation"]
+          inventory = preparation["inventory"]
+
           assert boundary["participant_identity_mapping_verified"] is False
           assert boundary["participant_disjoint_validation_created"] is False
           assert boundary["participant_generalization_claim"] is False
@@ -151,9 +165,49 @@ jobs:
           assert protocol["numeric_canonicalization"] == (
               HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION
           )
-          assert "_hollywood2_em" not in text
+          assert frozen_protocol["source_validation_numeric_canonicalization"] == (
+              HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION
+          )
+          assert report["report_fingerprint_sha256"] == (
+              frozen_protocol["source_validation_report_fingerprint_sha256"]
+          )
+          assert hashlib.sha256(report_path.read_bytes()).hexdigest() == (
+              frozen_protocol["source_validation_report_file_sha256"]
+          )
+          assert report["benchmark"] == frozen["benchmark"]
+          assert report["model"] == frozen["model"]
+          for key in (
+              "analysis_label_counts",
+              "source_token_fold_assignment",
+              "summary",
+          ):
+              assert report["metrics"][key] == frozen["metrics"][key]
+
+          assert preparation["analysis_rows"] == frozen_preparation["analysis_rows"]
+          assert preparation["analysis_sampling_rate_hz"] == (
+              frozen_preparation["analysis_sampling_rate_hz"]
+          )
+          assert preparation["prepared_rows_before_exclusions"] == (
+              frozen_preparation["prepared_rows_before_exclusions"]
+          )
+          assert preparation["excluded_rows"] == frozen_preparation["excluded_rows"]
+          assert inventory["ground_truth_file_count"] == (
+              frozen_preparation["ground_truth_file_count"]
+          )
+          assert inventory["ground_truth_sample_count"] == (
+              frozen_preparation["ground_truth_sample_count"]
+          )
+          assert inventory["source_tokens"] == frozen_preparation["source_tokens"]
+          assert inventory["source_token_count"] == frozen_preparation["source_token_count"]
+          assert preparation["participant_identity_resolved"] is False
+          assert preparation["raw_source_rows_embedded"] is False
+          assert preparation["source_filenames_embedded"] is False
           assert ".arff" not in text
+          assert "_hollywood2_em" not in text
+
           print("canonical report fingerprint:", report["report_fingerprint_sha256"])
+          print("canonical report file sha256:", hashlib.sha256(report_path.read_bytes()).hexdigest())
+          print("frozen summary fingerprint:", frozen["report_fingerprint_sha256"])
           print("claim boundary: source-token-held-out only")
           PY
       - name: Upload aggregate validation report only
