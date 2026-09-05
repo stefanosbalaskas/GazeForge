@@ -124,7 +124,11 @@ def _validate_pages(record: Mapping[str, Any]) -> None:
         "https://vision.imar.ro/eyetracking/description.php",
         "description URL",
     )
-    _equal(description.get("final_url"), "http://vision.imar.ro/eyetracking/description.php", "description redirect")
+    _equal(
+        description.get("final_url"),
+        "http://vision.imar.ro/eyetracking/description.php",
+        "description redirect",
+    )
     _equal(description.get("http_status"), 200, "description status")
     _equal(description.get("bytes"), 18184, "description bytes")
     _equal(description.get("sha256"), DESCRIPTION_SHA256, "description SHA-256")
@@ -139,7 +143,11 @@ def _validate_pages(record: Mapping[str, Any]) -> None:
         "https://vision.imar.ro/eyetracking/license.php",
         "licence URL",
     )
-    _equal(licence.get("final_url"), "https://vision.imar.ro/eyetracking/license.php", "licence redirect")
+    _equal(
+        licence.get("final_url"),
+        "https://vision.imar.ro/eyetracking/license.php",
+        "licence redirect",
+    )
     _equal(licence.get("http_status"), 200, "licence status")
     _equal(licence.get("bytes"), 5503, "licence bytes")
     _equal(licence.get("sha256"), LICENCE_SHA256, "licence SHA-256")
@@ -202,7 +210,11 @@ def validate_hollywood2_rights_evidence(
         rights.get("commercial_or_other_unpermitted_use_requires_prior_permission"),
         "permission requirement for other uses",
     )
-    _equal(rights.get("analysis_use_terms_status"), "verified_academic_use_only", "analysis-use status")
+    _equal(
+        rights.get("analysis_use_terms_status"),
+        "verified_academic_use_only",
+        "analysis-use status",
+    )
     _equal(
         rights.get("raw_archive_redistribution_status"),
         "not_permitted_under_standard_grant",
@@ -225,7 +237,10 @@ def validate_hollywood2_rights_evidence(
         annotation.get("underlying_license_automatically_applies_to_annotation_repository"),
         "automatic licence inheritance",
     )
-    _false(annotation.get("article_cc_by_is_dataset_license"), "article licence as GIN dataset licence")
+    _false(
+        annotation.get("article_cc_by_is_dataset_license"),
+        "article licence as GIN dataset licence",
+    )
     _false(annotation.get("license_inference_permitted"), "licence inference")
 
     mapping = _mapping(record, "participant_mapping")
@@ -236,7 +251,10 @@ def validate_hollywood2_rights_evidence(
     _equal(mapping.get("gin_file_subject_token_count"), 16, "GIN token count")
     _true(mapping.get("token_count_matches_published_participant_count"), "token-count cross-check")
     _false(mapping.get("file_subject_token_to_participant_mapping_verified"), "token mapping")
-    _false(mapping.get("participant_group_membership_by_file_token_verified"), "token group mapping")
+    _false(
+        mapping.get("participant_group_membership_by_file_token_verified"),
+        "token group mapping",
+    )
     _false(mapping.get("mapping_inference_permitted"), "participant mapping inference")
 
     boundary = _mapping(record, "scientific_boundary")
@@ -285,7 +303,9 @@ def validate_hollywood2_rights_evidence(
     if stored != calculated:
         raise BenchmarkIntegrityError("Hollywood2 rights evidence self-fingerprint is invalid.")
     if stored != EXPECTED_EVIDENCE_FINGERPRINT_SHA256:
-        raise BenchmarkIntegrityError("Hollywood2 rights evidence immutable v1 fingerprint drifted.")
+        raise BenchmarkIntegrityError(
+            "Hollywood2 rights evidence immutable v1 fingerprint drifted."
+        )
     return record
 
 
@@ -301,7 +321,9 @@ def validate_hollywood2_underlying_source_probe(
     _equal(probe.get("status"), LIVE_STATUS, "live status")
     stored = str(probe.get("probe_fingerprint_sha256", ""))
     if stored != _probe_fingerprint(probe):
-        raise BenchmarkIntegrityError("Hollywood2 underlying-source live probe self-fingerprint is invalid.")
+        raise BenchmarkIntegrityError(
+            "Hollywood2 underlying-source live probe self-fingerprint is invalid."
+        )
     if stored != EXPECTED_LIVE_PROBE_FINGERPRINT_SHA256:
         raise BenchmarkIntegrityError("Hollywood2 institutional source or rights page drifted.")
 
@@ -340,7 +362,11 @@ def validate_hollywood2_underlying_source_probe(
     ):
         _equal(live_download.get(key), frozen_download.get(key), f"live download {key}")
 
-    _equal(probe.get("verified_recording_context"), evidence["recording_context"], "live recording context")
+    _equal(
+        probe.get("verified_recording_context"),
+        evidence["recording_context"],
+        "live recording context",
+    )
     live_rights = _mapping(probe, "verified_underlying_rights")
     frozen_rights = evidence["underlying_rights"]
     for key in (
