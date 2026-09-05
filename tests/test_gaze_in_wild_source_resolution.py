@@ -93,13 +93,38 @@ def test_gaze_in_wild_article_and_software_licenses_are_scoped_separately():
     assert rights["raw_data_redistribution_terms_status"] == "unresolved"
 
 
-def test_gaze_in_wild_official_mapping_does_not_infer_published_inclusion():
+def test_gaze_in_wild_publication_set_does_not_infer_file_identity_or_task_mapping():
     mapping = _load_record()["mapping_and_coordinates"]
 
     assert mapping["official_participant_trial_index_scheme_verified"] is True
     assert mapping["official_processing_code_highest_participant_index"] == 23
     assert mapping["published_participant_count"] == 19
-    assert mapping["published_included_participant_set_verified"] is False
+    assert mapping["published_included_participant_set_verified"] is True
+    assert mapping["published_included_participant_ids"] == [
+        1,
+        2,
+        3,
+        6,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22,
+        23,
+    ]
+    assert mapping["processing_indices_absent_from_published_included_set"] == [4, 5, 7, 21]
+    assert mapping[
+        "published_person_number_to_exact_distributed_participant_identity_verified"
+    ] is False
     assert mapping["trial_index_to_published_task_mapping_verified"] is False
     assert mapping["participant_task_mapping_verified_from_exact_copy"] is False
 
