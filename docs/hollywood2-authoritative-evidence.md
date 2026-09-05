@@ -98,13 +98,17 @@ GazeForge now also carries a reviewed model-validation result derived from the s
 
 The split unit is the stable three-digit canonical filename prefix. The 16 prefixes are divided into four matched GroupKFold folds, with four source tokens held out in each fold. They remain **opaque source tokens only**. The result must therefore be described as **source-token-held-out**, never participant-held-out or participant-generalization evidence.
 
-The reviewed full aggregate report has fingerprint:
+A reproducibility review compared the successful pre-merge empirical execution (workflow `33955703630`, head `5180d4e38a2f5929161b7baee6af18c5e9b43c4d`, artifact `9966618539`) with the exact PR #66 merge-SHA execution (workflow `33956874927`, head `e0e47c47e0a2e42a4520bd14a126b23fc3b05644`, artifact `9966993646`). Source identity, preparation, held-out token assignment, predictions-derived performance summaries, and all substantive results were the same. The byte-level reports differed only in last-bit RandomForest calibration-ECE arithmetic at approximately `1e-17`, so neither uncanonicalized report was frozen directly.
 
-`6d6b7a0c677e278d3503ca5f6c4745430a037ea6b42a3000b93052fa7f2f0cab`
+For publication, GazeForge therefore applies a narrow deterministic numeric contract: **finite floating-point values inside the report `metrics` object are rounded to 15 decimal places before the publication fingerprint is computed**. Non-finite metric floats are rejected. Benchmark metadata, model configuration, protocol settings, source identities, rights state, and scientific claim boundaries are not rounded or rewritten. Under that rule the two independently generated reports become byte-identical.
 
-and deterministic report-file SHA-256:
+The reviewed canonical full aggregate report has fingerprint:
 
-`0d3e0ad01d47e6f953fc233c2a1c1a491d3a418dd685b96919ccdda0b96aaa63`.
+`a7a6219d6ffcb1fc6622110887a95f2c9d0646fea6e22d0ada941fe07b90586a`
+
+and deterministic canonical report-file SHA-256:
+
+`a5e22948105321dc97dcffc66926c32a6c93c797722b879e38fd3c6860dde34e`.
 
 The committed Frozen Evidence projection is:
 
@@ -112,11 +116,13 @@ The committed Frozen Evidence projection is:
 
 with fingerprint:
 
-`c6aa390995b480f368b24601498ba1c0b666a3fa938f8dc095e36ead6129414e`.
+`e1f1c030f843e118ebd65520dfab8e872efb4ea3e1d520299a993b0ca00ddabf`.
 
-The public Frozen Evidence page renders its model summary directly from this fingerprint-validated JSON rather than from hand-transcribed performance values. The reviewed result shows the same kind of model trade-off that motivates GazeForge's multi-level evaluation: ContextMLP is strongest on the principal sample-level classification metrics and has the best mean matched-event IoU and boundary-error profile in this benchmark, whereas transparent I-VT retains the highest mean event F1 because of substantially higher event precision. RandomForest is intermediate on sample-level classification but weaker on event F1. These are benchmark-specific source-token-held-out findings, not a universal AI-superiority claim.
+That frozen projection also binds the reviewed pre-merge and exact-merge workflow/artifact identities and their original uncanonicalized report fingerprints. The public Frozen Evidence page renders its model summary directly from this fingerprint-validated JSON rather than from hand-transcribed performance values.
 
-The dedicated live workflow now regenerates the full analysis from the pinned GIN commit and fails unless the resulting full-report fingerprint, report-file SHA-256, model summary, source-token fold assignment, and analysis-label counts exactly match the reviewed frozen projection.
+The reviewed result shows the same kind of model trade-off that motivates GazeForge's multi-level evaluation: ContextMLP is strongest on the principal sample-level classification metrics and has the best mean matched-event IoU and boundary-error profile in this benchmark, whereas transparent I-VT retains the highest mean event F1 because of substantially higher event precision. RandomForest is intermediate on sample-level classification but weaker on event F1. These are benchmark-specific source-token-held-out findings, not a universal AI-superiority claim.
+
+The dedicated live workflow now regenerates the full analysis from the pinned GIN commit and fails unless the resulting canonical full-report fingerprint, canonical report-file SHA-256, benchmark/model metadata, model summary, source-token fold assignment, analysis-label counts, and key preparation counts exactly match the committed frozen projection.
 
 ## Rights and remaining boundaries
 
@@ -140,4 +146,4 @@ The canonical live-source workflow reclones the GIN repository, recomputes every
 
 The complete-history workflow independently reclones the same pinned repository, enumerates every reachable commit, rechecks historical licence/README evidence and ground-truth path/token history, and binds the live result to the immutable history evidence contract. Persistent upstream unavailability remains fail-closed rather than being converted into a successful source result.
 
-The source-token validation workflow independently reclones the pinned repository, derives the 60 Hz analysis rows, reruns all four matched source-token folds, validates the aggregate-only claim boundary, and binds the live result to the frozen source-token summary. Raw source rows, filenames, and predictions are not committed to GazeForge.
+The source-token validation workflow independently reclones the pinned repository, derives the 60 Hz analysis rows, reruns all four matched source-token folds, validates the aggregate-only claim boundary, applies the metrics-only 15-decimal canonicalization contract, and binds the regenerated aggregate report to the frozen source-token summary. Raw source rows, filenames, and predictions are not committed to GazeForge.
