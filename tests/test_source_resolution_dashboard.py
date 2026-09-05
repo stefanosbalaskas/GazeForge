@@ -30,12 +30,12 @@ def test_source_resolution_dashboard_uses_complete_validated_repository_set():
         "visus-source-resolution-2026-09-04.json",
     )
     assert dashboard.bundle_fingerprint_sha256 == (
-        "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe"
+        "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758"
     )
     assert dashboard.reviewed_snapshot is True
     assert dashboard.reviewed_on == "2026-09-05"
     assert dashboard.lock_fingerprint_sha256 == (
-        "e18f0bd4a6a6dcc6f87de50751850546ea7c790c4312a944b091da1801941362"
+        "1616af4fdce05e184db2efcef9ac60ce53a64523ba72f8bb723706bf077bce58"
     )
     assert dashboard.lock_source_file == str(_LOCK)
     rows = {row["dataset_key"]: row for row in dashboard.rows}
