@@ -1,0 +1,88 @@
+name: Hollywood2 GIN history probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/hollywood2-gin-history-probe
+    paths:
+      - "scripts/hollywood2_gin_history_probe.py"
+      - "src/gazeforge/hollywood2_history_evidence.py"
+      - "tests/test_hollywood2_history_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-gin-history-evidence-v1.json"
+      - "docs/hollywood2-authoritative-evidence.md"
+      - ".github/workflows/hollywood2-gin-history-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Configure anonymous GIN transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global \
+            url."https://gin.g-node.org/ioannis.agtzidis/hollywood2_em".insteadOf \
+            "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
+      - name: Audit complete canonical GIN history
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5; do
+            if python scripts/hollywood2_gin_history_probe.py; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 5 ]; then
+              echo "Canonical GIN history probe failed after bounded retries." >&2
+              exit 1
+            fi
+            delay=$((attempt * 20))
+            echo "GIN history attempt ${attempt} failed; retrying after ${delay}s." >&2
+            sleep "$delay"
+          done
+      - name: Summarize history audit
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(Path("hollywood2_gin_history_probe.json").read_text())
+          history = record["history"]
+          licenses = history["license_history"]
+          readmes = history["readme_history"]
+          ground = history["ground_truth_history"]
+          print("HEAD:", record["observed_head_sha1"])
+          print("commits:", history["commit_count"])
+          print("initial commit:", history["initial_commit_sha1"])
+          print("license-named file ever present:", licenses["license_named_file_ever_present"])
+          print("unique license blobs:", licenses["unique_blob_count"])
+          print("unique README versions:", readmes["unique_version_count"])
+          print("README license keyword ever present:", readmes["license_keyword_ever_present"])
+          print("README identity keyword ever present:", readmes["identity_keyword_ever_present"])
+          print("ground-truth history versions:", ground["commit_versions_with_ground_truth"])
+          print("ground-truth token-set versions:", ground["token_set_version_count"])
+          print("ground-truth path-inventory versions:", ground["path_inventory_version_count"])
+          print("current ground-truth files:", ground["current"]["file_count"])
+          print("current tokens:", ground["current"]["file_subject_tokens"])
+          print("fingerprint:", record["probe_fingerprint_sha256"])
+          PY
+      - name: Upload deterministic history record
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-gin-history-probe
+          path: hollywood2_gin_history_probe.json
+          if-no-files-found: error
+          retention-days: 30
