@@ -8,8 +8,17 @@ on:
     paths:
       - "scripts/hollywood2_gin_live_probe.py"
       - "src/gazeforge/hollywood2_evidence.py"
+      - "src/gazeforge/source_resolution.py"
+      - "src/gazeforge/source_resolution_dashboard.py"
       - "tests/test_hollywood2_evidence.py"
+      - "tests/test_source_resolution*.py"
       - "validation/evidence/hollywood2/**"
+      - "validation/protocols/hollywood2-source-resolution-*.json"
+      - "validation/history/source-resolution/hollywood2-source-resolution-*.json"
+      - "validation/governance/source-resolution-bundle-lock-v1.json"
+      - "docs/hollywood2-authoritative-evidence.md"
+      - "docs/hollywood2-source-resolution.md"
+      - "docs/source-resolution-status.md"
       - "docs/api-reference.md"
       - ".github/workflows/hollywood2-gin-live-probe.yml"
   workflow_dispatch:
