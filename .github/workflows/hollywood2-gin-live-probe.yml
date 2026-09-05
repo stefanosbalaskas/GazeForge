@@ -42,6 +42,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Configure anonymous GIN transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global \
+            url."https://gin.g-node.org/ioannis.agtzidis/hollywood2_em".insteadOf \
+            "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
       - name: Probe canonical Hollywood2EM GIN repository
         shell: bash
         run: |
