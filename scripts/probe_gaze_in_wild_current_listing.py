@@ -61,19 +61,20 @@ def _canonical_bytes(value: Any) -> bytes:
     ).encode("utf-8")
 
 
-def _fingerprint(payload: dict[str, Any]) -> str:
+def probe_fingerprint(payload: dict[str, Any]) -> str:
+    """Return the canonical fingerprint of a normalized live listing probe."""
     body = dict(payload)
     body.pop("probe_fingerprint_sha256", None)
     return hashlib.sha256(_canonical_bytes(body)).hexdigest()
 
 
-def _request(url: str, *, timeout: float = 20.0) -> tuple[int | None, str, bytes]:
+def _request(url: str, *, timeout: float = 20.0) -> tuple[int | None, bytes]:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return int(response.status), response.geturl(), response.read()
+            return int(response.status), response.read()
     except urllib.error.HTTPError as exc:
-        return int(exc.code), exc.geturl(), exc.read()
+        return int(exc.code), exc.read()
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         raise ProbeError(f"Could not retrieve {url}: {exc}") from exc
 
@@ -105,19 +106,19 @@ def _target_class(url: str) -> str:
 
 
 def build_probe() -> dict[str, Any]:
-    listing_status, listing_final_url, listing_html = _request(RIT_LAB_URL)
+    """Build a normalized live-state record whose changes require reviewed evidence work."""
+    listing_status, listing_html = _request(RIT_LAB_URL)
     if listing_status != 200:
         raise ProbeError(f"Current RIT lab page returned HTTP {listing_status}.")
     target = _listing_target(listing_html)
     target_class = _target_class(target)
 
-    historical_status, historical_final_url, historical_body = _request(HISTORICAL_HTTPS_URL)
+    historical_status, _ = _request(HISTORICAL_HTTPS_URL)
     payload: dict[str, Any] = {
         "record_type": "gaze-in-wild-current-first-party-listing-probe-v1",
         "current_first_party_page": {
             "url": RIT_LAB_URL,
             "observed_http_status": listing_status,
-            "final_url": listing_final_url,
             "listing_text": LISTING_TEXT,
             "listing_present_exactly_once": True,
             "listing_target": target,
@@ -129,8 +130,6 @@ def build_probe() -> dict[str, Any]:
         "historical_endpoint_observation": {
             "url": HISTORICAL_HTTPS_URL,
             "observed_http_status": historical_status,
-            "final_url": historical_final_url,
-            "response_bytes": len(historical_body),
             "retrieval_succeeded": historical_status == 200,
             "observation_is_global_unavailability_proof": False,
             "observation_is_exact_copy_identity_evidence": False,
@@ -172,7 +171,7 @@ def build_probe() -> dict[str, Any]:
             "performance, cross-dataset validity, or Gazepoint GP3 validity."
         ),
     }
-    payload["probe_fingerprint_sha256"] = _fingerprint(payload)
+    payload["probe_fingerprint_sha256"] = probe_fingerprint(payload)
     return payload
 
 
