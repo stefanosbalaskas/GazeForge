@@ -336,6 +336,13 @@ def authorize_candidate_source_audit_template(
             gaze_in_wild_quarantine_exit,
             spec,
         )
+        if authorization.redistribution_status != (
+            gaze_in_wild_quarantine_exit.redistribution_status
+        ):
+            raise BenchmarkIntegrityError(
+                "Gaze-in-the-Wild source-audit authorization redistribution status conflicts "
+                "with the reviewed recovery-quarantine exit."
+            )
         quarantine_exit_fingerprint = gaze_in_wild_quarantine_exit.record_fingerprint_sha256
     elif gaze_in_wild_quarantine_exit is not None:
         raise BenchmarkIntegrityError(
@@ -372,6 +379,7 @@ def authorize_candidate_source_audit_template(
         ]
     )
     if quarantine_exit_fingerprint is not None:
+        assert gaze_in_wild_quarantine_exit is not None
         notes.extend(
             [
                 (
