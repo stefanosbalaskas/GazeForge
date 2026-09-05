@@ -116,8 +116,8 @@ def _authorized(spec, *, pixel_kinematics_compatible=False, redistribution_statu
     )
 
 
-def _gaze_exit(spec, *, redistribution_status="restricted"):
-    return GazeInWildQuarantineExitAuthorization(
+def _gaze_exit(spec, *, redistribution_status="restricted", validated=True):
+    record = GazeInWildQuarantineExitAuthorization(
         recovery_candidate_kind="candidate_original_layout_unverified",
         recovery_record_fingerprint_sha256=_SHA_A,
         recovery_tree_fingerprint_sha256=_SHA_B,
@@ -142,6 +142,9 @@ def _gaze_exit(spec, *, redistribution_status="restricted"):
         redistribution_evidence="redistribution restriction reviewed",
         authorization_basis="authority, exact-copy identity, and rights reviewed",
     )
+    if validated:
+        object.__setattr__(record, "_binding_validated", True)
+    return record
 
 
 def test_build_pending_authorization_is_bound_and_non_empirical(tmp_path):
@@ -250,6 +253,16 @@ def test_gaze_authorization_requires_separate_quarantine_exit():
 
     with pytest.raises(BenchmarkIntegrityError, match="quarantine-exit"):
         authorize_candidate_source_audit_template(template, authorization)
+
+
+def test_gaze_authorization_rejects_unvalidated_quarantine_exit():
+    template = _gaze_template()
+    with pytest.raises(BenchmarkIntegrityError, match="freshly revalidated"):
+        authorize_candidate_source_audit_template(
+            template,
+            _authorized(template),
+            gaze_in_wild_quarantine_exit=_gaze_exit(template, validated=False),
+        )
 
 
 def test_gaze_authorization_preserves_mapping_and_controls_pixel_kinematics():
