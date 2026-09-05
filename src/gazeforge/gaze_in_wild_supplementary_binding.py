@@ -81,13 +81,15 @@ def validate_gaze_in_wild_supplementary_binding(
         )
     if binding.get("evidence_fingerprint_sha256") != EXPECTED_EVIDENCE_FINGERPRINT_SHA256:
         raise BenchmarkIntegrityError(
-            "Gaze-in-the-Wild source checkpoint is not bound to the reviewed supplementary evidence."
+            "Gaze-in-the-Wild source checkpoint is not bound to the reviewed "
+            "supplementary evidence."
         )
     if binding.get("evidence_fingerprint_sha256") != evidence.get(
         "evidence_fingerprint_sha256"
     ):
         raise BenchmarkIntegrityError(
-            "Gaze-in-the-Wild supplementary evidence fingerprint does not match its checkpoint binding."
+            "Gaze-in-the-Wild supplementary evidence fingerprint does not match "
+            "its checkpoint binding."
         )
 
     bound_people = tuple(int(value) for value in binding.get("published_person_numbers", []))
@@ -148,8 +150,8 @@ def validate_gaze_in_wild_supplementary_binding(
     promoted = [label for label, value in unresolved_flags.items() if value is not False]
     if promoted:
         raise BenchmarkIntegrityError(
-            "Gaze-in-the-Wild supplementary binding must not promote unresolved file-level identity: "
-            + ", ".join(promoted)
+            "Gaze-in-the-Wild supplementary binding must not promote unresolved "
+            "file-level identity: " + ", ".join(promoted)
         )
 
     discrepancy = _mapping(mapping, "participant_18_age_metadata_discrepancy")
@@ -159,7 +161,8 @@ def validate_gaze_in_wild_supplementary_binding(
         "identity_mapping_from_age_permitted": False,
     }:
         raise BenchmarkIntegrityError(
-            "Gaze-in-the-Wild participant-18 age discrepancy must remain preserved and non-identifying."
+            "Gaze-in-the-Wild participant-18 age discrepancy must remain preserved "
+            "and non-identifying."
         )
 
     return GazeInWildSupplementaryBinding(
