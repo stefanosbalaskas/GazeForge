@@ -1,6 +1,6 @@
 # Hollywood2 authoritative ground-truth evidence
 
-GazeForge now carries a frozen evidence record for the canonical Hollywood2EM hand-labelled ground-truth repository. This is **real empirical source evidence**, not a source-resolution scaffold.
+GazeForge carries frozen evidence for the canonical Hollywood2EM hand-labelled ground-truth repository. This is **real empirical source evidence**, not a source-resolution scaffold.
 
 ## Canonical source
 
@@ -63,20 +63,53 @@ These counts reproduce the publication's rounded 62.4% fixation, 9.1% saccade, a
 
 This is frozen as **annotation sensitivity**. It is **not independent human-human reliability**, because the second coder corrected the first coding rather than producing an independent annotation stream.
 
+## Author declaration and underlying rights context
+
+A separately frozen provenance record verifies that Ioannis Agtzidis's 2020 TUM dissertation states that the data presented in the relevant chapter were made publicly available with an open-source licence and explicitly points to the Hollywood2EM GIN repository. That declaration materially supports provenance, but it does not name an exact licence identifier or reproduce licence text.
+
+The original Mathe–Sminchisescu Hollywood-2 eye-movement distribution is a distinct rights layer. Its institutional licence grants academic use subject to its stated restrictions and does not establish that the later hand-labelled GIN annotation repository inherits the same redistribution terms. GazeForge therefore keeps original-source rights and annotation-repository rights separate.
+
+## Complete reachable GIN history audit
+
+A dedicated live workflow now audits **all seven commits reachable from the pinned canonical GIN HEAD**, rather than checking only the current tree. The history begins with commit `1e80c3e0c1527fd4fdf6a2bc880a7c43c861eed0` (`Labelled EM added`, 2019-04-10) and reaches the pinned 2020 commit above. All seven observed commits are authored by Ioannis Agtzidis.
+
+The complete reachable history establishes the following negative and structural evidence:
+
+- no `LICENSE`, `COPYING`, or equivalent licence-named file occurs in any reachable revision;
+- the three distinct historical `README.md` blobs contain no licence/licence keyword evidence and no participant/subject/observer/identity mapping statement recovered by the reviewed probe;
+- the canonical `ground_truth/` directory first appears in commit `357bafd1decbea23eb2fe7cfd0fa1420c25d955c`, whose subject is `Moved files to correct directory`;
+- all **697** current ground-truth paths first appear in that move commit;
+- from that commit through HEAD, the ground-truth path inventory has one version and the set of **16 three-digit filename tokens** has one version;
+- the stable ground-truth path inventory is fingerprinted as `0a8e49b3ae814bee212176557cc71c0d5658cdcf56d16f1c75b15c0566ee989d`.
+
+This history result strengthens the provenance boundary but does not change its semantics. Persistent filename prefixes demonstrate stable repository syntax; they do **not** prove that the prefixes are original participant identifiers or identify active/free-viewing group membership. Likewise, failure to recover licence text from Git history does not negate the separate author open-source declaration; it means the exact repository-level licence identifier/text and redistribution scope remain unrecovered.
+
+Frozen history evidence:
+
+`validation/evidence/hollywood2/hollywood2-gin-history-evidence-v1.json`
+
+History evidence fingerprint:
+
+`c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1`
+
 ## Rights and remaining boundaries
 
-The canonical repository contains no LICENSE/COPYING file at the pinned revision. The article's CC BY license is not treated as the dataset license, and a separate description of the dataset as openly licensed is not substituted for exact repository-level terms. Dataset-specific analysis-use and redistribution terms therefore remain unresolved.
+The annotation repository's exact licence identifier/text and raw-annotation redistribution scope remain unresolved. The article's CC BY licence is not treated as the dataset licence, and the original Hollywood-2 institutional licence is not automatically inherited by the later GIN annotation repository.
 
-The 16 filename subject tokens match the published observer count, but GazeForge does not yet promote those tokens to verified participant identities. Consequently participant-held-out Hollywood2 modelling remains gated. The evidence also does not create independent human-human agreement, model validation, Lund↔Hollywood2 cross-dataset validation, recovery of the original Hollywood2 video corpus, or canonical Frozen Evidence.
+The 16 filename tokens match the published Hollywood-2 eye-tracking participant count, and the original public dataset is documented elsewhere as carrying unique subject IDs within task groups. However, no authoritative GIN-token → original-subject-ID mapping has been recovered. GazeForge therefore does not promote the filename tokens to verified participant identities or infer active/free-viewing group membership.
+
+Consequently participant-held-out Hollywood2 modelling remains gated. The evidence also does not create independent human-human agreement, model validation, Lund↔Hollywood2 cross-dataset validation, recovery of the complete original video/gaze archive, or canonical program-wide Frozen Evidence.
 
 ## Reproducibility
 
-The committed evidence record is:
+The authoritative ground-truth evidence record is:
 
 `validation/evidence/hollywood2/hollywood2-authoritative-ground-truth-evidence-v1.json`
 
-Evidence fingerprint:
+Ground-truth evidence fingerprint:
 
 `d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea`
 
-The dedicated live workflow reclones the canonical GIN repository, recomputes every ground-truth file identity and aggregate metric, regenerates the 697-entry ledger fingerprint, and binds the result to the immutable evidence contract.
+The canonical live-source workflow reclones the GIN repository, recomputes every ground-truth file identity and aggregate metric, regenerates the 697-entry ledger fingerprint, and binds the result to the immutable ground-truth evidence contract.
+
+The complete-history workflow independently reclones the same pinned repository, enumerates every reachable commit, rechecks historical licence/README evidence and ground-truth path/token history, and binds the live result to the immutable history evidence contract. Persistent upstream unavailability remains fail-closed rather than being converted into a successful source result.
