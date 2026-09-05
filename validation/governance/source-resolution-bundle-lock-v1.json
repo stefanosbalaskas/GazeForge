@@ -1,8 +1,8 @@
 {
   "lock_type": "source-resolution-bundle-lock-v1",
-  "reviewed_on": "2026-09-04",
+  "reviewed_on": "2026-09-05",
   "record_count": 3,
-  "bundle_fingerprint_sha256": "543bc47b29074049eb3f94a93a4ee952ccadc56b2d15347ff736da1f7127261c",
+  "bundle_fingerprint_sha256": "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe",
   "records": [
     {
       "dataset_key": "gaze-in-the-wild",
@@ -11,8 +11,8 @@
     },
     {
       "dataset_key": "hollywood2em",
-      "status": "canonical_distribution_identifier_established_current_copy_unverified",
-      "record_fingerprint_sha256": "5cabe4f572a9aaf1e509dfa764d8caa35301a16f26df07e5f44dbee3eb811920"
+      "status": "canonical_repository_and_ground_truth_recovered_terms_and_participant_mapping_unresolved",
+      "record_fingerprint_sha256": "cd08d220357fe0cf8a44a9fc7aa2ea76df95bd155de1977ab51ccfb734ef5ca5"
     },
     {
       "dataset_key": "visus",
@@ -21,8 +21,8 @@
     }
   ],
   "review_basis": [
-    "Reviewed unresolved source-resolution checkpoint set for VISUS, Hollywood2EM, and Gaze-in-the-Wild.",
-    "Any checkpoint-content or evidence-state change requires intentional lock replacement and scientific review before merge."
+    "Reviewed current source-resolution checkpoint set for VISUS, Hollywood2EM, and Gaze-in-the-Wild; Hollywood2EM now references separately frozen empirical source evidence while rights and source-audit readiness remain unresolved.",
+    "This governance lock snapshots checkpoint identities only; it does not authorize empirical evidence, rights, source-audit readiness, or Frozen Evidence publication."
   ],
   "scientific_boundary": {
     "non_empirical_governance_only": true,
@@ -31,5 +31,5 @@
     "authorizes_empirical_evidence": false,
     "authorizes_frozen_evidence_publication": false
   },
-  "lock_fingerprint_sha256": "f68ad9d2ff7f4348049a9342c9d787f08dfc31e01d7507a6f3e0fcb2ca46528d"
+  "lock_fingerprint_sha256": "e18f0bd4a6a6dcc6f87de50751850546ea7c790c4312a944b091da1801941362"
 }
