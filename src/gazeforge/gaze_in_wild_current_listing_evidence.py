@@ -14,7 +14,7 @@ from .exceptions import BenchmarkIntegrityError
 EVIDENCE_RECORD_TYPE = "gaze-in-wild-current-first-party-listing-evidence-v1"
 PROBE_RECORD_TYPE = "gaze-in-wild-current-first-party-listing-probe-v1"
 EXPECTED_EVIDENCE_FINGERPRINT_SHA256 = (
-    "c2b9a19f43276e6bde08794f87212e4c2016a9e0ab3183dc4f8b69d310c02916"
+    "e8257820f6cbfc9688e3771fd976c6afcb6b5ced93e385a009d10038a23bdcd5"
 )
 EXPECTED_LISTING_STATE_FINGERPRINT_SHA256 = (
     "b7fcf78719cb23ce7133fe3fb51a757c561c5b25797f40de4a2e00b8e1c4f839"
