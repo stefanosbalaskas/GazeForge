@@ -234,7 +234,7 @@ def build_probe(root: Path) -> dict[str, Any]:
                 "first_seen_commit_sha1"
             ],
             "license_file_blob_sha1": key_paths["License.md"]["pinned_blob_sha1"],
-            "license_file_identifies_mit": license_text.lstrip().startswith("MIT License"),
+            "license_file_identifies_mit": license_text.lstrip().startswith("The MIT License"),
             "license_scope_promoted_to_external_dataset_files": False,
         },
         "repository_tree": {
