@@ -24,7 +24,7 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -53,21 +53,75 @@ jobs:
           page = record["current_first_party_page"]
           assert page["listing_text"] == "The Gaze-In-Wild Dataset"
           assert page["listing_present_exactly_once"] is True
+          assert page["listing_target_is_expected_publication"] is True
           assert page["listing_target_is_direct_dataset_archive_verified"] is False
           assert page["dataset_file_rights_terms_found_on_listing"] is False
+          review = record["review_trigger"]
+          assert review["historical_transport_observation_is_review_gate"] is False
+          assert review["automatic_source_or_rights_promotion_permitted"] is False
+          if review["requires_human_evidence_review"]:
+              raise SystemExit(
+                  "Current first-party listing state changed; human evidence review is required "
+                  "before this workflow may pass."
+              )
+          transport = record["historical_endpoint_observation"]
+          assert transport["transport_status_is_source_identity_or_rights_evidence"] is False
+          assert transport["tls_unverified_fallback_is_source_authentication_evidence"] is False
+          assert transport["observation_is_global_unavailability_proof"] is False
+          assert transport["observation_is_exact_copy_identity_evidence"] is False
           boundary = record["scientific_boundary"]
           assert boundary["current_first_party_listing_verified"] is True
           for key, value in boundary.items():
               if key != "current_first_party_listing_verified":
                   assert value is False, (key, value)
-          assert record["review_trigger"]["automatic_source_or_rights_promotion_permitted"] is False
-          if record["review_trigger"]["requires_human_evidence_review"]:
-              raise SystemExit(
-                  "Current first-party listing/endpoint state changed; human evidence review "
-                  "is required before this workflow may pass."
-              )
           print("Current first-party listing remains within the reviewed non-promotion state.")
+          print("Historical transport diagnostic status:", transport["observed_http_status"])
           PY
+      - name: Install package and test dependencies
+        run: python -m pip install ".[dev]"
+      - name: Bind prior and current frozen evidence to live listing state
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_current_listing_evidence import (
+              EXPECTED_EVIDENCE_FINGERPRINT_SHA256,
+              EXPECTED_LISTING_STATE_FINGERPRINT_SHA256,
+              validate_gaze_in_wild_current_listing_evidence,
+              validate_gaze_in_wild_current_listing_probe,
+          )
+          from gazeforge.gaze_in_wild_distribution_evidence import (
+              validate_gaze_in_wild_distribution_availability_evidence,
+          )
+
+          prior = Path(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-distribution-availability-evidence-v1.json"
+          )
+          current = Path(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-current-first-party-listing-evidence-v1.json"
+          )
+          live = Path("gaze-in-wild-current-first-party-listing-probe-v1.json")
+
+          previous = validate_gaze_in_wild_distribution_availability_evidence(prior)
+          evidence = validate_gaze_in_wild_current_listing_evidence(current)
+          validate_gaze_in_wild_current_listing_probe(live, current)
+          assert evidence.evidence_fingerprint_sha256 == EXPECTED_EVIDENCE_FINGERPRINT_SHA256
+          assert (
+              evidence.listing_state_fingerprint_sha256
+              == EXPECTED_LISTING_STATE_FINGERPRINT_SHA256
+          )
+          assert evidence.current_exact_authoritative_copy_obtained is False
+          assert evidence.dataset_file_rights_resolved is False
+          assert previous.current_exact_copy_obtained is False
+          assert previous.dataset_file_rights_resolved is False
+          print("Live GIW first-party listing is bound to both reviewed evidence layers.")
+          PY
+      - name: Run focused current-listing evidence tests
+        run: python -m pytest -q tests/test_gaze_in_wild_current_listing_evidence.py
       - name: Upload normalized live probe
         uses: actions/upload-artifact@v4
         with:
