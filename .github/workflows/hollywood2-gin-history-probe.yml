@@ -52,6 +52,26 @@ jobs:
             echo "GIN history attempt ${attempt} failed; retrying after ${delay}s." >&2
             sleep "$delay"
           done
+      - name: Install package
+        run: python -m pip install .
+      - name: Bind live history audit to frozen evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_history_evidence import (
+              validate_hollywood2_gin_history_probe,
+          )
+
+          validate_hollywood2_gin_history_probe(
+              Path("hollywood2_gin_history_probe.json"),
+              Path(
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-gin-history-evidence-v1.json"
+              ),
+          )
+          print("Hollywood2 complete GIN history is bound to frozen evidence.")
+          PY
       - name: Summarize history audit
         shell: bash
         run: |
