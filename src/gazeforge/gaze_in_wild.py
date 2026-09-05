@@ -96,6 +96,23 @@ def _por_xy(por: Any, n_samples: int) -> tuple[np.ndarray, np.ndarray]:
     )
 
 
+def _scene_resolution(value: Any) -> tuple[int, int]:
+    try:
+        resolution = np.asarray(value, dtype=float).reshape(-1)
+    except (TypeError, ValueError) as exc:
+        raise SchemaError("Gaze-in-the-Wild ETG.SceneResolution must be numeric.") from exc
+    if resolution.size != 2 or np.any(~np.isfinite(resolution)):
+        raise SchemaError(
+            "Gaze-in-the-Wild ETG.SceneResolution must contain finite width and height."
+        )
+    rounded = np.rint(resolution)
+    if np.any(resolution <= 0) or not np.allclose(resolution, rounded, rtol=0.0, atol=1e-9):
+        raise SchemaError(
+            "Gaze-in-the-Wild ETG.SceneResolution must contain positive integer pixels."
+        )
+    return int(rounded[0]), int(rounded[1])
+
+
 def load_gaze_in_wild_mat(
     label_path: str | Path,
     *,
@@ -106,11 +123,13 @@ def load_gaze_in_wild_mat(
 ) -> GazeFrame:
     """Load one manually annotated Gaze-in-the-Wild recording.
 
-    Sampling rate is inferred from ``LabelData.T`` rather than hard-coded. The published hardware
-    rate (120 Hz) is retained as provenance because secondary processed benchmark descriptions have
-    reported a different cadence. Point-of-regard coordinates are retained but marked unverified;
-    unit-sensitive cross-dataset modelling must not proceed until their basis is independently
-    audited.
+    Sampling rate is inferred from ``LabelData.T`` rather than hard-coded. The
+    published eye-tracker acquisition rate (120 Hz) and the official processed-stream
+    target cadence (300 Hz) are retained as distinct provenance. When ``ProcessData``
+    is supplied, the official processing schema defines ``ETG.POR`` as normalized
+    scene-camera coordinates whose y axis has already been flipped to MATLAB image
+    convention; those coordinates are converted to canonical pixels using
+    ``ETG.SceneResolution``.
     """
     label_file = Path(label_path)
     if not label_file.exists():
@@ -146,6 +165,8 @@ def load_gaze_in_wild_mat(
     confidence = np.full(n_samples, np.nan, dtype=float)
     valid = np.zeros(n_samples, dtype=bool)
     process_file: Path | None = None
+    screen_size_px: tuple[int, int] | None = None
+    coordinate_verified = False
 
     if process_path is not None:
         process_file = Path(process_path)
@@ -153,15 +174,25 @@ def load_gaze_in_wild_mat(
             raise FileNotFoundError(process_file)
         process_data = _load_struct(process_file, "ProcessData")
         etg = _field(process_data, "ETG")
-        x, y = _por_xy(_field(etg, "POR"), n_samples)
+        por_x, por_y = _por_xy(_field(etg, "POR"), n_samples)
+        screen_size_px = _scene_resolution(_field(etg, "SceneResolution"))
+        width_px, height_px = screen_size_px
+        x = por_x * width_px
+        y = por_y * height_px
         confidence = _numeric_vector(_field(etg, "Confidence"), name="ETG.Confidence")
         if len(confidence) != n_samples:
             raise SchemaError(
                 "Gaze-in-the-Wild ETG.Confidence length does not match LabelData."
             )
-        valid = np.isfinite(confidence) & (confidence >= threshold)
+        valid = (
+            np.isfinite(confidence)
+            & (confidence >= threshold)
+            & np.isfinite(x)
+            & np.isfinite(y)
+        )
         x[~valid] = np.nan
         y[~valid] = np.nan
+        coordinate_verified = True
 
     event_codes = np.rint(labels_raw).astype(int)
     event_labels = [
@@ -190,7 +221,7 @@ def load_gaze_in_wild_mat(
     return GazeFrame(
         data=frame,
         sampling_rate_hz=sampling_rate_hz,
-        screen_size_px=None,
+        screen_size_px=screen_size_px,
         metadata={
             "source_dataset": "Gaze-in-the-Wild",
             "source_file": label_file.name,
@@ -199,14 +230,26 @@ def load_gaze_in_wild_mat(
             "label_code_map": dict(GAZE_IN_WILD_LABELS),
             "confidence_threshold": threshold,
             "participant_identity_resolved": participant_id is not None,
-            "coordinate_source_unit": "dataset-native POR; unit not independently verified",
-            "coordinate_unit_verified": False,
+            "coordinate_source_unit": (
+                "normalized Pupil scene-camera POR; y already flipped by official processing"
+                if process_file is not None
+                else "unavailable without ProcessData"
+            ),
+            "coordinate_output_unit": "pixels" if process_file is not None else "unavailable",
+            "coordinate_unit_verified": coordinate_verified,
+            "coordinate_conversion_basis": (
+                "official Gaze-in-the-Wild ReadData_function.m ETG.POR and ETG.SceneResolution"
+                if process_file is not None
+                else None
+            ),
             "sampling_rate_source": "inferred_from_LabelData.T",
             "published_hardware_sampling_rate_hz": 120.0,
+            "official_processed_target_rate_hz": 300.0,
             "published_hardware": "Pupil Labs binocular eye-tracking glasses",
             "sampling_rate_provenance_note": (
-                "The primary paper reports 120 Hz acquisition; secondary processed benchmark "
-                "metadata has reported another cadence. Analysis uses file timestamps."
+                "The primary paper reports 120 Hz acquisition; the official processing "
+                "repository documents gaze/IMU upsampling to 300 Hz. Analysis still uses "
+                "the exact LabelData timestamps rather than either nominal rate."
             ),
         },
     )
@@ -266,20 +309,36 @@ def load_gaze_in_wild_directory(
             "Gaze-in-the-Wild files do not share a consistent inferred sampling rate: "
             f"{sorted(round(float(value), 6) for value in rates)}"
         )
+
+    screen_sizes = {frame.screen_size_px for frame in frames}
+    if len(screen_sizes) > 1:
+        raise SchemaError(
+            "Gaze-in-the-Wild ProcessData files do not share one ETG.SceneResolution."
+        )
+    screen_size_px = next(iter(screen_sizes))
     combined = pd.concat([frame.data for frame in frames], ignore_index=True)
     resolved = not combined["participant_id"].astype(str).eq("__unresolved__").any()
+    coordinates_verified = all(
+        bool(frame.metadata.get("coordinate_unit_verified")) for frame in frames
+    )
     return GazeFrame(
         data=combined,
         sampling_rate_hz=median_rate,
-        screen_size_px=None,
+        screen_size_px=screen_size_px,
         metadata={
             "source_dataset": "Gaze-in-the-Wild",
             "n_source_files": len(frames),
             "participant_identity_resolved": resolved,
-            "coordinate_source_unit": "dataset-native POR; unit not independently verified",
-            "coordinate_unit_verified": False,
+            "coordinate_source_unit": (
+                "normalized Pupil scene-camera POR; y already flipped by official processing"
+                if process_dir is not None
+                else "unavailable without ProcessData"
+            ),
+            "coordinate_output_unit": "pixels" if process_dir is not None else "unavailable",
+            "coordinate_unit_verified": coordinates_verified,
             "sampling_rate_source": "median_of_file_timestamp_inference",
             "published_hardware_sampling_rate_hz": 120.0,
+            "official_processed_target_rate_hz": 300.0,
             "human_annotator_count_published": 5,
             "selected_labeller": (
                 labeller if labeller is not None else next(iter(selected_labellers), None)
