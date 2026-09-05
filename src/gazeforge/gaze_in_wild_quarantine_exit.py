@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 import re
 from collections.abc import Mapping
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -201,6 +201,7 @@ class GazeInWildQuarantineExitAuthorization:
     redistribution_evidence: str = "REVIEW_REQUIRED"
     authorization_basis: str = "REVIEW_REQUIRED"
     notes: tuple[str, ...] = ()
+    _binding_validated: bool = field(default=False, init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         kind = str(self.recovery_candidate_kind).strip().lower()
@@ -290,6 +291,7 @@ class GazeInWildQuarantineExitAuthorization:
 
     def _payload_without_fingerprint(self) -> dict[str, Any]:
         payload = asdict(self)
+        payload.pop("_binding_validated", None)
         payload["record_type"] = _RECORD_TYPE
         payload["notes"] = list(self.notes)
         payload["scientific_boundary"] = dict(_SCIENTIFIC_BOUNDARY)
@@ -453,6 +455,7 @@ def validate_gaze_in_wild_quarantine_exit_authorization(
     if authorization.audit_template_fingerprint_sha256 != template_fingerprint:
         raise BenchmarkIntegrityError("GIW quarantine-exit audit-template identity drifted.")
     _validate_authorized_template_consistency(authorization, spec)
+    object.__setattr__(authorization, "_binding_validated", True)
     return authorization
 
 
@@ -460,17 +463,22 @@ def require_authorized_gaze_in_wild_quarantine_exit(
     authorization: GazeInWildQuarantineExitAuthorization,
     spec: GazeInWildSourceAuditSpec,
 ) -> None:
-    """Require an authorized exit record bound to one exact GIW audit template.
+    """Require a freshly validated authorized exit bound to one exact GIW audit template.
 
     Full candidate-tree/recovery revalidation is performed by
-    :func:`validate_gaze_in_wild_quarantine_exit_authorization`. This narrower check is used at
-    the generic audit-template authorization boundary so a GIW template cannot be materialized
-    without carrying the separately reviewed quarantine-exit identity.
+    :func:`validate_gaze_in_wild_quarantine_exit_authorization`. The validation state is ephemeral:
+    it is not serialized, and editing/reloading a record requires another complete validation before
+    the generic source-audit authorization boundary will accept it.
     """
     if not isinstance(authorization, GazeInWildQuarantineExitAuthorization):
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild source-audit authorization requires a validated quarantine-exit "
             "record."
+        )
+    if authorization._binding_validated is not True:
+        raise BenchmarkIntegrityError(
+            "Gaze-in-the-Wild quarantine-exit record must be freshly revalidated against the "
+            "current candidate tree, recovery review, candidate inventory, and audit template."
         )
     if authorization.decision != "authorized":
         raise BenchmarkIntegrityError(
