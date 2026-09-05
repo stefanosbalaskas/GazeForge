@@ -19,9 +19,10 @@ LOCK = ROOT / "validation" / "governance" / "source-resolution-bundle-lock-v1.js
 REVIEW_BASIS = [
     "Reviewed current source-resolution checkpoint set for VISUS, Hollywood2EM, and "
     "Gaze-in-the-Wild; Hollywood2EM references separately frozen empirical source "
-    "evidence and Gaze-in-the-Wild now binds first-author processing provenance while "
-    "exact dataset copy, rights, participant/task mapping, and source-audit readiness "
-    "remain unresolved.",
+    "evidence and Gaze-in-the-Wild now binds first-author processing provenance plus "
+    "publication-level Supplementary Table 1 participant/task context while exact "
+    "dataset copy, rights, distributed-file identity, complete trial-to-task mapping, "
+    "and source-audit readiness remain unresolved.",
     "This governance lock snapshots checkpoint identities only; it does not authorize "
     "empirical evidence, rights, source-audit readiness, or Frozen Evidence publication.",
 ]
@@ -37,10 +38,10 @@ def test_builder_reproduces_committed_reviewed_lock():
 
     assert built == committed
     assert built["bundle_fingerprint_sha256"] == (
-        "899b2563e0218c9d96262a2d5245e6fec0e64345102a318b8fa657617877b758"
+        "57064fea405e4a2e944bb066dd2dd7bff919ec12fb380d9cc1a8ba67d3bbbc5a"
     )
     assert built["lock_fingerprint_sha256"] == (
-        "1616af4fdce05e184db2efcef9ac60ce53a64523ba72f8bb723706bf077bce58"
+        "705fab1f67b564da5deef8c004822c424e714037ec4e0067831fad8cbee3e713"
     )
     assert built["scientific_boundary"]["non_empirical_governance_only"] is True
     assert built["scientific_boundary"]["authorizes_empirical_evidence"] is False
@@ -57,6 +58,9 @@ def test_committed_lock_validates_and_loads_typed_identity():
     assert typed.lock_fingerprint_sha256 == summary["lock_fingerprint_sha256"]
     records = {row["dataset_key"]: row for row in typed.records}
     assert set(records) == {"gaze-in-the-wild", "hollywood2em", "visus"}
+    assert records["gaze-in-the-wild"]["record_fingerprint_sha256"] == (
+        "22bbdef6e6f2823d10c84fd099596700d9db19c54aecfb76484c7625fd9ebb08"
+    )
     assert records["hollywood2em"]["status"] == (
         "canonical_repository_and_ground_truth_recovered_terms_and_participant_"
         "mapping_unresolved"
