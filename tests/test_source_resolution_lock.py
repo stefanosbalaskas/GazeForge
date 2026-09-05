@@ -17,24 +17,28 @@ ROOT = Path(__file__).parents[1]
 PROTOCOLS = ROOT / "validation" / "protocols"
 LOCK = ROOT / "validation" / "governance" / "source-resolution-bundle-lock-v1.json"
 REVIEW_BASIS = [
-    "Reviewed unresolved source-resolution checkpoint set for VISUS, Hollywood2EM, and "
-    "Gaze-in-the-Wild.",
-    "Any checkpoint-content or evidence-state change requires intentional lock replacement and "
-    "scientific review before merge.",
+    "Reviewed current source-resolution checkpoint set for VISUS, Hollywood2EM, and "
+    "Gaze-in-the-Wild; Hollywood2EM now references separately frozen empirical source "
+    "evidence while rights and source-audit readiness remain unresolved.",
+    "This governance lock snapshots checkpoint identities only; it does not authorize "
+    "empirical evidence, rights, source-audit readiness, or Frozen Evidence publication.",
 ]
 
 
 def test_builder_reproduces_committed_reviewed_lock():
     built = build_source_resolution_bundle_lock(
         PROTOCOLS,
-        reviewed_on="2026-09-04",
+        reviewed_on="2026-09-05",
         review_basis=REVIEW_BASIS,
     )
     committed = json.loads(LOCK.read_text(encoding="utf-8"))
 
     assert built == committed
     assert built["bundle_fingerprint_sha256"] == (
-        "543bc47b29074049eb3f94a93a4ee952ccadc56b2d15347ff736da1f7127261c"
+        "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe"
+    )
+    assert built["lock_fingerprint_sha256"] == (
+        "e18f0bd4a6a6dcc6f87de50751850546ea7c790c4312a944b091da1801941362"
     )
     assert built["scientific_boundary"]["non_empirical_governance_only"] is True
     assert built["scientific_boundary"]["authorizes_empirical_evidence"] is False
@@ -49,11 +53,12 @@ def test_committed_lock_validates_and_loads_typed_identity():
     assert typed.record_count == 3
     assert typed.bundle_fingerprint_sha256 == summary["bundle_fingerprint_sha256"]
     assert typed.lock_fingerprint_sha256 == summary["lock_fingerprint_sha256"]
-    assert {row["dataset_key"] for row in typed.records} == {
-        "gaze-in-the-wild",
-        "hollywood2em",
-        "visus",
-    }
+    records = {row["dataset_key"]: row for row in typed.records}
+    assert set(records) == {"gaze-in-the-wild", "hollywood2em", "visus"}
+    assert records["hollywood2em"]["status"] == (
+        "canonical_repository_and_ground_truth_recovered_terms_and_participant_"
+        "mapping_unresolved"
+    )
 
 
 def test_lock_refuses_scientifically_valid_but_unreviewed_checkpoint_change(tmp_path):
@@ -81,6 +86,15 @@ def test_lock_refuses_weakened_scientific_boundary(tmp_path):
         validate_source_resolution_bundle_lock(altered, PROTOCOLS)
 
 
+def test_lock_is_governance_only_even_when_a_checkpoint_references_empirical_evidence():
+    summary = validate_source_resolution_bundle_lock(LOCK, PROTOCOLS)
+    payload = source_resolution_main
+
+    assert summary["scientific_boundary"]["non_empirical_governance_only"] is True
+    assert summary["scientific_boundary"]["authorizes_empirical_evidence"] is False
+    assert callable(payload)
+
+
 def test_cli_can_require_reviewed_bundle_lock(capsys):
     assert (
         source_resolution_main(
@@ -91,6 +105,11 @@ def test_cli_can_require_reviewed_bundle_lock(capsys):
     payload = json.loads(capsys.readouterr().out)
 
     assert payload["validation_bundle"]["record_count"] == 3
+    records = {
+        row["dataset_key"]: row
+        for row in payload["validation_bundle"]["records"]
+    }
+    assert records["hollywood2em"]["empirical_evidence_created"] is True
     assert payload["bundle_lock"]["matches_current_bundle"] is True
     assert payload["bundle_lock"]["scientific_boundary"]["authorizes_source_audit_ready"] is False
 
