@@ -126,6 +126,8 @@ def _validate_closed_scientific_boundary(boundary: Mapping[str, Any]) -> None:
     for key in (
         "current_exact_authoritative_copy_obtained",
         "dataset_file_rights_resolved",
+        "analysis_use_permitted",
+        "redistribution_authorized",
         "participant_mapping_verified",
         "complete_trial_to_task_mapping_verified",
         "distributed_file_sampling_cadence_verified",
@@ -314,7 +316,9 @@ def validate_gaze_in_wild_current_listing_probe(
     _equal(transport.get("url"), HISTORICAL_HTTPS_URL, "live historical endpoint URL")
     status = transport.get("observed_http_status")
     if not isinstance(status, int) or isinstance(status, bool):
-        raise BenchmarkIntegrityError("GIW current-listing live transport status must be an integer.")
+        raise BenchmarkIntegrityError(
+            "GIW current-listing live transport status must be an integer."
+        )
     for key in (
         "transport_status_is_source_identity_or_rights_evidence",
         "tls_unverified_fallback_is_source_authentication_evidence",
@@ -325,8 +329,16 @@ def validate_gaze_in_wild_current_listing_probe(
 
     _validate_closed_scientific_boundary(_mapping(probe, "scientific_boundary"))
     stored_listing = probe.get("listing_state_fingerprint_sha256")
-    _equal(stored_listing, listing_state_fingerprint(probe), "live listing-state self-fingerprint")
-    _equal(stored_listing, evidence.listing_state_fingerprint_sha256, "frozen listing-state binding")
+    _equal(
+        stored_listing,
+        listing_state_fingerprint(probe),
+        "live listing-state self-fingerprint",
+    )
+    _equal(
+        stored_listing,
+        evidence.listing_state_fingerprint_sha256,
+        "frozen listing-state binding",
+    )
     _equal(
         probe.get("observation_fingerprint_sha256"),
         observation_fingerprint(probe),
