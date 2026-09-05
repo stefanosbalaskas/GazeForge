@@ -1,0 +1,95 @@
+{
+  "record_type": "gaze-in-wild-distribution-availability-evidence-v1",
+  "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
+  "checked_on": "2026-09-05",
+  "status": "authoritative_historical_distribution_identified_current_exact_copy_unretrieved",
+  "scope": {
+    "authoritative_publication_doi": "10.1038/s41598-020-59251-5",
+    "authoritative_processing_repository": "https://github.com/RSKothari/Gaze-in-Wild",
+    "pinned_processing_commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "historical_distribution_url": "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/"
+  },
+  "authoritative_first_party_evidence": {
+    "publication_states_compressed_data_and_code_publicly_available": true,
+    "publication_distribution_url_matches_historical_url": true,
+    "processing_repository_readme_directs_users_to_same_historical_url_for_all_data_files": true,
+    "processing_repository_readme_states_raw_data_over_14tb_not_provided_online": true,
+    "processing_repository_readme_states_contact_authors_for_raw_data": true,
+    "current_exact_compressed_copy_obtained": false
+  },
+  "current_retrieval_observation": {
+    "probe_environment": "OpenAI web retrieval during reviewed source-resolution work",
+    "https_historical_url_observed_http_status": 502,
+    "retrieval_succeeded": false,
+    "observation_is_global_unavailability_proof": false,
+    "observation_is_exact_copy_identity_evidence": false,
+    "interpretation": "The historical first-party endpoint was not retrievable in this review environment; this does not prove that no authoritative copy exists or that the endpoint fails from every network."
+  },
+  "replacement_source_search": {
+    "authoritative_replacement_dataset_doi_found": false,
+    "authoritative_replacement_repository_found": false,
+    "searched_classes": [
+      "current RIT institutional pages",
+      "Zenodo",
+      "Figshare",
+      "OSF",
+      "Dataverse",
+      "Dryad",
+      "Mendeley Data",
+      "GitHub"
+    ],
+    "current_rit_lab_listing_is_direct_archive": false
+  },
+  "secondary_recovery_leads": [
+    {
+      "repository": "https://github.com/Morris88826/awesome-eye-data",
+      "commit_sha1": "4c6a58ef5be5693e08adac33e8768a3b88ddf8ac",
+      "label": "GazeinTheWild",
+      "processed_collection_advertised": true,
+      "google_drive_folder_advertised": true,
+      "format_described_as_transformed_csv_and_chunked_video_collection": true,
+      "authoritative_first_party_copy_verified": false,
+      "exact_processdata_labeldata_copy_verified": false,
+      "dataset_file_rights_verified": false,
+      "empirical_analysis_eligible": false
+    },
+    {
+      "repository": "https://github.com/George614/edit_distance_gpu",
+      "commit_sha1": "01711b11556c271a7a15e566935089bb2775121b",
+      "labeller_filename_examples_observed": [
+        "LabellerIdx_7_PrIdx_1_TrIdx_1.mat",
+        "LabellerIdx_8_PrIdx_1_TrIdx_1.mat"
+      ],
+      "separately_named_labeller_files_are_provenance_lead_only": true,
+      "authoritative_source_verified": false,
+      "shared_gaze_identity_verified": false,
+      "independent_stream_recoverability_verified": false,
+      "human_human_agreement_eligible": false
+    }
+  ],
+  "rights_boundary": {
+    "article_license": "CC BY 4.0",
+    "article_license_is_external_dataset_file_license": false,
+    "processing_repository_license": "MIT",
+    "processing_repository_license_scope": "software and associated documentation files",
+    "processing_repository_mit_is_external_dataset_file_license": false,
+    "dataset_file_analysis_use_terms_status": "unresolved",
+    "dataset_file_redistribution_terms_status": "unresolved",
+    "license_inference_permitted": false
+  },
+  "scientific_boundary": {
+    "authoritative_historical_distribution_identity_verified": true,
+    "current_exact_authoritative_copy_obtained": false,
+    "exact_distributed_participant_identity_mapping_verified": false,
+    "complete_trial_to_task_mapping_verified": false,
+    "distributed_file_sampling_cadence_verified": false,
+    "separately_recoverable_independent_labeller_streams_verified": false,
+    "human_human_agreement_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "cross_dataset_performance_created": false,
+    "gp3_validity_created": false,
+    "frozen_evidence_performance_claim_created": false
+  },
+  "claim_limit": "This evidence records the first-party historical distribution identity, a dated failed retrieval observation, and non-authoritative recovery leads. It does not establish a current exact dataset copy, dataset-file rights, participant/task mappings, independent recoverable labeller streams, sampling cadence, human agreement, model performance, cross-dataset validity, or Gazepoint GP3 validity.",
+  "evidence_fingerprint_sha256": "2400c81a0897fb414285069c368a8a9d96de1d18eb185b1073cf15bb1c8bd1da"
+}
