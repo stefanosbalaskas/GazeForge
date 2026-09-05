@@ -1,9 +1,10 @@
-"""Unified validation for non-empirical benchmark source-resolution checkpoints."""
+"""Unified validation for benchmark source-resolution checkpoints."""
 
 from __future__ import annotations
 
 import hashlib
 import json
+import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
@@ -30,11 +31,53 @@ _DATASET_KEYS = {
 
 _EXPECTED_STATUS = {
     "visus": "current_authoritative_distribution_unresolved",
-    "hollywood2em": "canonical_distribution_identifier_established_current_copy_unverified",
+    "hollywood2em": (
+        "canonical_repository_and_ground_truth_recovered_terms_and_participant_"
+        "mapping_unresolved"
+    ),
     "gaze-in-the-wild": (
         "published_distribution_identifier_established_current_direct_copy_unverified"
     ),
 }
+_EXPECTED_EMPIRICAL_STATE = {
+    "visus": False,
+    "hollywood2em": True,
+    "gaze-in-the-wild": False,
+}
+_EXPECTED_AUDIT_READY_STATE = {
+    "visus": False,
+    "hollywood2em": False,
+    "gaze-in-the-wild": False,
+}
+_HOLLYWOOD2_TOKENS = (
+    "001",
+    "002",
+    "003",
+    "004",
+    "005",
+    "006",
+    "008",
+    "010",
+    "011",
+    "012",
+    "013",
+    "014",
+    "015",
+    "017",
+    "018",
+    "019",
+)
+_HOLLYWOOD2_LABEL_COUNTS = {
+    "FIX": 2_414_211,
+    "SACCADE": 353_208,
+    "SP": 936_913,
+    "NOISE": 167_248,
+}
+_HOLLYWOOD2_COMMIT = "870fa6d6209c9085260918d61433a0a2c70fd497"
+_HOLLYWOOD2_LEDGER = "51dd0883cf5b7966a4caea94fb9ac97e43bee6cf716423f26f268810041d3030"
+_HOLLYWOOD2_SCHEMA = "31a6db306fded47592ad4c1647da8df3413df970a2b8abcba91e23d6261881c0"
+_HOLLYWOOD2_EVIDENCE = "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea"
+_HOLLYWOOD2_PROBE = "b3137d6bc4ff049802e6cdc62f6e9d3b8e490fe42384d501f789ba3bacb691dd"
 
 
 def _fingerprint(payload: Mapping[str, Any]) -> str:
@@ -173,7 +216,20 @@ def _validate_common(
         )
 
     empirical = _require_bool(payload, "empirical_evidence_created", dataset_key=dataset_key)
+    expected_empirical = _EXPECTED_EMPIRICAL_STATE[dataset_key]
+    if empirical is not expected_empirical:
+        raise BenchmarkIntegrityError(
+            f"{dataset_key} empirical_evidence_created does not match the reviewed checkpoint "
+            "state."
+        )
+
     audit_ready = _require_bool(payload, "source_audit_ready", dataset_key=dataset_key)
+    expected_audit_ready = _EXPECTED_AUDIT_READY_STATE[dataset_key]
+    if audit_ready is not expected_audit_ready:
+        raise BenchmarkIntegrityError(
+            f"{dataset_key} source_audit_ready does not match the reviewed checkpoint state."
+        )
+
     rights, analysis, redistribution = _validate_rights(payload, dataset_key=dataset_key)
     claim_limits = _require_nonempty_string_list(
         payload,
@@ -185,15 +241,6 @@ def _validate_common(
         "next_required_actions",
         dataset_key=dataset_key,
     )
-
-    if empirical:
-        raise BenchmarkIntegrityError(
-            f"{dataset_key} source-resolution status records are non-empirical checkpoints."
-        )
-    if audit_ready:
-        raise BenchmarkIntegrityError(
-            f"{dataset_key} current source-resolution status cannot be source-audit-ready."
-        )
     if analysis != "unresolved" or redistribution != "unresolved":
         raise BenchmarkIntegrityError(
             f"{dataset_key} current checkpoint must keep analysis and redistribution rights "
@@ -227,8 +274,23 @@ def _verify_optional_fingerprint(payload: Mapping[str, Any], fingerprint: str) -
         )
 
 
+def _require_hollywood2_rights(rights: Mapping[str, Any]) -> None:
+    for key, label in (
+        ("article_cc_by_is_dataset_license", "article license as dataset license"),
+        ("repository_license_file_recovered", "repository license recovery"),
+        ("dataset_specific_license_verified", "dataset-license verification"),
+        (
+            "open_source_description_is_exact_license_text",
+            "open-source description as exact license text",
+        ),
+    ):
+        if rights.get(key) is not False:
+            raise BenchmarkIntegrityError(f"Hollywood2EM must not promote {label}.")
+
+
 def validate_hollywood2_source_resolution_record(path: str | Path) -> dict[str, Any]:
-    """Validate the conservative Hollywood2EM source-resolution checkpoint."""
+    """Validate the reviewed Hollywood2EM recovered-source checkpoint."""
+
     _, payload = _load_payload(path)
     dataset_key = "hollywood2em"
     (
@@ -252,60 +314,147 @@ def validate_hollywood2_source_resolution_record(path: str | Path) -> dict[str, 
         "current_retrievable_copy_verified",
         dataset_key=dataset_key,
     )
-    if not canonical_found or current_copy:
+    if canonical_found is not True or current_copy is not True:
         raise BenchmarkIntegrityError(
-            "Hollywood2EM v1 resolution must establish the canonical distribution identifier "
-            "while keeping the exact current copy unverified."
+            "Hollywood2EM reviewed state requires the canonical repository and exact current "
+            "ground-truth copy to remain verified."
         )
 
-    publication = _require_mapping(payload, "authoritative_publication", dataset_key=dataset_key)
-    if publication.get("doi") != "10.16910/jemr.13.4.5":
+    expected_history = (
+        "validation/history/source-resolution/"
+        "hollywood2-source-resolution-2026-09-04.json"
+    )
+    if payload.get("supersedes") != expected_history:
         raise BenchmarkIntegrityError(
-            "Hollywood2EM source-resolution publication DOI is unexpected."
-        )
-    if publication.get("article_license_is_dataset_license") is not False:
-        raise BenchmarkIntegrityError(
-            "Hollywood2EM article licensing cannot be promoted into dataset-file licensing."
-        )
-    if rights.get("article_cc_by_is_dataset_license") is not False:
-        raise BenchmarkIntegrityError(
-            "Hollywood2EM CC BY article licensing cannot be treated as the dataset license."
-        )
-    if rights.get("open_source_description_is_exact_license_text") is not False:
-        raise BenchmarkIntegrityError(
-            "Hollywood2EM open-source descriptions cannot replace exact repository license text."
+            "Hollywood2EM checkpoint must preserve its reviewed historical predecessor path."
         )
 
-    annotation = _require_mapping(payload, "annotation_provenance", dataset_key=dataset_key)
-    if annotation.get("expert_labels_are_corrections_of_student_work") is not True:
+    repository = _require_mapping(
+        payload,
+        "authoritative_repository",
+        dataset_key=dataset_key,
+    )
+    expected_repository = {
+        "url": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+        "default_ref": "refs/heads/master",
+        "commit_sha1": _HOLLYWOOD2_COMMIT,
+        "commit_author_date": "2020-02-19T16:56:44+01:00",
+        "readme_git_blob_sha1": "c8b7d126295e5f52a7748533952f044228423bf8",
+        "readme_sha256": (
+            "97f839bda127674b5de1eb5d8c3b1d2c82d65e7c6c1708c2e9f9711170ada383"
+        ),
+        "repository_license_file_recovered": False,
+    }
+    if dict(repository) != expected_repository:
         raise BenchmarkIntegrityError(
-            "Hollywood2EM source-resolution must preserve the sequential "
-            "expert-correction workflow."
+            "Hollywood2EM authoritative repository identity drifted from the reviewed state."
         )
-    if annotation.get("independent_human_annotation_streams_verified") is not False:
+
+    ground = _require_mapping(
+        payload,
+        "authoritative_ground_truth",
+        dataset_key=dataset_key,
+    )
+    expected_counts = {
+        "file_count": 697,
+        "total_bytes": 137_328_178,
+        "sample_count": 3_871_580,
+        "test_file_count": 642,
+        "train_file_count": 55,
+        "clip_count": 56,
+        "file_subject_token_count": 16,
+    }
+    for key, expected in expected_counts.items():
+        if ground.get(key) != expected:
+            raise BenchmarkIntegrityError(
+                f"Hollywood2EM authoritative ground-truth {key} drifted."
+            )
+    if ground.get("source_identity_ledger_fingerprint_sha256") != _HOLLYWOOD2_LEDGER:
+        raise BenchmarkIntegrityError("Hollywood2EM source-ledger fingerprint drifted.")
+    if ground.get("schema_signature_sha256") != _HOLLYWOOD2_SCHEMA:
+        raise BenchmarkIntegrityError("Hollywood2EM schema fingerprint drifted.")
+    if ground.get("schema_uniform_across_all_files") is not True:
         raise BenchmarkIntegrityError(
-            "Hollywood2EM student/expert streams cannot be represented as independent annotations."
+            "Hollywood2EM schema must remain uniform across all recovered ground-truth files."
         )
-    interpretation = str(annotation.get("student_expert_comparison_interpretation", "")).lower()
-    if "sensitivity" not in interpretation or "independent" not in interpretation:
+    if ground.get("final_label_counts") != _HOLLYWOOD2_LABEL_COUNTS:
+        raise BenchmarkIntegrityError("Hollywood2EM final-label counts drifted.")
+
+    sensitivity = ground.get("student_vs_expert_corrected")
+    if not isinstance(sensitivity, Mapping):
+        raise BenchmarkIntegrityError(
+            "Hollywood2EM student-to-expert annotation sensitivity is missing."
+        )
+    if sensitivity.get("sample_count") != 3_871_580:
+        raise BenchmarkIntegrityError("Hollywood2EM sensitivity sample count drifted.")
+    if sensitivity.get("changed_sample_count") != 291_315:
+        raise BenchmarkIntegrityError("Hollywood2EM sensitivity changed-sample count drifted.")
+    agreement = float(sensitivity.get("raw_agreement_fraction", math.nan))
+    if not math.isclose(agreement, 0.9247555261676111, rel_tol=0.0, abs_tol=1e-15):
+        raise BenchmarkIntegrityError("Hollywood2EM sensitivity raw agreement drifted.")
+    interpretation = str(sensitivity.get("interpretation", "")).lower()
+    if "sensitivity" not in interpretation or "not independent human-human" not in interpretation:
         raise BenchmarkIntegrityError(
             "Hollywood2EM student/expert comparison must remain annotation sensitivity, "
-            "not independent reliability."
+            "not independent human-human reliability."
         )
 
-    mapping = _require_mapping(payload, "mapping_and_units", dataset_key=dataset_key)
-    for key in (
-        "participant_identity_mapping_verified",
-        "trial_identity_mapping_verified",
-        "coordinate_unit_verified",
+    semantics = _require_mapping(payload, "format_and_units", dataset_key=dataset_key)
+    if semantics.get("arff_relation") != "gaze_labels":
+        raise BenchmarkIntegrityError("Hollywood2EM ARFF relation drifted.")
+    expected_attributes = [
+        "time",
+        "x",
+        "y",
+        "confidence",
+        "handlabeller_1",
+        "handlabeller_final",
+    ]
+    if semantics.get("attributes") != expected_attributes:
+        raise BenchmarkIntegrityError("Hollywood2EM ARFF attribute schema drifted.")
+    for key, expected in (
+        ("time_unit", "microseconds"),
+        ("coordinate_unit", "pixels"),
+        ("native_sampling_rate_hz", 500.0),
+        ("observed_median_file_rate_hz", 500.0),
     ):
-        if mapping.get(key) is not False:
-            raise BenchmarkIntegrityError(
-                f"Hollywood2EM {key} must remain unverified until an exact copy is audited."
-            )
-    if mapping.get("verification_requires_exact_obtained_copy") is not True:
+        if semantics.get(key) != expected:
+            raise BenchmarkIntegrityError(f"Hollywood2EM {key} drifted.")
+    if semantics.get("coordinate_unit_verified") is not True:
+        raise BenchmarkIntegrityError("Hollywood2EM coordinate-unit verification was lost.")
+    if semantics.get("time_unit_verified") is not True:
+        raise BenchmarkIntegrityError("Hollywood2EM time-unit verification was lost.")
+
+    mapping = _require_mapping(payload, "mapping", dataset_key=dataset_key)
+    for key in (
+        "trial_clip_identity_file_bound",
+        "trial_identity_mapping_verified",
+        "file_subject_tokens_recovered",
+    ):
+        if mapping.get(key) is not True:
+            raise BenchmarkIntegrityError(f"Hollywood2EM {key} must remain verified.")
+    if tuple(mapping.get("file_subject_tokens", [])) != _HOLLYWOOD2_TOKENS:
+        raise BenchmarkIntegrityError("Hollywood2EM file subject-token set drifted.")
+    if mapping.get("participant_identity_mapping_verified") is not False:
         raise BenchmarkIntegrityError(
-            "Hollywood2EM mapping/unit verification must require an exact obtained copy."
+            "Hollywood2EM participant identity mapping must remain unresolved."
+        )
+
+    _require_hollywood2_rights(rights)
+
+    evidence = _require_mapping(payload, "evidence", dataset_key=dataset_key)
+    expected_evidence = {
+        "record": (
+            "validation/evidence/hollywood2/"
+            "hollywood2-authoritative-ground-truth-evidence-v1.json"
+        ),
+        "evidence_fingerprint_sha256": _HOLLYWOOD2_EVIDENCE,
+        "live_probe_record_type": "hollywood2-gin-live-probe-v2",
+        "live_probe_fingerprint_sha256": _HOLLYWOOD2_PROBE,
+    }
+    if dict(evidence) != expected_evidence:
+        raise BenchmarkIntegrityError(
+            "Hollywood2EM evidence binding drifted from the reviewed recovered-source state."
         )
 
     fingerprint = _fingerprint(payload)
@@ -326,6 +475,7 @@ def validate_hollywood2_source_resolution_record(path: str | Path) -> dict[str, 
         "source_state": {
             "canonical_distribution_identifier_found": canonical_found,
             "current_retrievable_copy_verified": current_copy,
+            "authoritative_ground_truth_file_count": 697,
         },
         "annotation_independence": {
             "independent_annotation_streams_verified": False,
@@ -337,6 +487,7 @@ def validate_hollywood2_source_resolution_record(path: str | Path) -> dict[str, 
 
 def validate_gaze_in_wild_source_resolution_record(path: str | Path) -> dict[str, Any]:
     """Validate the conservative Gaze-in-the-Wild source-resolution checkpoint."""
+
     _, payload = _load_payload(path)
     dataset_key = "gaze-in-the-wild"
     (
@@ -487,6 +638,7 @@ def validate_gaze_in_wild_source_resolution_record(path: str | Path) -> dict[str
 
 def validate_source_resolution_record(path: str | Path) -> dict[str, Any]:
     """Validate a known v1 source-resolution checkpoint and auto-dispatch by dataset."""
+
     source, payload = _load_payload(path)
     if payload.get("record_type") != _RECORD_TYPE:
         raise BenchmarkIntegrityError(
@@ -515,7 +667,8 @@ def validate_source_resolution_record(path: str | Path) -> dict[str, Any]:
 
 
 def validate_source_resolution_records(paths: Sequence[str | Path]) -> dict[str, Any]:
-    """Validate a set of source-resolution checkpoints and fingerprint the validated bundle."""
+    """Validate source-resolution checkpoints and fingerprint the reviewed bundle."""
+
     if not paths:
         raise ValueError("At least one source-resolution checkpoint path is required.")
 
@@ -553,6 +706,7 @@ class SourceResolutionRecord:
 
 def load_source_resolution_record(path: str | Path) -> SourceResolutionRecord:
     """Return a typed common view after dataset-specific source-resolution validation."""
+
     source = Path(path)
     summary = validate_source_resolution_record(source)
     return SourceResolutionRecord(
