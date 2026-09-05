@@ -80,6 +80,7 @@ nav:
       - Hollywood2 source audit: hollywood2-source-audit.md
       - Gaze-in-the-Wild: gaze-in-wild-benchmark.md
       - Gaze-in-the-Wild source resolution: gaze-in-wild-source-resolution.md
+      - Gaze-in-the-Wild distribution availability: gaze-in-wild-distribution-availability.md
       - Gaze-in-the-Wild source audit: gaze-in-wild-source-audit.md
       - Gaze-in-the-Wild labeller agreement: gaze-in-wild-labeller-agreement.md
       - Gaze-in-the-Wild model validation: gaze-in-wild-model-validation.md
