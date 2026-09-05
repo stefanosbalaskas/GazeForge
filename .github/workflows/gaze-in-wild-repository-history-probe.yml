@@ -71,6 +71,8 @@ jobs:
           assert record["pinned_commit_sha1"] == "52262d44e366a53369e10ca73c5f41daf0e8f1e5"
           assert record["reachable_commit_count"] == 56
           assert record["root_commit_sha1"] == "054c99d3b88f0ad46cbd0b7d66f4fc38718046f5"
+          assert record["software_license_history"]["license_file_identifies_mit"] is True
+          assert record["repository_tree"]["distributed_process_or_label_mat_path_count"] == 0
           boundary = record["scientific_boundary"]
           assert boundary["official_first_author_repository_history_verified"] is True
           assert boundary["exact_external_dataset_copy_obtained"] is False
@@ -85,6 +87,30 @@ jobs:
           assert record["repository_tree"]["repository_is_exact_compressed_dataset_copy"] is False
           print("Conservative Gaze-in-the-Wild repository-history boundary revalidated.")
           PY
+      - name: Install package
+        run: python -m pip install .
+      - name: Bind live history probe to frozen reviewed evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_history_evidence import (
+              validate_gaze_in_wild_repository_history_probe,
+          )
+
+          validate_gaze_in_wild_repository_history_probe(
+              Path("gaze-in-wild-repository-history-probe-v1.json"),
+              Path(
+                  "validation/evidence/gaze-in-wild/"
+                  "gaze-in-wild-repository-history-evidence-v1.json"
+              ),
+          )
+          print("Live Gaze-in-the-Wild repository history is bound to frozen evidence.")
+          PY
+      - name: Run focused history-evidence tests
+        run: python -m pytest -q tests/test_gaze_in_wild_history_evidence.py
       - name: Summarize complete-history probe
         shell: bash
         run: |
