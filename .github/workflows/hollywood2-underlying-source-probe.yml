@@ -1,0 +1,83 @@
+name: Hollywood2 underlying source live probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/hollywood2-rights-provenance
+    paths:
+      - "scripts/hollywood2_underlying_source_probe.py"
+      - "src/gazeforge/hollywood2_rights_evidence.py"
+      - "tests/test_hollywood2_rights_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-underlying-source-rights-evidence-v1.json"
+      - "docs/hollywood2-underlying-rights.md"
+      - "mkdocs.yml"
+      - ".github/workflows/hollywood2-underlying-source-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Probe institutional Hollywood-2 source and rights pages
+        run: python scripts/hollywood2_underlying_source_probe.py
+      - name: Install package
+        run: python -m pip install .
+      - name: Bind live institutional probe to frozen rights evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_rights_evidence import (
+              validate_hollywood2_underlying_source_probe,
+          )
+
+          validate_hollywood2_underlying_source_probe(
+              Path("hollywood2_underlying_source_live_probe.json"),
+              Path(
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-underlying-source-rights-evidence-v1.json"
+              ),
+          )
+          print("Hollywood2 institutional source/rights probe is bound to frozen evidence.")
+          PY
+      - name: Summarize rights-source result
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(
+              Path("hollywood2_underlying_source_live_probe.json").read_text()
+          )
+          endpoint = record["download_endpoint"]
+          rights = record["verified_underlying_rights"]
+          context = record["verified_recording_context"]
+          print("description SHA-256:", record["description_page"]["sha256"])
+          print("licence SHA-256:", record["licence_page"]["sha256"])
+          print("published archive endpoint:", endpoint["requested_url"])
+          print("current final endpoint:", endpoint["final_url"])
+          print("participants:", context["participant_count"])
+          print("active/free:", context["active_participant_count"], context["free_viewing_participant_count"])
+          print("academic use only:", rights["academic_use_only"])
+          print("standard grant allows transfer:", rights["standard_grant_allows_dataset_transfer"])
+          print("probe fingerprint:", record["probe_fingerprint_sha256"])
+          PY
+      - name: Upload deterministic probe record
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-underlying-source-live-probe
+          path: hollywood2_underlying_source_live_probe.json
+          if-no-files-found: error
+          retention-days: 30
