@@ -21,7 +21,10 @@ AWESOME_DRIVE_URL = (
 EDIT_REPOSITORY = "https://github.com/George614/edit_distance_gpu"
 EDIT_COMMIT = "01711b11556c271a7a15e566935089bb2775121b"
 EDIT_TREE = "9783f2af0e828f567d04ed82a0c1e80bf5a76774"
-EDIT_DEMO_BLOB = "d0b0ca6ec9af468b1ada3c7243339889f076c3ee"
+EDIT_REFERENCE_BLOBS = {
+    "levenGPU_demo.py": "d0b0ca6ec9af468b1ada3c7243339889f076c3ee",
+    "levenSequential.py": "b964cb6274ffec9929ff55499cfaf2e2100fff38",
+}
 LABELLER_FILENAMES = (
     "LabellerIdx_7_PrIdx_1_TrIdx_1.mat",
     "LabellerIdx_8_PrIdx_1_TrIdx_1.mat",
@@ -129,11 +132,16 @@ def build_probe(awesome_root: Path, edit_root: Path) -> dict[str, Any]:
     if not all(value in awesome_readme for value in required_awesome):
         raise ProbeError("awesome-eye-data reviewed README statements drifted.")
 
-    if _blob(edit_root, "levenGPU_demo.py") != EDIT_DEMO_BLOB:
-        raise ProbeError("edit_distance_gpu demo blob drifted.")
-    edit_demo = _text(edit_root, "levenGPU_demo.py")
-    if not all(name in edit_demo for name in LABELLER_FILENAMES):
+    reference_files: list[str] = []
+    for path, expected_blob in EDIT_REFERENCE_BLOBS.items():
+        if _blob(edit_root, path) != expected_blob:
+            raise ProbeError(f"edit_distance_gpu reference blob drifted: {path}.")
+        text = _text(edit_root, path)
+        if all(name in text for name in LABELLER_FILENAMES):
+            reference_files.append(path)
+    if sorted(reference_files) != sorted(EDIT_REFERENCE_BLOBS):
         raise ProbeError("Reviewed labeller filename references drifted.")
+
     tracked_basenames = {Path(path).name for path in edit_paths}
     if any(name in tracked_basenames for name in LABELLER_FILENAMES):
         raise ProbeError("Referenced labeller file unexpectedly became repository-resident.")
@@ -162,8 +170,9 @@ def build_probe(awesome_root: Path, edit_root: Path) -> dict[str, Any]:
                 "repository": EDIT_REPOSITORY,
                 "pinned_commit_sha1": EDIT_COMMIT,
                 "pinned_tree_sha1": EDIT_TREE,
-                "demo_blob_sha1": EDIT_DEMO_BLOB,
+                "reference_code_blobs": dict(EDIT_REFERENCE_BLOBS),
                 "classification": "local_path_reference_only",
+                "reference_code_paths": sorted(reference_files),
                 "referenced_labeller_filenames": list(LABELLER_FILENAMES),
                 "referenced_labeller_files_repository_resident": False,
                 "tracked_official_process_or_label_paths": [],
