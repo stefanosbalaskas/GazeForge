@@ -1,0 +1,77 @@
+name: Gaze-in-the-Wild current first-party listing probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-current-first-party-listing
+    paths:
+      - "scripts/probe_gaze_in_wild_current_listing.py"
+      - "src/gazeforge/gaze_in_wild_current_listing_evidence.py"
+      - "tests/test_gaze_in_wild_current_listing_evidence.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-current-first-party-listing-evidence-v1.json"
+      - "docs/gaze-in-wild-distribution-availability.md"
+      - ".github/workflows/gaze-in-wild-current-listing-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Probe current first-party listing and historical endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_current_listing.py \
+            --output gaze-in-wild-current-first-party-listing-probe-v1.json
+      - name: Enforce fail-closed current-state classification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(
+              Path("gaze-in-wild-current-first-party-listing-probe-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          assert record["record_type"] == "gaze-in-wild-current-first-party-listing-probe-v1"
+          page = record["current_first_party_page"]
+          assert page["listing_text"] == "The Gaze-In-Wild Dataset"
+          assert page["listing_present_exactly_once"] is True
+          assert page["listing_target_is_direct_dataset_archive_verified"] is False
+          assert page["dataset_file_rights_terms_found_on_listing"] is False
+          boundary = record["scientific_boundary"]
+          assert boundary["current_first_party_listing_verified"] is True
+          for key, value in boundary.items():
+              if key != "current_first_party_listing_verified":
+                  assert value is False, (key, value)
+          assert record["review_trigger"]["automatic_source_or_rights_promotion_permitted"] is False
+          if record["review_trigger"]["requires_human_evidence_review"]:
+              raise SystemExit(
+                  "Current first-party listing/endpoint state changed; human evidence review "
+                  "is required before this workflow may pass."
+              )
+          print("Current first-party listing remains within the reviewed non-promotion state.")
+          PY
+      - name: Upload normalized live probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-current-first-party-listing-probe
+          path: gaze-in-wild-current-first-party-listing-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
