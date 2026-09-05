@@ -210,7 +210,12 @@ def validate_gaze_in_wild_supplementary_identity_evidence(
         "highest processing participant index",
     )
     _equal(
-        tuple(int(value) for value in context.get("processing_indices_absent_from_published_19_person_table", [])),
+        tuple(
+            int(value)
+            for value in context.get(
+                "processing_indices_absent_from_published_19_person_table", []
+            )
+        ),
         (4, 5, 7, 21),
         "processing-only index set",
     )
