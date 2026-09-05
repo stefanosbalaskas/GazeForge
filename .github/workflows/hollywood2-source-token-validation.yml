@@ -1,0 +1,140 @@
+name: Hollywood2 source-token validation
+
+on:
+  push:
+    branches:
+      - main
+      - research/hollywood2-source-token-validation
+    paths:
+      - "src/gazeforge/__init__.py"
+      - "src/gazeforge/hollywood2_token_validation.py"
+      - "src/gazeforge/resampling.py"
+      - "src/gazeforge/comparison.py"
+      - "src/gazeforge/hollywood2.py"
+      - "src/gazeforge/events.py"
+      - "src/gazeforge/temporal.py"
+      - "src/gazeforge/paired.py"
+      - "src/gazeforge/stratified.py"
+      - "scripts/run_hollywood2_source_token_validation.py"
+      - "tests/test_hollywood2_token_validation.py"
+      - "tests/test_resampling.py"
+      - "validation/governance/hollywood2-source-token-analysis-authorization-v1.json"
+      - "validation/evidence/hollywood2/**"
+      - ".github/workflows/hollywood2-source-token-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test runner
+        run: python -m pip install . pytest
+      - name: Run source-token and resampling contract tests
+        run: |
+          python -m pytest -q \
+            tests/test_hollywood2_token_validation.py \
+            tests/test_resampling.py
+      - name: Validate committed operator authorization
+        run: |
+          python - <<'PY'
+          from gazeforge.hollywood2_token_validation import (
+              authorization_fingerprint,
+              load_hollywood2_source_token_analysis_authorization,
+          )
+
+          path = (
+              "validation/governance/"
+              "hollywood2-source-token-analysis-authorization-v1.json"
+          )
+          authorization = load_hollywood2_source_token_analysis_authorization(path)
+          print("authorization fingerprint:", authorization_fingerprint(authorization))
+          print("participant mapping verified:", authorization.participant_identity_mapping_verified)
+          print("raw redistribution authorized:", authorization.raw_source_redistribution_authorized)
+          PY
+
+  empirical:
+    needs: contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      PYTHONHASHSEED: "0"
+      OMP_NUM_THREADS: "2"
+      OPENBLAS_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package
+        run: python -m pip install .
+      - name: Configure anonymous GIN transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global \
+            url."https://gin.g-node.org/ioannis.agtzidis/hollywood2_em".insteadOf \
+            "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
+      - name: Clone pinned canonical Hollywood2EM source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 \
+            https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git \
+            _hollywood2_em
+          observed="$(git -C _hollywood2_em rev-parse HEAD)"
+          expected="870fa6d6209c9085260918d61433a0a2c70fd497"
+          test "$observed" = "$expected"
+          test -z "$(git -C _hollywood2_em status --porcelain --untracked-files=no)"
+      - name: Run derived-60-Hz source-token-held-out comparison
+        run: |
+          python scripts/run_hollywood2_source_token_validation.py \
+            --source-root _hollywood2_em \
+            --target-rate-hz 60 \
+            --min-label-purity 0.75 \
+            --folds 4 \
+            --rf-trees 100 \
+            --context-hidden 32,16 \
+            --context-max-iter 50 \
+            --output hollywood2-source-token-validation-v1.json
+      - name: Revalidate aggregate-only claim boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_token_validation import (
+              validate_hollywood2_source_token_validation_report,
+          )
+
+          path = Path("hollywood2-source-token-validation-v1.json")
+          report = validate_hollywood2_source_token_validation_report(path)
+          text = path.read_text(encoding="utf-8")
+          boundary = report["protocol"]["scientific_boundary"]
+          assert boundary["participant_identity_mapping_verified"] is False
+          assert boundary["participant_disjoint_validation_created"] is False
+          assert boundary["participant_generalization_claim"] is False
+          assert boundary["raw_source_redistributed_by_gazeforge"] is False
+          assert boundary["raw_predictions_embedded"] is False
+          assert "_hollywood2_em" not in text
+          assert ".arff" not in text
+          print("report fingerprint:", report["report_fingerprint_sha256"])
+          print("claim boundary: source-token-held-out only")
+          PY
+      - name: Upload aggregate validation report only
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-source-token-validation
+          path: hollywood2-source-token-validation-v1.json
+          if-no-files-found: error
+          retention-days: 30
