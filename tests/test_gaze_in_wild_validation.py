@@ -23,9 +23,25 @@ from gazeforge.source_audit_lineage import SourceAuditLineageReceipt
 def _write_process(path: Path, *, n: int = 60) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     sample = np.arange(n, dtype=float)
-    por = np.vstack([300.0 + 2.0 * sample, 200.0 + np.sin(sample / 5.0) * 20.0])
+    por = np.vstack(
+        [
+            0.20 + (2.0 * sample) / 1920.0,
+            0.40 + np.sin(sample / 5.0) * (20.0 / 1080.0),
+        ]
+    )
     confidence = np.ones(n, dtype=float)
-    savemat(path, {"ProcessData": {"ETG": {"POR": por, "Confidence": confidence}}})
+    savemat(
+        path,
+        {
+            "ProcessData": {
+                "ETG": {
+                    "POR": por,
+                    "Confidence": confidence,
+                    "SceneResolution": np.array([1920, 1080], dtype=float),
+                }
+            }
+        },
+    )
 
 
 def _write_label(path: Path, *, labeller: int, rate_hz: float, n: int = 60) -> None:
@@ -98,7 +114,10 @@ def _fixture(
         participant_mapping_basis="Fixture manifest.",
         coordinate_unit=coordinate_unit,
         coordinate_unit_verified=True,
-        coordinate_verification_basis="Fixture coordinate declaration.",
+        coordinate_verification_basis=(
+            "Fixture ProcessData uses official normalized POR plus SceneResolution before "
+            "canonical pixel conversion."
+        ),
         pixel_kinematics_compatible=pixel_kinematics_compatible,
         label_files=label_records,
         process_files=process_records,
