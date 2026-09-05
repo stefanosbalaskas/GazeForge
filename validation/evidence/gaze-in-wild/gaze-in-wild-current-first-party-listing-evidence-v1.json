@@ -1,0 +1,76 @@
+{
+  "claim_limit": "This reviewed evidence freezes the current first-party RIT listing identity and its publication target while preserving an environment-specific historical-endpoint transport diagnostic. It extends, but does not replace, the earlier distribution-availability evidence. It does not establish an exact authoritative ProcessData/LabelData copy, dataset-file rights, quarantine-exit eligibility, participant/task mappings, cadence, independent labeller recoverability, agreement, model performance, cross-dataset validity, or Gazepoint GP3 validity.",
+  "current_first_party_review": {
+    "current_exact_authoritative_copy_obtained": false,
+    "current_first_party_listing_present": true,
+    "dataset_file_rights_terms_found_on_listing": false,
+    "listing_page_copyright_is_dataset_file_license": false,
+    "listing_points_to_direct_dataset_archive": false,
+    "listing_points_to_publication_record": true
+  },
+  "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
+  "evidence_fingerprint_sha256": "e8257820f6cbfc9688e3771fd976c6afcb6b5ced93e385a009d10038a23bdcd5",
+  "historical_endpoint_transport_review": {
+    "either_status_is_exact_copy_identity_evidence": false,
+    "either_status_is_global_unavailability_proof": false,
+    "environment_specific_status_disagreement": true,
+    "github_actions_secure_tls_certificate_verified": false,
+    "github_actions_secure_transport_failure_class": "tls_certificate_verification_error",
+    "github_actions_tls_unverified_fallback_http_status": 404,
+    "interactive_web_fetch_observed_http_status": 502,
+    "tls_unverified_fallback_is_source_authentication_evidence": false,
+    "transport_status_is_source_identity_or_rights_evidence": false,
+    "url": "https://www.cis.rit.edu/~rsk3900/gaze-in-wild/"
+  },
+  "live_probe_binding": {
+    "current_first_party_page_url": "https://www.rit.edu/science/perception-movement-lab",
+    "listing_state_fingerprint_sha256": "b7fcf78719cb23ce7133fe3fb51a757c561c5b25797f40de4a2e00b8e1c4f839",
+    "listing_target": "https://pubmed.ncbi.nlm.nih.gov/32054884/",
+    "listing_target_class": "publication_pubmed",
+    "listing_target_is_direct_dataset_archive_verified": false,
+    "listing_text": "The Gaze-In-Wild Dataset",
+    "reviewed_observation_fingerprint_sha256": "a1660d1c70916b8af605f23c64518b4a50fdf59a649fd2fff460965474bae1e6"
+  },
+  "prior_distribution_evidence_fingerprint_sha256": "2400c81a0897fb414285069c368a8a9d96de1d18eb185b1073cf15bb1c8bd1da",
+  "quarantine_exit_boundary": {
+    "analysis_use_permitted": false,
+    "current_listing_is_source_authority_for_an_exact_local_copy": false,
+    "dataset_file_rights_resolved": false,
+    "exact_copy_identity_verified": false,
+    "quarantine_exit_authorizable_from_this_evidence": false,
+    "redistribution_status_resolved": false,
+    "reuse_terms_verified_for_dataset_files": false
+  },
+  "record_type": "gaze-in-wild-current-first-party-listing-evidence-v1",
+  "reviewed_on": "2026-09-06",
+  "rights_boundary": {
+    "analysis_use_permitted": false,
+    "article_license": "CC BY 4.0",
+    "article_license_is_external_dataset_file_license": false,
+    "current_listing_provides_dataset_file_analysis_terms": false,
+    "current_listing_provides_dataset_file_redistribution_terms": false,
+    "dataset_file_analysis_use_terms_status": "unresolved",
+    "dataset_file_redistribution_terms_status": "unresolved",
+    "license_inference_permitted": false,
+    "processing_repository_license": "MIT",
+    "processing_repository_mit_is_external_dataset_file_license": false,
+    "redistribution_authorized": false
+  },
+  "scientific_boundary": {
+    "analysis_use_permitted": false,
+    "complete_trial_to_task_mapping_verified": false,
+    "cross_dataset_performance_created": false,
+    "current_exact_authoritative_copy_obtained": false,
+    "current_first_party_listing_verified": true,
+    "dataset_file_rights_resolved": false,
+    "distributed_file_sampling_cadence_verified": false,
+    "frozen_evidence_performance_claim_created": false,
+    "gp3_validity_created": false,
+    "human_human_agreement_created": false,
+    "independent_labeller_recoverability_verified": false,
+    "original_distribution_equivalence_verified": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_mapping_verified": false,
+    "redistribution_authorized": false
+  }
+}
