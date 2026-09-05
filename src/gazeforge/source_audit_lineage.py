@@ -12,6 +12,7 @@ from typing import Any
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
 from .gaze_in_wild_audit import GazeInWildSourceAuditSpec
+from .gaze_in_wild_quarantine_exit import GazeInWildQuarantineExitAuthorization
 from .hollywood2_audit import Hollywood2SourceAuditSpec
 from .source_candidate_authorization import (
     CandidateSourceAuditAuthorization,
@@ -42,6 +43,7 @@ class SourceAuditLineageReceipt:
     audit_report_fingerprint_sha256: str
     source_manifest_fingerprints_sha256: Mapping[str, str]
     source_revision: str
+    quarantine_exit_fingerprint_sha256: str | None = None
     source_audit_verified: bool = True
     lineage_verified: bool = True
 
@@ -60,6 +62,25 @@ class SourceAuditLineageReceipt:
             if _SHA256_RE.fullmatch(value) is None:
                 raise ValueError(f"{field_name} must contain exactly 64 hexadecimal characters.")
             object.__setattr__(self, field_name, value)
+
+        exit_fingerprint = self.quarantine_exit_fingerprint_sha256
+        if dataset_key == "gaze-in-the-wild":
+            if not isinstance(exit_fingerprint, str):
+                raise ValueError(
+                    "Gaze-in-the-Wild lineage requires a quarantine-exit fingerprint."
+                )
+            normalized_exit = exit_fingerprint.strip().lower()
+            if _SHA256_RE.fullmatch(normalized_exit) is None:
+                raise ValueError(
+                    "quarantine_exit_fingerprint_sha256 must contain exactly 64 hexadecimal "
+                    "characters."
+                )
+            object.__setattr__(self, "quarantine_exit_fingerprint_sha256", normalized_exit)
+        elif exit_fingerprint is not None:
+            raise ValueError(
+                "Hollywood2EM lineage cannot carry a Gaze-in-the-Wild quarantine-exit fingerprint."
+            )
+
         if not isinstance(self.source_audit_verified, bool) or not self.source_audit_verified:
             raise ValueError("source_audit_verified must be true for a lineage receipt.")
         if not isinstance(self.lineage_verified, bool) or not self.lineage_verified:
@@ -337,13 +358,16 @@ def build_source_audit_lineage_receipt(
     template_spec: AuditTemplateSpec,
     authorization: CandidateSourceAuditAuthorization,
     audit_report: Mapping[str, Any],
+    *,
+    gaze_in_wild_quarantine_exit: GazeInWildQuarantineExitAuthorization | None = None,
 ) -> SourceAuditLineageReceipt:
     """Verify and bind the full reviewed-template → authorization → source-audit chain.
 
     The function recomputes the authorized empirical specification deterministically from the
     original template and authorization, then requires the audit report to fingerprint that exact
-    specification and to pass dataset-specific source-audit invariants. It creates no new model,
-    agreement, AOI, native-GP3, or Frozen Evidence result.
+    specification and to pass dataset-specific source-audit invariants. Recovered Gaze-in-the-Wild
+    lineage also carries the separately reviewed quarantine-exit fingerprint. It creates no new
+    model, agreement, AOI, native-GP3, or Frozen Evidence result.
     """
     dataset_key = _dataset_key(template_spec)
     if template_spec.dataset_status != "template":
@@ -355,7 +379,11 @@ def build_source_audit_lineage_receipt(
     if not isinstance(audit_report, Mapping):
         raise TypeError("audit_report must be a mapping.")
 
-    authorized_spec = authorize_candidate_source_audit_template(template_spec, authorization)
+    authorized_spec = authorize_candidate_source_audit_template(
+        template_spec,
+        authorization,
+        gaze_in_wild_quarantine_exit=gaze_in_wild_quarantine_exit,
+    )
     report_fingerprint = _validate_common_report(
         audit_report,
         authorized_spec=authorized_spec,
@@ -369,6 +397,11 @@ def build_source_audit_lineage_receipt(
     template_fingerprint = source_audit_template_fingerprint(template_spec)
     authorization_fingerprint = benchmark_fingerprint(authorization.to_dict())
     authorized_spec_fingerprint = benchmark_fingerprint(authorized_spec.to_dict())
+    exit_fingerprint = (
+        gaze_in_wild_quarantine_exit.record_fingerprint_sha256
+        if gaze_in_wild_quarantine_exit is not None
+        else None
+    )
 
     return SourceAuditLineageReceipt(
         dataset_key=dataset_key,
@@ -378,6 +411,7 @@ def build_source_audit_lineage_receipt(
         audit_report_fingerprint_sha256=report_fingerprint,
         source_manifest_fingerprints_sha256=manifests,
         source_revision=authorized_spec.source_revision,
+        quarantine_exit_fingerprint_sha256=exit_fingerprint,
     )
 
 
