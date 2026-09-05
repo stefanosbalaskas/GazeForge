@@ -6,6 +6,7 @@ on:
       - main
       - research/hollywood2-source-token-validation
     paths:
+      - "src/gazeforge/__init__.py"
       - "src/gazeforge/hollywood2_token_validation.py"
       - "src/gazeforge/resampling.py"
       - "src/gazeforge/comparison.py"
@@ -110,7 +111,6 @@ jobs:
       - name: Revalidate aggregate-only claim boundary
         run: |
           python - <<'PY'
-          import json
           from pathlib import Path
 
           from gazeforge.hollywood2_token_validation import (
