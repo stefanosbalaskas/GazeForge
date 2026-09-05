@@ -53,14 +53,19 @@ jobs:
           lock = payload["bundle_lock"]
           assert bundle["bundle_type"] == "source-resolution-validation-bundle-v1"
           assert bundle["record_count"] == 3
-          assert {row["dataset_key"] for row in bundle["records"]} == {
+          records = {row["dataset_key"]: row for row in bundle["records"]}
+          assert set(records) == {
               "gaze-in-the-wild",
               "hollywood2em",
               "visus",
           }
-          assert len(bundle["bundle_fingerprint_sha256"]) == 64
-          assert all(not row["source_audit_ready"] for row in bundle["records"])
-          assert all(not row["empirical_evidence_created"] for row in bundle["records"])
+          assert bundle["bundle_fingerprint_sha256"] == (
+              "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe"
+          )
+          assert all(not row["source_audit_ready"] for row in records.values())
+          assert records["visus"]["empirical_evidence_created"] is False
+          assert records["gaze-in-the-wild"]["empirical_evidence_created"] is False
+          assert records["hollywood2em"]["empirical_evidence_created"] is True
           assert lock["matches_current_bundle"] is True
           assert lock["bundle_fingerprint_sha256"] == bundle["bundle_fingerprint_sha256"]
           assert lock["scientific_boundary"]["non_empirical_governance_only"] is True
