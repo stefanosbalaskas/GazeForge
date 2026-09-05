@@ -23,7 +23,6 @@ from gazeforge.source_candidate_authorization import (
 _SHA_A = "a" * 64
 _SHA_B = "b" * 64
 _SHA_C = "c" * 64
-_SHA_D = "d" * 64
 
 
 def _hollywood_template():
@@ -85,7 +84,7 @@ def _gaze_template(*, coordinate_unit="pixels"):
     )
 
 
-def _authorized(spec, *, pixel_kinematics_compatible=False):
+def _authorized(spec, *, pixel_kinematics_compatible=False, redistribution_status="restricted"):
     dataset_key = (
         "hollywood2em" if isinstance(spec, Hollywood2SourceAuditSpec) else "gaze-in-the-wild"
     )
@@ -101,7 +100,7 @@ def _authorized(spec, *, pixel_kinematics_compatible=False):
         reuse_terms_evidence="current reuse terms reviewed",
         analysis_use_permitted=True,
         analysis_use_evidence="analysis use permission reviewed",
-        redistribution_status="restricted",
+        redistribution_status=redistribution_status,
         redistribution_evidence="redistribution restrictions reviewed",
         coordinate_unit_verified=True,
         coordinate_verification_evidence="coordinate documentation reviewed",
@@ -117,7 +116,7 @@ def _authorized(spec, *, pixel_kinematics_compatible=False):
     )
 
 
-def _gaze_exit(spec):
+def _gaze_exit(spec, *, redistribution_status="restricted"):
     return GazeInWildQuarantineExitAuthorization(
         recovery_candidate_kind="candidate_original_layout_unverified",
         recovery_record_fingerprint_sha256=_SHA_A,
@@ -128,18 +127,18 @@ def _gaze_exit(spec):
         reviewer="independent recovery reviewer",
         reviewed_at="2026-09-05",
         source_authority_verified=True,
-        authoritative_source="authoritative distribution",
-        authoritative_source_revision="verified revision",
+        authoritative_source=spec.source,
+        authoritative_source_revision=spec.source_revision,
         source_authority_evidence="source authority independently verified",
         exact_copy_identity_verified=True,
         exact_copy_identity_evidence="exact candidate copy matched authoritative identity",
         dataset_file_rights_resolved=True,
         reuse_terms_verified=True,
-        reuse_terms_source="current first-party terms",
+        reuse_terms_source=spec.reuse_terms_source,
         rights_evidence="dataset-file rights independently reviewed",
         analysis_use_permitted=True,
         analysis_use_evidence="analysis use explicitly permitted",
-        redistribution_status="restricted",
+        redistribution_status=redistribution_status,
         redistribution_evidence="redistribution restriction reviewed",
         authorization_basis="authority, exact-copy identity, and rights reviewed",
     )
@@ -279,7 +278,6 @@ def test_gaze_authorization_preserves_mapping_and_controls_pixel_kinematics():
 
 def test_gaze_quarantine_exit_must_match_exact_template():
     template = _gaze_template(coordinate_unit="pixels")
-    authorization = _authorized(template)
     exit_record = _gaze_exit(template)
     changed = _gaze_template(coordinate_unit="pixels")
     changed.notes.append("template drift")
@@ -290,6 +288,19 @@ def test_gaze_quarantine_exit_must_match_exact_template():
             changed,
             changed_authorization,
             gaze_in_wild_quarantine_exit=exit_record,
+        )
+
+
+def test_gaze_authorization_rejects_redistribution_disagreement():
+    template = _gaze_template()
+    with pytest.raises(BenchmarkIntegrityError, match="redistribution status conflicts"):
+        authorize_candidate_source_audit_template(
+            template,
+            _authorized(template, redistribution_status="permitted"),
+            gaze_in_wild_quarantine_exit=_gaze_exit(
+                template,
+                redistribution_status="restricted",
+            ),
         )
 
 
