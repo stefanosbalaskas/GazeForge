@@ -9,6 +9,7 @@ import pytest
 
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.gaze_in_wild_secondary_leads import (
+    EXPECTED_EVIDENCE_FINGERPRINT,
     EXPECTED_PROBE_FINGERPRINT,
     validate_gaze_in_wild_secondary_lead_evidence,
     validate_gaze_in_wild_secondary_lead_probe,
@@ -24,6 +25,17 @@ EVIDENCE = (
 )
 
 
+def _canonical_sha256(value: object) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            value,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+    ).hexdigest()
+
+
 def _probe_from_frozen() -> dict:
     evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
     probe = {
@@ -33,21 +45,20 @@ def _probe_from_frozen() -> dict:
         "scientific_boundary": evidence["scientific_boundary"],
         "claim_limit": evidence["claim_limit"],
     }
-    encoded = json.dumps(
-        probe, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-    ).encode("utf-8")
-    probe["probe_fingerprint_sha256"] = hashlib.sha256(encoded).hexdigest()
+    probe["probe_fingerprint_sha256"] = _canonical_sha256(probe)
     return probe
 
 
 def _refingerprint_probe(probe: dict) -> None:
     body = dict(probe)
     body.pop("probe_fingerprint_sha256", None)
-    probe["probe_fingerprint_sha256"] = hashlib.sha256(
-        json.dumps(
-            body, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-        ).encode("utf-8")
-    ).hexdigest()
+    probe["probe_fingerprint_sha256"] = _canonical_sha256(body)
+
+
+def _refingerprint_evidence(evidence: dict) -> None:
+    body = dict(evidence)
+    body.pop("evidence_fingerprint_sha256", None)
+    evidence["evidence_fingerprint_sha256"] = _canonical_sha256(body)
 
 
 def test_frozen_secondary_lead_evidence_is_self_consistent() -> None:
@@ -55,18 +66,27 @@ def test_frozen_secondary_lead_evidence_is_self_consistent() -> None:
     assert probe["probe_fingerprint_sha256"] == EXPECTED_PROBE_FINGERPRINT
     validated = validate_gaze_in_wild_secondary_lead_evidence(probe, EVIDENCE)
     assert validated.probe_fingerprint_sha256 == EXPECTED_PROBE_FINGERPRINT
-    assert len(validated.evidence_fingerprint_sha256) == 64
+    assert validated.evidence_fingerprint_sha256 == EXPECTED_EVIDENCE_FINGERPRINT
 
 
 def test_secondary_leads_remain_distinct_non_empirical_classes() -> None:
     probe = validate_gaze_in_wild_secondary_lead_probe(_probe_from_frozen())
     transformed = probe["sources"]["transformed_collection_lead"]
     labeller = probe["sources"]["labeller_filename_lead"]
-    assert transformed["classification"] == "external_transformed_collection_advertisement"
-    assert transformed["advertised_annotation_representation"] == "CSV files (one per chunk)"
+    assert (
+        transformed["classification"]
+        == "external_transformed_collection_advertisement"
+    )
+    assert (
+        transformed["advertised_annotation_representation"]
+        == "CSV files (one per chunk)"
+    )
     assert transformed["tracked_official_process_or_label_paths"] == []
     assert labeller["classification"] == "local_path_reference_only"
-    assert labeller["reference_code_paths"] == ["levenGPU_demo.py", "levenSequential.py"]
+    assert labeller["reference_code_paths"] == [
+        "levenGPU_demo.py",
+        "levenSequential.py",
+    ]
     assert labeller["referenced_labeller_files_repository_resident"] is False
     assert labeller["independent_annotation_streams_recovered"] is False
     assert not any(probe["scientific_boundary"].values())
@@ -119,5 +139,23 @@ def test_frozen_evidence_tampering_is_rejected() -> None:
     probe = _probe_from_frozen()
     evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
     evidence["review_status"] = "empirical"
-    with pytest.raises(BenchmarkIntegrityError, match="evidence fingerprint drifted"):
+    with pytest.raises(BenchmarkIntegrityError, match="must remain quarantined"):
+        validate_gaze_in_wild_secondary_lead_evidence(probe, evidence)
+
+
+def test_refingerprinted_frozen_evidence_tampering_is_rejected() -> None:
+    probe = _probe_from_frozen()
+    evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+    evidence["review_status"] = "empirical"
+    _refingerprint_evidence(evidence)
+    with pytest.raises(BenchmarkIntegrityError, match="must remain quarantined"):
+        validate_gaze_in_wild_secondary_lead_evidence(probe, evidence)
+
+
+def test_refingerprinted_extra_evidence_metadata_is_rejected() -> None:
+    probe = _probe_from_frozen()
+    evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+    evidence["empirical_status"] = "approved"
+    _refingerprint_evidence(evidence)
+    with pytest.raises(BenchmarkIntegrityError, match="reviewed evidence contract drifted"):
         validate_gaze_in_wild_secondary_lead_evidence(probe, evidence)
