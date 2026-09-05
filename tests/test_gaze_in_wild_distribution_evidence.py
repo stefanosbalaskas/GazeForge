@@ -36,17 +36,26 @@ def test_reviewed_distribution_availability_evidence_validates() -> None:
     ("section", "key"),
     [
         ("scientific_boundary", "current_exact_authoritative_copy_obtained"),
-        ("scientific_boundary", "exact_distributed_participant_identity_mapping_verified"),
+        (
+            "scientific_boundary",
+            "exact_distributed_participant_identity_mapping_verified",
+        ),
         ("scientific_boundary", "complete_trial_to_task_mapping_verified"),
         ("scientific_boundary", "distributed_file_sampling_cadence_verified"),
-        ("scientific_boundary", "separately_recoverable_independent_labeller_streams_verified"),
+        (
+            "scientific_boundary",
+            "separately_recoverable_independent_labeller_streams_verified",
+        ),
         ("scientific_boundary", "human_human_agreement_created"),
         ("scientific_boundary", "participant_disjoint_model_validation_created"),
         ("scientific_boundary", "cross_dataset_performance_created"),
         ("scientific_boundary", "gp3_validity_created"),
         ("scientific_boundary", "frozen_evidence_performance_claim_created"),
         ("rights_boundary", "article_license_is_external_dataset_file_license"),
-        ("rights_boundary", "processing_repository_mit_is_external_dataset_file_license"),
+        (
+            "rights_boundary",
+            "processing_repository_mit_is_external_dataset_file_license",
+        ),
         ("rights_boundary", "license_inference_permitted"),
     ],
 )
@@ -59,14 +68,18 @@ def test_evidence_rejects_unsupported_promotion(section: str, key: str) -> None:
 
 def test_failed_endpoint_probe_cannot_be_promoted_to_global_unavailability() -> None:
     record = copy.deepcopy(_record())
-    record["current_retrieval_observation"]["observation_is_global_unavailability_proof"] = True
+    record["current_retrieval_observation"][
+        "observation_is_global_unavailability_proof"
+    ] = True
     with pytest.raises(BenchmarkIntegrityError):
         validate_gaze_in_wild_distribution_availability_evidence(record)
 
 
 def test_secondary_processed_mirror_cannot_be_promoted_to_authoritative_copy() -> None:
     record = copy.deepcopy(_record())
-    record["secondary_recovery_leads"][0]["authoritative_first_party_copy_verified"] = True
+    record["secondary_recovery_leads"][0][
+        "authoritative_first_party_copy_verified"
+    ] = True
     with pytest.raises(BenchmarkIntegrityError):
         validate_gaze_in_wild_distribution_availability_evidence(record)
 
@@ -80,6 +93,8 @@ def test_secondary_labeller_filename_lead_cannot_create_agreement_eligibility() 
 
 def test_fingerprint_rejects_any_unreviewed_content_change() -> None:
     record = copy.deepcopy(_record())
-    record["replacement_source_search"]["authoritative_replacement_repository_found"] = True
+    record["replacement_source_search"][
+        "authoritative_replacement_repository_found"
+    ] = True
     with pytest.raises(BenchmarkIntegrityError):
         validate_gaze_in_wild_distribution_availability_evidence(record)
