@@ -7,6 +7,9 @@ import argparse
 import json
 from pathlib import Path
 
+from gazeforge.hollywood2_token_evidence import (
+    canonicalize_hollywood2_source_token_validation_report,
+)
 from gazeforge.hollywood2_token_validation import (
     load_hollywood2_source_token_analysis_authorization,
     run_hollywood2_source_token_validation,
@@ -93,7 +96,8 @@ def main() -> int:
         hidden_layer_sizes=hidden,
         temporal_max_iter=args.context_max_iter,
     )
-    report = validate_hollywood2_source_token_validation_report(run.report)
+    report = canonicalize_hollywood2_source_token_validation_report(run.report)
+    report = validate_hollywood2_source_token_validation_report(report)
     output = Path(args.output)
     output.write_text(
         json.dumps(
