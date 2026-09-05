@@ -92,13 +92,39 @@ History evidence fingerprint:
 
 `c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1`
 
+## Derived 60 Hz source-token-held-out validation
+
+GazeForge now also carries a reviewed model-validation result derived from the same pinned 500 Hz hand-labelled source. The benchmark is downsampled to **60 Hz** using the existing label-purity-aware resampling contract. With minimum label purity `0.75`, the 697 source files produce **465,013** derived rows before ambiguity exclusion and **450,649** analysis rows after excluding **14,364** ambiguous windows.
+
+The split unit is the stable three-digit canonical filename prefix. The 16 prefixes are divided into four matched GroupKFold folds, with four source tokens held out in each fold. They remain **opaque source tokens only**. The result must therefore be described as **source-token-held-out**, never participant-held-out or participant-generalization evidence.
+
+The reviewed full aggregate report has fingerprint:
+
+`6d6b7a0c677e278d3503ca5f6c4745430a037ea6b42a3000b93052fa7f2f0cab`
+
+and deterministic report-file SHA-256:
+
+`0d3e0ad01d47e6f953fc233c2a1c1a491d3a418dd685b96919ccdda0b96aaa63`.
+
+The committed Frozen Evidence projection is:
+
+`validation/evidence/hollywood2/hollywood2-source-token-60hz-frozen-summary-v1.json`
+
+with fingerprint:
+
+`c6aa390995b480f368b24601498ba1c0b666a3fa938f8dc095e36ead6129414e`.
+
+The public Frozen Evidence page renders its model summary directly from this fingerprint-validated JSON rather than from hand-transcribed performance values. The reviewed result shows the same kind of model trade-off that motivates GazeForge's multi-level evaluation: ContextMLP is strongest on the principal sample-level classification metrics and has the best mean matched-event IoU and boundary-error profile in this benchmark, whereas transparent I-VT retains the highest mean event F1 because of substantially higher event precision. RandomForest is intermediate on sample-level classification but weaker on event F1. These are benchmark-specific source-token-held-out findings, not a universal AI-superiority claim.
+
+The dedicated live workflow now regenerates the full analysis from the pinned GIN commit and fails unless the resulting full-report fingerprint, report-file SHA-256, model summary, source-token fold assignment, and analysis-label counts exactly match the reviewed frozen projection.
+
 ## Rights and remaining boundaries
 
 The annotation repository's exact licence identifier/text and raw-annotation redistribution scope remain unresolved. The article's CC BY licence is not treated as the dataset licence, and the original Hollywood-2 institutional licence is not automatically inherited by the later GIN annotation repository.
 
 The 16 filename tokens match the published Hollywood-2 eye-tracking participant count, and the original public dataset is documented elsewhere as carrying unique subject IDs within task groups. However, no authoritative GIN-token → original-subject-ID mapping has been recovered. GazeForge therefore does not promote the filename tokens to verified participant identities or infer active/free-viewing group membership.
 
-Consequently participant-held-out Hollywood2 modelling remains gated. The evidence also does not create independent human-human agreement, model validation, Lund↔Hollywood2 cross-dataset validation, recovery of the complete original video/gaze archive, or canonical program-wide Frozen Evidence.
+Consequently participant-held-out Hollywood2 modelling remains gated. The frozen source-token result also does not create independent human-human agreement, Lund↔Hollywood2 cross-dataset validation, recovery of the complete original video/gaze archive, exact annotation-repository licence resolution, redistribution permission, or native Gazepoint GP3 validity.
 
 ## Reproducibility
 
@@ -113,3 +139,5 @@ Ground-truth evidence fingerprint:
 The canonical live-source workflow reclones the GIN repository, recomputes every ground-truth file identity and aggregate metric, regenerates the 697-entry ledger fingerprint, and binds the result to the immutable ground-truth evidence contract.
 
 The complete-history workflow independently reclones the same pinned repository, enumerates every reachable commit, rechecks historical licence/README evidence and ground-truth path/token history, and binds the live result to the immutable history evidence contract. Persistent upstream unavailability remains fail-closed rather than being converted into a successful source result.
+
+The source-token validation workflow independently reclones the pinned repository, derives the 60 Hz analysis rows, reruns all four matched source-token folds, validates the aggregate-only claim boundary, and binds the live result to the frozen source-token summary. Raw source rows, filenames, and predictions are not committed to GazeForge.
