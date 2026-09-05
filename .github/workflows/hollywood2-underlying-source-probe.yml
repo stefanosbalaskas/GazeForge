@@ -1,0 +1,35 @@
+name: Hollywood2 underlying source live probe
+
+on:
+  push:
+    branches:
+      - research/hollywood2-rights-provenance
+    paths:
+      - "scripts/hollywood2_underlying_source_probe.py"
+      - ".github/workflows/hollywood2-underlying-source-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Probe institutional Hollywood-2 source and rights pages
+        run: python scripts/hollywood2_underlying_source_probe.py
+      - name: Upload deterministic probe record
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-underlying-source-live-probe
+          path: hollywood2_underlying_source_live_probe.json
+          if-no-files-found: error
+          retention-days: 30
