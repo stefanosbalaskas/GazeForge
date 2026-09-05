@@ -23,7 +23,7 @@ validation/evidence/gaze-in-wild/gaze-in-wild-current-first-party-listing-eviden
 with immutable fingerprint:
 
 ```text
-c2b9a19f43276e6bde08794f87212e4c2016a9e0ab3183dc4f8b69d310c02916
+e8257820f6cbfc9688e3771fd976c6afcb6b5ced93e385a009d10038a23bdcd5
 ```
 
 The second record is cryptographically bound to the first fingerprint. Both are provenance/governance evidence. Neither is **Frozen Evidence performance evidence**.
