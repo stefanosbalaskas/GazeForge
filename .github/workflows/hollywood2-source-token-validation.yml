@@ -96,13 +96,25 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git clone --depth 1 \
-            https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git \
-            _hollywood2_em
-          observed="$(git -C _hollywood2_em rev-parse HEAD)"
           expected="870fa6d6209c9085260918d61433a0a2c70fd497"
-          test "$observed" = "$expected"
-          test -z "$(git -C _hollywood2_em status --porcelain --untracked-files=no)"
+          for attempt in 1 2 3 4 5; do
+            rm -rf _hollywood2_em
+            if git clone --depth 1 \
+              https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git \
+              _hollywood2_em; then
+              observed="$(git -C _hollywood2_em rev-parse HEAD)"
+              test "$observed" = "$expected"
+              test -z "$(git -C _hollywood2_em status --porcelain --untracked-files=no)"
+              exit 0
+            fi
+            if [ "$attempt" -eq 5 ]; then
+              echo "Canonical GIN clone failed after bounded retries." >&2
+              exit 1
+            fi
+            delay=$((attempt * 20))
+            echo "GIN clone attempt ${attempt} failed; retrying after ${delay}s." >&2
+            sleep "$delay"
+          done
       - name: Run derived-60-Hz source-token-held-out comparison
         run: |
           python scripts/run_hollywood2_source_token_validation.py \
