@@ -2,7 +2,7 @@
   "record_type": "source-resolution-status-v1",
   "dataset": "Hollywood2EM eye-movement event benchmark",
   "checked_on": "2026-09-05",
-  "supersedes": "validation/protocols/hollywood2-source-resolution-2026-09-04.json",
+  "supersedes": "validation/history/source-resolution/hollywood2-source-resolution-2026-09-04.json",
   "status": "canonical_repository_and_ground_truth_recovered_terms_and_participant_mapping_unresolved",
   "empirical_evidence_created": true,
   "source_audit_ready": false,
