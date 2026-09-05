@@ -166,6 +166,24 @@ def test_file_role_promotion_is_rejected_even_after_rehashing(tmp_path: Path) ->
         validate_gaze_in_wild_recovery_candidate_review(record)
 
 
+def test_extension_inventory_cannot_be_falsified_by_refingerprinting(tmp_path: Path) -> None:
+    record = copy.deepcopy(_review(_candidate_tree(tmp_path)))
+    record["inventory"]["extension_counts"] = {".mat": 99}
+    record["record_fingerprint_sha256"] = recovery_candidate_record_fingerprint(record)
+
+    with pytest.raises(BenchmarkIntegrityError, match="extension inventory drifted"):
+        validate_gaze_in_wild_recovery_candidate_review(record)
+
+
+def test_claim_limit_cannot_be_promoted_by_refingerprinting(tmp_path: Path) -> None:
+    record = copy.deepcopy(_review(_candidate_tree(tmp_path)))
+    record["claim_limit"] = "This candidate is authoritative and empirically eligible."
+    record["record_fingerprint_sha256"] = recovery_candidate_record_fingerprint(record)
+
+    with pytest.raises(BenchmarkIntegrityError, match="claim limit drifted"):
+        validate_gaze_in_wild_recovery_candidate_review(record)
+
+
 def test_write_review_must_be_outside_candidate_tree(tmp_path: Path) -> None:
     root = _candidate_tree(tmp_path)
     review = _review(root)
@@ -191,6 +209,19 @@ def test_write_review_must_be_outside_candidate_tree(tmp_path: Path) -> None:
         write_gaze_in_wild_recovery_candidate_review(
             review,
             target,
+            candidate_root=root,
+        )
+
+
+def test_write_review_reverifies_candidate_tree(tmp_path: Path) -> None:
+    root = _candidate_tree(tmp_path)
+    review = _review(root)
+    (root / "unexpected.bin").write_bytes(b"new unreviewed material")
+
+    with pytest.raises(BenchmarkIntegrityError, match="no longer matches"):
+        write_gaze_in_wild_recovery_candidate_review(
+            review,
+            tmp_path / "stale-review.json",
             candidate_root=root,
         )
 
