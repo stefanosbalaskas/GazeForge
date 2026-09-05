@@ -1,7 +1,7 @@
 """Validation for the pinned authoritative Hollywood2EM ground-truth evidence.
 
 The evidence binds the canonical GIN repository to an exact revision and to
-all 697 hand-labelled ground-truth ARFF blobs.  It also freezes the observed
+all 697 hand-labelled ground-truth ARFF blobs. It also freezes the observed
 student-to-expert-corrected annotation sensitivity while explicitly refusing
 to reinterpret the sequential correction workflow as independent human-human
 agreement.
@@ -209,17 +209,36 @@ def _validate_labels(record: Mapping[str, Any]) -> None:
     crosscheck = labels.get("publication_crosscheck")
     if not isinstance(crosscheck, Mapping):
         raise BenchmarkIntegrityError("Hollywood2 publication cross-check is missing.")
-    _require_true(crosscheck.get("counts_reproduce_reported_rounding"), "publication cross-check")
+    _require_true(
+        crosscheck.get("counts_reproduce_reported_rounding"),
+        "publication cross-check",
+    )
 
 
 def _validate_sensitivity(record: Mapping[str, Any]) -> None:
     sensitivity = record.get("student_vs_expert_corrected_sensitivity")
     if not isinstance(sensitivity, Mapping):
         raise BenchmarkIntegrityError("Hollywood2 annotation-sensitivity evidence is missing.")
-    _require_equal(int(sensitivity.get("sample_count", -1)), 3871580, "sensitivity sample count")
-    _require_equal(int(sensitivity.get("equal_sample_count", -1)), 3580265, "equal sample count")
-    _require_equal(int(sensitivity.get("changed_sample_count", -1)), 291315, "changed sample count")
-    _require_equal(sensitivity.get("confusion"), _EXPECTED_CONFUSION, "student/final confusion")
+    _require_equal(
+        int(sensitivity.get("sample_count", -1)),
+        3871580,
+        "sensitivity sample count",
+    )
+    _require_equal(
+        int(sensitivity.get("equal_sample_count", -1)),
+        3580265,
+        "equal sample count",
+    )
+    _require_equal(
+        int(sensitivity.get("changed_sample_count", -1)),
+        291315,
+        "changed sample count",
+    )
+    _require_equal(
+        sensitivity.get("confusion"),
+        _EXPECTED_CONFUSION,
+        "student/final confusion",
+    )
     agreement = float(sensitivity.get("raw_agreement_fraction", math.nan))
     expected = 3580265 / 3871580
     if not math.isclose(agreement, expected, rel_tol=0.0, abs_tol=1e-15):
@@ -235,11 +254,27 @@ def _validate_boundaries(record: Mapping[str, Any]) -> None:
     rights = record.get("rights")
     if not isinstance(rights, Mapping):
         raise BenchmarkIntegrityError("Hollywood2 rights boundary is missing.")
-    _require_false(rights.get("repository_license_file_recovered"), "repository license recovery")
-    _require_false(rights.get("dataset_specific_license_verified"), "dataset-license verification")
-    _require_false(rights.get("article_cc_by_is_dataset_license"), "article license as dataset license")
-    _require_false(rights.get("source_bytes_redistributed_by_gazeforge"), "source-byte redistribution")
-    _require_equal(rights.get("analysis_use_terms_status"), "unresolved", "analysis-use status")
+    _require_false(
+        rights.get("repository_license_file_recovered"),
+        "repository license recovery",
+    )
+    _require_false(
+        rights.get("dataset_specific_license_verified"),
+        "dataset-license verification",
+    )
+    _require_false(
+        rights.get("article_cc_by_is_dataset_license"),
+        "article license as dataset license",
+    )
+    _require_false(
+        rights.get("source_bytes_redistributed_by_gazeforge"),
+        "source-byte redistribution",
+    )
+    _require_equal(
+        rights.get("analysis_use_terms_status"),
+        "unresolved",
+        "analysis-use status",
+    )
     _require_equal(
         rights.get("raw_data_redistribution_terms_status"),
         "unresolved",
@@ -289,21 +324,47 @@ def validate_hollywood2_authoritative_evidence(
     readme = upstream.get("readme")
     if not isinstance(readme, Mapping):
         raise BenchmarkIntegrityError("Hollywood2 README identity is missing.")
-    _require_equal(readme.get("git_blob_sha1"), "c8b7d126295e5f52a7748533952f044228423bf8", "README blob")
-    _require_equal(readme.get("sha256"), "97f839bda127674b5de1eb5d8c3b1d2c82d65e7c6c1708c2e9f9711170ada383", "README SHA-256")
+    _require_equal(
+        readme.get("git_blob_sha1"),
+        "c8b7d126295e5f52a7748533952f044228423bf8",
+        "README blob",
+    )
+    _require_equal(
+        readme.get("sha256"),
+        "97f839bda127674b5de1eb5d8c3b1d2c82d65e7c6c1708c2e9f9711170ada383",
+        "README SHA-256",
+    )
 
     execution = record.get("execution")
     if not isinstance(execution, Mapping):
         raise BenchmarkIntegrityError("Hollywood2 probe execution identity is missing.")
-    _require_equal(execution.get("probe_fingerprint_sha256"), EXPECTED_PROBE_FINGERPRINT_SHA256, "probe fingerprint")
+    _require_equal(
+        execution.get("probe_fingerprint_sha256"),
+        EXPECTED_PROBE_FINGERPRINT_SHA256,
+        "probe fingerprint",
+    )
 
     ledger = record.get("source_ledger")
     if not isinstance(ledger, Mapping):
         raise BenchmarkIntegrityError("Hollywood2 source-ledger identity is missing.")
-    _require_equal(int(ledger.get("entry_count", -1)), 697, "source-ledger entry count")
-    _require_equal(ledger.get("entries_fingerprint_sha256"), EXPECTED_LEDGER_FINGERPRINT_SHA256, "source-ledger fingerprint")
-    _require_false(ledger.get("raw_entry_ledger_committed"), "raw source-ledger byte embedding")
-    _require_true(ledger.get("regenerable_from_pinned_upstream_commit"), "ledger regeneration")
+    _require_equal(
+        int(ledger.get("entry_count", -1)),
+        697,
+        "source-ledger entry count",
+    )
+    _require_equal(
+        ledger.get("entries_fingerprint_sha256"),
+        EXPECTED_LEDGER_FINGERPRINT_SHA256,
+        "source-ledger fingerprint",
+    )
+    _require_false(
+        ledger.get("raw_entry_ledger_committed"),
+        "raw source-ledger byte embedding",
+    )
+    _require_true(
+        ledger.get("regenerable_from_pinned_upstream_commit"),
+        "ledger regeneration",
+    )
 
     _validate_coverage(record)
     _validate_schema(record)
@@ -316,8 +377,16 @@ def validate_hollywood2_authoritative_evidence(
         raise BenchmarkIntegrityError("Hollywood2 format semantics are missing.")
     _require_equal(semantics.get("time_unit"), "microseconds", "time unit")
     _require_equal(semantics.get("coordinate_unit"), "pixels", "coordinate unit")
-    _require_equal(float(semantics.get("native_sampling_rate_hz_publication", -1)), 500.0, "published sampling rate")
-    _require_equal(semantics.get("author_implementation_commit_sha1"), "9a345a37aab47ac6780ce0d4b5798cc15291c75b", "author format-source commit")
+    _require_equal(
+        float(semantics.get("native_sampling_rate_hz_publication", -1)),
+        500.0,
+        "published sampling rate",
+    )
+    _require_equal(
+        semantics.get("author_implementation_commit_sha1"),
+        "9a345a37aab47ac6780ce0d4b5798cc15291c75b",
+        "author format-source commit",
+    )
 
     stored = str(record.get("evidence_fingerprint_sha256", ""))
     calculated = evidence_fingerprint(record)
@@ -336,8 +405,16 @@ def validate_hollywood2_gin_probe(
 
     evidence = validate_hollywood2_authoritative_evidence(evidence_or_path)
     probe, _ = _load_record(probe_or_path)
-    _require_equal(probe.get("record_type"), "hollywood2-gin-live-probe-v2", "live probe type")
-    _require_equal(probe.get("status"), "verified_authoritative_source_probe", "live probe status")
+    _require_equal(
+        probe.get("record_type"),
+        "hollywood2-gin-live-probe-v2",
+        "live probe type",
+    )
+    _require_equal(
+        probe.get("status"),
+        "verified_authoritative_source_probe",
+        "live probe status",
+    )
     stored_probe = str(probe.get("probe_fingerprint_sha256", ""))
     if stored_probe != _probe_fingerprint(probe):
         raise BenchmarkIntegrityError("Hollywood2 live probe self-fingerprint is invalid.")
@@ -358,12 +435,24 @@ def validate_hollywood2_gin_probe(
     ground = probe.get("ground_truth")
     if not isinstance(ground, Mapping):
         raise BenchmarkIntegrityError("Hollywood2 live ground-truth audit is missing.")
-    _require_equal(int(ground.get("file_count", -1)), 697, "live ground-truth file count")
-    _require_equal(int(ground.get("total_bytes", -1)), 137328178, "live ground-truth byte count")
+    _require_equal(
+        int(ground.get("file_count", -1)),
+        697,
+        "live ground-truth file count",
+    )
+    _require_equal(
+        int(ground.get("total_bytes", -1)),
+        137328178,
+        "live ground-truth byte count",
+    )
     _require_equal(int(ground.get("total_rows", -1)), 3871580, "live sample count")
     _require_equal(ground.get("splits"), {"test": 642, "train": 55}, "live split counts")
     _require_equal(int(ground.get("clip_count", -1)), 56, "live clip count")
-    _require_equal(tuple(ground.get("file_subject_tokens", [])), _EXPECTED_TOKENS, "live tokens")
+    _require_equal(
+        tuple(ground.get("file_subject_tokens", [])),
+        _EXPECTED_TOKENS,
+        "live tokens",
+    )
     signatures = ground.get("schema_signatures")
     _require_equal(
         signatures,
@@ -378,7 +467,11 @@ def validate_hollywood2_gin_probe(
     comparison = ground.get("student_final_comparison")
     if not isinstance(comparison, Mapping):
         raise BenchmarkIntegrityError("Hollywood2 live student/final comparison is missing.")
-    _require_equal(int(comparison.get("changed_sample_count", -1)), 291315, "live changed samples")
+    _require_equal(
+        int(comparison.get("changed_sample_count", -1)),
+        291315,
+        "live changed samples",
+    )
     _require_equal(comparison.get("confusion"), _EXPECTED_CONFUSION, "live confusion")
     entries = ground.get("source_identity_ledger")
     if _ledger_fingerprint(entries) != EXPECTED_LEDGER_FINGERPRINT_SHA256:
