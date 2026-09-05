@@ -1,0 +1,185 @@
+{
+  "checked_on": "2026-09-05",
+  "claim_limits": [
+    "Absence of a LICENSE/COPYING file or licence wording in reachable Git/README history does not negate the separate author declaration that the chapter data were published with an open-source licence; it only means the exact repository licence text/identifier was not recovered from Git history.",
+    "Stable three-digit filename prefixes are not promoted to participant identities without an authoritative mapping statement or recoverable original metadata binding them to the original subject IDs.",
+    "The matching count of 16 filename tokens and 16 original Hollywood-2 eye-tracking participants remains corroborative context only.",
+    "Participant-disjoint Hollywood2EM modelling and Lund↔Hollywood2 validation remain blocked."
+  ],
+  "cross_evidence_context": {
+    "author_open_source_declaration_evidence_fingerprint_sha256": "a08510e43caca2a8e6d5c85e7b1ad41c9f312247cd9bd8367372f8ecad8aacab",
+    "author_open_source_declaration_verified_elsewhere": true,
+    "history_links_filename_tokens_to_original_subject_ids": false,
+    "history_provides_exact_license_identifier": false,
+    "upstream_unique_subject_id_semantics_verified_elsewhere": true
+  },
+  "evidence_fingerprint_sha256": "c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1",
+  "execution": {
+    "artifact_digest_sha256": "e87f38fc333d691fea079778d0815b6057a2a65251c26a395d755f9765a22f35",
+    "artifact_id": 9965497980,
+    "live_probe_fingerprint_sha256": "56aec7e299936b90f7a2fd7598aefd09f7288111c97a273132c6c00b611ff5a7",
+    "live_probe_record_type": "hollywood2-gin-history-probe-v1",
+    "workflow_head_sha": "78cc25aaefd25bc5d92084734009c02ad27896d1",
+    "workflow_run_id": 33953178808
+  },
+  "ground_truth_path_history": {
+    "all_697_current_ground_truth_paths_first_seen_in_move_commit": true,
+    "clip_count": 56,
+    "commit_versions_with_ground_truth": 6,
+    "file_subject_token_count": 16,
+    "file_subject_tokens": [
+      "001",
+      "002",
+      "003",
+      "004",
+      "005",
+      "006",
+      "008",
+      "010",
+      "011",
+      "012",
+      "013",
+      "014",
+      "015",
+      "017",
+      "018",
+      "019"
+    ],
+    "filename_schema_match": true,
+    "first_seen_commit_counts": {
+      "357bafd1decbea23eb2fe7cfd0fa1420c25d955c": 697
+    },
+    "first_seen_fingerprint_sha256": "16404f5caa8c2959bd14771eef20172295895a95946e650bed1af6b5096b6f44",
+    "ground_truth_directory_first_present_commit_sha1": "357bafd1decbea23eb2fe7cfd0fa1420c25d955c",
+    "ground_truth_directory_first_present_commit_subject": "Moved files to correct directory",
+    "ground_truth_file_count": 697,
+    "ground_truth_path_fingerprint_sha256": "0a8e49b3ae814bee212176557cc71c0d5658cdcf56d16f1c75b15c0566ee989d",
+    "initial_commit_ground_truth_directory_file_count": 0,
+    "initial_commit_tree_path_count": 697,
+    "interpretation": "The canonical ground_truth path inventory and 16 three-digit filename tokens are stable from the repository move commit onward. Git-path persistence is provenance for the token syntax, not proof that a token is an original participant identifier or of its task-group membership.",
+    "path_inventory_version_count": 1,
+    "token_set_version_count": 1
+  },
+  "license_history": {
+    "complete_reachable_history_searched": true,
+    "exact_license_identifier_recovered_from_git_history": false,
+    "exact_license_text_recovered_from_git_history": false,
+    "license_named_file_occurrence_count": 0,
+    "license_or_copying_named_file_ever_present": false,
+    "raw_annotation_redistribution_terms_recovered_from_git_history": false,
+    "readme_license_or_licence_keyword_ever_present": false,
+    "readme_unique_version_count": 3,
+    "unique_license_blob_count": 0
+  },
+  "next_required_actions": [
+    "Recover an exact licence identifier/text or author/institutional source that defines reuse and redistribution scope for the later Hollywood2EM annotation repository.",
+    "Recover an authoritative mapping between Hollywood2EM filename tokens and original Hollywood-2 subject identifiers/task groups, ideally from the original archive metadata/readme or an author statement."
+  ],
+  "readme_history": {
+    "participant_or_identity_keyword_ever_present": false,
+    "unique_version_count": 3,
+    "versions": [
+      {
+        "bytes": 2862,
+        "first_observed_commit_sha1": "99c4ad752b7b5189f86d4fdc458ca0d3ecbc2432",
+        "git_blob_sha1": "13d26f171b9acedb6da4bea9983c9510bb53dcb6",
+        "keyword_lines": [],
+        "path": "README.md",
+        "sha256": "8da322fa7f3dd35ef77bb75dbb6f5a17295df8d28f5b70d313b1da87d58d2b35"
+      },
+      {
+        "bytes": 2826,
+        "first_observed_commit_sha1": "c0b3af07b047f526d41f2b896750d1b2a7daca73",
+        "git_blob_sha1": "16b5d84350e527e96471de981679166bed097ee9",
+        "keyword_lines": [],
+        "path": "README.md",
+        "sha256": "1cc50010d1d4e59991b09fd83390ccf3d5df4d209cd72ca263286ff66dcb1719"
+      },
+      {
+        "bytes": 2808,
+        "first_observed_commit_sha1": "c71cd64629143058073f8fbbbf21fe21d0082d7e",
+        "git_blob_sha1": "c8b7d126295e5f52a7748533952f044228423bf8",
+        "keyword_lines": [],
+        "path": "README.md",
+        "sha256": "97f839bda127674b5de1eb5d8c3b1d2c82d65e7c6c1708c2e9f9711170ada383"
+      }
+    ]
+  },
+  "record_type": "hollywood2-gin-history-evidence-v1",
+  "repository_history": {
+    "commit_count": 7,
+    "commit_subjects": [
+      {
+        "author_date": "2019-04-10T15:26:58+02:00",
+        "commit_sha1": "1e80c3e0c1527fd4fdf6a2bc880a7c43c861eed0",
+        "subject": "Labelled EM added",
+        "tree_path_count": 697
+      },
+      {
+        "author_date": "2019-04-10T15:32:15+02:00",
+        "commit_sha1": "357bafd1decbea23eb2fe7cfd0fa1420c25d955c",
+        "subject": "Moved files to correct directory",
+        "tree_path_count": 697
+      },
+      {
+        "author_date": "2019-10-18T14:24:58+02:00",
+        "commit_sha1": "99c4ad752b7b5189f86d4fdc458ca0d3ecbc2432",
+        "subject": "Added README",
+        "tree_path_count": 698
+      },
+      {
+        "author_date": "2019-10-18T14:41:00+02:00",
+        "commit_sha1": "c0b3af07b047f526d41f2b896750d1b2a7daca73",
+        "subject": "Updated README",
+        "tree_path_count": 698
+      },
+      {
+        "author_date": "2020-02-19T16:37:09+01:00",
+        "commit_sha1": "c71cd64629143058073f8fbbbf21fe21d0082d7e",
+        "subject": "Fixed aspect ratio and evaluation table",
+        "tree_path_count": 698
+      },
+      {
+        "author_date": "2020-02-19T16:41:22+01:00",
+        "commit_sha1": "1ff0585dac4fd40e2a08e0920caf6b5910c42ccd",
+        "subject": "Added output of evaluated algorithms and detailed evaluation reports",
+        "tree_path_count": 5593
+      },
+      {
+        "author_date": "2020-02-19T16:56:44+01:00",
+        "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+        "subject": "Added sp_tool smoothed files",
+        "tree_path_count": 6234
+      }
+    ],
+    "head_commit_date": "2020-02-19T16:56:44+01:00",
+    "head_commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "head_commit_subject": "Added sp_tool smoothed files",
+    "initial_commit_date": "2019-04-10T15:26:58+02:00",
+    "initial_commit_sha1": "1e80c3e0c1527fd4fdf6a2bc880a7c43c861eed0",
+    "initial_commit_subject": "Labelled EM added",
+    "single_observed_commit_author_email": "ioannis.agtzidis@tum.de",
+    "single_observed_commit_author_name": "Ioannis Agtzidis"
+  },
+  "scientific_boundary": {
+    "annotation_repository_redistribution_terms_verified": false,
+    "complete_reachable_git_history_audited": true,
+    "cross_dataset_validation_created": false,
+    "exact_annotation_repository_license_identifier_verified": false,
+    "filename_token_to_original_participant_id_mapping_verified": false,
+    "filename_tokens_stable_from_ground_truth_move_commit": true,
+    "frozen_evidence_performance_claim_created": false,
+    "historical_readme_license_text_recovered": false,
+    "historical_repository_license_file_recovered": false,
+    "independent_human_human_agreement_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_group_membership_by_filename_token_verified": false,
+    "participant_identity_mapping_verified": false
+  },
+  "scope": {
+    "history_scope": "all commits reachable from the pinned canonical HEAD",
+    "pinned_commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
+  },
+  "status": "verified_complete_reachable_git_history_no_repository_license_or_participant_mapping_recovered"
+}
