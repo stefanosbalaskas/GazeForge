@@ -1,0 +1,145 @@
+{
+  "annotation_repository_rights": {
+    "analysis_use_terms_status": "unresolved",
+    "article_cc_by_is_dataset_license": false,
+    "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "dataset_specific_license_verified": false,
+    "license_inference_permitted": false,
+    "raw_data_redistribution_terms_status": "unresolved",
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "repository_license_file_recovered": false,
+    "underlying_license_automatically_applies_to_annotation_repository": false
+  },
+  "checked_on": "2026-09-05",
+  "evidence_fingerprint_sha256": "6227045c3cc831b3669b34ca74b955847df4b26fafbf825c9a1b5473e25bc943",
+  "execution": {
+    "artifact_id": 9963936216,
+    "artifact_zip_digest_sha256": "dfb4dd1deb2bea2b151e129e6ff9fea1f1bc309fa7adadf38fb3fb9613fe9441",
+    "live_probe_fingerprint_sha256": "1face6d676270165134f34a7956bf848d6422b69dbbfc2e2ecfdb9ac64688707",
+    "live_probe_record_type": "hollywood2-underlying-source-live-probe-v1",
+    "workflow_run_id": 33948037220
+  },
+  "institutional_source": {
+    "description_page": {
+      "bytes": 18184,
+      "content_type": "text/html; charset=utf-8",
+      "final_url": "http://vision.imar.ro/eyetracking/description.php",
+      "http_status": 200,
+      "normalised_text_sha256": "bc324312fa64119633a14a7bdd52283560bc25009beade4b4bd16fd18a7e7c06",
+      "requested_url": "https://vision.imar.ro/eyetracking/description.php",
+      "sha256": "305c5f6d7f977d419d40e60509f5b1ce7cdf58d57f91e8710313cb178493d6fe"
+    },
+    "download_endpoint": {
+      "accept_ranges": null,
+      "access_state": "redirects_to_login_page",
+      "anonymous_direct_archive_access_verified": false,
+      "authenticated_archive_access_tested": false,
+      "content_disposition": null,
+      "content_length": "2889",
+      "content_range": null,
+      "content_type": "text/html; charset=utf-8",
+      "final_scheme": "https",
+      "final_url": "https://vision.imar.ro/eyetracking/main_login.php",
+      "full_corpus_downloaded": false,
+      "http_status": 200,
+      "probe_method": "HEAD",
+      "published_archive_name": "gaze_hollywood2.zip",
+      "published_link_scheme": "http",
+      "requested_url": "http://vision.imar.ro/eyetracking/getdata.php?filepath=data&filename=gaze_hollywood2.zip",
+      "sampled_bytes": 0,
+      "transport_encrypted": true
+    },
+    "licence_page": {
+      "bytes": 5503,
+      "content_type": "text/html; charset=utf-8",
+      "final_url": "https://vision.imar.ro/eyetracking/license.php",
+      "http_status": 200,
+      "normalised_text_sha256": "0824a62438326029f4337822279bb7ea7c5517d0bb32795cba5068dbde269557",
+      "requested_url": "https://vision.imar.ro/eyetracking/license.php",
+      "sha256": "a50bc0cc3f422f6220798acac9991d3c18cbec0533d5d9cfe88554690abfdc2f"
+    }
+  },
+  "participant_mapping": {
+    "file_subject_token_to_participant_mapping_verified": false,
+    "gin_file_subject_token_count": 16,
+    "gin_file_subject_tokens": [
+      "001",
+      "002",
+      "003",
+      "004",
+      "005",
+      "006",
+      "008",
+      "010",
+      "011",
+      "012",
+      "013",
+      "014",
+      "015",
+      "017",
+      "018",
+      "019"
+    ],
+    "mapping_inference_permitted": false,
+    "participant_group_membership_by_file_token_verified": false,
+    "published_active_count": 12,
+    "published_free_viewing_count": 4,
+    "published_participant_count": 16,
+    "token_count_matches_published_participant_count": true
+  },
+  "record_type": "hollywood2-underlying-source-rights-evidence-v1",
+  "recording_context": {
+    "active_participant_count": 12,
+    "display_resolution_pixels": [
+      1280,
+      1024
+    ],
+    "display_size_cm": [
+      47.5,
+      29.5
+    ],
+    "eye_tracker": "SMI iView X HiSpeed 1250",
+    "free_viewing_participant_count": 4,
+    "participant_count": 16,
+    "sampling_rate_hz": 500.0,
+    "viewing_distance_cm": 60.0
+  },
+  "scientific_boundary": {
+    "annotation_repository_rights_resolved": false,
+    "cross_dataset_validation_created": false,
+    "file_subject_token_to_participant_mapping_verified": false,
+    "frozen_evidence_performance_claim_created": false,
+    "gin_annotation_repository_license_verified": false,
+    "gin_annotation_repository_redistribution_verified": false,
+    "model_validation_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_group_membership_by_file_token_verified": false,
+    "participant_identity_mapping_verified": false,
+    "underlying_hollywood2_archive_manifest_verified": false,
+    "underlying_hollywood2_corpus_bytes_downloaded": false,
+    "underlying_hollywood2_current_description_verified": true,
+    "underlying_hollywood2_current_licence_verified": true,
+    "underlying_hollywood2_current_rights_context_frozen": true,
+    "underlying_hollywood2_download_endpoint_resolved": true,
+    "underlying_hollywood2_gaze_source_identified": true,
+    "underlying_hollywood2_standard_academic_analysis_use_verified": true,
+    "underlying_hollywood2_standard_raw_archive_redistribution_not_permitted": true
+  },
+  "scope": {
+    "annotation_distribution": "Agtzidis-Startsev-Dorr Hollywood2EM hand-labelled GIN repository",
+    "scope_note": "The institutional licence applies to the original Hollywood-2 eye-movement distribution. No repository licence file has been recovered for the later Hollywood2EM hand-labelled GIN repository, so its exact reuse and redistribution terms remain unresolved.",
+    "underlying_distribution": "Mathe-Sminchisescu Hollywood-2 eye-movement distribution"
+  },
+  "status": "verified-authoritative-underlying-rights-context",
+  "underlying_rights": {
+    "academic_use_only": true,
+    "analysis_use_terms_status": "verified_academic_use_only",
+    "article_cc_by_is_dataset_license": false,
+    "citation_of_mathe_sminchisescu_papers_required": true,
+    "commercial_or_other_unpermitted_use_requires_prior_permission": true,
+    "license_scope": "underlying_hollywood2_gaze_distribution",
+    "limited_nonexclusive_nonassignable_nontransferable": true,
+    "raw_archive_redistribution_status": "not_permitted_under_standard_grant",
+    "standard_grant_allows_dataset_transfer": false
+  }
+}
