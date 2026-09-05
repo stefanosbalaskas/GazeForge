@@ -115,6 +115,23 @@ def _authorized(pending: GazeInWildQuarantineExitAuthorization):
     )
 
 
+def _validate(
+    authorized: GazeInWildQuarantineExitAuthorization,
+    *,
+    root: Path,
+    recovery: dict,
+    inventory: CandidateSourceInventory,
+    spec: GazeInWildSourceAuditSpec,
+) -> GazeInWildQuarantineExitAuthorization:
+    return validate_gaze_in_wild_quarantine_exit_authorization(
+        authorized,
+        root=root,
+        recovery_record_or_path=recovery,
+        inventory=inventory,
+        spec=spec,
+    )
+
+
 def test_pending_exit_binds_recovery_inventory_and_template(tmp_path: Path) -> None:
     root = _candidate(tmp_path)
     recovery = _recovery(root)
@@ -132,13 +149,14 @@ def test_pending_exit_binds_recovery_inventory_and_template(tmp_path: Path) -> N
     assert pending.candidate_inventory_fingerprint_sha256 == inventory.inventory_fingerprint_sha256
     assert pending.audit_template_fingerprint_sha256 == source_audit_template_fingerprint(spec)
     payload = pending.to_dict()
+    assert "_binding_validated" not in payload
     assert payload["scientific_boundary"]["empirical_evidence_created"] is False
     assert payload["scientific_boundary"]["source_audit_executed"] is False
     assert payload["scientific_boundary"]["human_human_agreement_created"] is False
     assert len(payload["record_fingerprint_sha256"]) == 64
 
 
-def test_authorized_exit_still_does_not_open_scientific_result_gates(tmp_path: Path) -> None:
+def test_authorized_exit_requires_fresh_full_binding_validation(tmp_path: Path) -> None:
     root = _candidate(tmp_path)
     recovery = _recovery(root)
     inventory, spec = _template(root)
@@ -146,9 +164,37 @@ def test_authorized_exit_still_does_not_open_scientific_result_gates(tmp_path: P
         build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
     )
 
+    with pytest.raises(BenchmarkIntegrityError, match="freshly revalidated"):
+        require_authorized_gaze_in_wild_quarantine_exit(authorized, spec)
+
+    validated = _validate(
+        authorized,
+        root=root,
+        recovery=recovery,
+        inventory=inventory,
+        spec=spec,
+    )
+    require_authorized_gaze_in_wild_quarantine_exit(validated, spec)
+
+
+def test_authorized_exit_still_does_not_open_scientific_result_gates(tmp_path: Path) -> None:
+    root = _candidate(tmp_path)
+    recovery = _recovery(root)
+    inventory, spec = _template(root)
+    authorized = _validate(
+        _authorized(
+            build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+        ),
+        root=root,
+        recovery=recovery,
+        inventory=inventory,
+        spec=spec,
+    )
+
     require_authorized_gaze_in_wild_quarantine_exit(authorized, spec)
     payload = authorized.to_dict()
     assert authorized.decision == "authorized"
+    assert "_binding_validated" not in payload
     assert not any(
         payload["scientific_boundary"][key]
         for key in (
@@ -255,10 +301,10 @@ def test_authorized_exit_refuses_conflicting_source_identity(tmp_path: Path) -> 
     conflicting = replace(authorized, authoritative_source="different source")
 
     with pytest.raises(BenchmarkIntegrityError, match="source/rights identity conflicts"):
-        validate_gaze_in_wild_quarantine_exit_authorization(
+        _validate(
             conflicting,
             root=root,
-            recovery_record_or_path=recovery,
+            recovery=recovery,
             inventory=inventory,
             spec=spec,
         )
@@ -304,12 +350,39 @@ def test_exit_writer_loader_and_fingerprint_tamper(tmp_path: Path) -> None:
     )
     loaded = load_gaze_in_wild_quarantine_exit_authorization(target)
     assert loaded == pending
+    assert loaded._binding_validated is False
 
     payload = json.loads(target.read_text(encoding="utf-8"))
     payload["decision"] = "authorized"
     target.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(BenchmarkIntegrityError):
         load_gaze_in_wild_quarantine_exit_authorization(target)
+
+
+def test_validated_state_is_not_serialized_or_reused_after_reload(tmp_path: Path) -> None:
+    root = _candidate(tmp_path)
+    recovery = _recovery(root)
+    inventory, spec = _template(root)
+    authorized = _validate(
+        _authorized(
+            build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+        ),
+        root=root,
+        recovery=recovery,
+        inventory=inventory,
+        spec=spec,
+    )
+    target = tmp_path / "authorized-exit.json"
+    write_gaze_in_wild_quarantine_exit_authorization(
+        authorized,
+        target,
+        candidate_root=root,
+    )
+    loaded = load_gaze_in_wild_quarantine_exit_authorization(target)
+
+    assert loaded.record_fingerprint_sha256 == authorized.record_fingerprint_sha256
+    with pytest.raises(BenchmarkIntegrityError, match="freshly revalidated"):
+        require_authorized_gaze_in_wild_quarantine_exit(loaded, spec)
 
 
 def test_exit_writer_stays_outside_candidate_tree(tmp_path: Path) -> None:
