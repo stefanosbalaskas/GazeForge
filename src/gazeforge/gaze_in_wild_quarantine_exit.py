@@ -1,6 +1,6 @@
 """Explicit exit gate from Gaze-in-the-Wild recovery quarantine to source-audit review.
 
-The gate is deliberately narrower than a source audit.  It binds one exact recovery
+The gate is deliberately narrower than a source audit. It binds one exact recovery
 candidate, one exact generic candidate inventory, and one exact non-empirical audit
 template to an independently reviewed source-authority / exact-copy / rights decision.
 It never executes the source audit and never creates empirical evidence.
@@ -67,7 +67,11 @@ def _resolved(value: Any, *, field_name: str) -> str:
     return text
 
 
-def _load_json_object(value: Mapping[str, Any] | str | Path, *, label: str) -> dict[str, Any]:
+def _load_json_object(
+    value: Mapping[str, Any] | str | Path,
+    *,
+    label: str,
+) -> dict[str, Any]:
     if isinstance(value, Mapping):
         return dict(value)
     path = Path(value)
@@ -103,15 +107,18 @@ def _recovery_files(record: Mapping[str, Any]) -> list[dict[str, Any]]:
     raw = inventory.get("files")
     if not isinstance(raw, list):
         raise BenchmarkIntegrityError("GIW recovery review file manifest is missing.")
-    return [
-        {
-            "path": str(item["path"]),
-            "sha256": str(item["sha256"]),
-            "bytes": int(item["bytes"]),
-        }
-        for item in raw
-        if isinstance(item, Mapping)
-    ]
+    rows: list[dict[str, Any]] = []
+    for item in raw:
+        if not isinstance(item, Mapping):
+            raise BenchmarkIntegrityError("GIW recovery review file manifest is invalid.")
+        rows.append(
+            {
+                "path": str(item["path"]),
+                "sha256": str(item["sha256"]),
+                "bytes": int(item["bytes"]),
+            }
+        )
+    return rows
 
 
 def _generic_inventory_files(inventory: CandidateSourceInventory) -> list[dict[str, Any]]:
@@ -130,7 +137,9 @@ def _validate_candidate_binding(
     if not isinstance(inventory, CandidateSourceInventory):
         raise TypeError("inventory must be a CandidateSourceInventory instance.")
     if inventory.dataset_key != "gaze-in-the-wild":
-        raise BenchmarkIntegrityError("GIW quarantine exit requires a Gaze-in-the-Wild inventory.")
+        raise BenchmarkIntegrityError(
+            "GIW quarantine exit requires a Gaze-in-the-Wild inventory."
+        )
 
     root_path = Path(root).resolve()
     recovery = _load_json_object(
@@ -292,7 +301,10 @@ class GazeInWildQuarantineExitAuthorization:
         return payload
 
     @classmethod
-    def from_dict(cls, payload: Mapping[str, Any]) -> GazeInWildQuarantineExitAuthorization:
+    def from_dict(
+        cls,
+        payload: Mapping[str, Any],
+    ) -> GazeInWildQuarantineExitAuthorization:
         if payload.get("record_type") != _RECORD_TYPE:
             raise BenchmarkIntegrityError(
                 f"GIW quarantine-exit record_type must be {_RECORD_TYPE!r}."
@@ -316,6 +328,26 @@ class GazeInWildQuarantineExitAuthorization:
         if stored != record.record_fingerprint_sha256:
             raise BenchmarkIntegrityError("GIW quarantine-exit record fingerprint drifted.")
         return record
+
+
+def _validate_authorized_template_consistency(
+    authorization: GazeInWildQuarantineExitAuthorization,
+    spec: GazeInWildSourceAuditSpec,
+) -> None:
+    if authorization.decision != "authorized":
+        return
+    authorization._require_authorized()
+    expected = {
+        "authoritative_source": spec.source,
+        "authoritative_source_revision": spec.source_revision,
+        "reuse_terms_source": spec.reuse_terms_source,
+    }
+    for field_name, expected_value in expected.items():
+        if getattr(authorization, field_name) != expected_value:
+            raise BenchmarkIntegrityError(
+                "GIW quarantine-exit reviewed source/rights identity conflicts with the exact "
+                f"audit template field {field_name}."
+            )
 
 
 def build_gaze_in_wild_quarantine_exit_authorization(
@@ -375,7 +407,10 @@ def write_gaze_in_wild_quarantine_exit_authorization(
 def load_gaze_in_wild_quarantine_exit_authorization(
     path: str | Path,
 ) -> GazeInWildQuarantineExitAuthorization:
-    payload = _load_json_object(path, label="Gaze-in-the-Wild quarantine-exit authorization")
+    payload = _load_json_object(
+        path,
+        label="Gaze-in-the-Wild quarantine-exit authorization",
+    )
     return GazeInWildQuarantineExitAuthorization.from_dict(payload)
 
 
@@ -401,8 +436,9 @@ def validate_gaze_in_wild_quarantine_exit_authorization(
     )
     if authorization.recovery_candidate_kind != str(recovery["candidate_kind"]):
         raise BenchmarkIntegrityError("GIW quarantine-exit candidate kind drifted.")
-    if authorization.recovery_record_fingerprint_sha256 != recovery_candidate_record_fingerprint(
-        recovery
+    if (
+        authorization.recovery_record_fingerprint_sha256
+        != recovery_candidate_record_fingerprint(recovery)
     ):
         raise BenchmarkIntegrityError("GIW quarantine-exit recovery-record identity drifted.")
     if authorization.recovery_tree_fingerprint_sha256 != str(
@@ -416,6 +452,7 @@ def validate_gaze_in_wild_quarantine_exit_authorization(
         raise BenchmarkIntegrityError("GIW quarantine-exit candidate-inventory identity drifted.")
     if authorization.audit_template_fingerprint_sha256 != template_fingerprint:
         raise BenchmarkIntegrityError("GIW quarantine-exit audit-template identity drifted.")
+    _validate_authorized_template_consistency(authorization, spec)
     return authorization
 
 
@@ -426,7 +463,7 @@ def require_authorized_gaze_in_wild_quarantine_exit(
     """Require an authorized exit record bound to one exact GIW audit template.
 
     Full candidate-tree/recovery revalidation is performed by
-    :func:`validate_gaze_in_wild_quarantine_exit_authorization`.  This narrower check is used at
+    :func:`validate_gaze_in_wild_quarantine_exit_authorization`. This narrower check is used at
     the generic audit-template authorization boundary so a GIW template cannot be materialized
     without carrying the separately reviewed quarantine-exit identity.
     """
@@ -446,3 +483,4 @@ def require_authorized_gaze_in_wild_quarantine_exit(
             "Gaze-in-the-Wild quarantine-exit authorization is not bound to this exact audit "
             "template."
         )
+    _validate_authorized_template_consistency(authorization, spec)
