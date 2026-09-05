@@ -22,7 +22,10 @@ from gazeforge.gaze_in_wild_quarantine_exit import (
     write_gaze_in_wild_quarantine_exit_authorization,
 )
 from gazeforge.gaze_in_wild_recovery import build_gaze_in_wild_recovery_candidate_review
-from gazeforge.source_candidate import build_candidate_source_inventory
+from gazeforge.source_candidate import (
+    CandidateSourceInventory,
+    build_candidate_source_inventory,
+)
 from gazeforge.source_candidate_authorization import source_audit_template_fingerprint
 
 
@@ -45,7 +48,7 @@ def _recovery(root: Path, *, kind: str = "candidate_original_layout_unverified")
     )
 
 
-def _template(root: Path) -> tuple[object, GazeInWildSourceAuditSpec]:
+def _template(root: Path) -> tuple[CandidateSourceInventory, GazeInWildSourceAuditSpec]:
     inventory = build_candidate_source_inventory(root, dataset_key="gaze-in-the-wild")
     by_path = {item.path: item for item in inventory.files}
     process = by_path["ProcessData/PrIdx_1_TrIdx_1.mat"]
@@ -94,14 +97,14 @@ def _authorized(pending: GazeInWildQuarantineExitAuthorization):
         reviewer="independent scientific reviewer",
         reviewed_at="2026-09-05",
         source_authority_verified=True,
-        authoritative_source="independently verified authoritative distribution",
-        authoritative_source_revision="verified distribution revision",
+        authoritative_source="reviewed-authoritative-source",
+        authoritative_source_revision="reviewed-source-revision",
         source_authority_evidence="first-party authority evidence reviewed independently",
         exact_copy_identity_verified=True,
         exact_copy_identity_evidence="candidate manifest matched authoritative copy identity",
         dataset_file_rights_resolved=True,
         reuse_terms_verified=True,
-        reuse_terms_source="current first-party reuse terms",
+        reuse_terms_source="reviewed terms source",
         rights_evidence="dataset-file rights and restrictions reviewed",
         analysis_use_permitted=True,
         analysis_use_evidence="analysis use explicitly permitted by reviewed terms",
@@ -240,6 +243,25 @@ def test_exit_refuses_template_not_bound_to_inventory(tmp_path: Path) -> None:
 
     with pytest.raises(BenchmarkIntegrityError, match="candidate inventory fingerprint"):
         build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+
+
+def test_authorized_exit_refuses_conflicting_source_identity(tmp_path: Path) -> None:
+    root = _candidate(tmp_path)
+    recovery = _recovery(root)
+    inventory, spec = _template(root)
+    authorized = _authorized(
+        build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+    )
+    conflicting = replace(authorized, authoritative_source="different source")
+
+    with pytest.raises(BenchmarkIntegrityError, match="source/rights identity conflicts"):
+        validate_gaze_in_wild_quarantine_exit_authorization(
+            conflicting,
+            root=root,
+            recovery_record_or_path=recovery,
+            inventory=inventory,
+            spec=spec,
+        )
 
 
 def test_exit_revalidation_detects_candidate_tree_drift(tmp_path: Path) -> None:
