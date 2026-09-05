@@ -22,11 +22,17 @@ on:
       - "docs/hollywood2-source-resolution.md"
       - "docs/source-resolution-status.md"
       - "docs/api-reference.md"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/docs.yml"
       - ".github/workflows/hollywood2-gin-live-probe.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   probe:
