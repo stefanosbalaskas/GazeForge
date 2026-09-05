@@ -18,21 +18,19 @@ def test_repository_discovery_finds_exact_current_source_resolution_set():
 
     assert [path.name for path in paths] == [
         "gaze-in-wild-source-resolution-2026-09-04.json",
-        "hollywood2-source-resolution-2026-09-04.json",
+        "hollywood2-source-resolution-2026-09-05.json",
         "visus-source-resolution-2026-09-04.json",
     ]
 
     summary = source_resolution_discovery.validate_source_resolution_directory(_PROTOCOLS)
     assert summary["record_count"] == 3
-    assert {record["dataset_key"] for record in summary["records"]} == {
-        "gaze-in-the-wild",
-        "hollywood2em",
-        "visus",
-    }
+    records = {record["dataset_key"]: record for record in summary["records"]}
+    assert set(records) == {"gaze-in-the-wild", "hollywood2em", "visus"}
+    assert records["hollywood2em"]["empirical_evidence_created"] is True
 
 
 def test_discovery_ignores_other_protocol_json_files(tmp_path):
-    source = _PROTOCOLS / "hollywood2-source-resolution-2026-09-04.json"
+    source = _PROTOCOLS / "hollywood2-source-resolution-2026-09-05.json"
     _copy_json(source, tmp_path / source.name)
     (tmp_path / "unrelated-protocol.json").write_text("not json", encoding="utf-8")
 
@@ -70,9 +68,9 @@ def test_discovery_refuses_wrong_record_type_for_matching_candidate(tmp_path):
 
 
 def test_directory_validation_rejects_duplicate_dataset_checkpoints(tmp_path):
-    source = _PROTOCOLS / "hollywood2-source-resolution-2026-09-04.json"
-    _copy_json(source, tmp_path / "hollywood2-source-resolution-2026-09-04.json")
+    source = _PROTOCOLS / "hollywood2-source-resolution-2026-09-05.json"
     _copy_json(source, tmp_path / "hollywood2-source-resolution-2026-09-05.json")
+    _copy_json(source, tmp_path / "hollywood2-source-resolution-2026-09-06.json")
 
     with pytest.raises(BenchmarkIntegrityError, match="duplicate dataset checkpoints"):
         source_resolution_discovery.validate_source_resolution_directory(tmp_path)
@@ -84,7 +82,9 @@ def test_directory_mode_cli_emits_complete_repository_bundle(capsys):
 
     output = json.loads(capsys.readouterr().out)
     assert output["record_count"] == 3
-    assert len(output["bundle_fingerprint_sha256"]) == 64
+    assert output["bundle_fingerprint_sha256"] == (
+        "6518614703d3ee99b54739365f0098d1a8df580e952cdcaecd33cdcaff49cebe"
+    )
 
 
 def test_cli_rejects_directory_and_explicit_paths_together():
