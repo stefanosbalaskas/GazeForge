@@ -119,7 +119,7 @@ def _authorization(template, *, pixel_kinematics_compatible=False):
 
 
 def _gaze_exit(template):
-    return GazeInWildQuarantineExitAuthorization(
+    record = GazeInWildQuarantineExitAuthorization(
         recovery_candidate_kind="candidate_original_layout_unverified",
         recovery_record_fingerprint_sha256=_SHA_A,
         recovery_tree_fingerprint_sha256=_SHA_B,
@@ -144,6 +144,8 @@ def _gaze_exit(template):
         redistribution_evidence="redistribution restrictions reviewed",
         authorization_basis="authority, exact-copy identity, and rights reviewed",
     )
+    object.__setattr__(record, "_binding_validated", True)
+    return record
 
 
 def _stamp_report(body):
