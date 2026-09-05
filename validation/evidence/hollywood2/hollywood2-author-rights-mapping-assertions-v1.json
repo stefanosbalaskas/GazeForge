@@ -1,6 +1,6 @@
 {
   "checked_on": "2026-09-05",
-  "evidence_fingerprint_sha256": "78b876a4e368b364d2cd229b8896c8830dec3bc1f3beaeec6b2690410f1283a4",
+  "evidence_fingerprint_sha256": "cc890d995ce6ae9d55e4e989937bfee2c6e10eb98ed71ac10456424ff38c4462",
   "gin_repository_state": {
     "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
     "file_subject_token_count": 16,
@@ -74,7 +74,7 @@
   },
   "sources": {
     "agtzidis_thesis": {
-      "assertion": "All the data presented in this chapter are made publicly available with an open-source license.",
+      "assertion": "Chapter 4 states that its presented data are publicly available under an open-source licence; footnote 2 identifies Hollywood2EM.",
       "assertion_applies_to_hollywood2em": true,
       "author": "Ioannis Agtzidis",
       "chapter": "Chapter 4: Hand-labeled data sets",
@@ -86,7 +86,7 @@
       "url": "https://mediatum.ub.tum.de/doc/1538004/1538004.pdf"
     },
     "mathe_thesis": {
-      "assertion": "Our publicly available dataset lists the unique ids of the subjects within each group, to allow researchers to track their identity for the purpose of future studies.",
+      "assertion": "The public dataset is described as listing unique subject IDs within each task group so participant identity can be tracked.",
       "author": "Stefan Mathe",
       "chapter": "Chapter 4: Large Scale Human Eye Movement Datasets for Action Recognition",
       "cross_task_groups_disjoint": true,
