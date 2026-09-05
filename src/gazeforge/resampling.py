@@ -42,20 +42,40 @@ def _interpolate_with_gap_limit(
     source_t = unique_t
     source_v = source_v[unique_index]
 
-    for i, target in enumerate(target_times):
-        exact = np.flatnonzero(np.isclose(source_t, target, rtol=0.0, atol=1e-9))
-        if exact.size:
-            output[i] = source_v[int(exact[0])]
-            continue
-        right = int(np.searchsorted(source_t, target, side="right"))
-        left = right - 1
-        if left < 0 or right >= len(source_t):
-            continue
-        gap = source_t[right] - source_t[left]
-        if gap <= 0 or gap > max_gap_ms:
-            continue
-        weight = (target - source_t[left]) / gap
-        output[i] = source_v[left] + weight * (source_v[right] - source_v[left])
+    positions = np.searchsorted(source_t, target_times, side="left")
+    right_clip = np.minimum(positions, len(source_t) - 1)
+    exact_right = (positions < len(source_t)) & np.isclose(
+        source_t[right_clip], target_times, rtol=0.0, atol=1e-9
+    )
+    left_clip = np.maximum(positions - 1, 0)
+    exact_left = (positions > 0) & np.isclose(
+        source_t[left_clip], target_times, rtol=0.0, atol=1e-9
+    )
+    if exact_right.any():
+        output[exact_right] = source_v[right_clip[exact_right]]
+    exact_left_only = exact_left & ~exact_right
+    if exact_left_only.any():
+        output[exact_left_only] = source_v[left_clip[exact_left_only]]
+
+    interpolation = ~(exact_right | exact_left)
+    right = positions
+    left = right - 1
+    valid = interpolation & (left >= 0) & (right < len(source_t))
+    if valid.any():
+        valid_positions = np.flatnonzero(valid)
+        left_idx = left[valid_positions]
+        right_idx = right[valid_positions]
+        gaps = source_t[right_idx] - source_t[left_idx]
+        gap_ok = (gaps > 0) & (gaps <= max_gap_ms)
+        if gap_ok.any():
+            target_idx = valid_positions[gap_ok]
+            left_idx = left[target_idx]
+            right_idx = right[target_idx]
+            gaps = source_t[right_idx] - source_t[left_idx]
+            weights = (target_times[target_idx] - source_t[left_idx]) / gaps
+            output[target_idx] = source_v[left_idx] + weights * (
+                source_v[right_idx] - source_v[left_idx]
+            )
     return output
 
 
@@ -74,12 +94,19 @@ def _majority_label_window(
     ambiguous = np.ones(len(target_times), dtype=bool)
     half_window = target_period_ms / 2.0
 
+    finite = np.isfinite(timestamps)
+    source_t = timestamps[finite]
+    source_labels = labels[finite]
+    if len(source_t):
+        order = np.argsort(source_t, kind="stable")
+        source_t = source_t[order]
+        source_labels = source_labels[order]
+
     for i, target in enumerate(target_times):
-        if i == len(target_times) - 1:
-            mask = (timestamps >= target - half_window) & (timestamps <= target + half_window)
-        else:
-            mask = (timestamps >= target - half_window) & (timestamps < target + half_window)
-        selected = labels[mask]
+        left = int(np.searchsorted(source_t, target - half_window, side="left"))
+        right_side = "right" if i == len(target_times) - 1 else "left"
+        right = int(np.searchsorted(source_t, target + half_window, side=right_side))
+        selected = source_labels[left:right]
         selected = selected[pd.notna(selected)]
         source_counts[i] = int(len(selected))
         if not len(selected):
