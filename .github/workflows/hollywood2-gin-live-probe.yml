@@ -11,6 +11,8 @@ on:
       - "src/gazeforge/source_resolution.py"
       - "src/gazeforge/source_resolution_dashboard.py"
       - "tests/test_hollywood2_evidence.py"
+      - "tests/test_hollywood2_source_resolution.py"
+      - "tests/test_docs_hook.py"
       - "tests/test_source_resolution*.py"
       - "validation/evidence/hollywood2/**"
       - "validation/protocols/hollywood2-source-resolution-*.json"
