@@ -54,7 +54,7 @@ def test_mkdocs_hook_generates_conservative_empty_evidence_page(tmp_path):
     assert "Governance status, not performance evidence" in source_page
     assert "separately frozen empirical source evidence" in source_page
     assert "## Reviewed governance snapshot" in source_page
-    assert "1616af4fdce0" in source_page
+    assert "705fab1f67b5" in source_page
     assert "Gaze-in-the-Wild naturalistic eye-head event benchmark" in source_page
     assert "Hollywood2EM eye-movement event benchmark" in source_page
     assert "canonical_repository_and_ground_truth_recovered" in source_page
