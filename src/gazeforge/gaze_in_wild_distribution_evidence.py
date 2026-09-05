@@ -1,4 +1,4 @@
-"""Fail-closed validation for reviewed Gaze-in-the-Wild distribution-availability evidence."""
+"""Fail-closed validation for reviewed Gaze-in-the-Wild distribution evidence."""
 
 from __future__ import annotations
 
@@ -113,14 +113,26 @@ def validate_gaze_in_wild_distribution_availability_evidence(
     )
 
     scope = _mapping(record, "scope")
-    _equal(scope.get("authoritative_publication_doi"), "10.1038/s41598-020-59251-5", "DOI")
+    _equal(
+        scope.get("authoritative_publication_doi"),
+        "10.1038/s41598-020-59251-5",
+        "DOI",
+    )
     _equal(
         scope.get("authoritative_processing_repository"),
         "https://github.com/RSKothari/Gaze-in-Wild",
         "processing repository",
     )
-    _equal(scope.get("pinned_processing_commit_sha1"), PINNED_PROCESSING_COMMIT, "pinned commit")
-    _equal(scope.get("historical_distribution_url"), HISTORICAL_DISTRIBUTION_URL, "historical distribution URL")
+    _equal(
+        scope.get("pinned_processing_commit_sha1"),
+        PINNED_PROCESSING_COMMIT,
+        "pinned commit",
+    )
+    _equal(
+        scope.get("historical_distribution_url"),
+        HISTORICAL_DISTRIBUTION_URL,
+        "historical distribution URL",
+    )
 
     first_party = _mapping(record, "authoritative_first_party_evidence")
     for key in (
@@ -131,29 +143,58 @@ def validate_gaze_in_wild_distribution_availability_evidence(
         "processing_repository_readme_states_contact_authors_for_raw_data",
     ):
         _true(first_party.get(key), key)
-    _false(first_party.get("current_exact_compressed_copy_obtained"), "a current exact compressed copy")
+    _false(
+        first_party.get("current_exact_compressed_copy_obtained"),
+        "a current exact compressed copy",
+    )
 
     retrieval = _mapping(record, "current_retrieval_observation")
-    _equal(retrieval.get("https_historical_url_observed_http_status"), 502, "dated retrieval status")
+    _equal(
+        retrieval.get("https_historical_url_observed_http_status"),
+        502,
+        "dated retrieval status",
+    )
     _false(retrieval.get("retrieval_succeeded"), "successful retrieval")
-    _false(retrieval.get("observation_is_global_unavailability_proof"), "global unavailability proof")
-    _false(retrieval.get("observation_is_exact_copy_identity_evidence"), "exact-copy evidence")
+    _false(
+        retrieval.get("observation_is_global_unavailability_proof"),
+        "global unavailability proof",
+    )
+    _false(
+        retrieval.get("observation_is_exact_copy_identity_evidence"),
+        "exact-copy evidence",
+    )
 
     replacement = _mapping(record, "replacement_source_search")
-    _false(replacement.get("authoritative_replacement_dataset_doi_found"), "an authoritative replacement DOI")
-    _false(replacement.get("authoritative_replacement_repository_found"), "an authoritative replacement repository")
-    _false(replacement.get("current_rit_lab_listing_is_direct_archive"), "the current RIT listing as a direct archive")
+    _false(
+        replacement.get("authoritative_replacement_dataset_doi_found"),
+        "an authoritative replacement DOI",
+    )
+    _false(
+        replacement.get("authoritative_replacement_repository_found"),
+        "an authoritative replacement repository",
+    )
+    _false(
+        replacement.get("current_rit_lab_listing_is_direct_archive"),
+        "the current RIT listing as a direct archive",
+    )
 
     leads = record.get("secondary_recovery_leads")
     if not isinstance(leads, list) or len(leads) != 2:
         raise BenchmarkIntegrityError(
-            "Gaze-in-the-Wild distribution evidence must preserve exactly two reviewed secondary recovery leads."
+            "Gaze-in-the-Wild distribution evidence must preserve exactly two "
+            "reviewed secondary recovery leads."
         )
     for lead in leads:
         if not isinstance(lead, Mapping):
-            raise BenchmarkIntegrityError("GIW secondary recovery leads must be mappings.")
+            raise BenchmarkIntegrityError(
+                "GIW secondary recovery leads must be mappings."
+            )
     mirror, labeller = leads
-    _equal(mirror.get("repository"), "https://github.com/Morris88826/awesome-eye-data", "secondary mirror repository")
+    _equal(
+        mirror.get("repository"),
+        "https://github.com/Morris88826/awesome-eye-data",
+        "secondary mirror repository",
+    )
     for key in (
         "authoritative_first_party_copy_verified",
         "exact_processdata_labeldata_copy_verified",
@@ -161,8 +202,15 @@ def validate_gaze_in_wild_distribution_availability_evidence(
         "empirical_analysis_eligible",
     ):
         _false(mirror.get(key), f"secondary mirror {key}")
-    _equal(labeller.get("repository"), "https://github.com/George614/edit_distance_gpu", "labeller recovery lead repository")
-    _true(labeller.get("separately_named_labeller_files_are_provenance_lead_only"), "labeller filenames as provenance-only evidence")
+    _equal(
+        labeller.get("repository"),
+        "https://github.com/George614/edit_distance_gpu",
+        "labeller recovery lead repository",
+    )
+    _true(
+        labeller.get("separately_named_labeller_files_are_provenance_lead_only"),
+        "labeller filenames as provenance-only evidence",
+    )
     for key in (
         "authoritative_source_verified",
         "shared_gaze_identity_verified",
@@ -173,20 +221,41 @@ def validate_gaze_in_wild_distribution_availability_evidence(
 
     rights = _mapping(record, "rights_boundary")
     _equal(rights.get("article_license"), "CC BY 4.0", "article license")
-    _false(rights.get("article_license_is_external_dataset_file_license"), "article license as dataset-file license")
-    _equal(rights.get("processing_repository_license"), "MIT", "processing repository license")
+    _false(
+        rights.get("article_license_is_external_dataset_file_license"),
+        "article license as dataset-file license",
+    )
+    _equal(
+        rights.get("processing_repository_license"),
+        "MIT",
+        "processing repository license",
+    )
     _equal(
         rights.get("processing_repository_license_scope"),
         "software and associated documentation files",
         "processing repository license scope",
     )
-    _false(rights.get("processing_repository_mit_is_external_dataset_file_license"), "MIT as external dataset-file license")
-    _equal(rights.get("dataset_file_analysis_use_terms_status"), "unresolved", "analysis-use terms")
-    _equal(rights.get("dataset_file_redistribution_terms_status"), "unresolved", "redistribution terms")
+    _false(
+        rights.get("processing_repository_mit_is_external_dataset_file_license"),
+        "MIT as external dataset-file license",
+    )
+    _equal(
+        rights.get("dataset_file_analysis_use_terms_status"),
+        "unresolved",
+        "analysis-use terms",
+    )
+    _equal(
+        rights.get("dataset_file_redistribution_terms_status"),
+        "unresolved",
+        "redistribution terms",
+    )
     _false(rights.get("license_inference_permitted"), "license inference")
 
     boundary = _mapping(record, "scientific_boundary")
-    _true(boundary.get("authoritative_historical_distribution_identity_verified"), "historical distribution identity")
+    _true(
+        boundary.get("authoritative_historical_distribution_identity_verified"),
+        "historical distribution identity",
+    )
     for key in (
         "current_exact_authoritative_copy_obtained",
         "exact_distributed_participant_identity_mapping_verified",
@@ -202,8 +271,16 @@ def validate_gaze_in_wild_distribution_availability_evidence(
         _false(boundary.get(key), key)
 
     stored = record.get("evidence_fingerprint_sha256")
-    _equal(stored, EXPECTED_EVIDENCE_FINGERPRINT_SHA256, "stored evidence fingerprint")
-    _equal(evidence_fingerprint(record), EXPECTED_EVIDENCE_FINGERPRINT_SHA256, "recomputed evidence fingerprint")
+    _equal(
+        stored,
+        EXPECTED_EVIDENCE_FINGERPRINT_SHA256,
+        "stored evidence fingerprint",
+    )
+    _equal(
+        evidence_fingerprint(record),
+        EXPECTED_EVIDENCE_FINGERPRINT_SHA256,
+        "recomputed evidence fingerprint",
+    )
 
     return GazeInWildDistributionAvailabilityEvidence(
         path=path,
