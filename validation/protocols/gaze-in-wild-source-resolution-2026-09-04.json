@@ -2,7 +2,7 @@
   "record_type": "source-resolution-status-v1",
   "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
   "checked_on": "2026-09-05",
-  "status": "authoritative_processing_repository_verified_direct_dataset_copy_unverified",
+  "status": "published_distribution_identifier_established_current_direct_copy_unverified",
   "empirical_evidence_created": false,
   "source_audit_ready": false,
   "published_distribution_identifier_found": true,
@@ -156,8 +156,9 @@
     "published_acquisition_hardware_rate_hz": 120,
     "official_processing_target_rate_hz": 300,
     "secondary_evaluation_catalog_rate_hz": 300,
-    "rates_reconciled": true,
-    "reconciliation": "120 Hz is eye-tracker acquisition hardware provenance; the first-author processing repository documents gaze/IMU upsampling to 300 Hz, which explains the later processed-benchmark 300 Hz description.",
+    "acquisition_processing_stage_relationship_verified": true,
+    "rates_reconciled": false,
+    "reconciliation": "The stage relationship is verified: 120 Hz is eye-tracker acquisition hardware provenance and the first-author processing repository documents gaze/IMU upsampling to a 300 Hz processed target. The exact distributed LabelData cadence is still unverified, so the source-resolution gate keeps rates_reconciled false until timestamp-level file audit.",
     "distributed_file_analysis_cadence_verified": false,
     "required_resolution_method": "infer each audited LabelData stream from its timestamps; never substitute either the 120 Hz acquisition rate or 300 Hz processing target for measured file cadence"
   },
@@ -177,6 +178,8 @@
     ],
     "canonical_pixel_conversion_basis_verified": true,
     "exact_distributed_file_point_of_regard_audited": false,
+    "point_of_regard_coordinate_unit_verified_from_exact_copy": false,
+    "verification_requires_exact_obtained_copy": true,
     "verification_requires_exact_obtained_copy_for_empirical_source_audit": true
   },
   "claim_limits": [
