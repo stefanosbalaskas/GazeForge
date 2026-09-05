@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import ssl
 import urllib.error
 import urllib.request
 from html.parser import HTMLParser
@@ -68,7 +69,7 @@ def probe_fingerprint(payload: dict[str, Any]) -> str:
     return hashlib.sha256(_canonical_bytes(body)).hexdigest()
 
 
-def _request(url: str, *, timeout: float = 20.0) -> tuple[int | None, bytes]:
+def _request(url: str, *, timeout: float = 20.0) -> tuple[int, bytes]:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
@@ -77,6 +78,63 @@ def _request(url: str, *, timeout: float = 20.0) -> tuple[int | None, bytes]:
         return int(exc.code), exc.read()
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         raise ProbeError(f"Could not retrieve {url}: {exc}") from exc
+
+
+def _historical_endpoint_observation(*, timeout: float = 20.0) -> dict[str, Any]:
+    request = urllib.request.Request(HISTORICAL_HTTPS_URL, headers={"User-Agent": USER_AGENT})
+    secure_tls_verified = False
+    secure_failure_class: str | None = None
+    effective_status: int | None = None
+    insecure_fallback_used = False
+
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            secure_tls_verified = True
+            effective_status = int(response.status)
+            response.read()
+    except urllib.error.HTTPError as exc:
+        secure_tls_verified = True
+        effective_status = int(exc.code)
+        exc.read()
+    except urllib.error.URLError as exc:
+        reason = exc.reason
+        if not isinstance(reason, ssl.SSLCertVerificationError):
+            raise ProbeError(
+                f"Historical endpoint failed before an HTTP status was observable: {exc}"
+            ) from exc
+        secure_failure_class = "tls_certificate_verification_error"
+        insecure_fallback_used = True
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        try:
+            with urllib.request.urlopen(request, timeout=timeout, context=context) as response:
+                effective_status = int(response.status)
+                response.read()
+        except urllib.error.HTTPError as fallback_exc:
+            effective_status = int(fallback_exc.code)
+            fallback_exc.read()
+        except (urllib.error.URLError, TimeoutError, OSError) as fallback_exc:
+            raise ProbeError(
+                "Historical endpoint TLS-unverified fallback could not observe an HTTP status: "
+                f"{fallback_exc}"
+            ) from fallback_exc
+    except (TimeoutError, OSError) as exc:
+        raise ProbeError(f"Historical endpoint retrieval failed: {exc}") from exc
+
+    if effective_status is None:
+        raise ProbeError("Historical endpoint probe did not produce an HTTP status.")
+    return {
+        "url": HISTORICAL_HTTPS_URL,
+        "secure_tls_certificate_verified": secure_tls_verified,
+        "secure_transport_failure_class": secure_failure_class,
+        "tls_unverified_fallback_used": insecure_fallback_used,
+        "observed_http_status": effective_status,
+        "retrieval_succeeded": effective_status == 200,
+        "tls_unverified_fallback_is_source_authentication_evidence": False,
+        "observation_is_global_unavailability_proof": False,
+        "observation_is_exact_copy_identity_evidence": False,
+    }
 
 
 def _listing_target(html: bytes) -> str:
@@ -113,7 +171,7 @@ def build_probe() -> dict[str, Any]:
     target = _listing_target(listing_html)
     target_class = _target_class(target)
 
-    historical_status, _ = _request(HISTORICAL_HTTPS_URL)
+    historical = _historical_endpoint_observation()
     payload: dict[str, Any] = {
         "record_type": "gaze-in-wild-current-first-party-listing-probe-v1",
         "current_first_party_page": {
@@ -127,13 +185,7 @@ def build_probe() -> dict[str, Any]:
             "listing_target_is_direct_dataset_archive_verified": False,
             "dataset_file_rights_terms_found_on_listing": False,
         },
-        "historical_endpoint_observation": {
-            "url": HISTORICAL_HTTPS_URL,
-            "observed_http_status": historical_status,
-            "retrieval_succeeded": historical_status == 200,
-            "observation_is_global_unavailability_proof": False,
-            "observation_is_exact_copy_identity_evidence": False,
-        },
+        "historical_endpoint_observation": historical,
         "review_trigger": {
             "listing_target_changed_from_expected_publication": (
                 target != EXPECTED_PUBLICATION_TARGET
@@ -141,9 +193,12 @@ def build_probe() -> dict[str, Any]:
             "listing_target_is_first_party_rit_candidate": (
                 target_class == "first_party_rit_candidate"
             ),
-            "historical_endpoint_status_changed_from_reviewed_502": historical_status != 502,
+            "historical_endpoint_status_changed_from_reviewed_502": (
+                historical["observed_http_status"] != 502
+            ),
             "requires_human_evidence_review": (
-                target != EXPECTED_PUBLICATION_TARGET or historical_status != 502
+                target != EXPECTED_PUBLICATION_TARGET
+                or historical["observed_http_status"] != 502
             ),
             "automatic_source_or_rights_promotion_permitted": False,
         },
@@ -165,10 +220,12 @@ def build_probe() -> dict[str, Any]:
         },
         "claim_limit": (
             "This probe records the current first-party RIT listing target and one bounded "
-            "historical-endpoint HTTP observation. A listing or endpoint change triggers human "
-            "review and never automatically establishes an exact dataset copy, dataset-file "
-            "rights, participant/task mappings, labeller recoverability, agreement, model "
-            "performance, cross-dataset validity, or Gazepoint GP3 validity."
+            "historical-endpoint HTTP observation. If secure certificate verification fails, a "
+            "TLS-unverified fallback may observe HTTP status only; that fallback is not source-"
+            "authentication evidence. Any listing or endpoint-state change triggers human review "
+            "and never automatically establishes an exact dataset copy, dataset-file rights, "
+            "participant/task mappings, labeller recoverability, agreement, model performance, "
+            "cross-dataset validity, or Gazepoint GP3 validity."
         ),
     }
     payload["probe_fingerprint_sha256"] = probe_fingerprint(payload)
@@ -195,6 +252,12 @@ def main() -> int:
                 "historical_http_status": payload["historical_endpoint_observation"][
                     "observed_http_status"
                 ],
+                "historical_secure_tls_verified": payload["historical_endpoint_observation"][
+                    "secure_tls_certificate_verified"
+                ],
+                "historical_tls_unverified_fallback_used": payload[
+                    "historical_endpoint_observation"
+                ]["tls_unverified_fallback_used"],
                 "requires_human_evidence_review": payload["review_trigger"][
                     "requires_human_evidence_review"
                 ],
