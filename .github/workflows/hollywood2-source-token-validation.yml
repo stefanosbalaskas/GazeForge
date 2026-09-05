@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - research/hollywood2-source-token-validation
+      - validation/hollywood2-source-token-frozen-evidence
     paths:
       - "src/gazeforge/__init__.py"
       - "src/gazeforge/hollywood2_token_validation.py"
@@ -108,11 +109,14 @@ jobs:
             --context-hidden 32,16 \
             --context-max-iter 50 \
             --output hollywood2-source-token-validation-v1.json
-      - name: Revalidate aggregate-only claim boundary
+      - name: Revalidate aggregate-only claim boundary and frozen binding
         run: |
           python - <<'PY'
+          import hashlib
+          import json
           from pathlib import Path
 
+          from gazeforge.dashboard import load_frozen_benchmark_report
           from gazeforge.hollywood2_token_validation import (
               validate_hollywood2_source_token_validation_report,
           )
@@ -128,7 +132,35 @@ jobs:
           assert boundary["raw_predictions_embedded"] is False
           assert "_hollywood2_em" not in text
           assert ".arff" not in text
+
+          frozen_path = Path(
+              "validation/evidence/hollywood2/"
+              "hollywood2-source-token-60hz-frozen-summary-v1.json"
+          )
+          frozen = load_frozen_benchmark_report(frozen_path)
+          frozen_protocol = frozen["protocol"]
+          assert frozen_protocol["scientific_boundary"][
+              "participant_disjoint_validation_created"
+          ] is False
+          assert frozen_protocol["scientific_boundary"][
+              "participant_identity_mapping_verified"
+          ] is False
+          assert report["report_fingerprint_sha256"] == frozen_protocol[
+              "source_validation_report_fingerprint_sha256"
+          ]
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == frozen_protocol[
+              "source_validation_report_file_sha256"
+          ]
+          assert report["metrics"]["summary"] == frozen["metrics"]["summary"]
+          assert report["metrics"]["source_token_fold_assignment"] == frozen["metrics"][
+              "source_token_fold_assignment"
+          ]
+          assert report["metrics"]["analysis_label_counts"] == frozen["metrics"][
+              "analysis_label_counts"
+          ]
+          assert json.dumps(frozen).find("participant-held-out") >= 0
           print("report fingerprint:", report["report_fingerprint_sha256"])
+          print("frozen summary fingerprint:", frozen["report_fingerprint_sha256"])
           print("claim boundary: source-token-held-out only")
           PY
       - name: Upload aggregate validation report only
