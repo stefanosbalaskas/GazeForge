@@ -1,4 +1,4 @@
-"""Probe public GIN host metadata for Hollywood2EM without inferring license terms."""
+"""Probe public GIN and DataCite metadata for Hollywood2EM without inferring rights."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from gazeforge.hollywood2_gin_host_metadata import (
+    DATACITE_QUERY_URLS,
     REPO_API,
     REPO_PAGE,
     build_probe_record,
@@ -20,7 +21,10 @@ USER_AGENT = "GazeForge/hollywood2-gin-host-metadata-probe"
 
 
 def _fetch(url: str) -> dict[str, Any]:
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": USER_AGENT, "Accept": "application/json,text/html;q=0.9,*/*;q=0.8"},
+    )
     try:
         with urllib.request.urlopen(request, timeout=60) as response:  # noqa: S310
             body = response.read()
@@ -47,7 +51,12 @@ def _fetch(url: str) -> dict[str, Any]:
 
 
 def main() -> int:
-    record = build_probe_record(_fetch(REPO_API), _fetch(REPO_PAGE))
+    datacite_fetches = [_fetch(url) for url in DATACITE_QUERY_URLS]
+    record = build_probe_record(
+        _fetch(REPO_API),
+        _fetch(REPO_PAGE),
+        datacite_fetches,
+    )
     OUTPUT.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(record, indent=2, sort_keys=True))
     return 0
