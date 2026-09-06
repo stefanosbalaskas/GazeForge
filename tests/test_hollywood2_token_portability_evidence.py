@@ -7,6 +7,7 @@ import pytest
 
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.hollywood2_token_portability_evidence import (
+    HOLLYWOOD2_SOURCE_TOKEN_V1_V2_MAX_ABS_METRIC_DELTA,
     PORTABILITY_EVIDENCE_FINGERPRINT,
     V1_CANONICAL_REPORT_FILE_SHA256,
     V1_CANONICAL_REPORT_FINGERPRINT,
@@ -15,6 +16,7 @@ from gazeforge.hollywood2_token_portability_evidence import (
     V2_CANONICAL_REPORT_FINGERPRINT,
     portability_evidence_fingerprint,
     validate_hollywood2_source_token_portability_evidence,
+    validate_hollywood2_v1_v2_metric_equivalence,
 )
 
 EVIDENCE = Path(
@@ -39,11 +41,69 @@ def test_hollywood2_numeric_portability_evidence_is_immutable() -> None:
 
     before = record["migration"]["from_contract"]
     after = record["migration"]["to_contract"]
-    assert before["frozen_summary_report_fingerprint_sha256"] == V1_FROZEN_SUMMARY_FINGERPRINT
-    assert before["canonical_source_report_fingerprint_sha256"] == V1_CANONICAL_REPORT_FINGERPRINT
-    assert before["canonical_source_report_file_sha256"] == V1_CANONICAL_REPORT_FILE_SHA256
-    assert after["canonical_source_report_fingerprint_sha256"] == V2_CANONICAL_REPORT_FINGERPRINT
-    assert after["canonical_source_report_file_sha256"] == V2_CANONICAL_REPORT_FILE_SHA256
+    assert (
+        before["frozen_summary_report_fingerprint_sha256"]
+        == V1_FROZEN_SUMMARY_FINGERPRINT
+    )
+    assert (
+        before["canonical_source_report_fingerprint_sha256"]
+        == V1_CANONICAL_REPORT_FINGERPRINT
+    )
+    assert (
+        before["canonical_source_report_file_sha256"]
+        == V1_CANONICAL_REPORT_FILE_SHA256
+    )
+    assert (
+        after["canonical_source_report_fingerprint_sha256"]
+        == V2_CANONICAL_REPORT_FINGERPRINT
+    )
+    assert (
+        after["canonical_source_report_file_sha256"]
+        == V2_CANONICAL_REPORT_FILE_SHA256
+    )
+
+
+def test_hollywood2_v1_v2_metric_equivalence_accepts_only_serialization_delta() -> None:
+    v1 = {
+        "accuracy": 0.817326596815109,
+        "rows": [{"fold": 1, "score": 0.263223085435483}],
+        "label": "ContextMLP",
+        "enabled": False,
+        "missing": None,
+    }
+    v2 = {
+        "accuracy": 0.81732659681511,
+        "rows": [{"fold": 1, "score": 0.26322308543548}],
+        "label": "ContextMLP",
+        "enabled": False,
+        "missing": None,
+    }
+    observed = validate_hollywood2_v1_v2_metric_equivalence(v1, v2)
+    assert observed <= HOLLYWOOD2_SOURCE_TOKEN_V1_V2_MAX_ABS_METRIC_DELTA
+
+
+def test_hollywood2_v1_v2_metric_equivalence_rejects_larger_numeric_drift() -> None:
+    with pytest.raises(BenchmarkIntegrityError, match="exceeded portability bound"):
+        validate_hollywood2_v1_v2_metric_equivalence(
+            {"metric": 0.5},
+            {"metric": 0.50000000000002},
+        )
+
+
+def test_hollywood2_v1_v2_metric_equivalence_rejects_structure_drift() -> None:
+    with pytest.raises(BenchmarkIntegrityError, match="structure drifted"):
+        validate_hollywood2_v1_v2_metric_equivalence(
+            {"metric": [0.5]},
+            {"other": [0.5]},
+        )
+
+
+def test_hollywood2_v1_v2_metric_equivalence_rejects_nonfloat_drift() -> None:
+    with pytest.raises(BenchmarkIntegrityError, match="non-float metric value drifted"):
+        validate_hollywood2_v1_v2_metric_equivalence(
+            {"fold": 1},
+            {"fold": 2},
+        )
 
 
 def test_hollywood2_numeric_portability_evidence_rejects_precision_relaxation() -> None:
