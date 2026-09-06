@@ -13,8 +13,10 @@ on:
       - "src/gazeforge/gaze_in_wild_recovery.py"
       - "src/gazeforge/gaze_in_wild_quarantine_exit.py"
       - "src/gazeforge/source_candidate.py"
+      - "src/gazeforge/source_candidate_cli.py"
       - "tests/test_gaze_in_wild_exact_copy_review.py"
       - "tests/test_gaze_in_wild_quarantine_exit.py"
+      - "tests/test_gaze_in_wild_quarantine_exit_cli.py"
       - "docs/gaze-in-wild-exact-copy-review.md"
       - "mkdocs.yml"
       - ".github/workflows/gaze-in-wild-exact-copy-review.yml"
@@ -26,8 +28,10 @@ on:
       - "src/gazeforge/gaze_in_wild_recovery.py"
       - "src/gazeforge/gaze_in_wild_quarantine_exit.py"
       - "src/gazeforge/source_candidate.py"
+      - "src/gazeforge/source_candidate_cli.py"
       - "tests/test_gaze_in_wild_exact_copy_review.py"
       - "tests/test_gaze_in_wild_quarantine_exit.py"
+      - "tests/test_gaze_in_wild_quarantine_exit_cli.py"
       - "docs/gaze-in-wild-exact-copy-review.md"
       - "mkdocs.yml"
       - ".github/workflows/gaze-in-wild-exact-copy-review.yml"
@@ -53,10 +57,13 @@ jobs:
           ruff check
           src/gazeforge/gaze_in_wild_exact_copy_review.py
           src/gazeforge/gaze_in_wild_quarantine_exit.py
+          src/gazeforge/source_candidate_cli.py
           tests/test_gaze_in_wild_exact_copy_review.py
           tests/test_gaze_in_wild_quarantine_exit.py
+          tests/test_gaze_in_wild_quarantine_exit_cli.py
       - name: Run exact-copy and quarantine-exit regression tests
         run: >-
           pytest -q
           tests/test_gaze_in_wild_exact_copy_review.py
           tests/test_gaze_in_wild_quarantine_exit.py
+          tests/test_gaze_in_wild_quarantine_exit_cli.py
