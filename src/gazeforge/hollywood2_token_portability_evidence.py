@@ -59,7 +59,9 @@ def validate_hollywood2_source_token_portability_evidence(
 
     observed_fingerprint = portability_evidence_fingerprint(record)
     if record.get("evidence_fingerprint_sha256") != PORTABILITY_EVIDENCE_FINGERPRINT:
-        raise BenchmarkIntegrityError("Hollywood2 portability evidence fingerprint is not reviewed.")
+        raise BenchmarkIntegrityError(
+            "Hollywood2 portability evidence fingerprint is not reviewed."
+        )
     if observed_fingerprint != PORTABILITY_EVIDENCE_FINGERPRINT:
         raise BenchmarkIntegrityError("Hollywood2 portability evidence content drifted.")
 
