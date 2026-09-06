@@ -57,7 +57,11 @@ def test_host_metadata_records_absent_license_field_without_inference():
     ).encode()
     record = build_probe_record(
         _fetch(api_body, url="https://example.test/api"),
-        _fetch(b"<html>Hollywood2_em</html>", url="https://example.test/repo", content_type="text/html"),
+        _fetch(
+            b"<html>Hollywood2_em</html>",
+            url="https://example.test/repo",
+            content_type="text/html",
+        ),
     )
 
     rights = record["rights_interpretation"]
@@ -68,8 +72,17 @@ def test_host_metadata_records_absent_license_field_without_inference():
 
 def test_non_json_api_response_is_retained_as_response_identity_only():
     record = build_probe_record(
-        _fetch(b"forbidden", url="https://example.test/api", status=403, content_type="text/plain"),
-        _fetch(b"<html>Hollywood2_em</html>", url="https://example.test/repo", content_type="text/html"),
+        _fetch(
+            b"forbidden",
+            url="https://example.test/api",
+            status=403,
+            content_type="text/plain",
+        ),
+        _fetch(
+            b"<html>Hollywood2_em</html>",
+            url="https://example.test/repo",
+            content_type="text/html",
+        ),
     )
 
     assert record["api"]["json_object"] is False
