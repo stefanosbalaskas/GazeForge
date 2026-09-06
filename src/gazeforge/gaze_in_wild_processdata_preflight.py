@@ -274,11 +274,26 @@ def build_gaze_in_wild_processdata_preflight_record(
             "empirical_evidence_eligible": False,
         },
         "claim_limits": [
-            "This preflight verifies structural compatibility for one quarantined ProcessData object only.",
-            "ETG.Labels is not treated as separately distributed LabelData or an independent labeller stream.",
-            "The stored or timestamp-inferred processed rate is not promoted to acquisition-hardware cadence or corpus-wide cadence.",
-            "Presence and shape of ETG.POR/SceneResolution do not independently establish coordinate semantics for the historical distribution.",
-            "The result does not establish distribution identity, dataset-file rights, analysis permission, redistribution permission, or empirical eligibility.",
+            (
+                "This preflight verifies structural compatibility for one quarantined "
+                "ProcessData object only."
+            ),
+            (
+                "ETG.Labels is not treated as separately distributed LabelData or an "
+                "independent labeller stream."
+            ),
+            (
+                "The stored or timestamp-inferred processed rate is not promoted to "
+                "acquisition-hardware cadence or corpus-wide cadence."
+            ),
+            (
+                "Presence and shape of ETG.POR/SceneResolution do not independently "
+                "establish coordinate semantics for the historical distribution."
+            ),
+            (
+                "The result does not establish distribution identity, dataset-file rights, "
+                "analysis permission, redistribution permission, or empirical eligibility."
+            ),
         ],
     }
     record["record_fingerprint_sha256"] = benchmark_fingerprint(record)
@@ -300,7 +315,9 @@ def validate_gaze_in_wild_processdata_preflight_record(payload: Mapping[str, Any
     if boundary.get("processdata_structural_preflight_verified") is not True:
         raise SchemaError("ProcessData structural preflight must be explicitly verified.")
     if boundary.get("adapter_coordinate_fields_compatible_for_this_sample") is not True:
-        raise SchemaError("Adapter field compatibility must be explicitly verified for this sample.")
+        raise SchemaError(
+            "Adapter field compatibility must be explicitly verified for this sample."
+        )
     for key in (
         "authoritative_original_or_canonical_dataset_copy_obtained",
         "full_distribution_recovered",
