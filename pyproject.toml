@@ -65,6 +65,7 @@ docs = [
 gazeforge = "gazeforge.cli:main"
 gazeforge-source-candidate = "gazeforge.source_candidate_cli:main"
 gazeforge-source-resolution = "gazeforge.source_resolution_cli:main"
+gazeforge-giw-first-party-resolution = "gazeforge.gaze_in_wild_first_party_resolution_cli:main"
 gazeforge-visus = "gazeforge.visus_cli:main"
 gazeforge-visus-source-resolution = "gazeforge.visus_source_resolution_cli:main"
 
