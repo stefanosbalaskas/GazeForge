@@ -90,6 +90,7 @@ jobs:
           print("probe fingerprint:", record["probe_fingerprint_sha256"])
           PY
       - name: Upload deterministic host-metadata record
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: hollywood2-gin-host-metadata-live-probe

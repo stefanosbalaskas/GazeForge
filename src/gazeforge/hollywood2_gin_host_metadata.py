@@ -493,11 +493,18 @@ def validate_hollywood2_gin_host_metadata_live_probe(
 
     api = _mapping(probe, "api")
     page = _mapping(probe, "page")
-    _equal(api.get("http_status"), 403, "fresh GIN API HTTP status")
-    _false(api.get("json_object"), "fresh GIN API JSON-object observation")
-    _equal(api.get("license_key_paths"), [], "fresh GIN API license key paths")
-    _equal(page.get("http_status"), 403, "fresh GIN page HTTP status")
-    _equal(api.get("sha256"), page.get("sha256"), "fresh GIN page/API response identity")
+    api_accessible = api.get("http_status") == 200 and api.get("json_object") is True
+    if api_accessible:
+        _equal(api.get("license_key_paths"), [], "fresh GIN API license key paths")
+        _equal(page.get("http_status"), 200, "fresh GIN page HTTP status")
+        _false(page.get("contains_license_word"), "fresh GIN page license keyword")
+        _false(page.get("contains_licence_word"), "fresh GIN page licence keyword")
+    else:
+        _equal(api.get("http_status"), 403, "fresh GIN API HTTP status")
+        _false(api.get("json_object"), "fresh GIN API JSON-object observation")
+        _equal(api.get("license_key_paths"), [], "fresh GIN API license key paths")
+        _equal(page.get("http_status"), 403, "fresh GIN page HTTP status")
+        _equal(api.get("sha256"), page.get("sha256"), "fresh GIN page/API response identity")
 
     queries = probe.get("datacite_queries")
     if not isinstance(queries, list) or len(queries) != 4:
@@ -512,7 +519,11 @@ def validate_hollywood2_gin_host_metadata_live_probe(
         _equal(query.get("exact_repository_match_count"), 0, "fresh DataCite exact match count")
 
     rights = _mapping(probe, "rights_interpretation")
-    _false(rights.get("host_api_metadata_accessible"), "fresh host API accessibility")
+    _equal(
+        rights.get("host_api_metadata_accessible"),
+        api_accessible,
+        "fresh host API accessibility",
+    )
     _false(rights.get("host_api_exposes_license_key"), "fresh host API license-key observation")
     _false(
         rights.get("host_api_exposes_nonempty_license_value"),
