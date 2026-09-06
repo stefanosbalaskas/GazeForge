@@ -1,0 +1,167 @@
+{
+  "bundled_export_metadata": {
+    "absolute_time_range": "502.17422 - 1065.863125",
+    "data_format_version": "v1.8",
+    "export_date": "16.10.2018",
+    "export_time": "15:29:18",
+    "frame_index_range": "0 - 16464",
+    "player_software_version": "1.8.26",
+    "relative_time_range": "00:00.000 - 09:23.688"
+  },
+  "checked_on": "2026-09-06",
+  "claim_limits": [
+    "The embedded exports/ProcessData.mat is a recoverable first-party data-bearing GIW ProcessData object, not a verified byte-equivalent copy of the historical distributed PrIdx_2_TrIdx_2.mat file.",
+    "The embedded sample is one PrIdx 2 / TrIdx 2 object and does not establish the full participant inventory, complete TrIdx-to-task mapping, or corpus completeness.",
+    "The embedded SR value of 300 documents this processed sample's stored cadence; it is not promoted to the acquisition-hardware cadence of the published study.",
+    "ETG.Labels inside this ProcessData object does not establish recovery of separately distributed LabelData files or independent labeller streams.",
+    "The repository MIT licence is not promoted to rights for the historical external dataset distribution.",
+    "No raw local Path2Data value is retained; only its SHA-256 digest is frozen.",
+    "Deleted or unreachable Git objects, historical web-hosted files, private storage, author-held copies, and other external archives remain outside this audit."
+  ],
+  "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
+  "embedded_processdata": {
+    "exact_distribution_file_equivalence_verified": false,
+    "first_party_data_bearing_processdata_object_verified": true,
+    "identity": {
+      "DepthPresent": 0,
+      "ETG.Confidence_shape": [
+        106225
+      ],
+      "ETG.Labels_shape": [
+        106225
+      ],
+      "ETG.POR_shape": [
+        106225,
+        2
+      ],
+      "GIW.GIWvector_shape": [
+        106225,
+        3
+      ],
+      "IMU.HeadVector_shape": [
+        106225,
+        3
+      ],
+      "Path2Data_sha256": "8058c7143cf9104f3802ee7578792db8c48ad74d2515d27e993c435ed126ff4d",
+      "PrIdx": 2,
+      "SR": 300,
+      "TrIdx": 2,
+      "ZED.FrameNo_shape": [
+        106225
+      ],
+      "timestamp_count": 106225
+    },
+    "independent_labeller_streams_recovered": false,
+    "member_crc32": "167e450c",
+    "member_path": "exports/ProcessData.mat",
+    "member_sha256": "d633bbf0a3a9224b71e286ada10a63abe7761264eec7e8c25c94fcf0bbbafc63",
+    "member_size_bytes": 40528499,
+    "processdata_fields": [
+      "PrIdx",
+      "TrIdx",
+      "SR",
+      "T",
+      "Path2Data",
+      "DepthPresent",
+      "calib_flag",
+      "IMU",
+      "ETG",
+      "ZED",
+      "StereoCameraParameters",
+      "SceneCameraParameters",
+      "GIW",
+      "HeadDrift_deg",
+      "HeadDrift_s",
+      "HeadDrift_rate",
+      "ETG_toff",
+      "ZED_toff",
+      "dist2chart",
+      "R0",
+      "R1",
+      "HeadDrift_deg_cor",
+      "HeadDrift_rate_cor"
+    ],
+    "published_distribution_filename_match": false,
+    "separate_labeldata_recovered": false,
+    "top_level_variables": [
+      {
+        "class": "struct",
+        "name": "ProcessData",
+        "shape": [
+          1,
+          1
+        ]
+      },
+      {
+        "class": "double",
+        "name": "strFixed",
+        "shape": [
+          1,
+          1
+        ]
+      },
+      {
+        "class": "uint8",
+        "name": "__function_workspace__",
+        "shape": [
+          1,
+          296040
+        ]
+      }
+    ]
+  },
+  "evidence_fingerprint_sha256": "d564e1c835b73154c2d08d9d54108c3b31bc013b489a5ad2cda2a77f846f53a4",
+  "parent_evidence": {
+    "distribution_availability_fingerprint_sha256": "2400c81a0897fb414285069c368a8a9d96de1d18eb185b1073cf15bb1c8bd1da",
+    "layout_convergence_fingerprint_sha256": "b9c006e7bc367d7a66a4e78577d4d267b488eec298619b7e2e6707468172ac12",
+    "repository_history_fingerprint_sha256": "800d84d71d1d4b1a07e3b6d07c3bb7093c679284f49db0930a9836d77da30ad3"
+  },
+  "preprocessing_archive": {
+    "added_commit_sha1": "b625bd2b38d60c5f20da4704ed41dbe9ef63a78c",
+    "added_commit_subject": "added isolated preprocessing code",
+    "exact_distribution_filename_member_present": false,
+    "git_blob_sha1": "284a64bcf52e686a19a09ff65d83f2328251eb71",
+    "labeldata_member_present": false,
+    "member_count": 12,
+    "nested_archive_member_count": 0,
+    "path": "DataExtraction/all_preprocessing_steps.zip",
+    "sha256": "5deef95a4d847b7b21a37c5d746212549b63217bd64159bec72992d82b575956",
+    "size_bytes": 72109475
+  },
+  "reachable_history": {
+    "all_reachable_commit_trees_checked": true,
+    "alternate_labeller_mat_path_count": 0,
+    "archive_path_count": 1,
+    "exact_distribution_filename_path_count": 0,
+    "only_branch": "master",
+    "only_known_distribution_project_page": "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/",
+    "process_or_label_named_path_count": 12,
+    "release_count": 0,
+    "tag_ref_count": 0,
+    "tracked_mat_path_count_across_reachable_trees": 0
+  },
+  "record_type": "gaze-in-wild-historical-tree-recovery-evidence-v1",
+  "scientific_boundary": {
+    "analysis_use_permitted": false,
+    "authoritative_original_or_canonical_dataset_copy_obtained": false,
+    "coordinate_semantics_verified": false,
+    "dataset_file_rights_resolved": false,
+    "empirical_evidence_eligible": false,
+    "full_distribution_recovered": false,
+    "independent_labeller_recoverability_verified": false,
+    "original_distribution_equivalence_verified": false,
+    "participant_mapping_complete": false,
+    "published_acquisition_cadence_verified_from_embedded_sample": false,
+    "quarantine_exit_authorized": false,
+    "redistribution_authorized": false,
+    "source_audit_ready": false,
+    "trial_task_mapping_complete": false
+  },
+  "scope": {
+    "pinned_commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "reachable_commit_count": 56,
+    "repository": "https://github.com/RSKothari/Gaze-in-Wild",
+    "root_commit_sha1": "054c99d3b88f0ad46cbd0b7d66f4fc38718046f5"
+  },
+  "status": "verified_embedded_first_party_processdata_sample_full_distribution_and_rights_unresolved"
+}
