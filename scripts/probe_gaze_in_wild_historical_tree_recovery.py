@@ -7,6 +7,7 @@ import hashlib
 import json
 import re
 import subprocess
+import zipfile
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +16,10 @@ PINNED_COMMIT = "52262d44e366a53369e10ca73c5f41daf0e8f1e5"
 EXPECTED_COMMIT_COUNT = 56
 EXPECTED_ROOT_COMMIT = "054c99d3b88f0ad46cbd0b7d66f4fc38718046f5"
 RIT_PROJECT_URL = "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/"
+PREPROCESSING_ARCHIVE = "DataExtraction/all_preprocessing_steps.zip"
+EXPECTED_ARCHIVE_BLOB_SHA1 = "284a64bcf52e686a19a09ff65d83f2328251eb71"
+EXPECTED_ARCHIVE_ADDED_COMMIT = "b625bd2b38d60c5f20da4704ed41dbe9ef63a78c"
+EXPECTED_ARCHIVE_ADDED_SUBJECT = "added isolated preprocessing code"
 
 _EXACT_DATA_RE = re.compile(
     r"(?:^|/)PrIdx_\d+_TrIdx_\d+(?:_Lbr_\d+)?\.mat$",
@@ -65,6 +70,14 @@ def _fingerprint(record: dict[str, Any]) -> str:
     body = dict(record)
     body.pop("probe_fingerprint_sha256", None)
     return hashlib.sha256(_canonical_bytes(body)).hexdigest()
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _tree_paths(root: Path, commit: str) -> list[str]:
@@ -126,6 +139,72 @@ def _readme_revisions(root: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def _archive_audit(root: Path) -> dict[str, Any]:
+    archive_path = root / PREPROCESSING_ARCHIVE
+    if not archive_path.is_file():
+        raise ProbeError(f"Expected preprocessing archive is missing: {PREPROCESSING_ARCHIVE}")
+
+    blob = _blob(root, PINNED_COMMIT, PREPROCESSING_ARCHIVE)
+    if blob != EXPECTED_ARCHIVE_BLOB_SHA1:
+        raise ProbeError(f"Preprocessing archive blob drifted: {blob!r}.")
+
+    added_commits = [
+        line
+        for line in _git(
+            root,
+            "log",
+            "--diff-filter=A",
+            "--reverse",
+            "--format=%H",
+            "--",
+            PREPROCESSING_ARCHIVE,
+        ).splitlines()
+        if line
+    ]
+    if added_commits != [EXPECTED_ARCHIVE_ADDED_COMMIT]:
+        raise ProbeError(f"Unexpected archive-addition history: {added_commits!r}.")
+    subject = _git(root, "show", "-s", "--format=%s", EXPECTED_ARCHIVE_ADDED_COMMIT)
+    if subject != EXPECTED_ARCHIVE_ADDED_SUBJECT:
+        raise ProbeError(f"Unexpected archive addition subject: {subject!r}.")
+
+    try:
+        with zipfile.ZipFile(archive_path, "r") as archive:
+            bad_member = archive.testzip()
+            if bad_member is not None:
+                raise ProbeError(f"Preprocessing archive CRC failure at {bad_member!r}.")
+            infos = archive.infolist()
+            members = sorted(info.filename for info in infos if not info.is_dir())
+            total_uncompressed_bytes = sum(info.file_size for info in infos if not info.is_dir())
+            total_compressed_bytes = sum(info.compress_size for info in infos if not info.is_dir())
+    except (OSError, zipfile.BadZipFile) as exc:
+        raise ProbeError(f"Could not inspect preprocessing archive: {exc}") from exc
+
+    mat_members = sorted(name for name in members if name.lower().endswith(".mat"))
+    exact_data_members = sorted(name for name in members if _EXACT_DATA_RE.search(name))
+    alternate_labeller_members = sorted(name for name in members if _LABEL_ALT_RE.search(name))
+    process_or_label_named_members = sorted(name for name in members if _DATA_NAME_RE.search(name))
+    nested_archive_members = sorted(name for name in members if _ARCHIVE_RE.search(name))
+
+    return {
+        "path": PREPROCESSING_ARCHIVE,
+        "blob_sha1": blob,
+        "sha256": _sha256(archive_path),
+        "size_bytes": archive_path.stat().st_size,
+        "added_commit_sha1": EXPECTED_ARCHIVE_ADDED_COMMIT,
+        "added_commit_subject": subject,
+        "member_count": len(members),
+        "total_uncompressed_bytes": total_uncompressed_bytes,
+        "total_compressed_bytes": total_compressed_bytes,
+        "members": members,
+        "mat_members": mat_members,
+        "exact_giw_data_members": exact_data_members,
+        "alternate_labeller_members": alternate_labeller_members,
+        "process_or_label_named_members": process_or_label_named_members,
+        "nested_archive_members": nested_archive_members,
+        "dataset_distribution_archive_proven": False,
+    }
+
+
 def build_probe(root: Path, releases_json: Path) -> dict[str, Any]:
     root = root.resolve()
     head = _git(root, "rev-parse", "HEAD")
@@ -142,9 +221,7 @@ def build_probe(root: Path, releases_json: Path) -> dict[str, Any]:
         raise ProbeError("Root/head identity drifted.")
 
     refs = [line for line in _git(root, "show-ref").splitlines() if line]
-    local_branch_refs = sorted(
-        line for line in refs if " refs/heads/" in line
-    )
+    local_branch_refs = sorted(line for line in refs if " refs/heads/" in line)
     tag_refs = sorted(line for line in refs if " refs/tags/" in line)
 
     unique_mat_paths: set[str] = set()
@@ -163,9 +240,7 @@ def build_probe(root: Path, releases_json: Path) -> dict[str, Any]:
         alt_label_paths = sorted(path for path in paths if _LABEL_ALT_RE.search(path))
         named_data_paths = sorted(path for path in paths if _DATA_NAME_RE.search(path))
         archive_paths = sorted(path for path in paths if _ARCHIVE_RE.search(path))
-        distribution_like = sorted(
-            set(exact_data_paths + alt_label_paths + named_data_paths + archive_paths)
-        )
+        distribution_like = sorted(set(exact_data_paths + alt_label_paths + named_data_paths + archive_paths))
         if mat_paths:
             commits_with_mat_paths.append(commit)
         if distribution_like:
@@ -198,6 +273,7 @@ def build_probe(root: Path, releases_json: Path) -> dict[str, Any]:
         for url in all_readme_urls
         if "gaze-in-wild" in url.lower() or "ProcessData" in url or "LabelData" in url
     )
+    archive_audit = _archive_audit(root)
 
     record: dict[str, Any] = {
         "record_type": "gaze-in-wild-historical-tree-recovery-probe-v1",
@@ -221,17 +297,17 @@ def build_probe(root: Path, releases_json: Path) -> dict[str, Any]:
             "unique_process_or_label_named_paths": sorted(unique_named_data_paths),
             "unique_archive_paths": sorted(unique_archive_paths),
         },
+        "preprocessing_archive_audit": archive_audit,
         "readme_endpoint_history": {
             "unique_revision_count": len(readmes),
             "revisions": readmes,
             "all_urls": all_readme_urls,
             "distribution_url_candidates": distribution_url_candidates,
-            "only_known_distribution_project_page": (
-                distribution_url_candidates == [RIT_PROJECT_URL]
-            ),
+            "only_known_distribution_project_page": distribution_url_candidates == [RIT_PROJECT_URL],
         },
         "scientific_boundary": {
             "all_reachable_commit_trees_checked": True,
+            "preprocessing_archive_members_checked": True,
             "no_reachable_historical_tree_is_authoritative_dataset_copy_proven": True,
             "unreachable_or_external_objects_excluded_from_claim": True,
             "authoritative_original_or_canonical_dataset_copy_obtained": False,
@@ -244,11 +320,11 @@ def build_probe(root: Path, releases_json: Path) -> dict[str, Any]:
             "empirical_evidence_eligible": False,
         },
         "claim_limit": (
-            "This probe audits every Git tree reachable from the pinned first-author "
-            "repository HEAD plus visible local branch/tag refs and GitHub releases. "
-            "It cannot rule out deleted/unreachable Git objects, historical web-hosted "
-            "files, private storage, author-held copies, or other external archives, and "
-            "it creates no dataset-file rights or empirical authorization."
+            "This probe audits every Git tree reachable from the pinned first-author repository HEAD, "
+            "the members of the tracked preprocessing ZIP, visible local branch/tag refs, and GitHub "
+            "releases. It cannot rule out deleted/unreachable Git objects, historical web-hosted files, "
+            "private storage, author-held copies, or other external archives, and it creates no dataset-file "
+            "rights or empirical authorization."
         ),
     }
     record["probe_fingerprint_sha256"] = _fingerprint(record)
@@ -262,11 +338,9 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     record = build_probe(args.root, args.releases_json)
-    args.output.write_text(
-        json.dumps(record, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+    args.output.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     audit = record["historical_tree_audit"]
+    archive = record["preprocessing_archive_audit"]
     print(
         json.dumps(
             {
@@ -276,6 +350,9 @@ def main() -> int:
                 "unique_alternate_labeller_path_count": len(audit["unique_alternate_labeller_paths"]),
                 "unique_process_or_label_named_path_count": len(audit["unique_process_or_label_named_paths"]),
                 "unique_archive_path_count": len(audit["unique_archive_paths"]),
+                "preprocessing_archive_member_count": archive["member_count"],
+                "preprocessing_archive_mat_member_count": len(archive["mat_members"]),
+                "preprocessing_archive_exact_giw_data_member_count": len(archive["exact_giw_data_members"]),
                 "release_count": record["refs"]["release_count"],
                 "probe_fingerprint_sha256": record["probe_fingerprint_sha256"],
             },
