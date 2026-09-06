@@ -76,7 +76,9 @@ def validate_hollywood2_v1_v2_metric_equivalence(
             return max(
                 (
                     walk(item_first, item_second, f"{path}[{index}]")
-                    for index, (item_first, item_second) in enumerate(zip(first, second))
+                    for index, (item_first, item_second) in enumerate(
+                        zip(first, second, strict=True)
+                    )
                 ),
                 default=0.0,
             )
