@@ -55,7 +55,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--output",
-        default="hollywood2-source-token-validation-v1.json",
+        default="hollywood2-source-token-validation-v2.json",
     )
     parser.add_argument("--target-rate-hz", type=float, default=60.0)
     parser.add_argument("--min-label-purity", type=float, default=0.75)
