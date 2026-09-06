@@ -317,11 +317,23 @@ def test_authorized_exit_rejects_free_text_exact_copy_claim(tmp_path: Path) -> N
     authorized = _authorized(
         build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
     )
+    free_text = replace(
+        authorized,
+        exact_copy_identity_evidence="candidate manifest matched authoritative copy identity",
+    )
 
     with pytest.raises(BenchmarkIntegrityError, match="not free-text evidence"):
-        replace(
-            authorized,
-            exact_copy_identity_evidence="candidate manifest matched authoritative copy identity",
+        validate_gaze_in_wild_quarantine_exit_authorization(
+            free_text,
+            root=root,
+            recovery_record_or_path=recovery,
+            inventory=inventory,
+            spec=spec,
+            exact_copy_review_record_or_path={"fixture": "structured-review"},
+            readiness_record_or_path={"fixture": "readiness"},
+            candidate_screen_record_or_path={"fixture": "candidate-screen"},
+            reference_root=root.parent / "reference",
+            reference_provenance_path=root.parent / "reference-provenance.txt",
         )
 
 
