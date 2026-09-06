@@ -36,7 +36,17 @@ def main() -> None:
     boundary = record["coordinate_boundary"]
     print("ARFF file count:", inventory["arff_file_count"])
     print("required schema count:", inventory["required_gaze_schema_file_count"])
+    print(
+        "author metadata complete count:",
+        inventory["author_convention_metadata_complete_file_count"],
+    )
+    print("metadata key counts:", inventory["metadata_key_file_counts"])
+    print("metadata signatures:", inventory["metadata_signatures"])
     print("header marker counts:", inventory["marker_file_counts"])
+    print(
+        "all headers match author metadata convention:",
+        boundary["all_headers_match_author_input_metadata_convention"],
+    )
     print("coordinate unit candidate:", boundary["coordinate_unit_candidate"])
     print("coordinate unit verified:", boundary["coordinate_unit_verified"])
     print("probe fingerprint:", record["probe_fingerprint_sha256"])
