@@ -154,7 +154,8 @@ def _load_json_object(record_or_path: Mapping[str, Any] | str | Path) -> dict[st
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise BenchmarkIntegrityError(f"Could not load Hollywood2 author-license evidence: {exc}") from exc
+        message = f"Could not load Hollywood2 author-license evidence: {exc}"
+        raise BenchmarkIntegrityError(message) from exc
     if not isinstance(payload, dict):
         raise BenchmarkIntegrityError("Hollywood2 author-license evidence must be one JSON object.")
     return payload
@@ -253,7 +254,9 @@ def _validate_boundary(boundary: Mapping[str, Any], *, frozen: bool) -> None:
         ("frozen_evidence_performance_claim_created", "Frozen Evidence performance claim"),
     ):
         _false(boundary.get(key), label)
-    model_key = "participant_disjoint_model_validation_created" if frozen else "model_validation_created"
+    model_key = (
+        "participant_disjoint_model_validation_created" if frozen else "model_validation_created"
+    )
     _false(boundary.get(model_key), "model validation")
 
 
@@ -316,7 +319,9 @@ def validate_hollywood2_author_license_evidence(
 
     stored = str(record.get("evidence_fingerprint_sha256", ""))
     if stored != evidence_fingerprint(record):
-        raise BenchmarkIntegrityError("Hollywood2 author-license evidence self-fingerprint is invalid.")
+        raise BenchmarkIntegrityError(
+            "Hollywood2 author-license evidence self-fingerprint is invalid."
+        )
     if stored != EXPECTED_EVIDENCE_FINGERPRINT_SHA256:
         raise BenchmarkIntegrityError("Hollywood2 author-license immutable v1 fingerprint drifted.")
     return record
@@ -333,9 +338,13 @@ def validate_hollywood2_author_license_live_probe(
     _equal(probe.get("status"), LIVE_STATUS, "live status")
     stored = str(probe.get("probe_fingerprint_sha256", ""))
     if stored != probe_fingerprint(probe):
-        raise BenchmarkIntegrityError("Hollywood2 author-license live-probe fingerprint is invalid.")
+        raise BenchmarkIntegrityError(
+            "Hollywood2 author-license live-probe fingerprint is invalid."
+        )
     if stored != EXPECTED_LIVE_PROBE_FINGERPRINT_SHA256:
-        raise BenchmarkIntegrityError("Hollywood2 author dissertation bytes/text or markers drifted.")
+        raise BenchmarkIntegrityError(
+            "Hollywood2 author dissertation bytes/text or markers drifted."
+        )
 
     _validate_source(_mapping(probe, "source"))
     statement = _mapping(probe, "observed_statement")
@@ -357,7 +366,11 @@ def validate_hollywood2_author_license_live_probe(
     _validate_boundary(_mapping(probe, "scientific_boundary"), frozen=False)
 
     frozen_source = _mapping(evidence, "author_dissertation")
-    _equal(_mapping(probe, "source").get("sha256"), frozen_source.get("sha256"), "live PDF binding")
+    _equal(
+        _mapping(probe, "source").get("sha256"),
+        frozen_source.get("sha256"),
+        "live PDF binding",
+    )
     _equal(
         _mapping(probe, "source").get("normalised_extracted_text_sha256"),
         frozen_source.get("normalised_extracted_text_sha256"),
