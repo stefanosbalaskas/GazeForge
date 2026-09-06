@@ -10,7 +10,8 @@ source authority, rights, quarantine status, source-audit readiness, or empirica
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping
+import math
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +26,12 @@ from .gaze_in_wild_recovery import (
 
 RECORD_TYPE = "gaze-in-wild-recovery-candidate-processdata-screen-v1"
 CANDIDATE_STATUS = "quarantined"
+_ALLOWED_CANDIDATE_KINDS = {
+    "unknown_recovered_copy",
+    "candidate_original_layout_unverified",
+    "transformed_secondary_collection",
+    "labeller_provenance_only",
+}
 
 _SCREENING_POLICY = {
     "selected_path_was_explicit": True,
@@ -154,6 +161,122 @@ def _recovery_binding(recovery: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _positive_integer(value: Any, *, field_name: str, minimum: int = 1) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+        raise BenchmarkIntegrityError(
+            f"GIW candidate ProcessData preflight {field_name} is invalid."
+        )
+    return value
+
+
+def _finite_number(value: Any, *, field_name: str, positive: bool = False) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise BenchmarkIntegrityError(
+            f"GIW candidate ProcessData preflight {field_name} is invalid."
+        )
+    number = float(value)
+    if not math.isfinite(number) or (positive and number <= 0):
+        raise BenchmarkIntegrityError(
+            f"GIW candidate ProcessData preflight {field_name} is invalid."
+        )
+    return number
+
+
+def _integer_shape(value: Any, *, field_name: str, length: int) -> tuple[int, ...]:
+    if isinstance(value, (str, bytes)) or not isinstance(value, Sequence) or len(value) != length:
+        raise BenchmarkIntegrityError(
+            f"GIW candidate ProcessData preflight {field_name} is invalid."
+        )
+    return tuple(
+        _positive_integer(item, field_name=field_name)
+        for item in value
+    )
+
+
+def _validate_processdata_observation(
+    preflight: Mapping[str, Any],
+    *,
+    relative_path: str,
+    digest: str,
+    bytes_: int,
+) -> None:
+    if preflight.get("path") != relative_path:
+        raise BenchmarkIntegrityError("GIW candidate ProcessData preflight path binding drifted.")
+    if preflight.get("sha256") != digest:
+        raise BenchmarkIntegrityError("GIW candidate ProcessData preflight SHA-256 binding drifted.")
+    if preflight.get("bytes") != bytes_:
+        raise BenchmarkIntegrityError("GIW candidate ProcessData preflight byte binding drifted.")
+
+    _positive_integer(preflight.get("participant_index"), field_name="participant_index")
+    _positive_integer(preflight.get("trial_index"), field_name="trial_index")
+    _finite_number(preflight.get("stored_rate_hz"), field_name="stored_rate_hz", positive=True)
+    _finite_number(
+        preflight.get("inferred_processed_rate_hz"),
+        field_name="inferred_processed_rate_hz",
+        positive=True,
+    )
+    n_samples = _positive_integer(
+        preflight.get("timestamp_count"),
+        field_name="timestamp_count",
+        minimum=2,
+    )
+    start_s = _finite_number(preflight.get("timestamp_start_s"), field_name="timestamp_start_s")
+    end_s = _finite_number(preflight.get("timestamp_end_s"), field_name="timestamp_end_s")
+    if end_s <= start_s:
+        raise BenchmarkIntegrityError(
+            "GIW candidate ProcessData preflight timestamp span is invalid."
+        )
+
+    por_shape = _integer_shape(preflight.get("por_shape"), field_name="por_shape", length=2)
+    if por_shape not in {(n_samples, 2), (2, n_samples)}:
+        raise BenchmarkIntegrityError(
+            "GIW candidate ProcessData preflight POR shape is inconsistent with timestamps."
+        )
+    confidence_shape = _integer_shape(
+        preflight.get("confidence_shape"),
+        field_name="confidence_shape",
+        length=1,
+    )
+    if confidence_shape != (n_samples,):
+        raise BenchmarkIntegrityError(
+            "GIW candidate ProcessData preflight confidence shape is inconsistent with timestamps."
+        )
+    _integer_shape(
+        preflight.get("scene_resolution_px"),
+        field_name="scene_resolution_px",
+        length=2,
+    )
+
+    labels_present = preflight.get("labels_present")
+    if not isinstance(labels_present, bool):
+        raise BenchmarkIntegrityError(
+            "GIW candidate ProcessData preflight labels_present must be boolean."
+        )
+    labels_shape = preflight.get("labels_shape")
+    if labels_present:
+        if _integer_shape(labels_shape, field_name="labels_shape", length=1) != (n_samples,):
+            raise BenchmarkIntegrityError(
+                "GIW candidate ProcessData preflight label shape is inconsistent with timestamps."
+            )
+    elif labels_shape is not None:
+        raise BenchmarkIntegrityError(
+            "GIW candidate ProcessData preflight labels_shape must be null when labels are absent."
+        )
+
+    if not isinstance(preflight.get("top_level_labeldata_present"), bool):
+        raise BenchmarkIntegrityError(
+            "GIW candidate ProcessData preflight top_level_labeldata_present must be boolean."
+        )
+    if preflight.get("adapter_coordinate_fields_compatible") is not True:
+        raise BenchmarkIntegrityError(
+            "GIW candidate ProcessData screen requires explicit structural compatibility."
+        )
+    if preflight.get("timestamp_grid_valid") is not True:
+        raise BenchmarkIntegrityError(
+            "GIW candidate ProcessData screen requires an explicitly valid timestamp grid."
+        )
+
+
 def build_gaze_in_wild_candidate_processdata_screen(
     root: str | Path,
     recovery_record_or_path: Mapping[str, Any] | str | Path,
@@ -229,6 +352,8 @@ def validate_gaze_in_wild_candidate_processdata_screen(
         raise BenchmarkIntegrityError("GIW candidate ProcessData screen must remain quarantined.")
     if record.get("dataset") != "Gaze-in-the-Wild":
         raise BenchmarkIntegrityError("GIW candidate ProcessData screen dataset identity drifted.")
+    if record.get("candidate_kind") not in _ALLOWED_CANDIDATE_KINDS:
+        raise BenchmarkIntegrityError("GIW candidate ProcessData screen candidate_kind is invalid.")
 
     for key in (
         "recovery_record_fingerprint_sha256",
@@ -247,7 +372,10 @@ def validate_gaze_in_wild_candidate_processdata_screen(
     digest = str(selected.get("sha256", ""))
     if len(digest) != 64 or any(char not in "0123456789abcdef" for char in digest):
         raise BenchmarkIntegrityError("GIW candidate ProcessData selected-file SHA-256 is invalid.")
-    if not isinstance(selected.get("bytes"), int) or int(selected["bytes"]) < 0:
+    if not isinstance(selected.get("bytes"), int) or isinstance(selected.get("bytes"), bool):
+        raise BenchmarkIntegrityError("GIW candidate ProcessData selected-file byte size is invalid.")
+    bytes_ = int(selected["bytes"])
+    if bytes_ < 0:
         raise BenchmarkIntegrityError("GIW candidate ProcessData selected-file byte size is invalid.")
     if selected.get("generic_recovery_role") != "unclassified":
         raise BenchmarkIntegrityError(
@@ -257,20 +385,12 @@ def validate_gaze_in_wild_candidate_processdata_screen(
     preflight = record.get("processdata_preflight")
     if not isinstance(preflight, Mapping):
         raise BenchmarkIntegrityError("GIW candidate ProcessData preflight observation is missing.")
-    if preflight.get("path") != relative_path:
-        raise BenchmarkIntegrityError("GIW candidate ProcessData preflight path binding drifted.")
-    if preflight.get("sha256") != digest:
-        raise BenchmarkIntegrityError("GIW candidate ProcessData preflight SHA-256 binding drifted.")
-    if preflight.get("bytes") != selected.get("bytes"):
-        raise BenchmarkIntegrityError("GIW candidate ProcessData preflight byte binding drifted.")
-    if preflight.get("adapter_coordinate_fields_compatible") is not True:
-        raise BenchmarkIntegrityError(
-            "GIW candidate ProcessData screen requires explicit structural compatibility."
-        )
-    if preflight.get("timestamp_grid_valid") is not True:
-        raise BenchmarkIntegrityError(
-            "GIW candidate ProcessData screen requires an explicitly valid timestamp grid."
-        )
+    _validate_processdata_observation(
+        preflight,
+        relative_path=relative_path,
+        digest=digest,
+        bytes_=bytes_,
+    )
 
     if record.get("screening_policy") != _SCREENING_POLICY:
         raise BenchmarkIntegrityError(
