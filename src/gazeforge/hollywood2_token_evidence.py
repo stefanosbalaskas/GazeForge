@@ -5,11 +5,13 @@ therefore differ in the last machine-representable bits of aggregate metrics eve
 rows, folds, source identities, predictions, and scientifically meaningful results are unchanged.
 Frozen evidence needs an explicit serialization contract for those finite metric floats.
 
-Version 1 rounded finite values in the ``metrics`` subtree to 15 decimal places. That contract is
-retained for historical replay. Version 2 rounds the same metrics-only subtree to 14 decimal places
-after exact-software reruns demonstrated last-bit hardware/BLAS portability drift at 15 places.
-Benchmark metadata, model configuration, protocol settings, source identities, and scientific claim
-boundaries are never rounded or rewritten by either contract.
+Version 1 rounded finite values in the ``metrics`` subtree to 15 decimal places and is retained for
+historical replay. Version 2 moved to 14 places after last-bit hardware/BLAS drift was observed, but
+a later full-report cross-worker diagnostic showed one fold-level Brier value straddling a 14-place
+rounding boundary. Version 3 therefore rounds the same metrics-only subtree to 13 decimal places,
+the highest precision that reproduced the reviewed full report byte-for-byte on the independent
+diagnostic worker. Benchmark metadata, model configuration, protocol settings, source identities,
+and scientific claim boundaries are never rounded or rewritten by any contract.
 """
 
 from __future__ import annotations
@@ -28,6 +30,7 @@ from .hollywood2_token_validation import (
 
 HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V1 = 15
 HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V2 = 14
+HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V3 = 13
 
 HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1 = {
     "method": "recursive_round_finite_metric_floats",
@@ -41,14 +44,20 @@ HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2 = {
     "nonfinite_metric_floats_permitted": False,
     "benchmark_model_protocol_numeric_values_rounded": False,
 }
+HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V3 = {
+    "method": "recursive_round_finite_metric_floats",
+    "metric_float_decimal_places": HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V3,
+    "nonfinite_metric_floats_permitted": False,
+    "benchmark_model_protocol_numeric_values_rounded": False,
+}
 
 # Public aliases identify the current publication contract. Historical validation must import the
-# explicit V1 names above rather than relying on these aliases.
+# explicit versioned names above rather than relying on these aliases.
 HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES = (
-    HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V2
+    HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V3
 )
 HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION = dict(
-    HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2
+    HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V3
 )
 
 
@@ -58,9 +67,10 @@ def _validate_numeric_canonicalization_contract(
     if contract not in (
         HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1,
         HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2,
+        HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V3,
     ):
         raise BenchmarkIntegrityError(
-            "Hollywood2 numeric canonicalization must use the reviewed v1 or v2 contract."
+            "Hollywood2 numeric canonicalization must use a reviewed v1, v2, or v3 contract."
         )
     return dict(contract)
 
@@ -73,9 +83,11 @@ def _canonicalize_metric_value(
     if decimal_places not in {
         HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V1,
         HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V2,
+        HOLLYWOOD2_SOURCE_TOKEN_METRIC_DECIMAL_PLACES_V3,
     }:
         raise BenchmarkIntegrityError(
-            "Hollywood2 metric canonicalization supports only reviewed 14- or 15-place contracts."
+            "Hollywood2 metric canonicalization supports only reviewed 13-, 14-, or 15-place "
+            "contracts."
         )
     if isinstance(value, dict):
         return {
@@ -115,9 +127,8 @@ def canonicalize_hollywood2_source_token_validation_report(
     recorded in the protocol, then the report fingerprint is recomputed and the complete
     Hollywood2 scientific claim boundary is revalidated.
 
-    The default is the current v2 portability contract. Pass
-    ``HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1`` explicitly to replay historical v1
-    publication evidence.
+    The default is the current v3 portability contract. Pass an explicit versioned contract to
+    replay historical v1 or v2 publication evidence.
     """
     validated = validate_hollywood2_source_token_validation_report(report)
     output = copy.deepcopy(validated)
@@ -129,7 +140,7 @@ def canonicalize_hollywood2_source_token_validation_report(
         )
 
     contract_input = (
-        HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2
+        HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V3
         if numeric_canonicalization is None
         else numeric_canonicalization
     )
