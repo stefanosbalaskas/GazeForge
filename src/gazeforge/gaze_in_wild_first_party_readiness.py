@@ -413,7 +413,9 @@ def validate_gaze_in_wild_first_party_quarantine_readiness(
     }:
         raise BenchmarkIntegrityError("GIW first-party readiness privacy boundary drifted.")
     if record.get("scientific_boundary") != _SCIENTIFIC_BOUNDARY:
-        raise BenchmarkIntegrityError("GIW first-party readiness scientific boundary cannot promote.")
+        raise BenchmarkIntegrityError(
+            "GIW first-party readiness scientific boundary cannot promote."
+        )
     if record.get("claim_limit") != CLAIM_LIMIT:
         raise BenchmarkIntegrityError("GIW first-party readiness claim limit drifted.")
     stored = _sha256(record.get("record_fingerprint_sha256"), label="record fingerprint")
