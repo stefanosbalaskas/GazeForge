@@ -1,0 +1,110 @@
+name: Hollywood2 coordinate metadata probe
+
+on:
+  push:
+    branches:
+      - research/hollywood2-coordinate-metadata
+    paths:
+      - "src/gazeforge/hollywood2_coordinate_metadata.py"
+      - "scripts/hollywood2_coordinate_metadata_probe.py"
+      - "tests/test_hollywood2_coordinate_metadata.py"
+      - ".github/workflows/hollywood2-coordinate-metadata-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and focused tooling
+        run: python -m pip install . pytest ruff
+      - name: Ruff focused files
+        run: |
+          ruff check \
+            src/gazeforge/hollywood2_coordinate_metadata.py \
+            scripts/hollywood2_coordinate_metadata_probe.py \
+            tests/test_hollywood2_coordinate_metadata.py
+      - name: Run focused coordinate metadata tests
+        run: python -m pytest -q tests/test_hollywood2_coordinate_metadata.py
+      - name: Acquire pinned canonical Hollywood2EM source
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="870fa6d6209c9085260918d61433a0a2c70fd497"
+          canonical="https://gin.g-node.org/ioannis.agtzidis/hollywood2_em"
+          legacy="https://web.gin.g-node.org/ioannis.agtzidis/hollywood2_em"
+
+          clone_once() {
+            local endpoint="$1"
+            rm -rf _hollywood2_em
+            if ! git clone --depth 1 "$endpoint" _hollywood2_em; then
+              return 1
+            fi
+            observed="$(git -C _hollywood2_em rev-parse HEAD)"
+            test "$observed" = "$expected"
+            test -z "$(git -C _hollywood2_em status --porcelain --untracked-files=no)"
+            return 0
+          }
+
+          for endpoint in "$canonical" "$canonical" "$canonical" "$legacy" "$legacy"; do
+            if clone_once "$endpoint"; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Could not acquire the pinned Hollywood2EM source through bounded public routes." >&2
+          exit 1
+      - name: Run header-only coordinate metadata probe
+        run: |
+          python scripts/hollywood2_coordinate_metadata_probe.py \
+            --source-root _hollywood2_em \
+            --output hollywood2-coordinate-metadata-live-probe.json
+      - name: Revalidate no-promotion and no-row boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.hollywood2_coordinate_metadata import probe_fingerprint
+
+          path = Path("hollywood2-coordinate-metadata-live-probe.json")
+          record = json.loads(path.read_text(encoding="utf-8"))
+          assert record["probe_fingerprint_sha256"] == probe_fingerprint(record)
+          assert record["source_binding"]["commit_sha1"] == (
+              "870fa6d6209c9085260918d61433a0a2c70fd497"
+          )
+          coordinate = record["coordinate_boundary"]
+          assert coordinate["coordinate_unit_verified"] is False
+          assert coordinate["coordinate_verification_basis_created"] is False
+          assert coordinate["pixel_to_visual_angle_conversion_verified"] is False
+          assert coordinate["unit_sensitive_cross_dataset_modelling_ready"] is False
+          scientific = record["scientific_boundary"]
+          assert scientific["raw_source_rows_read"] is False
+          assert scientific["raw_source_rows_embedded"] is False
+          assert scientific["source_filenames_embedded"] is False
+          assert scientific["participant_disjoint_validation_created"] is False
+          assert scientific["cross_dataset_validation_created"] is False
+          assert scientific["new_empirical_performance_claim_created"] is False
+          text = path.read_text(encoding="utf-8")
+          assert ".arff" not in text
+          print("coordinate metadata probe fingerprint:", record["probe_fingerprint_sha256"])
+          print("coordinate unit verified:", coordinate["coordinate_unit_verified"])
+          PY
+      - name: Upload metadata-only probe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-coordinate-metadata-live-probe
+          path: hollywood2-coordinate-metadata-live-probe.json
+          if-no-files-found: error
+          retention-days: 30
