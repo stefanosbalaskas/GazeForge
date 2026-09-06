@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections.abc import Sequence
 from dataclasses import asdict
 from pathlib import Path
-from typing import Sequence
 
 from .gaze_in_wild_first_party_resolution import (
     build_gaze_in_wild_first_party_resolution_request,
