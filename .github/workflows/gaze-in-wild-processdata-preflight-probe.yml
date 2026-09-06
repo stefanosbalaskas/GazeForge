@@ -1,0 +1,54 @@
+name: Gaze-in-the-Wild ProcessData preflight probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-processdata-preflight
+    paths:
+      - "scripts/probe_gaze_in_wild_processdata_preflight.py"
+      - ".github/workflows/gaze-in-wild-processdata-preflight-probe.yml"
+      - "src/gazeforge/gaze_in_wild_processdata_preflight.py"
+      - "tests/test_gaze_in_wild_processdata_preflight.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-processdata-preflight-evidence-v1.json"
+      - "docs/gaze-in-wild-processdata-preflight.md"
+      - "mkdocs.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test dependency
+        run: python -m pip install --disable-pip-version-check --quiet -e ".[dev]"
+      - name: Clone pinned first-author repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/RSKothari/Gaze-in-Wild.git _giw_source
+          git -C _giw_source checkout --quiet 52262d44e366a53369e10ca73c5f41daf0e8f1e5
+      - name: Run quarantined ProcessData structural preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_processdata_preflight.py \
+            _giw_source \
+            --output gaze-in-wild-processdata-preflight-probe-v1.json
+      - name: Upload deterministic ProcessData preflight probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-processdata-preflight-probe
+          path: gaze-in-wild-processdata-preflight-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
