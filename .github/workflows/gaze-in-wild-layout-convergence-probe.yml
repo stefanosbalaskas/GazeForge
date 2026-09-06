@@ -1,0 +1,140 @@
+name: Gaze-in-the-Wild layout convergence probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-layout-convergence
+    paths:
+      - "scripts/probe_gaze_in_wild_layout_convergence.py"
+      - "src/gazeforge/gaze_in_wild_layout_convergence.py"
+      - "tests/test_gaze_in_wild_layout_convergence.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-layout-convergence-evidence-v1.json"
+      - "docs/gaze-in-wild-layout-convergence.md"
+      - "mkdocs.yml"
+      - ".github/workflows/gaze-in-wild-layout-convergence-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test dependencies
+        run: python -m pip install ".[dev]"
+      - name: Fetch exact pinned first-party and downstream files
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _giw_layout
+          fetch_exact() {
+            local url="$1"
+            local output="$2"
+            curl --fail --location --silent --show-error \
+              --retry 4 --retry-all-errors --connect-timeout 20 \
+              --max-time 120 "$url" --output "$output"
+          }
+          fetch_exact \
+            "https://raw.githubusercontent.com/RSKothari/Gaze-in-Wild/52262d44e366a53369e10ca73c5f41daf0e8f1e5/PlotLabels.m" \
+            _giw_layout/first-party-PlotLabels.m
+          fetch_exact \
+            "https://raw.githubusercontent.com/RSKothari/Gaze-in-Wild/52262d44e366a53369e10ca73c5f41daf0e8f1e5/.gitignore" \
+            _giw_layout/first-party-gitignore
+          fetch_exact \
+            "https://raw.githubusercontent.com/DFKI-Interactive-Machine-Learning/open-gaze-lab/2c87abb3ed5d3e21ed027252a8fcd4fcfd9bdeee/backend/src/preprocess_headmounted/giw.py" \
+            _giw_layout/dfki-giw.py
+          fetch_exact \
+            "https://raw.githubusercontent.com/arnejad/ACE-DNV/3142eb4457087743664d96994e952ed784741d1f/modules/GiW.py" \
+            _giw_layout/ace-giw.py
+          fetch_exact \
+            "https://raw.githubusercontent.com/LEO-UMCG/Unsupervised-Gaze-Event-Discrimination/12ff306d8690e483d5e721e18d447fbd0d887e54/preprocessing.py" \
+            _giw_layout/leo-preprocessing.py
+      - name: Run exact-file layout convergence probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_layout_convergence.py \
+            --first-party-plot-labels _giw_layout/first-party-PlotLabels.m \
+            --first-party-gitignore _giw_layout/first-party-gitignore \
+            --dfki-giw _giw_layout/dfki-giw.py \
+            --ace-giw _giw_layout/ace-giw.py \
+            --leo-preprocessing _giw_layout/leo-preprocessing.py \
+            --output gaze-in-wild-layout-convergence-probe-v1.json
+      - name: Validate parent evidence and frozen convergence binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_distribution_evidence import (
+              validate_gaze_in_wild_distribution_availability_evidence,
+          )
+          from gazeforge.gaze_in_wild_history_evidence import (
+              validate_gaze_in_wild_repository_history_evidence,
+          )
+          from gazeforge.gaze_in_wild_layout_convergence import (
+              validate_gaze_in_wild_layout_convergence_probe,
+          )
+
+          root = Path("validation/evidence/gaze-in-wild")
+          history = validate_gaze_in_wild_repository_history_evidence(
+              root / "gaze-in-wild-repository-history-evidence-v1.json"
+          )
+          distribution = validate_gaze_in_wild_distribution_availability_evidence(
+              root / "gaze-in-wild-distribution-availability-evidence-v1.json"
+          )
+          secondary = json.loads(
+              (root / "gaze-in-wild-secondary-recovery-lead-evidence-v1.json")
+              .read_text(encoding="utf-8")
+          )
+          body = dict(secondary)
+          stored = body.pop("evidence_fingerprint_sha256")
+          calculated = hashlib.sha256(
+              json.dumps(
+                  body,
+                  sort_keys=True,
+                  separators=(",", ":"),
+                  ensure_ascii=False,
+              ).encode("utf-8")
+          ).hexdigest()
+          assert stored == calculated == (
+              "e312079108f8b50ddedd6f361272218fc8665c880b147797aee5bb434ebc8c29"
+          )
+          assert history["evidence_fingerprint_sha256"] == (
+              "800d84d71d1d4b1a07e3b6d07c3bb7093c679284f49db0930a9836d77da30ad3"
+          )
+          assert distribution.fingerprint_sha256 == (
+              "2400c81a0897fb414285069c368a8a9d96de1d18eb185b1073cf15bb1c8bd1da"
+          )
+          validated = validate_gaze_in_wild_layout_convergence_probe(
+              Path("gaze-in-wild-layout-convergence-probe-v1.json"),
+              root / "gaze-in-wild-layout-convergence-evidence-v1.json",
+          )
+          assert validated.candidate_layout_screening_signal_only is True
+          assert validated.exact_copy_identity_verified is False
+          print("layout probe:", validated.probe_fingerprint_sha256)
+          print("frozen evidence:", validated.fingerprint_sha256)
+          PY
+      - name: Run focused layout convergence tests
+        run: python -m pytest -q tests/test_gaze_in_wild_layout_convergence.py
+      - name: Upload deterministic layout convergence probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-layout-convergence-probe
+          path: gaze-in-wild-layout-convergence-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30

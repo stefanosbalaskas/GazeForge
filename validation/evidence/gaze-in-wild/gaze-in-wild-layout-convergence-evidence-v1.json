@@ -1,0 +1,93 @@
+{
+  "record_type": "gaze-in-wild-layout-convergence-evidence-v1",
+  "status": "first_party_layout_verified_secondary_convergence_verified_candidate_screening_only",
+  "checked_on": "2026-09-06",
+  "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
+  "parent_evidence": {
+    "repository_history_evidence_fingerprint_sha256": "800d84d71d1d4b1a07e3b6d07c3bb7093c679284f49db0930a9836d77da30ad3",
+    "secondary_recovery_lead_evidence_fingerprint_sha256": "e312079108f8b50ddedd6f361272218fc8665c880b147797aee5bb434ebc8c29",
+    "distribution_availability_evidence_fingerprint_sha256": "2400c81a0897fb414285069c368a8a9d96de1d18eb185b1073cf15bb1c8bd1da"
+  },
+  "first_party_schema": {
+    "repository": "https://github.com/RSKothari/Gaze-in-Wild",
+    "pinned_commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "plot_labels_path": "PlotLabels.m",
+    "plot_labels_git_blob_sha1": "511581250e04c62037c71d2da16271be4979d434",
+    "gitignore_path": ".gitignore",
+    "gitignore_git_blob_sha1": "85f9e994c92da6cbb5632ab241ae7473a83b35e5",
+    "process_filename_pattern": "PrIdx_%d_TrIdx_%d.mat",
+    "label_filename_pattern": "PrIdx_%d_TrIdx_%d_Lbr_%d.mat",
+    "process_variable": "ProcessData",
+    "label_variable": "LabelData",
+    "mat_files_ignored_by_processing_repository": true,
+    "repository_is_exact_dataset_copy": false
+  },
+  "downstream_convergence": {
+    "reviewed_probe_record_type": "gaze-in-wild-layout-convergence-probe-v1",
+    "reviewed_probe_fingerprint_sha256": "98d9f5d81bed214248c08dbb3901b548b1ae6849f1fd85a33bec474c6e202943",
+    "independent_downstream_source_count": 3,
+    "full_layout_match_count": 2,
+    "label_schema_corroboration_count": 3,
+    "sources": [
+      {
+        "key": "dfki_open_gaze_lab",
+        "repository": "https://github.com/DFKI-Interactive-Machine-Learning/open-gaze-lab",
+        "pinned_commit_sha1": "2c87abb3ed5d3e21ed027252a8fcd4fcfd9bdeee",
+        "path": "backend/src/preprocess_headmounted/giw.py",
+        "git_blob_sha1": "eebf405662caa0657095012d9451b3a0576bb5dc",
+        "classification": "independent_downstream_full_layout_match"
+      },
+      {
+        "key": "ace_dnv",
+        "repository": "https://github.com/arnejad/ACE-DNV",
+        "pinned_commit_sha1": "3142eb4457087743664d96994e952ed784741d1f",
+        "path": "modules/GiW.py",
+        "git_blob_sha1": "eb30815510c2e04d4239e06b7b22ffc74c10c595",
+        "classification": "independent_downstream_full_layout_match"
+      },
+      {
+        "key": "leo_umcg_unsupervised",
+        "repository": "https://github.com/LEO-UMCG/Unsupervised-Gaze-Event-Discrimination",
+        "pinned_commit_sha1": "12ff306d8690e483d5e721e18d447fbd0d887e54",
+        "path": "preprocessing.py",
+        "git_blob_sha1": "7489c5df1ef5f5d7125f14b6b609ab2e170c0d3e",
+        "classification": "independent_downstream_label_schema_corroboration"
+      }
+    ],
+    "candidate_layout_screening_signal_only": true,
+    "convergence_is_exact_copy_identity_evidence": false,
+    "convergence_is_dataset_file_rights_evidence": false,
+    "convergence_is_empirical_authorization": false
+  },
+  "scientific_boundary": {
+    "first_party_filename_and_matlab_variable_schema_verified": true,
+    "independent_downstream_layout_convergence_verified": true,
+    "authoritative_original_or_canonical_dataset_copy_obtained": false,
+    "original_distribution_equivalence_verified": false,
+    "dataset_file_rights_resolved": false,
+    "analysis_use_permitted": false,
+    "redistribution_authorized": false,
+    "quarantine_exit_authorized": false,
+    "source_audit_ready": false,
+    "empirical_evidence_eligible": false,
+    "human_human_agreement_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "cross_dataset_validation_created": false,
+    "gp3_validity_claim_created": false,
+    "frozen_evidence_performance_claim_created": false
+  },
+  "claim_limits": [
+    "The first-party processing code verifies filename and MATLAB-variable conventions only; it is not the externally hosted ProcessData/LabelData distribution.",
+    "Independent downstream matches increase confidence that a recovered candidate has historically plausible GIW layout, but filename/schema convergence is not byte identity, source authority, or original-distribution equivalence.",
+    "No downstream repository license, implementation, transformed copy, or local-path reference is promoted to GIW dataset-file reuse permission.",
+    "The first-party processing repository MIT license remains software-scoped and does not resolve rights for external dataset files.",
+    "No candidate leaves quarantine, no source audit is authorized, and no empirical evidence or performance claim is created by this convergence record."
+  ],
+  "next_required_actions": [
+    "Use the verified layout only as a non-authoritative screening aid when an actual recovery candidate is obtained.",
+    "Obtain and fingerprint an authoritative current or preserved original/canonical ProcessData/LabelData distribution.",
+    "Resolve dataset-file analysis-use and redistribution terms from an independently verified rights authority.",
+    "Route any recovered candidate through exact tree inventory, quarantine exit, and source audit before empirical analysis."
+  ],
+  "evidence_fingerprint_sha256": "b9c006e7bc367d7a66a4e78577d4d267b488eec298619b7e2e6707468172ac12"
+}
