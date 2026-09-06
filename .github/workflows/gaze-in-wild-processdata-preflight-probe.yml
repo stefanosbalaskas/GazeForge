@@ -1,0 +1,136 @@
+name: Gaze-in-the-Wild ProcessData preflight probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-processdata-preflight
+    paths:
+      - "scripts/probe_gaze_in_wild_processdata_preflight.py"
+      - ".github/workflows/gaze-in-wild-processdata-preflight-probe.yml"
+      - "src/gazeforge/gaze_in_wild_processdata_preflight.py"
+      - "tests/test_gaze_in_wild_processdata_preflight.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-processdata-preflight-evidence-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-historical-tree-recovery-evidence-v1.json"
+      - "docs/gaze-in-wild-processdata-preflight.md"
+      - "mkdocs.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test dependency
+        run: python -m pip install --disable-pip-version-check --quiet -e ".[dev]"
+      - name: Clone pinned first-author repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/RSKothari/Gaze-in-Wild.git _giw_source
+          git -C _giw_source checkout --quiet 52262d44e366a53369e10ca73c5f41daf0e8f1e5
+      - name: Run quarantined ProcessData structural preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_processdata_preflight.py \
+            _giw_source \
+            --output gaze-in-wild-processdata-preflight-probe-v1.json
+      - name: Validate frozen evidence and exact live binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_historical_tree_recovery import load_evidence
+          from gazeforge.gaze_in_wild_processdata_preflight import (
+              validate_gaze_in_wild_processdata_preflight_record,
+          )
+
+          live = json.loads(
+              Path("gaze-in-wild-processdata-preflight-probe-v1.json")
+              .read_text(encoding="utf-8")
+          )
+          frozen = json.loads(
+              Path(
+                  "validation/evidence/gaze-in-wild/"
+                  "gaze-in-wild-processdata-preflight-evidence-v1.json"
+              ).read_text(encoding="utf-8")
+          )
+          parent = load_evidence(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-historical-tree-recovery-evidence-v1.json"
+          )
+
+          validate_gaze_in_wild_processdata_preflight_record(live)
+          validate_gaze_in_wild_processdata_preflight_record(frozen)
+          assert live == frozen
+          assert frozen["source"]["parent_evidence_fingerprint_sha256"] == (
+              parent["evidence_fingerprint_sha256"]
+          )
+          assert frozen["record_fingerprint_sha256"] == (
+              "d2ec4cc066302646e199b88d29e6f8c165b1ce735c61f1652b8e00b1511a75dd"
+          )
+
+          sample = frozen["processdata"]
+          assert sample["sha256"] == (
+              "d633bbf0a3a9224b71e286ada10a63abe7761264eec7e8c25c94fcf0bbbafc63"
+          )
+          assert sample["bytes"] == 40528499
+          assert sample["participant_index"] == 2
+          assert sample["trial_index"] == 2
+          assert sample["stored_rate_hz"] == 300.0
+          assert sample["timestamp_count"] == 106225
+          assert sample["timestamp_start_s"] == 0.0
+          assert sample["timestamp_end_s"] == 354.0851999999941
+          assert sample["por_shape"] == [106225, 2]
+          assert sample["confidence_shape"] == [106225]
+          assert sample["scene_resolution_px"] == [1920, 1080]
+          assert sample["labels_present"] is True
+          assert sample["labels_shape"] == [106225]
+          assert sample["top_level_labeldata_present"] is False
+
+          boundary = frozen["scientific_boundary"]
+          assert boundary["processdata_structural_preflight_verified"] is True
+          assert boundary["adapter_coordinate_fields_compatible_for_this_sample"] is True
+          for key in (
+              "authoritative_original_or_canonical_dataset_copy_obtained",
+              "full_distribution_recovered",
+              "original_distribution_equivalence_verified",
+              "separate_labeldata_recovered",
+              "independent_labeller_recoverability_verified",
+              "dataset_file_rights_resolved",
+              "analysis_use_permitted",
+              "redistribution_authorized",
+              "participant_mapping_complete",
+              "trial_task_mapping_complete",
+              "coordinate_semantics_verified",
+              "corpus_sampling_rate_distribution_verified",
+              "published_acquisition_cadence_verified_from_sample",
+              "quarantine_exit_authorized",
+              "source_audit_ready",
+              "empirical_evidence_eligible",
+          ):
+              assert boundary[key] is False
+          PY
+      - name: Run ProcessData preflight adversarial tests
+        run: pytest -q tests/test_gaze_in_wild_processdata_preflight.py
+      - name: Upload deterministic ProcessData preflight probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-processdata-preflight-probe
+          path: gaze-in-wild-processdata-preflight-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
