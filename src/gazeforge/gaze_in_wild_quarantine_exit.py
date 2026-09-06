@@ -289,6 +289,7 @@ class GazeInWildQuarantineExitAuthorization:
             "authoritative_source",
             "authoritative_source_revision",
             "source_authority_evidence",
+            "exact_copy_identity_evidence",
             "reuse_terms_source",
             "rights_evidence",
             "analysis_use_evidence",
@@ -296,7 +297,6 @@ class GazeInWildQuarantineExitAuthorization:
             "authorization_basis",
         ):
             _resolved(getattr(self, field_name), field_name=field_name)
-        _structured_exact_copy_fingerprint(self.exact_copy_identity_evidence)
 
     @property
     def record_fingerprint_sha256(self) -> str:
