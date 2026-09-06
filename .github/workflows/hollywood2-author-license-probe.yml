@@ -9,12 +9,18 @@ on:
       - "src/gazeforge/hollywood2_author_license_evidence.py"
       - "scripts/hollywood2_author_license_probe.py"
       - "tests/test_hollywood2_author_license_probe.py"
+      - "validation/evidence/hollywood2/hollywood2-author-license-statement-evidence-v1.json"
+      - "docs/hollywood2-author-license-statement.md"
+      - "mkdocs.yml"
       - ".github/workflows/hollywood2-author-license-probe.yml"
   pull_request:
     paths:
       - "src/gazeforge/hollywood2_author_license_evidence.py"
       - "scripts/hollywood2_author_license_probe.py"
       - "tests/test_hollywood2_author_license_probe.py"
+      - "validation/evidence/hollywood2/hollywood2-author-license-statement-evidence-v1.json"
+      - "docs/hollywood2-author-license-statement.md"
+      - "mkdocs.yml"
       - ".github/workflows/hollywood2-author-license-probe.yml"
   workflow_dispatch:
 
@@ -48,13 +54,41 @@ jobs:
         run: pytest -q tests/test_hollywood2_author_license_probe.py
       - name: Probe institutional dissertation
         run: python scripts/hollywood2_author_license_probe.py
+      - name: Bind live dissertation probe to frozen evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_author_license_evidence import (
+              validate_hollywood2_author_license_live_probe,
+          )
+
+          validate_hollywood2_author_license_live_probe(
+              Path("hollywood2_author_license_live_probe.json"),
+              Path(
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-author-license-statement-evidence-v1.json"
+              ),
+          )
+          print("Hollywood2 author-license live probe is bound to frozen evidence.")
+          PY
       - name: Summarize conservative result
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
 
+          from gazeforge.hollywood2_author_license_evidence import (
+              validate_hollywood2_author_license_evidence,
+          )
+
           record = json.loads(Path("hollywood2_author_license_live_probe.json").read_text())
+          evidence = validate_hollywood2_author_license_evidence(
+              Path(
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-author-license-statement-evidence-v1.json"
+              )
+          )
           source = record["source"]
           statement = record["observed_statement"]
           rights = record["rights_interpretation"]
@@ -68,6 +102,7 @@ jobs:
           print("redistribution authorized:", boundary["gin_raw_data_redistribution_authorized"])
           print("source audit ready:", boundary["source_audit_ready"])
           print("probe fingerprint:", record["probe_fingerprint_sha256"])
+          print("frozen evidence fingerprint:", evidence["evidence_fingerprint_sha256"])
           PY
       - name: Upload live probe record
         uses: actions/upload-artifact@v4
