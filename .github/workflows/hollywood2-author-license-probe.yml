@@ -1,0 +1,75 @@
+name: Hollywood2 author license statement probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/hollywood2-author-license-statement
+    paths:
+      - "scripts/hollywood2_author_license_probe.py"
+      - "tests/test_hollywood2_author_license_probe.py"
+      - ".github/workflows/hollywood2-author-license-probe.yml"
+  pull_request:
+    paths:
+      - "scripts/hollywood2_author_license_probe.py"
+      - "tests/test_hollywood2_author_license_probe.py"
+      - ".github/workflows/hollywood2-author-license-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PDF text extraction and test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+          python -m pip install -e ".[dev]"
+      - name: Ruff probe tranche
+        run: >-
+          ruff check
+          scripts/hollywood2_author_license_probe.py
+          tests/test_hollywood2_author_license_probe.py
+      - name: Run focused unit tests
+        run: pytest -q tests/test_hollywood2_author_license_probe.py
+      - name: Probe institutional dissertation
+        run: python scripts/hollywood2_author_license_probe.py
+      - name: Summarize conservative result
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(Path("hollywood2_author_license_live_probe.json").read_text())
+          source = record["source"]
+          statement = record["observed_statement"]
+          rights = record["rights_interpretation"]
+          boundary = record["scientific_boundary"]
+          print("dissertation SHA-256:", source["sha256"])
+          print("extracted text SHA-256:", source["normalised_extracted_text_sha256"])
+          print("open-license statement:", statement["open_source_license_statement_present"])
+          print("Hollywood2EM GIN footnote:", statement["hollywood2_gin_footnote_present"])
+          print("exact license identifier recovered:", rights["exact_license_identifier_recovered"])
+          print("analysis use authorized:", boundary["gin_analysis_use_authorized"])
+          print("redistribution authorized:", boundary["gin_raw_data_redistribution_authorized"])
+          print("source audit ready:", boundary["source_audit_ready"])
+          print("probe fingerprint:", record["probe_fingerprint_sha256"])
+          PY
+      - name: Upload live probe record
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-author-license-live-probe
+          path: hollywood2_author_license_live_probe.json
+          if-no-files-found: error
+          retention-days: 30
