@@ -9,6 +9,7 @@ from gazeforge.hollywood2_token_evidence import (
     HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1,
     HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2,
     _canonicalize_metric_value,
+    _validate_numeric_canonicalization_contract,
 )
 
 
@@ -56,6 +57,11 @@ def test_hollywood2_metric_canonicalization_is_metrics_only_contract() -> None:
     assert canonical["token"] == "001"
     assert canonical["flag"] is False
     assert canonical["values"] == [0.12345678901235]
+
+
+def test_hollywood2_explicit_empty_contract_is_rejected() -> None:
+    with pytest.raises(BenchmarkIntegrityError, match="reviewed v1 or v2"):
+        _validate_numeric_canonicalization_contract({})
 
 
 @pytest.mark.parametrize("places", [0, 13, 16, 20])
