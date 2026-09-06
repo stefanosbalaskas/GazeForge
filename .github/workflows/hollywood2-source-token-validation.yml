@@ -6,6 +6,7 @@ on:
       - main
       - research/hollywood2-source-token-validation
       - validation/hollywood2-source-token-frozen-evidence
+      - fix/hollywood2-source-token-runtime-lock
     paths:
       - "src/gazeforge/__init__.py"
       - "src/gazeforge/hollywood2_token_validation.py"
@@ -23,6 +24,7 @@ on:
       - "tests/test_hollywood2_token_frozen_evidence.py"
       - "tests/test_resampling.py"
       - "validation/governance/hollywood2-source-token-analysis-authorization-v1.json"
+      - "validation/governance/hollywood2-source-token-runtime-v1.txt"
       - "validation/evidence/hollywood2/**"
       - "docs/hollywood2-authoritative-evidence.md"
       - ".github/workflows/hollywood2-source-token-validation.yml"
@@ -231,8 +233,33 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install package
-        run: python -m pip install .
+      - name: Install package with frozen empirical runtime
+        run: |
+          python -m pip install \
+            --constraint validation/governance/hollywood2-source-token-runtime-v1.txt \
+            .
+      - name: Verify frozen empirical runtime
+        run: |
+          sha256sum validation/governance/hollywood2-source-token-runtime-v1.txt
+          python - <<'PY'
+          from importlib.metadata import version
+
+          expected = {
+              "numpy": "2.5.2",
+              "pandas": "3.0.5",
+              "scikit-learn": "1.9.0",
+              "scipy": "1.18.1",
+              "joblib": "1.6.0",
+              "threadpoolctl": "3.6.0",
+              "narwhals": "2.25.0",
+              "cloudpickle": "3.1.2",
+              "python-dateutil": "2.9.0.post0",
+              "six": "1.17.0",
+          }
+          observed = {name: version(name) for name in expected}
+          assert observed == expected, (observed, expected)
+          print("frozen empirical runtime verified:", observed)
+          PY
       - name: Acquire pinned canonical Hollywood2EM source
         id: acquire
         shell: bash
