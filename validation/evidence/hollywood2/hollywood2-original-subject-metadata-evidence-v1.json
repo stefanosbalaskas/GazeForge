@@ -1,0 +1,126 @@
+{
+  "checked_on": "2026-09-06",
+  "claim_limits": [
+    "The reviewed public description states 16 volunteers: 12 active/action-recognition and 4 free-viewing, sampled at 500 Hz.",
+    "The reviewed public description exposed one Hollywood-2 gaze-data link and no public README link.",
+    "The advertised gaze_hollywood2.zip route resolved to an HTML login page; this probe did not authenticate, submit a request, or download the archive.",
+    "The reviewed public license page states academic-use restrictions and request/transfer conditions; observing those terms is not acceptance or authorization.",
+    "The 16 stable three-digit GIN filename tokens are not participant identities or task-group labels. Their count matching the 16-subject public description is corroborative only.",
+    "Later published descriptions of expanded Hollywood-2 viewing groups make count-based token mapping unsafe; exact subject/group mapping still requires an authoritative ledger or explicit author confirmation.",
+    "Participant-disjoint validation, source-audit readiness, cross-dataset validation, and new empirical performance claims remain uncreated."
+  ],
+  "evidence_fingerprint_sha256": "ba7813dd4f87c4a20ee75f3a9e537e329bca74c519b7bc65a5ba5e5095dd8a5c",
+  "execution": {
+    "artifact_id": 9997181901,
+    "artifact_zip_sha256": "a8c15f0f38b3648786ce331f3cf50d4ad5683be093a0cf0d3505ff12e5529f7e",
+    "job_id": 101558892716,
+    "live_probe_fingerprint_sha256": "1965813fa733a77173d5248fa9d65bf2c2a6b81f33f706cfc2ee076602f99622",
+    "live_probe_record_type": "hollywood2-original-subject-metadata-live-probe-v1",
+    "probe_head_sha": "9eb7d0da9ae08cbc5d93e68e8a34dc29a159cfd1",
+    "workflow_run_id": 34060071078
+  },
+  "mapping_boundary": {
+    "gin_token_to_original_subject_id_verified": false,
+    "gin_token_to_task_group_verified": false,
+    "original_subject_group_id_ledger_recovered": false,
+    "original_subject_ids_recovered_from_public_metadata": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_identity_mapping_verified": false
+  },
+  "record_type": "hollywood2-original-subject-metadata-evidence-v1",
+  "reviewed_public_observation": {
+    "advertised_data_link_head": {
+      "content_disposition": null,
+      "content_length": "2889",
+      "content_type": "text/html; charset=utf-8",
+      "final_url": "https://vision.imar.ro/eyetracking/main_login.php",
+      "http_status": 200,
+      "requested_url": "http://vision.imar.ro/eyetracking/getdata.php?filepath=data&filename=gaze_hollywood2.zip"
+    },
+    "description": {
+      "hollywood2_data_link_count": 1,
+      "http_status": 200,
+      "markers": {
+        "active_action_recognition_task": true,
+        "active_and_free_viewing_split": true,
+        "five_hundred_hz": true,
+        "four_free_viewing_subjects": true,
+        "hollywood2_data_link_present": true,
+        "public_readme_link_present": false,
+        "sixteen_volunteers": true,
+        "twelve_active_subjects": true,
+        "free_viewing_no_specific_task": true
+      },
+      "normalized_text_length": 5791,
+      "normalized_text_sha256": "88b520eec8ceae3b6d015e4be8d31bbbaa6cd6685a68fffb80a878ce67faba64",
+      "public_readme_link_count": 0
+    },
+    "gin_filename_token_context": {
+      "absent_numbers_within_001_to_019": [
+        "007",
+        "009",
+        "016"
+      ],
+      "stable_three_digit_tokens": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "005",
+        "006",
+        "008",
+        "010",
+        "011",
+        "012",
+        "013",
+        "014",
+        "015",
+        "017",
+        "018",
+        "019"
+      ],
+      "token_count": 16,
+      "token_count_match_is_mapping_evidence": false,
+      "token_count_matches_public_original_subject_count": true
+    },
+    "license_page": {
+      "http_status": 200,
+      "markers": {
+        "academic_use_only": true,
+        "limited_nonexclusive_nonassignable_nontransferable": true,
+        "no_sublicense_or_transfer": true,
+        "request_from_academic_address": true,
+        "responsible_use_permission_clause": true
+      },
+      "normalized_text_length": 3307,
+      "normalized_text_sha256": "952fd2ff8dfdba12037ad76a0959a01634039a18b0b59360a4e50d5ede7591da"
+    }
+  },
+  "rights_boundary": {
+    "dataset_archive_download_performed": false,
+    "dataset_redistribution_authorized_by_this_probe": false,
+    "dataset_use_authorized_by_this_probe": false,
+    "license_acceptance_or_academic_request_performed": false,
+    "login_gate_bypassed": false,
+    "public_license_page_observed": true
+  },
+  "scientific_boundary": {
+    "cross_dataset_validation_created": false,
+    "new_empirical_performance_claim_created": false,
+    "source_audit_ready": false
+  },
+  "source_binding": {
+    "advertised_archive_filename": "gaze_hollywood2.zip",
+    "advertised_hollywood2_archive_url": "http://vision.imar.ro/eyetracking/getdata.php?filepath=data&filename=gaze_hollywood2.zip",
+    "author_license_statement_evidence_fingerprint_sha256": "b01da719afe18f4eb0103a17d6e8c85f3750ba299050f8026063a9ebb55b1b2e",
+    "description_url": "https://vision.imar.ro/eyetracking/description.php",
+    "gin_accessible_host_evidence_fingerprint_sha256": "9e09bfe43a273fbcd8cfe258be547aee18e96b8f0928198d1fb5411555024ced",
+    "gin_commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "gin_history_evidence_fingerprint_sha256": "c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1",
+    "gin_repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "license_url": "https://vision.imar.ro/eyetracking/license.php",
+    "reviewed_archive_route_final_url": "https://vision.imar.ro/eyetracking/main_login.php",
+    "underlying_source_rights_evidence_fingerprint_sha256": "6227045c3cc831b3669b34ca74b955847df4b26fafbf825c9a1b5473e25bc943"
+  },
+  "status": "reviewed-public-original-distribution-metadata-login-gated-no-subject-ledger"
+}

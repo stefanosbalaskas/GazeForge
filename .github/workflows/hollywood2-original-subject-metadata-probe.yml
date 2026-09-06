@@ -1,0 +1,103 @@
+name: Hollywood2 original subject metadata probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/hollywood2-original-subject-metadata
+    paths:
+      - "src/gazeforge/hollywood2_original_subject_metadata.py"
+      - "src/gazeforge/hollywood2_original_subject_metadata_evidence.py"
+      - "scripts/hollywood2_original_subject_metadata_probe.py"
+      - "tests/test_hollywood2_original_subject_metadata.py"
+      - "tests/test_hollywood2_original_subject_metadata_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-original-subject-metadata-evidence-v1.json"
+      - "docs/hollywood2-original-subject-metadata.md"
+      - ".github/workflows/hollywood2-original-subject-metadata-probe.yml"
+  pull_request:
+    paths:
+      - "src/gazeforge/hollywood2_original_subject_metadata.py"
+      - "src/gazeforge/hollywood2_original_subject_metadata_evidence.py"
+      - "scripts/hollywood2_original_subject_metadata_probe.py"
+      - "tests/test_hollywood2_original_subject_metadata.py"
+      - "tests/test_hollywood2_original_subject_metadata_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-original-subject-metadata-evidence-v1.json"
+      - "docs/hollywood2-original-subject-metadata.md"
+      - ".github/workflows/hollywood2-original-subject-metadata-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test dependencies
+        run: python -m pip install -e ".[dev]"
+      - name: Ruff original-subject tranche
+        run: >-
+          ruff check
+          src/gazeforge/hollywood2_original_subject_metadata.py
+          src/gazeforge/hollywood2_original_subject_metadata_evidence.py
+          scripts/hollywood2_original_subject_metadata_probe.py
+          tests/test_hollywood2_original_subject_metadata.py
+          tests/test_hollywood2_original_subject_metadata_evidence.py
+      - name: Run focused unit tests
+        run: >-
+          pytest -q
+          tests/test_hollywood2_original_subject_metadata.py
+          tests/test_hollywood2_original_subject_metadata_evidence.py
+      - name: Probe public original-distribution metadata
+        run: python scripts/hollywood2_original_subject_metadata_probe.py
+      - name: Validate frozen and fresh public-source boundaries
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_original_subject_metadata_evidence import (
+              validate_hollywood2_original_subject_evidence,
+              validate_hollywood2_original_subject_live_probe,
+          )
+
+          evidence = Path(
+              "validation/evidence/hollywood2/"
+              "hollywood2-original-subject-metadata-evidence-v1.json"
+          )
+          live = Path("hollywood2_original_subject_metadata_live_probe.json")
+          validate_hollywood2_original_subject_evidence(evidence)
+          validate_hollywood2_original_subject_live_probe(live, evidence)
+          print("Frozen evidence and fresh-live fail-closed semantics validated.")
+          PY
+      - name: Summarize fail-closed result
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(
+              Path("hollywood2_original_subject_metadata_live_probe.json").read_text()
+          )
+          print("description status:", record["description"]["http_status"])
+          print("subject context:", record["observed_subject_context"])
+          print("advertised data link HEAD:", record["advertised_data_link_head"])
+          print("rights boundary:", record["rights_boundary"])
+          print("mapping boundary:", record["mapping_boundary"])
+          print("fingerprint:", record["probe_fingerprint_sha256"])
+          PY
+      - name: Upload public-metadata record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-original-subject-metadata-live-probe
+          path: hollywood2_original_subject_metadata_live_probe.json
+          if-no-files-found: error
+          retention-days: 30
