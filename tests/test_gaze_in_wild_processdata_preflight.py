@@ -30,6 +30,7 @@ def _write_processdata(
     top_level_labeldata: bool = False,
     process_updates: dict[str, object] | None = None,
     etg_updates: dict[str, object] | None = None,
+    etg_remove: tuple[str, ...] = (),
 ) -> None:
     times = np.arange(n, dtype=float) / 300.0
     etg: dict[str, object] = {
@@ -43,6 +44,8 @@ def _write_processdata(
         etg["Labels"] = np.ones(n, dtype=float)
     if etg_updates:
         etg.update(etg_updates)
+    for field_name in etg_remove:
+        etg.pop(field_name, None)
 
     process: dict[str, object] = {
         "PrIdx": 2,
@@ -142,8 +145,8 @@ def test_missing_processdata_is_rejected(tmp_path: Path) -> None:
 
 def test_missing_required_etg_field_is_rejected(tmp_path: Path) -> None:
     path = tmp_path / "ProcessData.mat"
-    _write_processdata(path, etg_updates={"POR": None})
-    with pytest.raises(SchemaError):
+    _write_processdata(path, etg_remove=("POR",))
+    with pytest.raises(SchemaError, match="missing field 'POR'"):
         preflight_gaze_in_wild_processdata(path)
 
 
