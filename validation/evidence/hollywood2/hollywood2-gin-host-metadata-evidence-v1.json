@@ -1,0 +1,99 @@
+{
+  "canonical_repository_binding": {
+    "annotation_provenance_evidence_fingerprint_sha256": "a08510e43caca2a8e6d5c85e7b1ad41c9f312247cd9bd8367372f8ecad8aacab",
+    "author_license_statement_evidence_fingerprint_sha256": "b01da719afe18f4eb0103a17d6e8c85f3750ba299050f8026063a9ebb55b1b2e",
+    "authoritative_ground_truth_evidence_fingerprint_sha256": "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea",
+    "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "gin_history_evidence_fingerprint_sha256": "c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1",
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "underlying_source_rights_evidence_fingerprint_sha256": "6227045c3cc831b3669b34ca74b955847df4b26fafbf825c9a1b5473e25bc943"
+  },
+  "checked_on": "2026-09-06",
+  "claim_limits": [
+    "The GIN page and API returned HTTP 403 from the reviewed GitHub Actions runner, so host-level license metadata was not inspectable and license-field absence is not established.",
+    "The four DataCite queries are bounded registry observations; zero exact repository matches do not establish global DOI or license absence.",
+    "The author-authored open-license indication remains provenance context only and does not identify exact repository license terms.",
+    "The original Hollywood-2 academic-use terms are a separate rights scope and are not inherited automatically by the GIN annotations.",
+    "Exact GIN analysis-use and redistribution terms, participant mapping, source-audit readiness, participant-disjoint validation, cross-dataset validation, independent human-human agreement, and performance Frozen Evidence remain unresolved or uncreated."
+  ],
+  "evidence_fingerprint_sha256": "949ba38f924124f95303c49aaa0478cc2f0a3ee1e412a71fddf8e7d16ee91764",
+  "execution": {
+    "artifact_id": 9996290245,
+    "artifact_zip_sha256": "d2f9168e5ef1016a81fa202bf0f8f3079676ee9a6d405247ab46a3a06f3b645c",
+    "live_probe_fingerprint_sha256": "42bfa075fb9d577d1e3c4557506f61f0be9ef2a6a25a2ce6c56ff6198c2ef59e",
+    "live_probe_json_sha256": "941276dae410d43b69874de12c45439318a8313c0b78b81440092087d322d133",
+    "live_probe_record_type": "hollywood2-gin-host-metadata-live-probe-v1",
+    "probe_head_sha": "ed22e018efbd44a0f2ce9f2ee08272084ffdedd6",
+    "workflow_run_id": 34057066048
+  },
+  "live_observation": {
+    "datacite_queries": [
+      {
+        "exact_repository_match_count": 0,
+        "query_label": "hollywood2",
+        "reported_total": 27,
+        "response_sha256": "43a965da66f4b7587727e358a3b6780a84f7144fe808f78d837b7786af2f63d5",
+        "returned_record_count": 27
+      },
+      {
+        "exact_repository_match_count": 0,
+        "query_label": "hollywood2_em",
+        "reported_total": 0,
+        "response_sha256": "73cad5cc7fa1c12012f82d1963153aa0e7077956287fa8ecd7b92c333ef7a80f",
+        "returned_record_count": 0
+      },
+      {
+        "exact_repository_match_count": 0,
+        "query_label": "ioannis.agtzidis",
+        "reported_total": 1,
+        "response_sha256": "2e54db785c35e1694f5b45c52febe0d3bc43caf730c3cada46f52b1007797d9e",
+        "returned_record_count": 1
+      },
+      {
+        "exact_repository_match_count": 0,
+        "query_label": "exact_repository_fragment",
+        "reported_total": 0,
+        "response_sha256": "61a33d8d1b5a659c63bc60cb27fd80af75173a1b2aa0db1b4e35c6533a0fbca1",
+        "returned_record_count": 0
+      }
+    ],
+    "gin_api": {
+      "bytes": 93,
+      "http_status": 403,
+      "json_object": false,
+      "license_key_paths": [],
+      "metadata_accessible": false,
+      "sha256": "0d3e98ca727fc1201b436170af5a63f23348aaf146a3ac6234f6c4da283e8b34"
+    },
+    "gin_page": {
+      "bytes": 93,
+      "http_status": 403,
+      "metadata_accessible": false,
+      "sha256": "0d3e98ca727fc1201b436170af5a63f23348aaf146a3ac6234f6c4da283e8b34"
+    },
+    "page_and_api_response_sha256_identical": true
+  },
+  "record_type": "hollywood2-gin-host-metadata-evidence-v1",
+  "rights_interpretation": {
+    "analysis_use_authorized": false,
+    "author_or_host_clarification_required_for_exact_terms": true,
+    "datacite_exact_repository_registration_recovered": false,
+    "exact_license_identifier_recovered": false,
+    "exact_license_text_recovered": false,
+    "gin_analysis_use_terms_status": "unresolved_exact_terms",
+    "gin_host_license_metadata_inspected": false,
+    "gin_raw_data_redistribution_terms_status": "unresolved_exact_terms",
+    "host_metadata_license_absence_verified": false,
+    "raw_data_redistribution_authorized": false,
+    "registry_zero_match_is_global_absence_claim": false
+  },
+  "scientific_boundary": {
+    "cross_dataset_validation_created": false,
+    "frozen_evidence_performance_claim_created": false,
+    "independent_human_human_agreement_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_identity_mapping_verified": false,
+    "source_audit_ready": false
+  },
+  "status": "bounded-host-registry-resolution-exact-terms-unresolved"
+}

@@ -9,12 +9,14 @@ on:
       - "src/gazeforge/hollywood2_gin_host_metadata.py"
       - "scripts/hollywood2_gin_host_metadata_probe.py"
       - "tests/test_hollywood2_gin_host_metadata.py"
+      - "validation/evidence/hollywood2/hollywood2-gin-host-metadata-evidence-v1.json"
       - ".github/workflows/hollywood2-gin-host-metadata-probe.yml"
   pull_request:
     paths:
       - "src/gazeforge/hollywood2_gin_host_metadata.py"
       - "scripts/hollywood2_gin_host_metadata_probe.py"
       - "tests/test_hollywood2_gin_host_metadata.py"
+      - "validation/evidence/hollywood2/hollywood2-gin-host-metadata-evidence-v1.json"
       - ".github/workflows/hollywood2-gin-host-metadata-probe.yml"
   workflow_dispatch:
 
@@ -45,6 +47,22 @@ jobs:
         run: pytest -q tests/test_hollywood2_gin_host_metadata.py
       - name: Probe public GIN and DataCite metadata
         run: python scripts/hollywood2_gin_host_metadata_probe.py
+      - name: Verify live probe against frozen evidence
+        run: |
+          python - <<'PY'
+          from gazeforge.hollywood2_gin_host_metadata import (
+              validate_hollywood2_gin_host_metadata_live_probe,
+          )
+
+          validate_hollywood2_gin_host_metadata_live_probe(
+              "hollywood2_gin_host_metadata_live_probe.json",
+              (
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-gin-host-metadata-evidence-v1.json"
+              ),
+          )
+          print("Fresh host/registry probe preserves the frozen fail-closed boundary.")
+          PY
       - name: Summarize conservative result
         run: |
           python - <<'PY'

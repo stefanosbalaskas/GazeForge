@@ -1,9 +1,30 @@
 import json
+from copy import deepcopy
+from pathlib import Path
 
-from gazeforge.hollywood2_gin_host_metadata import build_probe_record
+import pytest
+
+from gazeforge.exceptions import BenchmarkIntegrityError
+from gazeforge.hollywood2_gin_host_metadata import (
+    EXPECTED_EVIDENCE_FINGERPRINT_SHA256,
+    build_probe_record,
+    probe_fingerprint,
+    validate_hollywood2_gin_host_metadata_evidence,
+    validate_hollywood2_gin_host_metadata_live_probe,
+)
+
+EVIDENCE_PATH = Path(
+    "validation/evidence/hollywood2/hollywood2-gin-host-metadata-evidence-v1.json"
+)
 
 
-def _fetch(body: bytes, *, url: str, status: int = 200, content_type: str = "application/json"):
+def _fetch(
+    body: bytes,
+    *,
+    url: str,
+    status: int = 200,
+    content_type: str = "application/json",
+):
     return {
         "requested_url": url,
         "final_url": url,
@@ -13,6 +34,29 @@ def _fetch(body: bytes, *, url: str, status: int = 200, content_type: str = "app
         "sha256": "0" * 64,
         "body": body,
     }
+
+
+def _empty_datacite(url: str):
+    body = json.dumps({"meta": {"total": 0}, "data": []}).encode()
+    return _fetch(body, url=url)
+
+
+def _fresh_bounded_probe():
+    return build_probe_record(
+        _fetch(b"forbidden", url="https://example.test/api", status=403),
+        _fetch(
+            b"forbidden",
+            url="https://example.test/repo",
+            status=403,
+            content_type="text/html",
+        ),
+        [
+            _empty_datacite("https://api.datacite.org/dois?query=hollywood2"),
+            _empty_datacite("https://api.datacite.org/dois?query=hollywood2_em"),
+            _empty_datacite("https://api.datacite.org/dois?query=ioannis.agtzidis"),
+            _empty_datacite("https://api.datacite.org/dois?query=exact_repository_fragment"),
+        ],
+    )
 
 
 def test_host_metadata_never_promotes_api_license_without_review():
@@ -139,3 +183,34 @@ def test_zero_datacite_match_never_becomes_global_absence_claim():
     assert rights["datacite_exact_repository_match_count"] == 0
     assert rights["registry_zero_match_is_global_absence_claim"] is False
     assert rights["exact_license_identifier_verified"] is False
+
+
+def test_frozen_host_metadata_evidence_validates_exactly():
+    record = validate_hollywood2_gin_host_metadata_evidence(EVIDENCE_PATH)
+    assert record["evidence_fingerprint_sha256"] == EXPECTED_EVIDENCE_FINGERPRINT_SHA256
+    assert record["rights_interpretation"]["host_metadata_license_absence_verified"] is False
+    assert record["rights_interpretation"]["analysis_use_authorized"] is False
+    assert record["scientific_boundary"]["source_audit_ready"] is False
+
+
+def test_frozen_evidence_rejects_permission_promotion():
+    record = json.loads(EVIDENCE_PATH.read_text(encoding="utf-8"))
+    tampered = deepcopy(record)
+    tampered["rights_interpretation"]["analysis_use_authorized"] = True
+    with pytest.raises(BenchmarkIntegrityError):
+        validate_hollywood2_gin_host_metadata_evidence(tampered)
+
+
+def test_fresh_bounded_probe_binds_semantically_to_frozen_evidence():
+    probe = _fresh_bounded_probe()
+    validated = validate_hollywood2_gin_host_metadata_live_probe(probe, EVIDENCE_PATH)
+    assert validated["rights_interpretation"]["datacite_exact_repository_match_count"] == 0
+
+
+def test_fresh_probe_rejects_new_exact_datacite_repository_match():
+    probe = _fresh_bounded_probe()
+    probe["datacite_queries"][0]["exact_repository_match_count"] = 1
+    probe["rights_interpretation"]["datacite_exact_repository_match_count"] = 1
+    probe["probe_fingerprint_sha256"] = probe_fingerprint(probe)
+    with pytest.raises(BenchmarkIntegrityError):
+        validate_hollywood2_gin_host_metadata_live_probe(probe, EVIDENCE_PATH)
