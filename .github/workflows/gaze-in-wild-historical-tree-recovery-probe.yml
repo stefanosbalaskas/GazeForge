@@ -31,6 +31,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install bounded MAT inspection dependency
+        run: python -m pip install --disable-pip-version-check --quiet scipy
       - name: Clone complete pinned first-author repository history
         shell: bash
         run: |
@@ -54,6 +56,38 @@ jobs:
           assert isinstance(value, list)
           print('release_count:', len(value))
           PY
+      - name: Inspect bundled preprocessing MAT structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import tempfile
+          import zipfile
+          from pathlib import Path
+          from scipy.io import whosmat
+
+          archive_path = Path('_giw_history/DataExtraction/all_preprocessing_steps.zip')
+          with zipfile.ZipFile(archive_path) as zf:
+              rows = []
+              for info in zf.infolist():
+                  if info.is_dir():
+                      continue
+                  rows.append({
+                      'name': info.filename,
+                      'file_size': info.file_size,
+                      'compress_size': info.compress_size,
+                      'crc32': f'{info.CRC:08x}',
+                  })
+              print('archive_members:', json.dumps(rows, sort_keys=True))
+              with tempfile.TemporaryDirectory() as td:
+                  target = Path(zf.extract('exports/ProcessData.mat', path=td))
+                  variables = [
+                      {'name': name, 'shape': list(shape), 'class': cls}
+                      for name, shape, cls in whosmat(target)
+                  ]
+                  print('processdata_whosmat:', json.dumps(variables, sort_keys=True))
+          PY
       - name: Audit all reachable commit trees and README endpoints
         shell: bash
         run: |
@@ -76,6 +110,7 @@ jobs:
           assert len(p['refs']['local_branch_refs']) == 1
           b = p['scientific_boundary']
           assert b['all_reachable_commit_trees_checked'] is True
+          assert b['preprocessing_archive_members_checked'] is True
           assert b['unreachable_or_external_objects_excluded_from_claim'] is True
           for key in (
               'authoritative_original_or_canonical_dataset_copy_obtained',
