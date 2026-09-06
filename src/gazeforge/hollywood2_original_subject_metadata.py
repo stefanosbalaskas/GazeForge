@@ -172,6 +172,7 @@ def build_probe_record(
             "dataset_archive_download_performed": False,
             "dataset_use_authorized_by_this_probe": False,
             "dataset_redistribution_authorized_by_this_probe": False,
+            "login_gate_bypassed": False,
         },
         "mapping_boundary": {
             "original_subject_ids_recovered_from_public_metadata": False,
