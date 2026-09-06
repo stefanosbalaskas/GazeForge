@@ -1,0 +1,41 @@
+name: Gaze-in-the-Wild candidate ProcessData preflight
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-candidate-preflight
+    paths:
+      - "src/gazeforge/gaze_in_wild_candidate_preflight.py"
+      - "src/gazeforge/gaze_in_wild_processdata_preflight.py"
+      - "src/gazeforge/gaze_in_wild_recovery.py"
+      - "tests/test_gaze_in_wild_candidate_preflight.py"
+      - ".github/workflows/gaze-in-wild-candidate-preflight.yml"
+      - "docs/gaze-in-wild-candidate-preflight.md"
+      - "mkdocs.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test dependency
+        run: python -m pip install --disable-pip-version-check --quiet -e ".[dev]"
+      - name: Ruff candidate preflight tranche
+        run: >-
+          ruff check
+          src/gazeforge/gaze_in_wild_candidate_preflight.py
+          tests/test_gaze_in_wild_candidate_preflight.py
+      - name: Run candidate ProcessData screening tests
+        run: pytest -q tests/test_gaze_in_wild_candidate_preflight.py
