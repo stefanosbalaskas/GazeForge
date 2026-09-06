@@ -65,7 +65,8 @@ jobs:
           import tempfile
           import zipfile
           from pathlib import Path
-          from scipy.io import whosmat
+          import numpy as np
+          from scipy.io import loadmat, whosmat
 
           archive_path = Path('_giw_history/DataExtraction/all_preprocessing_steps.zip')
           with zipfile.ZipFile(archive_path) as zf:
@@ -80,6 +81,8 @@ jobs:
                       'crc32': f'{info.CRC:08x}',
                   })
               print('archive_members:', json.dumps(rows, sort_keys=True))
+              export_info = zf.read('exports/export_info.csv').decode('utf-8', errors='replace').strip()
+              print('export_info_csv:', json.dumps(export_info))
               with tempfile.TemporaryDirectory() as td:
                   target = Path(zf.extract('exports/ProcessData.mat', path=td))
                   variables = [
@@ -87,6 +90,21 @@ jobs:
                       for name, shape, cls in whosmat(target)
                   ]
                   print('processdata_whosmat:', json.dumps(variables, sort_keys=True))
+                  data = loadmat(target, variable_names=['ProcessData'], squeeze_me=True, struct_as_record=False)
+                  process = data['ProcessData']
+                  fields = list(getattr(process, '_fieldnames', []) or [])
+                  described = {}
+                  for field in fields:
+                      value = getattr(process, field)
+                      row = {'python_type': type(value).__name__}
+                      if isinstance(value, np.ndarray):
+                          row['shape'] = list(value.shape)
+                          row['dtype'] = str(value.dtype)
+                      elif hasattr(value, '_fieldnames'):
+                          row['struct_fields'] = list(getattr(value, '_fieldnames', []) or [])
+                      described[field] = row
+                  print('processdata_fields:', json.dumps(fields))
+                  print('processdata_field_shapes:', json.dumps(described, sort_keys=True))
           PY
       - name: Audit all reachable commit trees and README endpoints
         shell: bash
