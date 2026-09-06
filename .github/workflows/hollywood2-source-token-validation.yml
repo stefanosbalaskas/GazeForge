@@ -20,6 +20,7 @@ on:
       - "src/gazeforge/paired.py"
       - "src/gazeforge/stratified.py"
       - "scripts/run_hollywood2_source_token_validation.py"
+      - "scripts/validate_hollywood2_source_token_portability.py"
       - "tests/test_hollywood2_token_validation.py"
       - "tests/test_hollywood2_token_evidence.py"
       - "tests/test_hollywood2_token_frozen_evidence.py"
@@ -56,6 +57,7 @@ jobs:
             src/gazeforge/hollywood2_token_evidence.py \
             src/gazeforge/hollywood2_token_portability_evidence.py \
             scripts/run_hollywood2_source_token_validation.py \
+            scripts/validate_hollywood2_source_token_portability.py \
             tests/test_hollywood2_token_evidence.py \
             tests/test_hollywood2_token_frozen_evidence.py \
             tests/test_hollywood2_token_portability_evidence.py
@@ -87,18 +89,9 @@ jobs:
               "hollywood2-source-token-numeric-portability-evidence-v2.json"
           )
           print("authorization fingerprint:", authorization_fingerprint(authorization))
-          print(
-              "portability evidence fingerprint:",
-              portability["evidence_fingerprint_sha256"],
-          )
-          print(
-              "participant mapping verified:",
-              authorization.participant_identity_mapping_verified,
-          )
-          print(
-              "raw redistribution authorized:",
-              authorization.raw_source_redistribution_authorized,
-          )
+          print("portability fingerprint:", portability["evidence_fingerprint_sha256"])
+          assert authorization.participant_identity_mapping_verified is False
+          assert authorization.raw_source_redistribution_authorized is False
           PY
 
   reviewed-artifact-replay:
@@ -163,141 +156,9 @@ jobs:
           unzip -q _reviewed/merge.zip -d _reviewed/merge
       - name: Replay historical v1 and portability v2 contracts
         run: |
-          python - <<'PY'
-          import hashlib
-          import json
-          from pathlib import Path
-
-          from gazeforge.dashboard import load_frozen_benchmark_report
-          from gazeforge.hollywood2_token_evidence import (
-              HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1,
-              HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2,
-              _canonicalize_metric_value,
-              canonicalize_hollywood2_source_token_validation_report,
-          )
-          from gazeforge.hollywood2_token_portability_evidence import (
-              validate_hollywood2_source_token_portability_evidence,
-          )
-          from gazeforge.hollywood2_token_validation import (
-              validate_hollywood2_source_token_validation_report,
-          )
-
-          frozen = load_frozen_benchmark_report(
-              "validation/evidence/hollywood2/"
-              "hollywood2-source-token-60hz-frozen-summary-v1.json"
-          )
-          evidence = validate_hollywood2_source_token_portability_evidence(
-              "validation/evidence/hollywood2/"
-              "hollywood2-source-token-numeric-portability-evidence-v2.json"
-          )
-          reviewed = evidence["reviewed_source_verified_artifacts"]
-          before = evidence["migration"]["from_contract"]
-          after = evidence["migration"]["to_contract"]
-
-          v1_texts = []
-          v2_texts = []
-          for label, directory, evidence_key in (
-              ("pre-merge", "pre", "pre_merge"),
-              ("exact-merge", "merge", "exact_merge"),
-          ):
-              path = Path(
-                  f"_reviewed/{directory}/hollywood2-source-token-validation-v1.json"
-              )
-              raw_bytes = path.read_bytes()
-              lineage = reviewed[evidence_key]
-              assert hashlib.sha256(raw_bytes).hexdigest() == (
-                  lineage["uncanonicalized_report_file_sha256"]
-              )
-              raw = validate_hollywood2_source_token_validation_report(
-                  json.loads(raw_bytes)
-              )
-              assert raw["report_fingerprint_sha256"] == (
-                  lineage["uncanonicalized_report_fingerprint_sha256"]
-              )
-
-              v1 = canonicalize_hollywood2_source_token_validation_report(
-                  raw,
-                  numeric_canonicalization=(
-                      HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1
-                  ),
-              )
-              v1_text = (
-                  json.dumps(
-                      v1,
-                      indent=2,
-                      sort_keys=True,
-                      ensure_ascii=False,
-                      allow_nan=False,
-                  )
-                  + "\n"
-              )
-              assert v1["report_fingerprint_sha256"] == (
-                  before["canonical_source_report_fingerprint_sha256"]
-              )
-              assert hashlib.sha256(v1_text.encode("utf-8")).hexdigest() == (
-                  before["canonical_source_report_file_sha256"]
-              )
-
-              v2 = canonicalize_hollywood2_source_token_validation_report(
-                  raw,
-                  numeric_canonicalization=(
-                      HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2
-                  ),
-              )
-              v2_text = (
-                  json.dumps(
-                      v2,
-                      indent=2,
-                      sort_keys=True,
-                      ensure_ascii=False,
-                      allow_nan=False,
-                  )
-                  + "\n"
-              )
-              assert v2["report_fingerprint_sha256"] == (
-                  after["canonical_source_report_fingerprint_sha256"]
-              )
-              assert hashlib.sha256(v2_text.encode("utf-8")).hexdigest() == (
-                  after["canonical_source_report_file_sha256"]
-              )
-
-              assert v1["benchmark"] == frozen["benchmark"] == v2["benchmark"]
-              assert v1["model"] == frozen["model"] == v2["model"]
-              for key in (
-                  "analysis_label_counts",
-                  "source_token_fold_assignment",
-                  "summary",
-              ):
-                  assert v1["metrics"][key] == frozen["metrics"][key]
-                  assert v2["metrics"][key] == _canonicalize_metric_value(
-                      frozen["metrics"][key],
-                      decimal_places=14,
-                  )
-
-              boundary = v2["protocol"]["scientific_boundary"]
-              assert boundary["participant_identity_mapping_verified"] is False
-              assert boundary["participant_disjoint_validation_created"] is False
-              assert boundary["participant_generalization_claim"] is False
-              assert boundary["raw_source_redistributed_by_gazeforge"] is False
-              assert boundary["raw_predictions_embedded"] is False
-              assert ".arff" not in v2_text
-              assert "_hollywood2_em" not in v2_text
-
-              v1_texts.append(v1_text)
-              v2_texts.append(v2_text)
-              print(label, "v1 fingerprint:", v1["report_fingerprint_sha256"])
-              print(label, "v2 fingerprint:", v2["report_fingerprint_sha256"])
-
-          assert v1_texts[0] == v1_texts[1]
-          assert v2_texts[0] == v2_texts[1]
-          assert v1_texts[0] != v2_texts[0]
-          assert reviewed["v2_recanonicalized_reports_byte_identical"] is True
-          assert frozen["report_fingerprint_sha256"] == (
-              before["frozen_summary_report_fingerprint_sha256"]
-          )
-          print("v1 evidence preserved and v2 reviewed artifacts are byte-identical")
-          print("this is artifact replay, not a fresh source rerun")
-          PY
+          python scripts/validate_hollywood2_source_token_portability.py replay \
+            --pre-report _reviewed/pre/hollywood2-source-token-validation-v1.json \
+            --merge-report _reviewed/merge/hollywood2-source-token-validation-v1.json
 
   empirical:
     needs: reviewed-artifact-replay
@@ -366,7 +227,6 @@ jobs:
               fi
               return 1
             fi
-
             observed="$(git -C _hollywood2_em rev-parse HEAD)"
             if [ "$observed" != "$expected" ]; then
               echo "Source was reachable but HEAD identity drifted: ${observed}" >&2
@@ -393,7 +253,6 @@ jobs:
               sleep $((attempt * 15))
             fi
           done
-
           for attempt in 1 2; do
             if clone_once "$legacy" legacy-alias; then
               echo "Canonical repository bytes acquired through the legacy GIN hostname."
@@ -403,25 +262,21 @@ jobs:
               sleep 15
             fi
           done
-
           if [ "$canonical_403_count" -eq "$canonical_attempts" ]; then
             echo "source_available=false" >> "$GITHUB_OUTPUT"
             echo "source_unavailable_reason=canonical_gin_http_403" >> "$GITHUB_OUTPUT"
             {
               echo "### Hollywood2 live-source availability"
               echo
-              echo "The canonical GIN endpoint returned HTTP 403 on all bounded canonical attempts."
-              echo "No source bytes were acquired in this job. The blocking evidence gate is the"
-              echo "reviewed-artifact replay job, which revalidates both historical v1 and current"
-              echo "v2 publication contracts from the two prior source-verified aggregate artifacts."
+              echo "The canonical GIN endpoint returned HTTP 403 on all bounded attempts."
+              echo "No source bytes were acquired in this job. Reviewed-artifact replay"
+              echo "remains the blocking v1/v2 portability evidence gate."
               echo
-              echo "This status is not a fresh empirical rerun and is not interpreted as a"
-              echo "model-validation failure or source-identity result."
+              echo "This is not a fresh empirical rerun or a model-validation failure."
             } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-
-          echo "Canonical GIN acquisition failed without the audited all-attempt HTTP-403 condition." >&2
+          echo "Canonical GIN acquisition failed outside the audited HTTP-403 case." >&2
           exit 1
       - name: Run derived-60-Hz source-token-held-out comparison
         if: steps.acquire.outputs.source_available == 'true'
@@ -438,101 +293,8 @@ jobs:
       - name: Bind live aggregate report to portability v2 evidence
         if: steps.acquire.outputs.source_available == 'true'
         run: |
-          python - <<'PY'
-          import hashlib
-          from pathlib import Path
-
-          from gazeforge.dashboard import load_frozen_benchmark_report
-          from gazeforge.hollywood2_token_evidence import (
-              HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2,
-              _canonicalize_metric_value,
-          )
-          from gazeforge.hollywood2_token_portability_evidence import (
-              validate_hollywood2_source_token_portability_evidence,
-          )
-          from gazeforge.hollywood2_token_validation import (
-              validate_hollywood2_source_token_validation_report,
-          )
-
-          report_path = Path("hollywood2-source-token-validation-v2.json")
-          report = validate_hollywood2_source_token_validation_report(report_path)
-          frozen = load_frozen_benchmark_report(
-              "validation/evidence/hollywood2/"
-              "hollywood2-source-token-60hz-frozen-summary-v1.json"
-          )
-          evidence = validate_hollywood2_source_token_portability_evidence(
-              "validation/evidence/hollywood2/"
-              "hollywood2-source-token-numeric-portability-evidence-v2.json"
-          )
-          expected = evidence["migration"]["to_contract"]
-          text = report_path.read_text(encoding="utf-8")
-
-          protocol = report["protocol"]
-          boundary = protocol["scientific_boundary"]
-          preparation = protocol["preparation"]
-          inventory = preparation["inventory"]
-          frozen_preparation = frozen["protocol"]["preparation"]
-
-          assert protocol["numeric_canonicalization"] == (
-              HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2
-          )
-          assert report["report_fingerprint_sha256"] == (
-              expected["canonical_source_report_fingerprint_sha256"]
-          )
-          assert hashlib.sha256(report_path.read_bytes()).hexdigest() == (
-              expected["canonical_source_report_file_sha256"]
-          )
-          assert report["benchmark"] == frozen["benchmark"]
-          assert report["model"] == frozen["model"]
-          for key in (
-              "analysis_label_counts",
-              "source_token_fold_assignment",
-              "summary",
-          ):
-              assert report["metrics"][key] == _canonicalize_metric_value(
-                  frozen["metrics"][key],
-                  decimal_places=14,
-              )
-
-          assert preparation["analysis_rows"] == frozen_preparation["analysis_rows"]
-          assert preparation["analysis_sampling_rate_hz"] == (
-              frozen_preparation["analysis_sampling_rate_hz"]
-          )
-          assert preparation["prepared_rows_before_exclusions"] == (
-              frozen_preparation["prepared_rows_before_exclusions"]
-          )
-          assert preparation["excluded_rows"] == frozen_preparation["excluded_rows"]
-          assert inventory["ground_truth_file_count"] == (
-              frozen_preparation["ground_truth_file_count"]
-          )
-          assert inventory["ground_truth_sample_count"] == (
-              frozen_preparation["ground_truth_sample_count"]
-          )
-          assert inventory["source_tokens"] == frozen_preparation["source_tokens"]
-          assert inventory["source_token_count"] == frozen_preparation["source_token_count"]
-
-          assert boundary["participant_identity_mapping_verified"] is False
-          assert boundary["participant_disjoint_validation_created"] is False
-          assert boundary["participant_generalization_claim"] is False
-          assert boundary["raw_source_redistributed_by_gazeforge"] is False
-          assert boundary["raw_predictions_embedded"] is False
-          assert preparation["participant_identity_resolved"] is False
-          assert preparation["raw_source_rows_embedded"] is False
-          assert preparation["source_filenames_embedded"] is False
-          assert ".arff" not in text
-          assert "_hollywood2_em" not in text
-
-          print(
-              "v2 canonical report fingerprint:",
-              report["report_fingerprint_sha256"],
-          )
-          print(
-              "v2 canonical report file sha256:",
-              hashlib.sha256(report_path.read_bytes()).hexdigest(),
-          )
-          print("v1 frozen scientific summary preserved:", frozen["report_fingerprint_sha256"])
-          print("claim boundary: source-token-held-out only")
-          PY
+          python scripts/validate_hollywood2_source_token_portability.py bind-live \
+            --report hollywood2-source-token-validation-v2.json
       - name: Record replay-backed availability fallback
         if: steps.acquire.outputs.source_available == 'false'
         run: |
