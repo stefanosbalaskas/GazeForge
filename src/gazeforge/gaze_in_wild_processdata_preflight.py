@@ -62,14 +62,19 @@ def _field(obj: Any, name: str) -> Any:
     raise SchemaError(f"Gaze-in-the-Wild ProcessData is missing field {name!r}.")
 
 
-def _numeric_vector(value: Any, *, name: str) -> np.ndarray:
+def _numeric_vector(
+    value: Any,
+    *,
+    name: str,
+    require_finite: bool = True,
+) -> np.ndarray:
     try:
         vector = np.asarray(value, dtype=float).reshape(-1)
     except (TypeError, ValueError) as exc:
         raise SchemaError(f"Gaze-in-the-Wild ProcessData field {name!r} must be numeric.") from exc
     if not len(vector):
         raise SchemaError(f"Gaze-in-the-Wild ProcessData field {name!r} cannot be empty.")
-    if np.any(~np.isfinite(vector)):
+    if require_finite and np.any(~np.isfinite(vector)):
         raise SchemaError(f"Gaze-in-the-Wild ProcessData field {name!r} must be finite.")
     return vector
 
@@ -175,7 +180,11 @@ def preflight_gaze_in_wild_processdata(
 
     etg = _field(process_data, "ETG")
     por_shape = _por_shape(_field(etg, "POR"), n_samples=n_samples)
-    confidence = _numeric_vector(_field(etg, "Confidence"), name="ETG.Confidence")
+    confidence = _numeric_vector(
+        _field(etg, "Confidence"),
+        name="ETG.Confidence",
+        require_finite=False,
+    )
     if len(confidence) != n_samples:
         raise SchemaError(
             "Gaze-in-the-Wild ProcessData.ETG.Confidence must match ProcessData.T length."
@@ -185,9 +194,11 @@ def preflight_gaze_in_wild_processdata(
     labels_present = False
     labels_shape: tuple[int] | None = None
     try:
-        labels = _numeric_vector(_field(etg, "Labels"), name="ETG.Labels")
+        labels_value = _field(etg, "Labels")
     except SchemaError:
         labels = None
+    else:
+        labels = _numeric_vector(labels_value, name="ETG.Labels")
     if labels is not None:
         if len(labels) != n_samples:
             raise SchemaError(
