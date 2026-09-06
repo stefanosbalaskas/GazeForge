@@ -1,0 +1,78 @@
+{
+  "author_input_convention": {
+    "commit_sha1": "9a345a37aab47ac6780ce0d4b5798cc15291c75b",
+    "coordinate_semantics": "on-screen-or-stimulus-relative",
+    "coordinate_unit": "pixels",
+    "readme_git_blob_sha1": "112f5f2a235f059ac2394db3180956474e644c06",
+    "repository": "MikhailStartsev/deep_em_classifier",
+    "required_geometry_metadata_keys": [
+      "width_px",
+      "height_px",
+      "width_mm",
+      "height_mm",
+      "distance_mm"
+    ],
+    "time_unit": "microseconds",
+    "visual_angle_conversion_described": true
+  },
+  "canonical_source": {
+    "authoritative_ground_truth_evidence_fingerprint_sha256": "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea",
+    "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
+  },
+  "evidence_fingerprint_sha256": "f08f6f01b6f4eac422572e8e13d7dff794101769ad56691a93464c7032515806",
+  "record_type": "hollywood2-coordinate-semantics-evidence-v1",
+  "reviewed_header_probe": {
+    "arff_file_count": 697,
+    "artifact_id": 9998400863,
+    "artifact_zip_sha256": "e8cd5f26a178b079a9600f8b90d054ff85334622df7bd43438cf74a7ac64a40d",
+    "attribute_signature": [
+      "time",
+      "x",
+      "y",
+      "confidence",
+      "handlabeller_1",
+      "handlabeller_final"
+    ],
+    "author_convention_metadata_complete_file_count": 697,
+    "head_sha": "b8be8017d0eddcd6946ba212b2f2335094a365f8",
+    "metadata_key_file_counts": {
+      "distance_mm": 697,
+      "height_mm": 697,
+      "height_px": 697,
+      "width_mm": 697,
+      "width_px": 697
+    },
+    "metadata_signature_count": 24,
+    "probe_fingerprint_sha256": "d3ed5f9bc005ec435c34df1aa8fb0cb30599d49dff4835085f00114d43e185bd",
+    "raw_source_rows_embedded": false,
+    "raw_source_rows_read": false,
+    "required_gaze_schema_file_count": 697,
+    "source_filenames_embedded": false,
+    "workflow_run_id": 34064095480
+  },
+  "rights_boundary": {
+    "exact_annotation_repository_license_verified": false,
+    "new_analysis_permission_created": false,
+    "new_redistribution_permission_created": false
+  },
+  "scientific_boundary": {
+    "cross_dataset_validation_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_validation_created": false,
+    "participant_identity_mapping_verified": false,
+    "pixel_to_visual_angle_conversion_verified": false,
+    "source_token_to_participant_mapping_verified": false,
+    "unit_sensitive_cross_dataset_modelling_executed": false
+  },
+  "status": "verified-pixel-coordinate-semantics",
+  "verification": {
+    "coordinate_unit": "pixels",
+    "coordinate_unit_verified": true,
+    "verification_basis": [
+      "Exact author implementation documents x/y ARFF coordinates in pixels.",
+      "All 697 pinned GIN ground-truth ARFF headers contain the complete author input metadata convention.",
+      "Prior authoritative ground-truth evidence independently binds the same author implementation and records pixel coordinate semantics."
+    ]
+  }
+}
