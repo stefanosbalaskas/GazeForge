@@ -43,7 +43,8 @@ DESCRIPTION = b"""
 <p>The active group had to solve an action recognition task.</p>
 <p>The free-viewing group was not required to solve any specific task.</p>
 <p>Sampling frequency 500Hz.</p>
-<a href="http://vision.imar.ro/eyetracking/getdata.php?filepath=data&amp;filename=gaze_hollywood2.zip">
+<a href="http://vision.imar.ro/eyetracking/getdata.php?\
+filepath=data&amp;filename=gaze_hollywood2.zip">
 Hollywood-2 gaze data (1.8Gib)</a>
 </body></html>
 """

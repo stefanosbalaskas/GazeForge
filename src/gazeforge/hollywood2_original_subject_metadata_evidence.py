@@ -1,4 +1,7 @@
-"""Frozen evidence and fresh-live validation for original Hollywood-2 subject metadata."""
+"""Frozen evidence and fresh-live validation.
+
+Covers original Hollywood-2 subject metadata.
+"""
 
 from __future__ import annotations
 
@@ -359,7 +362,11 @@ def validate_hollywood2_original_subject_live_probe(
         context.get("public_page_distinguishes_task_groups"),
         "fresh task-group distinction",
     )
-    _eq(context.get("advertised_hollywood2_data_link_count"), 1, "fresh data-link count")
+    _eq(
+        context.get("advertised_hollywood2_data_link_count"),
+        1,
+        "fresh data-link count",
+    )
 
     _validate_nonpromotion_boundaries(probe)
     return probe
