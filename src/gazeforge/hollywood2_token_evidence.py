@@ -128,10 +128,12 @@ def canonicalize_hollywood2_source_token_validation_report(
             "Hollywood2 source-token report is missing metrics or protocol metadata."
         )
 
-    contract = _validate_numeric_canonicalization_contract(
-        numeric_canonicalization
-        or HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2
+    contract_input = (
+        HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2
+        if numeric_canonicalization is None
+        else numeric_canonicalization
     )
+    contract = _validate_numeric_canonicalization_contract(contract_input)
     decimal_places = int(contract["metric_float_decimal_places"])
     output["metrics"] = _canonicalize_metric_value(
         metrics,
