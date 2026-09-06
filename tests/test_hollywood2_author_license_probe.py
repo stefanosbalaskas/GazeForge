@@ -1,6 +1,6 @@
 import pytest
 
-from scripts.hollywood2_author_license_probe import (
+from gazeforge.hollywood2_author_license_evidence import (
     GAZECOM_GIN_URL,
     HMD_GIN_URL,
     HOLLYWOOD2_GIN_URL,
