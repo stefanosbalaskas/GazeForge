@@ -1,0 +1,99 @@
+name: Gaze-in-the-Wild historical tree recovery probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-historical-tree-recovery
+    paths:
+      - "scripts/probe_gaze_in_wild_historical_tree_recovery.py"
+      - ".github/workflows/gaze-in-wild-historical-tree-recovery-probe.yml"
+      - "src/gazeforge/gaze_in_wild_historical_tree_recovery.py"
+      - "tests/test_gaze_in_wild_historical_tree_recovery.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-historical-tree-recovery-evidence-v1.json"
+      - "docs/gaze-in-wild-historical-tree-recovery.md"
+      - "mkdocs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Clone complete pinned first-author repository history
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/RSKothari/Gaze-in-Wild.git _giw_history
+          git -C _giw_history checkout --quiet 52262d44e366a53369e10ca73c5f41daf0e8f1e5
+          test "$(git -C _giw_history rev-list --count HEAD)" = "56"
+      - name: Record current public GitHub releases response
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            --retry 4 --retry-all-errors --connect-timeout 20 --max-time 120 \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/RSKothari/Gaze-in-Wild/releases \
+            --output _giw_releases.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('_giw_releases.json').read_text(encoding='utf-8'))
+          assert isinstance(value, list)
+          print('release_count:', len(value))
+          PY
+      - name: Audit all reachable commit trees and README endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_historical_tree_recovery.py \
+            _giw_history \
+            --releases-json _giw_releases.json \
+            --output gaze-in-wild-historical-tree-recovery-probe-v1.json
+      - name: Enforce recovery boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('gaze-in-wild-historical-tree-recovery-probe-v1.json').read_text(encoding='utf-8'))
+          assert p['reachable_commit_count'] == 56
+          assert p['refs']['release_count'] == 0
+          assert p['refs']['tag_refs'] == []
+          assert len(p['refs']['local_branch_refs']) == 1
+          b = p['scientific_boundary']
+          assert b['all_reachable_commit_trees_checked'] is True
+          assert b['unreachable_or_external_objects_excluded_from_claim'] is True
+          for key in (
+              'authoritative_original_or_canonical_dataset_copy_obtained',
+              'original_distribution_equivalence_verified',
+              'dataset_file_rights_resolved',
+              'analysis_use_permitted',
+              'redistribution_authorized',
+              'quarantine_exit_authorized',
+              'source_audit_ready',
+              'empirical_evidence_eligible',
+          ):
+              assert b[key] is False
+          print('probe_fingerprint:', p['probe_fingerprint_sha256'])
+          PY
+      - name: Upload deterministic historical-tree recovery probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-historical-tree-recovery-probe
+          path: gaze-in-wild-historical-tree-recovery-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
