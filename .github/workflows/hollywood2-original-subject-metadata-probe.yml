@@ -7,14 +7,22 @@ on:
       - research/hollywood2-original-subject-metadata
     paths:
       - "src/gazeforge/hollywood2_original_subject_metadata.py"
+      - "src/gazeforge/hollywood2_original_subject_metadata_evidence.py"
       - "scripts/hollywood2_original_subject_metadata_probe.py"
       - "tests/test_hollywood2_original_subject_metadata.py"
+      - "tests/test_hollywood2_original_subject_metadata_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-original-subject-metadata-evidence-v1.json"
+      - "docs/hollywood2-original-subject-metadata.md"
       - ".github/workflows/hollywood2-original-subject-metadata-probe.yml"
   pull_request:
     paths:
       - "src/gazeforge/hollywood2_original_subject_metadata.py"
+      - "src/gazeforge/hollywood2_original_subject_metadata_evidence.py"
       - "scripts/hollywood2_original_subject_metadata_probe.py"
       - "tests/test_hollywood2_original_subject_metadata.py"
+      - "tests/test_hollywood2_original_subject_metadata_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-original-subject-metadata-evidence-v1.json"
+      - "docs/hollywood2-original-subject-metadata.md"
       - ".github/workflows/hollywood2-original-subject-metadata-probe.yml"
   workflow_dispatch:
 
@@ -39,12 +47,36 @@ jobs:
         run: >-
           ruff check
           src/gazeforge/hollywood2_original_subject_metadata.py
+          src/gazeforge/hollywood2_original_subject_metadata_evidence.py
           scripts/hollywood2_original_subject_metadata_probe.py
           tests/test_hollywood2_original_subject_metadata.py
+          tests/test_hollywood2_original_subject_metadata_evidence.py
       - name: Run focused unit tests
-        run: pytest -q tests/test_hollywood2_original_subject_metadata.py
+        run: >-
+          pytest -q
+          tests/test_hollywood2_original_subject_metadata.py
+          tests/test_hollywood2_original_subject_metadata_evidence.py
       - name: Probe public original-distribution metadata
         run: python scripts/hollywood2_original_subject_metadata_probe.py
+      - name: Validate frozen and fresh public-source boundaries
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_original_subject_metadata_evidence import (
+              validate_hollywood2_original_subject_evidence,
+              validate_hollywood2_original_subject_live_probe,
+          )
+
+          evidence = Path(
+              "validation/evidence/hollywood2/"
+              "hollywood2-original-subject-metadata-evidence-v1.json"
+          )
+          live = Path("hollywood2_original_subject_metadata_live_probe.json")
+          validate_hollywood2_original_subject_evidence(evidence)
+          validate_hollywood2_original_subject_live_probe(live, evidence)
+          print("Frozen evidence and fresh-live fail-closed semantics validated.")
+          PY
       - name: Summarize fail-closed result
         run: |
           python - <<'PY'
