@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - research/gaze-in-wild-exact-copy-review
+      - research/gaze-in-wild-structured-quarantine-binding
     paths:
       - "src/gazeforge/gaze_in_wild_exact_copy_review.py"
       - "src/gazeforge/gaze_in_wild_first_party_readiness.py"
@@ -51,7 +52,9 @@ jobs:
         run: >-
           ruff check
           src/gazeforge/gaze_in_wild_exact_copy_review.py
+          src/gazeforge/gaze_in_wild_quarantine_exit.py
           tests/test_gaze_in_wild_exact_copy_review.py
+          tests/test_gaze_in_wild_quarantine_exit.py
       - name: Run exact-copy and quarantine-exit regression tests
         run: >-
           pytest -q
