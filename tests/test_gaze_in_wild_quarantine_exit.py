@@ -4,9 +4,11 @@ import copy
 import json
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+import gazeforge.gaze_in_wild_exact_copy_review as exact_copy_module
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.gaze_in_wild_audit import (
     GazeInWildLabelFileRecord,
@@ -27,6 +29,8 @@ from gazeforge.source_candidate import (
     build_candidate_source_inventory,
 )
 from gazeforge.source_candidate_authorization import source_audit_template_fingerprint
+
+_EXACT_COPY_FP = "a" * 64
 
 
 def _candidate(tmp_path: Path) -> Path:
@@ -101,7 +105,9 @@ def _authorized(pending: GazeInWildQuarantineExitAuthorization):
         authoritative_source_revision="reviewed-source-revision",
         source_authority_evidence="first-party authority evidence reviewed independently",
         exact_copy_identity_verified=True,
-        exact_copy_identity_evidence="candidate manifest matched authoritative copy identity",
+        exact_copy_identity_evidence=(
+            f"Structured GIW exact-copy review fingerprint: {_EXACT_COPY_FP}"
+        ),
         dataset_file_rights_resolved=True,
         reuse_terms_verified=True,
         reuse_terms_source="reviewed terms source",
@@ -131,6 +137,57 @@ def _validate(
         recovery_record_or_path=recovery,
         inventory=inventory,
         spec=spec,
+    )
+
+
+def _install_live_exact_copy_verifier(
+    monkeypatch: pytest.MonkeyPatch,
+    authorization: GazeInWildQuarantineExitAuthorization,
+    *,
+    record_fingerprint: str = _EXACT_COPY_FP,
+    exact_copy_identity_verified: bool = True,
+) -> None:
+    def fake_verify(*args, **kwargs):
+        return SimpleNamespace(
+            exact_copy_identity_verified=exact_copy_identity_verified,
+            record_fingerprint_sha256=record_fingerprint,
+            recovery_record_fingerprint_sha256=(
+                authorization.recovery_record_fingerprint_sha256
+            ),
+            recovery_tree_fingerprint_sha256=(
+                authorization.recovery_tree_fingerprint_sha256
+            ),
+            candidate_inventory_fingerprint_sha256=(
+                authorization.candidate_inventory_fingerprint_sha256
+            ),
+        )
+
+    monkeypatch.setattr(
+        exact_copy_module,
+        "verify_gaze_in_wild_exact_copy_review",
+        fake_verify,
+    )
+
+
+def _validate_with_structured_exact_copy(
+    authorized: GazeInWildQuarantineExitAuthorization,
+    *,
+    root: Path,
+    recovery: dict,
+    inventory: CandidateSourceInventory,
+    spec: GazeInWildSourceAuditSpec,
+) -> GazeInWildQuarantineExitAuthorization:
+    return validate_gaze_in_wild_quarantine_exit_authorization(
+        authorized,
+        root=root,
+        recovery_record_or_path=recovery,
+        inventory=inventory,
+        spec=spec,
+        exact_copy_review_record_or_path={"fixture": "structured-review"},
+        readiness_record_or_path={"fixture": "readiness"},
+        candidate_screen_record_or_path={"fixture": "candidate-screen"},
+        reference_root=root.parent / "reference",
+        reference_provenance_path=root.parent / "reference-provenance.txt",
     )
 
 
@@ -169,7 +226,29 @@ def test_authorized_exit_requires_fresh_full_binding_validation(tmp_path: Path) 
     with pytest.raises(BenchmarkIntegrityError, match="freshly revalidated"):
         require_authorized_gaze_in_wild_quarantine_exit(authorized, spec)
 
-    validated = _validate(
+    with pytest.raises(BenchmarkIntegrityError, match="fresh structured exact-copy live"):
+        _validate(
+            authorized,
+            root=root,
+            recovery=recovery,
+            inventory=inventory,
+            spec=spec,
+        )
+
+
+def test_authorized_exit_accepts_fresh_matching_structured_exact_copy(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = _candidate(tmp_path)
+    recovery = _recovery(root)
+    inventory, spec = _template(root)
+    authorized = _authorized(
+        build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+    )
+    _install_live_exact_copy_verifier(monkeypatch, authorized)
+
+    validated = _validate_with_structured_exact_copy(
         authorized,
         root=root,
         recovery=recovery,
@@ -179,21 +258,81 @@ def test_authorized_exit_requires_fresh_full_binding_validation(tmp_path: Path) 
     require_authorized_gaze_in_wild_quarantine_exit(validated, spec)
 
 
+def test_authorized_exit_rejects_structured_fingerprint_mismatch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = _candidate(tmp_path)
+    recovery = _recovery(root)
+    inventory, spec = _template(root)
+    authorized = _authorized(
+        build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+    )
+    _install_live_exact_copy_verifier(
+        monkeypatch,
+        authorized,
+        record_fingerprint="b" * 64,
+    )
+
+    with pytest.raises(BenchmarkIntegrityError, match="does not match"):
+        _validate_with_structured_exact_copy(
+            authorized,
+            root=root,
+            recovery=recovery,
+            inventory=inventory,
+            spec=spec,
+        )
+
+
+def test_authorized_exit_rejects_non_verified_structured_review(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = _candidate(tmp_path)
+    recovery = _recovery(root)
+    inventory, spec = _template(root)
+    authorized = _authorized(
+        build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+    )
+    _install_live_exact_copy_verifier(
+        monkeypatch,
+        authorized,
+        exact_copy_identity_verified=False,
+    )
+
+    with pytest.raises(BenchmarkIntegrityError, match="live decision is not verified"):
+        _validate_with_structured_exact_copy(
+            authorized,
+            root=root,
+            recovery=recovery,
+            inventory=inventory,
+            spec=spec,
+        )
+
+
+def test_authorized_exit_rejects_free_text_exact_copy_claim(tmp_path: Path) -> None:
+    root = _candidate(tmp_path)
+    recovery = _recovery(root)
+    inventory, spec = _template(root)
+    authorized = _authorized(
+        build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+    )
+
+    with pytest.raises(BenchmarkIntegrityError, match="not free-text evidence"):
+        replace(
+            authorized,
+            exact_copy_identity_evidence="candidate manifest matched authoritative copy identity",
+        )
+
+
 def test_authorized_exit_still_does_not_open_scientific_result_gates(tmp_path: Path) -> None:
     root = _candidate(tmp_path)
     recovery = _recovery(root)
     inventory, spec = _template(root)
-    authorized = _validate(
-        _authorized(
-            build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
-        ),
-        root=root,
-        recovery=recovery,
-        inventory=inventory,
-        spec=spec,
+    authorized = _authorized(
+        build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
     )
 
-    require_authorized_gaze_in_wild_quarantine_exit(authorized, spec)
     payload = authorized.to_dict()
     assert authorized.decision == "authorized"
     assert "_binding_validated" not in payload
@@ -361,14 +500,19 @@ def test_exit_writer_loader_and_fingerprint_tamper(tmp_path: Path) -> None:
         load_gaze_in_wild_quarantine_exit_authorization(target)
 
 
-def test_validated_state_is_not_serialized_or_reused_after_reload(tmp_path: Path) -> None:
+def test_validated_state_is_not_serialized_or_reused_after_reload(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     root = _candidate(tmp_path)
     recovery = _recovery(root)
     inventory, spec = _template(root)
-    authorized = _validate(
-        _authorized(
-            build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
-        ),
+    authorized = _authorized(
+        build_gaze_in_wild_quarantine_exit_authorization(root, recovery, inventory, spec)
+    )
+    _install_live_exact_copy_verifier(monkeypatch, authorized)
+    validated = _validate_with_structured_exact_copy(
+        authorized,
         root=root,
         recovery=recovery,
         inventory=inventory,
@@ -376,13 +520,13 @@ def test_validated_state_is_not_serialized_or_reused_after_reload(tmp_path: Path
     )
     target = tmp_path / "authorized-exit.json"
     write_gaze_in_wild_quarantine_exit_authorization(
-        authorized,
+        validated,
         target,
         candidate_root=root,
     )
     loaded = load_gaze_in_wild_quarantine_exit_authorization(target)
 
-    assert loaded.record_fingerprint_sha256 == authorized.record_fingerprint_sha256
+    assert loaded.record_fingerprint_sha256 == validated.record_fingerprint_sha256
     with pytest.raises(BenchmarkIntegrityError, match="freshly revalidated"):
         require_authorized_gaze_in_wild_quarantine_exit(loaded, spec)
 
