@@ -1,14 +1,9 @@
 """Structured exact-copy review for quarantined Gaze-in-the-Wild recovery candidates.
 
-This module sits between first-party quarantine readiness and the existing quarantine-exit
-authorization.  It compares one live-reverified candidate tree with one separately supplied
-reference tree using complete relative-path / byte-size / SHA-256 manifests.  The reference
-provenance artifact is hashed locally; its contents and any private archive location are not
-serialized.
-
-A positive review means only that the candidate is byte-manifest identical to the separately
-reviewed reference copy.  It does not by itself prove historical-original equivalence, authorize
-quarantine exit, authorize a source audit, or create empirical evidence.
+This layer compares one live-reverified recovery candidate with one separately supplied
+reference tree using complete relative-path, byte-size, and SHA-256 manifests. Reference
+provenance is represented by a local file digest only. A positive decision does not by itself
+prove historical-original equivalence, authorize quarantine exit, or create empirical evidence.
 """
 
 from __future__ import annotations
@@ -82,8 +77,8 @@ CLAIM_LIMIT = (
     "This record can establish only byte-manifest identity between one live-reverified GIW "
     "recovery candidate and one separately reviewed local reference copy. It does not infer "
     "reference authority from filenames, MATLAB structure, or manifest equality; it does not "
-    "establish historical-original distribution equivalence, authorize quarantine exit or source "
-    "audit execution, recover LabelData, or create empirical evidence."
+    "establish historical-original distribution equivalence, authorize quarantine exit or "
+    "source audit execution, recover LabelData, or create empirical evidence."
 )
 
 
@@ -133,7 +128,9 @@ def _file_sha256(path: str | Path) -> str:
 def _resolved(value: Any, *, label: str) -> str:
     text = "" if value is None else str(value).strip()
     if text.lower() in _UNRESOLVED:
-        raise BenchmarkIntegrityError(f"GIW exact-copy reviewed decisions require {label}.")
+        raise BenchmarkIntegrityError(
+            f"GIW exact-copy reviewed decisions require {label}."
+        )
     return text
 
 
@@ -156,10 +153,21 @@ def _load_json_object(
     return payload, path
 
 
-def _assert_distinct_trees(candidate_root: str | Path, reference_root: str | Path) -> tuple[Path, Path]:
+def _mapping(record: Mapping[str, Any], key: str) -> Mapping[str, Any]:
+    value = record.get(key)
+    if not isinstance(value, Mapping):
+        raise BenchmarkIntegrityError(f"GIW exact-copy field {key!r} is missing.")
+    return value
+
+
+def _assert_distinct_trees(
+    candidate_root: str | Path,
+    reference_root: str | Path,
+) -> tuple[Path, Path]:
     candidate = Path(candidate_root).resolve()
     reference = Path(reference_root).resolve()
-    if candidate == reference or candidate in reference.parents or reference in candidate.parents:
+    nested = candidate in reference.parents or reference in candidate.parents
+    if candidate == reference or nested:
         raise BenchmarkIntegrityError(
             "GIW exact-copy review requires separate, non-nested candidate and reference trees."
         )
@@ -173,12 +181,9 @@ def _reference_provenance_digest(
     reference_root: Path,
 ) -> str:
     path = Path(provenance_path).resolve()
-    if (
-        path == candidate_root
-        or candidate_root in path.parents
-        or path == reference_root
-        or reference_root in path.parents
-    ):
+    inside_candidate = path == candidate_root or candidate_root in path.parents
+    inside_reference = path == reference_root or reference_root in path.parents
+    if inside_candidate or inside_reference:
         raise BenchmarkIntegrityError(
             "GIW reference provenance evidence must live outside both compared trees."
         )
@@ -186,16 +191,16 @@ def _reference_provenance_digest(
 
 
 def _recovery_manifest(record: Mapping[str, Any]) -> list[dict[str, Any]]:
-    inventory = record.get("inventory")
-    if not isinstance(inventory, Mapping):
-        raise BenchmarkIntegrityError("GIW exact-copy recovery inventory is missing.")
+    inventory = _mapping(record, "inventory")
     raw = inventory.get("files")
     if not isinstance(raw, list) or not raw:
         raise BenchmarkIntegrityError("GIW exact-copy recovery file manifest is missing.")
     rows: list[dict[str, Any]] = []
     for item in raw:
         if not isinstance(item, Mapping):
-            raise BenchmarkIntegrityError("GIW exact-copy recovery manifest entry is invalid.")
+            raise BenchmarkIntegrityError(
+                "GIW exact-copy recovery manifest entry is invalid."
+            )
         rows.append(
             {
                 "path": str(item.get("path", "")),
@@ -225,10 +230,8 @@ def _candidate_binding(
             "GIW exact-copy review requires a readiness record whose preliminary blockers are "
             "already resolved."
         )
-    readiness_state = readiness.get("readiness")
-    if not isinstance(readiness_state, Mapping) or readiness_state.get(
-        "ready_for_independent_exact_copy_review"
-    ) is not True:
+    readiness_state = _mapping(readiness, "readiness")
+    if readiness_state.get("ready_for_independent_exact_copy_review") is not True:
         raise BenchmarkIntegrityError("GIW exact-copy readiness gate is not satisfied.")
 
     screen = verify_gaze_in_wild_candidate_processdata_screen(
@@ -243,19 +246,19 @@ def _candidate_binding(
     validate_gaze_in_wild_recovery_candidate_review(recovery_record)
     verify_gaze_in_wild_recovery_candidate_tree(candidate_root, recovery_record)
 
-    saved = readiness.get("candidate_binding")
-    if not isinstance(saved, Mapping):
-        raise BenchmarkIntegrityError("GIW exact-copy readiness candidate binding is missing.")
-    selected = screen.get("selected_file")
-    if not isinstance(selected, Mapping):
-        raise BenchmarkIntegrityError("GIW exact-copy ProcessData selection is missing.")
+    saved = _mapping(readiness, "candidate_binding")
+    selected = _mapping(screen, "selected_file")
     expected = {
         "candidate_kind": str(screen["candidate_kind"]),
         "recovery_record_fingerprint_sha256": str(
             screen["recovery_record_fingerprint_sha256"]
         ),
-        "recovery_tree_fingerprint_sha256": str(screen["recovery_tree_fingerprint_sha256"]),
-        "candidate_screen_fingerprint_sha256": candidate_processdata_screen_fingerprint(screen),
+        "recovery_tree_fingerprint_sha256": str(
+            screen["recovery_tree_fingerprint_sha256"]
+        ),
+        "candidate_screen_fingerprint_sha256": (
+            candidate_processdata_screen_fingerprint(screen)
+        ),
         "selected_file": {
             "relative_path": selected["relative_path"],
             "sha256": selected["sha256"],
@@ -267,15 +270,15 @@ def _candidate_binding(
             "GIW exact-copy readiness no longer binds the current candidate ProcessData screen."
         )
 
-    candidate_inventory = build_candidate_source_inventory(
+    inventory = build_candidate_source_inventory(
         candidate_root,
         dataset_key="gaze-in-the-wild",
     )
-    if _recovery_manifest(recovery_record) != _inventory_manifest(candidate_inventory):
+    if _recovery_manifest(recovery_record) != _inventory_manifest(inventory):
         raise BenchmarkIntegrityError(
             "GIW exact-copy recovery review and current candidate inventory disagree."
         )
-    return recovery_record, candidate_inventory
+    return recovery_record, inventory
 
 
 def _comparison_summary(
@@ -287,13 +290,12 @@ def _comparison_summary(
     candidate_paths = set(candidate_by_path)
     reference_paths = set(reference_by_path)
     shared = candidate_paths & reference_paths
-    content_mismatch_count = sum(
+    mismatches = sum(
         1
         for path in shared
         if candidate_by_path[path].sha256 != reference_by_path[path].sha256
         or candidate_by_path[path].bytes != reference_by_path[path].bytes
     )
-    exact = candidate.files == reference.files
     return {
         "method": "complete_relative_path_byte_size_sha256_manifest_equality",
         "candidate_file_count": candidate.file_count,
@@ -303,9 +305,9 @@ def _comparison_summary(
         "shared_path_count": len(shared),
         "candidate_only_path_count": len(candidate_paths - reference_paths),
         "reference_only_path_count": len(reference_paths - candidate_paths),
-        "shared_path_content_mismatch_count": content_mismatch_count,
+        "shared_path_content_mismatch_count": mismatches,
         "path_set_equal": candidate_paths == reference_paths,
-        "exact_manifest_match": exact,
+        "exact_manifest_match": candidate.files == reference.files,
     }
 
 
@@ -316,7 +318,9 @@ def _derive_result(
     exact_manifest_match: bool,
 ) -> tuple[str, dict[str, bool]]:
     exact_verified = (
-        review_status == "reviewed" and reference_binding_verified and exact_manifest_match
+        review_status == "reviewed"
+        and reference_binding_verified
+        and exact_manifest_match
     )
     if review_status == "pending_review":
         decision = "pending_review"
@@ -345,14 +349,19 @@ def build_gaze_in_wild_exact_copy_review(
 ) -> dict[str, Any]:
     """Build a pending exact-copy review from complete candidate/reference manifests."""
 
-    readiness = validate_gaze_in_wild_first_party_quarantine_readiness(readiness_record_or_path)
+    readiness = validate_gaze_in_wild_first_party_quarantine_readiness(
+        readiness_record_or_path
+    )
     recovery, candidate_inventory = _candidate_binding(
         readiness,
         candidate_root=candidate_root,
         recovery_record_or_path=recovery_record_or_path,
         candidate_screen_record_or_path=candidate_screen_record_or_path,
     )
-    candidate_path, reference_path = _assert_distinct_trees(candidate_root, reference_root)
+    candidate_path, reference_path = _assert_distinct_trees(
+        candidate_root,
+        reference_root,
+    )
     reference_inventory = build_candidate_source_inventory(
         reference_path,
         dataset_key="gaze-in-the-wild",
@@ -368,25 +377,30 @@ def build_gaze_in_wild_exact_copy_review(
         reference_binding_verified=False,
         exact_manifest_match=bool(comparison["exact_manifest_match"]),
     )
-    recovery_inventory = recovery["inventory"]
+    recovery_inventory = _mapping(recovery, "inventory")
+    readiness_candidate = _mapping(readiness, "candidate_binding")
     record: dict[str, Any] = {
         "record_type": RECORD_TYPE,
         "dataset": "Gaze-in-the-Wild",
-        "readiness_record_fingerprint_sha256": first_party_readiness_fingerprint(readiness),
-        "first_party_binding": dict(readiness["first_party_binding"]),
+        "readiness_record_fingerprint_sha256": (
+            first_party_readiness_fingerprint(readiness)
+        ),
+        "first_party_binding": dict(_mapping(readiness, "first_party_binding")),
         "candidate_binding": {
-            "candidate_kind": str(readiness["candidate_binding"]["candidate_kind"]),
-            "recovery_record_fingerprint_sha256": recovery_candidate_record_fingerprint(recovery),
+            "candidate_kind": str(readiness_candidate["candidate_kind"]),
+            "recovery_record_fingerprint_sha256": (
+                recovery_candidate_record_fingerprint(recovery)
+            ),
             "recovery_tree_fingerprint_sha256": str(
                 recovery_inventory["tree_fingerprint_sha256"]
             ),
             "candidate_screen_fingerprint_sha256": str(
-                readiness["candidate_binding"]["candidate_screen_fingerprint_sha256"]
+                readiness_candidate["candidate_screen_fingerprint_sha256"]
             ),
             "candidate_inventory_fingerprint_sha256": (
                 candidate_inventory.inventory_fingerprint_sha256
             ),
-            "selected_file": dict(readiness["candidate_binding"]["selected_file"]),
+            "selected_file": dict(_mapping(readiness_candidate, "selected_file")),
         },
         "reference_binding": {
             "reference_inventory_fingerprint_sha256": (
@@ -422,9 +436,12 @@ def review_gaze_in_wild_exact_copy_record(
     reference_binding_verified: bool,
     evidence_basis: str,
 ) -> dict[str, Any]:
-    """Apply the human reference-binding decision and deterministically derive exact-copy status."""
+    """Apply human reference review and deterministically derive exact-copy status."""
 
-    record, _ = _load_json_object(record_or_path, label="Gaze-in-the-Wild exact-copy review")
+    record, _ = _load_json_object(
+        record_or_path,
+        label="Gaze-in-the-Wild exact-copy review",
+    )
     validate_gaze_in_wild_exact_copy_review(record)
     if not isinstance(reference_binding_verified, bool):
         raise ValueError("reference_binding_verified must be boolean.")
@@ -433,9 +450,12 @@ def review_gaze_in_wild_exact_copy_record(
         "reviewer": _resolved(reviewer, label="reviewer"),
         "reviewed_at": _resolved(reviewed_at, label="reviewed_at"),
         "reference_binding_verified": reference_binding_verified,
-        "evidence_basis": _resolved(evidence_basis, label="reference-binding evidence basis"),
+        "evidence_basis": _resolved(
+            evidence_basis,
+            label="reference-binding evidence basis",
+        ),
     }
-    comparison = record["comparison"]
+    comparison = _mapping(record, "comparison")
     decision, result = _derive_result(
         review_status="reviewed",
         reference_binding_verified=reference_binding_verified,
@@ -447,10 +467,148 @@ def review_gaze_in_wild_exact_copy_record(
     return record
 
 
+def _validate_candidate_section(record: Mapping[str, Any]) -> tuple[str, str, str, str]:
+    candidate = _mapping(record, "candidate_binding")
+    expected = {
+        "candidate_kind",
+        "recovery_record_fingerprint_sha256",
+        "recovery_tree_fingerprint_sha256",
+        "candidate_screen_fingerprint_sha256",
+        "candidate_inventory_fingerprint_sha256",
+        "selected_file",
+    }
+    if set(candidate) != expected:
+        raise BenchmarkIntegrityError("GIW exact-copy candidate binding is invalid.")
+    candidate_kind = str(candidate.get("candidate_kind", "")).strip()
+    allowed_kinds = {"unknown_recovered_copy", "candidate_original_layout_unverified"}
+    if candidate_kind not in allowed_kinds:
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy candidate kind is not exit-review eligible."
+        )
+    digests = []
+    for key in (
+        "recovery_record_fingerprint_sha256",
+        "recovery_tree_fingerprint_sha256",
+        "candidate_screen_fingerprint_sha256",
+        "candidate_inventory_fingerprint_sha256",
+    ):
+        digests.append(_sha256(candidate.get(key), label=key))
+    selected = _mapping(candidate, "selected_file")
+    if set(selected) != {"relative_path", "sha256", "bytes"}:
+        raise BenchmarkIntegrityError("GIW exact-copy selected-file binding is invalid.")
+    relative_text = str(selected.get("relative_path", ""))
+    relative_path = Path(relative_text)
+    if not relative_text or relative_path.is_absolute() or ".." in relative_path.parts:
+        raise BenchmarkIntegrityError("GIW exact-copy selected-file path is unsafe.")
+    _sha256(selected.get("sha256"), label="selected-file SHA-256")
+    selected_bytes = selected.get("bytes")
+    invalid_bytes = (
+        isinstance(selected_bytes, bool)
+        or not isinstance(selected_bytes, int)
+        or selected_bytes <= 0
+    )
+    if invalid_bytes:
+        raise BenchmarkIntegrityError("GIW exact-copy selected-file bytes are invalid.")
+    return digests[0], digests[1], digests[2], digests[3]
+
+
+def _validate_reference_and_comparison(
+    record: Mapping[str, Any],
+    candidate_inventory_fingerprint: str,
+) -> tuple[str, str, bool]:
+    reference = _mapping(record, "reference_binding")
+    expected_reference = {
+        "reference_inventory_fingerprint_sha256",
+        "reference_file_count",
+        "reference_total_bytes",
+        "reference_provenance_sha256",
+    }
+    if set(reference) != expected_reference:
+        raise BenchmarkIntegrityError("GIW exact-copy reference binding is invalid.")
+    reference_fingerprint = _sha256(
+        reference.get("reference_inventory_fingerprint_sha256"),
+        label="reference inventory fingerprint",
+    )
+    provenance_fingerprint = _sha256(
+        reference.get("reference_provenance_sha256"),
+        label="reference provenance fingerprint",
+    )
+    for key in ("reference_file_count", "reference_total_bytes"):
+        value = reference.get(key)
+        if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+            raise BenchmarkIntegrityError(f"GIW exact-copy {key} is invalid.")
+
+    comparison = _mapping(record, "comparison")
+    expected_comparison = {
+        "method",
+        "candidate_file_count",
+        "reference_file_count",
+        "candidate_total_bytes",
+        "reference_total_bytes",
+        "shared_path_count",
+        "candidate_only_path_count",
+        "reference_only_path_count",
+        "shared_path_content_mismatch_count",
+        "path_set_equal",
+        "exact_manifest_match",
+    }
+    if set(comparison) != expected_comparison:
+        raise BenchmarkIntegrityError("GIW exact-copy comparison summary is invalid.")
+    expected_method = "complete_relative_path_byte_size_sha256_manifest_equality"
+    if comparison.get("method") != expected_method:
+        raise BenchmarkIntegrityError("GIW exact-copy comparison method drifted.")
+    count_fields = (
+        "candidate_file_count",
+        "reference_file_count",
+        "candidate_total_bytes",
+        "reference_total_bytes",
+        "shared_path_count",
+        "candidate_only_path_count",
+        "reference_only_path_count",
+        "shared_path_content_mismatch_count",
+    )
+    for key in count_fields:
+        value = comparison.get(key)
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            raise BenchmarkIntegrityError(
+                f"GIW exact-copy comparison field {key} is invalid."
+            )
+    for key in ("path_set_equal", "exact_manifest_match"):
+        if not isinstance(comparison.get(key), bool):
+            raise BenchmarkIntegrityError(
+                f"GIW exact-copy comparison field {key} must be boolean."
+            )
+    if comparison["reference_file_count"] != reference["reference_file_count"]:
+        raise BenchmarkIntegrityError("GIW exact-copy reference file count drifted.")
+    if comparison["reference_total_bytes"] != reference["reference_total_bytes"]:
+        raise BenchmarkIntegrityError("GIW exact-copy reference total bytes drifted.")
+    exact_manifest_match = bool(comparison["exact_manifest_match"])
+    fingerprint_equality = candidate_inventory_fingerprint == reference_fingerprint
+    if exact_manifest_match != fingerprint_equality:
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy manifest-equality derivation drifted."
+        )
+    if exact_manifest_match:
+        difference_fields = (
+            "candidate_only_path_count",
+            "reference_only_path_count",
+            "shared_path_content_mismatch_count",
+        )
+        if not comparison["path_set_equal"]:
+            raise BenchmarkIntegrityError(
+                "GIW exact-copy exact match requires identical paths."
+            )
+        if any(comparison[key] != 0 for key in difference_fields):
+            raise BenchmarkIntegrityError(
+                "GIW exact-copy exact match conflicts with difference counts."
+            )
+    return reference_fingerprint, provenance_fingerprint, exact_manifest_match
+
+
 def validate_gaze_in_wild_exact_copy_review(
     record_or_path: Mapping[str, Any] | str | Path,
 ) -> GazeInWildExactCopyReview:
-    """Validate deterministic exact-copy review semantics without granting later authorization."""
+    """Validate deterministic review semantics without granting later authorization."""
 
     record, path = _load_json_object(
         record_or_path,
@@ -483,8 +641,8 @@ def validate_gaze_in_wild_exact_copy_review(
         record.get("readiness_record_fingerprint_sha256"),
         label="readiness fingerprint",
     )
-    first_party = record.get("first_party_binding")
-    if not isinstance(first_party, Mapping) or set(first_party) != {
+    first_party = _mapping(record, "first_party_binding")
+    if set(first_party) != {
         "request_fingerprint_sha256",
         "response_fingerprint_sha256",
         "correspondence_sha256",
@@ -493,121 +651,15 @@ def validate_gaze_in_wild_exact_copy_review(
     for key, value in first_party.items():
         _sha256(value, label=key)
 
-    candidate = record.get("candidate_binding")
-    candidate_keys = {
-        "candidate_kind",
-        "recovery_record_fingerprint_sha256",
-        "recovery_tree_fingerprint_sha256",
-        "candidate_screen_fingerprint_sha256",
-        "candidate_inventory_fingerprint_sha256",
-        "selected_file",
-    }
-    if not isinstance(candidate, Mapping) or set(candidate) != candidate_keys:
-        raise BenchmarkIntegrityError("GIW exact-copy candidate binding is invalid.")
-    candidate_kind = str(candidate.get("candidate_kind", "")).strip()
-    if candidate_kind not in {"unknown_recovered_copy", "candidate_original_layout_unverified"}:
-        raise BenchmarkIntegrityError("GIW exact-copy candidate kind is not exit-review eligible.")
-    for key in (
-        "recovery_record_fingerprint_sha256",
-        "recovery_tree_fingerprint_sha256",
-        "candidate_screen_fingerprint_sha256",
-        "candidate_inventory_fingerprint_sha256",
-    ):
-        _sha256(candidate.get(key), label=key)
-    selected = candidate.get("selected_file")
-    if not isinstance(selected, Mapping) or set(selected) != {"relative_path", "sha256", "bytes"}:
-        raise BenchmarkIntegrityError("GIW exact-copy selected-file binding is invalid.")
-    relative_path = Path(str(selected.get("relative_path", "")))
-    if (
-        not str(selected.get("relative_path", ""))
-        or relative_path.is_absolute()
-        or ".." in relative_path.parts
-    ):
-        raise BenchmarkIntegrityError("GIW exact-copy selected-file path is unsafe.")
-    _sha256(selected.get("sha256"), label="selected-file SHA-256")
-    selected_bytes = selected.get("bytes")
-    if isinstance(selected_bytes, bool) or not isinstance(selected_bytes, int) or selected_bytes <= 0:
-        raise BenchmarkIntegrityError("GIW exact-copy selected-file bytes are invalid.")
-
-    reference = record.get("reference_binding")
-    if not isinstance(reference, Mapping) or set(reference) != {
-        "reference_inventory_fingerprint_sha256",
-        "reference_file_count",
-        "reference_total_bytes",
-        "reference_provenance_sha256",
-    }:
-        raise BenchmarkIntegrityError("GIW exact-copy reference binding is invalid.")
-    reference_inventory_fingerprint = _sha256(
-        reference.get("reference_inventory_fingerprint_sha256"),
-        label="reference inventory fingerprint",
+    recovery_fp, tree_fp, _screen_fp, candidate_inventory_fp = (
+        _validate_candidate_section(record)
     )
-    reference_provenance_sha256 = _sha256(
-        reference.get("reference_provenance_sha256"),
-        label="reference provenance fingerprint",
+    reference_fp, provenance_fp, exact_manifest_match = (
+        _validate_reference_and_comparison(record, candidate_inventory_fp)
     )
-    for key in ("reference_file_count", "reference_total_bytes"):
-        value = reference.get(key)
-        if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
-            raise BenchmarkIntegrityError(f"GIW exact-copy {key} is invalid.")
 
-    comparison = record.get("comparison")
-    comparison_keys = {
-        "method",
-        "candidate_file_count",
-        "reference_file_count",
-        "candidate_total_bytes",
-        "reference_total_bytes",
-        "shared_path_count",
-        "candidate_only_path_count",
-        "reference_only_path_count",
-        "shared_path_content_mismatch_count",
-        "path_set_equal",
-        "exact_manifest_match",
-    }
-    if not isinstance(comparison, Mapping) or set(comparison) != comparison_keys:
-        raise BenchmarkIntegrityError("GIW exact-copy comparison summary is invalid.")
-    if comparison.get("method") != "complete_relative_path_byte_size_sha256_manifest_equality":
-        raise BenchmarkIntegrityError("GIW exact-copy comparison method drifted.")
-    for key in (
-        "candidate_file_count",
-        "reference_file_count",
-        "candidate_total_bytes",
-        "reference_total_bytes",
-        "shared_path_count",
-        "candidate_only_path_count",
-        "reference_only_path_count",
-        "shared_path_content_mismatch_count",
-    ):
-        value = comparison.get(key)
-        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-            raise BenchmarkIntegrityError(f"GIW exact-copy comparison field {key} is invalid.")
-    for key in ("path_set_equal", "exact_manifest_match"):
-        if not isinstance(comparison.get(key), bool):
-            raise BenchmarkIntegrityError(f"GIW exact-copy comparison field {key} must be boolean.")
-    if comparison["reference_file_count"] != reference["reference_file_count"]:
-        raise BenchmarkIntegrityError("GIW exact-copy reference file count drifted.")
-    if comparison["reference_total_bytes"] != reference["reference_total_bytes"]:
-        raise BenchmarkIntegrityError("GIW exact-copy reference total bytes drifted.")
-    if comparison["exact_manifest_match"] != (
-        str(candidate["candidate_inventory_fingerprint_sha256"])
-        == reference_inventory_fingerprint
-    ):
-        raise BenchmarkIntegrityError("GIW exact-copy manifest-equality derivation drifted.")
-    if comparison["exact_manifest_match"]:
-        if not comparison["path_set_equal"]:
-            raise BenchmarkIntegrityError("GIW exact-copy exact match requires identical paths.")
-        if any(
-            comparison[key] != 0
-            for key in (
-                "candidate_only_path_count",
-                "reference_only_path_count",
-                "shared_path_content_mismatch_count",
-            )
-        ):
-            raise BenchmarkIntegrityError("GIW exact-copy exact match conflicts with difference counts.")
-
-    review = record.get("review")
-    if not isinstance(review, Mapping) or set(review) != {
+    review = _mapping(record, "review")
+    if set(review) != {
         "status",
         "reviewer",
         "reviewed_at",
@@ -620,7 +672,9 @@ def validate_gaze_in_wild_exact_copy_review(
         raise BenchmarkIntegrityError("GIW exact-copy review status is invalid.")
     reference_binding_verified = review.get("reference_binding_verified")
     if not isinstance(reference_binding_verified, bool):
-        raise BenchmarkIntegrityError("GIW exact-copy reference-binding decision must be boolean.")
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy reference-binding decision must be boolean."
+        )
     if review_status == "pending_review":
         if reference_binding_verified:
             raise BenchmarkIntegrityError(
@@ -629,24 +683,34 @@ def validate_gaze_in_wild_exact_copy_review(
     else:
         _resolved(review.get("reviewer"), label="reviewer")
         _resolved(review.get("reviewed_at"), label="reviewed_at")
-        _resolved(review.get("evidence_basis"), label="reference-binding evidence basis")
+        _resolved(
+            review.get("evidence_basis"),
+            label="reference-binding evidence basis",
+        )
 
     expected_decision, expected_result = _derive_result(
         review_status=review_status,
         reference_binding_verified=reference_binding_verified,
-        exact_manifest_match=bool(comparison["exact_manifest_match"]),
+        exact_manifest_match=exact_manifest_match,
     )
-    if record.get("decision") != expected_decision or expected_decision not in _ALLOWED_DECISIONS:
+    if record.get("decision") != expected_decision:
         raise BenchmarkIntegrityError("GIW exact-copy decision derivation drifted.")
+    if expected_decision not in _ALLOWED_DECISIONS:
+        raise BenchmarkIntegrityError("GIW exact-copy decision is invalid.")
     if record.get("result") != expected_result:
         raise BenchmarkIntegrityError("GIW exact-copy result derivation drifted.")
     if record.get("privacy_boundary") != _PRIVACY_BOUNDARY:
         raise BenchmarkIntegrityError("GIW exact-copy privacy boundary drifted.")
     if record.get("scientific_boundary") != _SCIENTIFIC_BOUNDARY:
-        raise BenchmarkIntegrityError("GIW exact-copy scientific boundary cannot promote.")
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy scientific boundary cannot promote."
+        )
     if record.get("claim_limit") != CLAIM_LIMIT:
         raise BenchmarkIntegrityError("GIW exact-copy claim limit drifted.")
-    stored = _sha256(record.get("record_fingerprint_sha256"), label="record fingerprint")
+    stored = _sha256(
+        record.get("record_fingerprint_sha256"),
+        label="record fingerprint",
+    )
     if stored != exact_copy_review_fingerprint(record):
         raise BenchmarkIntegrityError("GIW exact-copy record fingerprint drifted.")
 
@@ -654,15 +718,15 @@ def validate_gaze_in_wild_exact_copy_review(
         path=path,
         record_fingerprint_sha256=stored,
         decision=expected_decision,
-        exact_copy_identity_verified=bool(expected_result["exact_copy_identity_verified"]),
-        readiness_record_fingerprint_sha256=readiness_fingerprint,
-        recovery_record_fingerprint_sha256=str(candidate["recovery_record_fingerprint_sha256"]),
-        recovery_tree_fingerprint_sha256=str(candidate["recovery_tree_fingerprint_sha256"]),
-        candidate_inventory_fingerprint_sha256=str(
-            candidate["candidate_inventory_fingerprint_sha256"]
+        exact_copy_identity_verified=bool(
+            expected_result["exact_copy_identity_verified"]
         ),
-        reference_inventory_fingerprint_sha256=reference_inventory_fingerprint,
-        reference_provenance_sha256=reference_provenance_sha256,
+        readiness_record_fingerprint_sha256=readiness_fingerprint,
+        recovery_record_fingerprint_sha256=recovery_fp,
+        recovery_tree_fingerprint_sha256=tree_fp,
+        candidate_inventory_fingerprint_sha256=candidate_inventory_fp,
+        reference_inventory_fingerprint_sha256=reference_fp,
+        reference_provenance_sha256=provenance_fp,
     )
 
 
@@ -676,13 +740,21 @@ def verify_gaze_in_wild_exact_copy_review(
     reference_root: str | Path,
     reference_provenance_path: str | Path,
 ) -> GazeInWildExactCopyReview:
-    """Freshly revalidate both complete trees, provenance digest, and readiness lineage."""
+    """Freshly revalidate both trees, provenance digest, and readiness lineage."""
 
     validated = validate_gaze_in_wild_exact_copy_review(record_or_path)
-    record, _ = _load_json_object(record_or_path, label="Gaze-in-the-Wild exact-copy review")
-    readiness = validate_gaze_in_wild_first_party_quarantine_readiness(readiness_record_or_path)
-    if validated.readiness_record_fingerprint_sha256 != first_party_readiness_fingerprint(readiness):
-        raise BenchmarkIntegrityError("GIW exact-copy readiness-record identity drifted.")
+    record, _ = _load_json_object(
+        record_or_path,
+        label="Gaze-in-the-Wild exact-copy review",
+    )
+    readiness = validate_gaze_in_wild_first_party_quarantine_readiness(
+        readiness_record_or_path
+    )
+    current_readiness_fp = first_party_readiness_fingerprint(readiness)
+    if validated.readiness_record_fingerprint_sha256 != current_readiness_fp:
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy readiness-record identity drifted."
+        )
     if record["first_party_binding"] != readiness["first_party_binding"]:
         raise BenchmarkIntegrityError("GIW exact-copy first-party lineage drifted.")
 
@@ -692,7 +764,10 @@ def verify_gaze_in_wild_exact_copy_review(
         recovery_record_or_path=recovery_record_or_path,
         candidate_screen_record_or_path=candidate_screen_record_or_path,
     )
-    candidate_path, reference_path = _assert_distinct_trees(candidate_root, reference_root)
+    candidate_path, reference_path = _assert_distinct_trees(
+        candidate_root,
+        reference_root,
+    )
     reference_inventory = build_candidate_source_inventory(
         reference_path,
         dataset_key="gaze-in-the-wild",
@@ -702,29 +777,33 @@ def verify_gaze_in_wild_exact_copy_review(
         candidate_root=candidate_path,
         reference_root=reference_path,
     )
-    expected_candidate = record["candidate_binding"]
-    if expected_candidate["recovery_record_fingerprint_sha256"] != recovery_candidate_record_fingerprint(
-        recovery
-    ):
+    expected_candidate = _mapping(record, "candidate_binding")
+    recovery_fp = recovery_candidate_record_fingerprint(recovery)
+    if expected_candidate["recovery_record_fingerprint_sha256"] != recovery_fp:
         raise BenchmarkIntegrityError("GIW exact-copy recovery-record identity drifted.")
-    if expected_candidate["recovery_tree_fingerprint_sha256"] != str(
-        recovery["inventory"]["tree_fingerprint_sha256"]
-    ):
+    recovery_inventory = _mapping(recovery, "inventory")
+    current_tree_fp = str(recovery_inventory["tree_fingerprint_sha256"])
+    if expected_candidate["recovery_tree_fingerprint_sha256"] != current_tree_fp:
         raise BenchmarkIntegrityError("GIW exact-copy recovery-tree identity drifted.")
-    if expected_candidate["candidate_inventory_fingerprint_sha256"] != (
-        candidate_inventory.inventory_fingerprint_sha256
-    ):
+    current_candidate_fp = candidate_inventory.inventory_fingerprint_sha256
+    if expected_candidate["candidate_inventory_fingerprint_sha256"] != current_candidate_fp:
         raise BenchmarkIntegrityError("GIW exact-copy candidate inventory drifted.")
-    reference = record["reference_binding"]
-    if reference["reference_inventory_fingerprint_sha256"] != (
-        reference_inventory.inventory_fingerprint_sha256
-    ):
+
+    reference = _mapping(record, "reference_binding")
+    current_reference_fp = reference_inventory.inventory_fingerprint_sha256
+    if reference["reference_inventory_fingerprint_sha256"] != current_reference_fp:
         raise BenchmarkIntegrityError("GIW exact-copy reference inventory drifted.")
     if reference["reference_provenance_sha256"] != provenance_sha256:
-        raise BenchmarkIntegrityError("GIW exact-copy reference provenance digest drifted.")
-    if record["comparison"] != _comparison_summary(candidate_inventory, reference_inventory):
-        raise BenchmarkIntegrityError("GIW exact-copy live manifest comparison drifted.")
-
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy reference provenance digest drifted."
+        )
+    if record["comparison"] != _comparison_summary(
+        candidate_inventory,
+        reference_inventory,
+    ):
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy live manifest comparison drifted."
+        )
     return replace(validated, _binding_validated=True)
 
 
@@ -742,18 +821,23 @@ def write_gaze_in_wild_exact_copy_review(
     candidate, reference = _assert_distinct_trees(candidate_root, reference_root)
     target = Path(output)
     resolved = target.resolve(strict=False)
-    if (
-        resolved == candidate
-        or candidate in resolved.parents
-        or resolved == reference
-        or reference in resolved.parents
-    ):
-        raise BenchmarkIntegrityError("GIW exact-copy review output must be outside both trees.")
+    inside_candidate = resolved == candidate or candidate in resolved.parents
+    inside_reference = resolved == reference or reference in resolved.parents
+    if inside_candidate or inside_reference:
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy review output must be outside both trees."
+        )
     if target.exists() and not overwrite:
         raise FileExistsError(target)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(
-        json.dumps(dict(record), indent=2, sort_keys=True, ensure_ascii=False, allow_nan=False)
+        json.dumps(
+            dict(record),
+            indent=2,
+            sort_keys=True,
+            ensure_ascii=False,
+            allow_nan=False,
+        )
         + "\n",
         encoding="utf-8",
     )
@@ -764,16 +848,16 @@ def bind_verified_exact_copy_review_to_quarantine_exit(
     authorization: GazeInWildQuarantineExitAuthorization,
     exact_copy_review: GazeInWildExactCopyReview,
 ) -> GazeInWildQuarantineExitAuthorization:
-    """Bind a freshly verified exact-copy artifact into a still-manual quarantine-exit record.
-
-    The returned authorization remains pending. Authority, rights, redistribution, and the final
-    quarantine-exit decision remain separate manual controls in ``gaze_in_wild_quarantine_exit``.
-    """
+    """Bind fresh exact-copy evidence into a still-manual quarantine-exit record."""
 
     if not isinstance(authorization, GazeInWildQuarantineExitAuthorization):
-        raise TypeError("authorization must be a GazeInWildQuarantineExitAuthorization instance.")
+        raise TypeError(
+            "authorization must be a GazeInWildQuarantineExitAuthorization instance."
+        )
     if not isinstance(exact_copy_review, GazeInWildExactCopyReview):
-        raise TypeError("exact_copy_review must be a GazeInWildExactCopyReview instance.")
+        raise TypeError(
+            "exact_copy_review must be a GazeInWildExactCopyReview instance."
+        )
     if authorization.decision != "pending":
         raise BenchmarkIntegrityError(
             "GIW structured exact-copy evidence can only be bound before the quarantine-exit "
@@ -781,26 +865,32 @@ def bind_verified_exact_copy_review_to_quarantine_exit(
         )
     if exact_copy_review._binding_validated is not True:
         raise BenchmarkIntegrityError(
-            "GIW exact-copy review must be freshly revalidated against both current trees and the "
-            "reference-provenance digest before it can support quarantine review."
+            "GIW exact-copy review must be freshly revalidated against both current trees and "
+            "the reference-provenance digest before it can support quarantine review."
         )
     if not exact_copy_review.exact_copy_identity_verified:
         raise BenchmarkIntegrityError(
-            "GIW quarantine review cannot bind an exact-copy record whose identity decision is not "
-            "verified."
+            "GIW quarantine review cannot bind an exact-copy record whose identity decision is "
+            "not verified."
         )
     if authorization.recovery_record_fingerprint_sha256 != (
         exact_copy_review.recovery_record_fingerprint_sha256
     ):
-        raise BenchmarkIntegrityError("GIW exact-copy review does not bind this recovery record.")
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy review does not bind this recovery record."
+        )
     if authorization.recovery_tree_fingerprint_sha256 != (
         exact_copy_review.recovery_tree_fingerprint_sha256
     ):
-        raise BenchmarkIntegrityError("GIW exact-copy review does not bind this recovery tree.")
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy review does not bind this recovery tree."
+        )
     if authorization.candidate_inventory_fingerprint_sha256 != (
         exact_copy_review.candidate_inventory_fingerprint_sha256
     ):
-        raise BenchmarkIntegrityError("GIW exact-copy review does not bind this candidate inventory.")
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy review does not bind this candidate inventory."
+        )
 
     fingerprint = exact_copy_review.record_fingerprint_sha256
     note = f"Structured GIW exact-copy review fingerprint: {fingerprint}"
