@@ -77,7 +77,7 @@ def _candidate(
     kind: str = "candidate_original_layout_unverified",
 ) -> tuple[Path, dict, dict]:
     root = tmp_path / "candidate"
-    root.mkdir()
+    root.mkdir(parents=True)
     _write_processdata(root / "opaque.mat")
     (root / "README").write_text("unverified recovery candidate\n", encoding="utf-8")
     recovery = build_gaze_in_wild_recovery_candidate_review(
