@@ -17,6 +17,7 @@ from gazeforge.gaze_in_wild_candidate_preflight import (
 )
 from gazeforge.gaze_in_wild_recovery import (
     build_gaze_in_wild_recovery_candidate_review,
+    recovery_candidate_record_fingerprint,
     validate_gaze_in_wild_recovery_candidate_review,
 )
 
@@ -52,7 +53,11 @@ def _candidate_tree(tmp_path: Path) -> Path:
     process = root / "unclassified"
     process.mkdir(parents=True)
     _write_processdata(process / "opaque-a.mat")
-    (root / "other.bin").write_bytes(b"not a matlab ProcessData file")
+    savemat(
+        root / "other.bin",
+        {"Other": np.array([1.0])},
+        appendmat=False,
+    )
     (root / "README").write_text(
         "Unverified recovery candidate; names do not establish file roles.\n",
         encoding="utf-8",
@@ -186,7 +191,7 @@ def test_explicit_non_processdata_inventory_file_fails_structural_preflight(
 ) -> None:
     root = _candidate_tree(tmp_path)
     recovery = _recovery(root)
-    with pytest.raises(SchemaError):
+    with pytest.raises(SchemaError, match="does not contain MATLAB variable 'ProcessData'"):
         build_gaze_in_wild_candidate_processdata_screen(
             root,
             recovery,
@@ -306,6 +311,41 @@ def test_validator_rejects_preflight_identity_drift_after_refingerprinting(
         validate_gaze_in_wild_candidate_processdata_screen(screen)
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("participant_index", 0),
+        ("trial_index", -1),
+        ("stored_rate_hz", 0.0),
+        ("inferred_processed_rate_hz", float("inf")),
+        ("timestamp_count", 1),
+        ("por_shape", (8, 3)),
+        ("confidence_shape", (7,)),
+        ("scene_resolution_px", (1920, 0)),
+    ],
+)
+def test_validator_rejects_malformed_structural_observation_after_refingerprinting(
+    tmp_path: Path,
+    field: str,
+    value: object,
+) -> None:
+    root = _candidate_tree(tmp_path)
+    screen = _screen(root, _recovery(root))
+    screen["processdata_preflight"][field] = value
+    _refingerprint(screen)
+    with pytest.raises(BenchmarkIntegrityError):
+        validate_gaze_in_wild_candidate_processdata_screen(screen)
+
+
+def test_validator_rejects_bogus_candidate_kind_after_refingerprinting(tmp_path: Path) -> None:
+    root = _candidate_tree(tmp_path)
+    screen = _screen(root, _recovery(root))
+    screen["candidate_kind"] = "authoritative_copy"
+    _refingerprint(screen)
+    with pytest.raises(BenchmarkIntegrityError, match="candidate_kind"):
+        validate_gaze_in_wild_candidate_processdata_screen(screen)
+
+
 def test_verify_rebuilds_screen_and_detects_recovery_binding_substitution(
     tmp_path: Path,
 ) -> None:
@@ -316,8 +356,6 @@ def test_verify_rebuilds_screen_and_detects_recovery_binding_substitution(
 
     substituted = copy.deepcopy(recovery)
     substituted["provenance"]["note"] += " changed"
-    from gazeforge.gaze_in_wild_recovery import recovery_candidate_record_fingerprint
-
     substituted["record_fingerprint_sha256"] = recovery_candidate_record_fingerprint(substituted)
     with pytest.raises(BenchmarkIntegrityError, match="different recovery review"):
         verify_gaze_in_wild_candidate_processdata_screen(root, substituted, screen)
