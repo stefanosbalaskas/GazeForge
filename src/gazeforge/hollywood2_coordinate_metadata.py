@@ -1,14 +1,16 @@
 """Metadata-only inspection of pinned Hollywood2EM ARFF headers.
 
-This module deliberately stops before every ARFF ``@data`` section.  It can
-observe header vocabulary and schema signatures, but it cannot by itself verify
-coordinate units, participant identities, rights, or empirical validity.
+This module deliberately stops before every ARFF ``@data`` section. It can
+observe header vocabulary, ``%@METADATA`` fields, and schema signatures, but it
+cannot by itself verify coordinate units, participant identities, rights, or
+empirical validity.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 from collections import Counter
 from pathlib import Path
@@ -24,6 +26,10 @@ HEADER_BYTE_LIMIT = 262_144
 
 _ATTRIBUTE_RE = re.compile(
     r"^@attribute\s+(?:\"([^\"]+)\"|'([^']+)'|(\S+))\s+(.+)$",
+    flags=re.IGNORECASE,
+)
+_METADATA_RE = re.compile(
+    r"^%\s*@metadata\s+(\S+)\s+(.+?)\s*$",
     flags=re.IGNORECASE,
 )
 
@@ -45,6 +51,13 @@ _REQUIRED_GAZE_ATTRIBUTES = (
     "confidence",
     "handlabeller_1",
     "handlabeller_final",
+)
+_AUTHOR_CONVENTION_METADATA_KEYS = (
+    "width_px",
+    "height_px",
+    "width_mm",
+    "height_mm",
+    "distance_mm",
 )
 
 
@@ -92,6 +105,15 @@ def _read_header(path: Path) -> tuple[bytes, list[str]]:
     return header, text.splitlines()
 
 
+def _metadata_value(value: str) -> str | float:
+    text = value.strip()
+    try:
+        number = float(text)
+    except ValueError:
+        return text
+    return number if math.isfinite(number) else text
+
+
 def inspect_hollywood2_arff_header(path: str | Path) -> dict[str, Any]:
     """Inspect one ARFF header without reading or returning source rows."""
     file_path = Path(path)
@@ -100,9 +122,20 @@ def inspect_hollywood2_arff_header(path: str | Path) -> dict[str, Any]:
     header, lines = _read_header(file_path)
     attributes: list[str] = []
     attribute_types: list[str] = []
+    metadata: dict[str, str | float] = {}
     header_text = "\n".join(lines).lower()
     for line in lines:
-        match = _ATTRIBUTE_RE.match(line.strip())
+        stripped = line.strip()
+        metadata_match = _METADATA_RE.match(stripped)
+        if metadata_match is not None:
+            key = metadata_match.group(1).strip().lower()
+            if key in metadata:
+                raise BenchmarkIntegrityError(
+                    f"Hollywood2 ARFF header repeats metadata key {key!r}."
+                )
+            metadata[key] = _metadata_value(metadata_match.group(2))
+            continue
+        match = _ATTRIBUTE_RE.match(stripped)
         if match is None:
             continue
         name = next(group for group in match.groups()[:3] if group is not None)
@@ -119,6 +152,10 @@ def inspect_hollywood2_arff_header(path: str | Path) -> dict[str, Any]:
         "data_marker_found": True,
         "attributes": attributes,
         "attribute_types": attribute_types,
+        "metadata": metadata,
+        "author_convention_metadata_complete": all(
+            key in metadata for key in _AUTHOR_CONVENTION_METADATA_KEYS
+        ),
         "required_gaze_attributes_present": all(
             name in attributes for name in _REQUIRED_GAZE_ATTRIBUTES
         ),
@@ -144,7 +181,11 @@ def build_hollywood2_coordinate_metadata_probe(
 
     marker_counts: Counter[str] = Counter()
     signature_counts: Counter[tuple[str, ...]] = Counter()
+    metadata_key_counts: Counter[str] = Counter()
+    metadata_signature_counts: Counter[str] = Counter()
+    metadata_signature_values: dict[str, dict[str, str | float]] = {}
     required_schema_count = 0
+    author_metadata_complete_count = 0
     header_hashes: set[str] = set()
     max_header_bytes = 0
 
@@ -154,6 +195,14 @@ def build_hollywood2_coordinate_metadata_probe(
         signature_counts[signature] += 1
         if observation["required_gaze_attributes_present"]:
             required_schema_count += 1
+        if observation["author_convention_metadata_complete"]:
+            author_metadata_complete_count += 1
+        metadata = dict(observation["metadata"])
+        for key in metadata:
+            metadata_key_counts[key] += 1
+        metadata_signature = hashlib.sha256(_canonical_bytes(metadata)).hexdigest()
+        metadata_signature_counts[metadata_signature] += 1
+        metadata_signature_values.setdefault(metadata_signature, metadata)
         for marker, present in observation["markers"].items():
             if present:
                 marker_counts[marker] += 1
@@ -166,6 +215,24 @@ def build_hollywood2_coordinate_metadata_probe(
             signature_counts.items(), key=lambda item: (-item[1], item[0])
         )
     ]
+    metadata_signatures = [
+        {
+            "metadata": metadata_signature_values[digest],
+            "file_count": count,
+            "metadata_signature_sha256": digest,
+        }
+        for digest, count in sorted(
+            metadata_signature_counts.items(), key=lambda item: (-item[1], item[0])
+        )
+    ]
+    all_headers_match_author_convention = (
+        required_schema_count == len(paths)
+        and author_metadata_complete_count == len(paths)
+        and metadata_key_counts["width_px"] == len(paths)
+        and metadata_key_counts["height_px"] == len(paths)
+    )
+    candidate = "pixels" if all_headers_match_author_convention else "unresolved"
+
     record: dict[str, Any] = {
         "record_type": RECORD_TYPE,
         "status": STATUS,
@@ -178,14 +245,20 @@ def build_hollywood2_coordinate_metadata_probe(
             "unique_header_sha256_count": len(header_hashes),
             "max_header_bytes": max_header_bytes,
             "required_gaze_schema_file_count": required_schema_count,
+            "author_convention_metadata_complete_file_count": author_metadata_complete_count,
             "attribute_signatures": signatures,
+            "metadata_key_file_counts": dict(sorted(metadata_key_counts.items())),
+            "metadata_signatures": metadata_signatures,
             "marker_file_counts": {
                 marker: marker_counts.get(marker, 0) for marker in _MARKERS
             },
         },
         "coordinate_boundary": {
             "header_vocabulary_observed": True,
-            "coordinate_unit_candidate": "pixels",
+            "all_headers_match_author_input_metadata_convention": (
+                all_headers_match_author_convention
+            ),
+            "coordinate_unit_candidate": candidate,
             "coordinate_unit_verified": False,
             "coordinate_verification_basis_created": False,
             "pixel_to_visual_angle_conversion_verified": False,
