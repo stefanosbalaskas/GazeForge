@@ -1,0 +1,92 @@
+{
+  "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
+  "evidence_binding": {
+    "current_first_party_listing_url": "https://www.rit.edu/science/perception-movement-lab",
+    "current_listing_evidence_fingerprint_sha256": "e8257820f6cbfc9688e3771fd976c6afcb6b5ced93e385a009d10038a23bdcd5",
+    "current_listing_state_fingerprint_sha256": "b7fcf78719cb23ce7133fe3fb51a757c561c5b25797f40de4a2e00b8e1c4f839",
+    "current_listing_target": "https://pubmed.ncbi.nlm.nih.gov/32054884/",
+    "historical_distribution_evidence_fingerprint_sha256": "2400c81a0897fb414285069c368a8a9d96de1d18eb185b1073cf15bb1c8bd1da",
+    "historical_distribution_url": "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/"
+  },
+  "first_party_contact_candidates": [
+    {
+      "contact_status": "current_institutional_contact",
+      "email": "gabriel.diaz@rit.edu",
+      "name": "Gabriel J. Diaz",
+      "role_basis": "current Director, RIT Perception for Movement Lab",
+      "source": "https://www.rit.edu/science/directory/gjdgis-gabriel-diaz"
+    },
+    {
+      "contact_status": "historical_published_contact_current_delivery_not_verified",
+      "email": "rsk3900@rit.edu",
+      "name": "Rakshit Kothari",
+      "role_basis": "historical corresponding-author contact in the Gaze-in-the-Wild publication",
+      "source": "https://pubmed.ncbi.nlm.nih.gov/32054884/"
+    }
+  ],
+  "prepared_on": "2026-09-06",
+  "privacy_boundary": {
+    "request_contains_private_correspondence": false,
+    "response_workflow_commits_raw_correspondence_by_default": false
+  },
+  "purpose": "Request first-party clarification of the current authoritative compressed distribution and dataset-file reuse terms without inferring rights from public-availability statements.",
+  "questions": [
+    {
+      "id": "Q1",
+      "text": "What is the current authoritative location or access route for the compressed Gaze-in-the-Wild distribution used with the published processing code, including ProcessData and LabelData?",
+      "topic": "current_authoritative_distribution"
+    },
+    {
+      "id": "Q2",
+      "text": "If a current archive or replacement copy is available, is it the original compressed public distribution or a canonical replacement, and how can exact-copy identity be verified?",
+      "topic": "archive_identity"
+    },
+    {
+      "id": "Q3",
+      "text": "What terms explicitly govern analysis/research use of the dataset files themselves, separate from the article licence and processing-code licence?",
+      "topic": "analysis_use_terms"
+    },
+    {
+      "id": "Q4",
+      "text": "May the dataset files themselves be redistributed, mirrored, or bundled with research software, and under what exact terms or restrictions?",
+      "topic": "redistribution_terms"
+    },
+    {
+      "id": "Q5",
+      "text": "May derived metrics, trained-model outputs, validation reports, and non-reconstructive aggregate results be published if dataset-file redistribution is restricted?",
+      "topic": "derived_outputs"
+    },
+    {
+      "id": "Q6",
+      "text": "Who currently has authority to confirm or grant these dataset-file reuse and redistribution terms?",
+      "topic": "authority"
+    },
+    {
+      "id": "Q7",
+      "text": "If available, what authoritative metadata defines participant identities and the complete TrIdx-to-task mapping in the compressed distribution?",
+      "topic": "participant_trial_metadata"
+    },
+    {
+      "id": "Q8",
+      "text": "If available, what authoritative metadata defines distributed-file coordinate units/semantics and sampling cadence?",
+      "topic": "signal_metadata"
+    },
+    {
+      "id": "Q9",
+      "text": "If available, are independently created labeller streams separately recoverable for the same gaze samples, and how are those streams identified in the authoritative distribution?",
+      "topic": "labeller_streams"
+    }
+  ],
+  "record_type": "gaze-in-wild-first-party-resolution-request-v1",
+  "request_boundary": {
+    "article_cc_by_is_dataset_file_license": false,
+    "contact_email_domain_alone_proves_rights_authority": false,
+    "empirical_evidence_created": false,
+    "processing_repository_mit_is_dataset_file_license": false,
+    "public_availability_statement_is_dataset_file_license": false,
+    "request_itself_grants_analysis_permission": false,
+    "request_itself_grants_redistribution_permission": false,
+    "response_alone_verifies_exact_copy_identity": false
+  },
+  "request_fingerprint_sha256": "39ae27429a6a23c2fc07125e8f500b9d8d2ceb133c59e52d7379225007a7d6db"
+}

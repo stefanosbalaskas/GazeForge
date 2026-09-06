@@ -1,0 +1,100 @@
+name: Gaze-in-the-Wild first-party resolution request
+
+on:
+  push:
+    branches:
+      - main
+      - validation/gaze-in-wild-first-party-resolution-request
+    paths:
+      - "src/gazeforge/gaze_in_wild_first_party_resolution.py"
+      - "src/gazeforge/gaze_in_wild_first_party_resolution_cli.py"
+      - "tests/test_gaze_in_wild_first_party_resolution.py"
+      - "tests/test_gaze_in_wild_first_party_resolution_cli.py"
+      - "validation/requests/gaze-in-wild/**"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-distribution-availability-evidence-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-current-first-party-listing-evidence-v1.json"
+      - "docs/gaze-in-wild-first-party-resolution.md"
+      - ".github/workflows/gaze-in-wild-first-party-resolution.yml"
+      - "pyproject.toml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-request:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test dependencies
+        run: python -m pip install ".[dev]"
+      - name: Validate exact parent evidence and committed request
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_first_party_resolution import (
+              EXPECTED_REQUEST_FINGERPRINT_SHA256,
+              build_gaze_in_wild_first_party_resolution_request,
+              validate_gaze_in_wild_first_party_resolution_request,
+          )
+
+          distribution = Path(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-distribution-availability-evidence-v1.json"
+          )
+          current = Path(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-current-first-party-listing-evidence-v1.json"
+          )
+          request = Path(
+              "validation/requests/gaze-in-wild/"
+              "gaze-in-wild-first-party-resolution-request-v1.json"
+          )
+
+          validated = validate_gaze_in_wild_first_party_resolution_request(
+              request,
+              distribution,
+              current,
+          )
+          generated = build_gaze_in_wild_first_party_resolution_request(distribution, current)
+          committed = json.loads(request.read_text(encoding="utf-8"))
+          assert generated == committed
+          assert validated.request_fingerprint_sha256 == EXPECTED_REQUEST_FINGERPRINT_SHA256
+          print("GIW first-party request fingerprint:", EXPECTED_REQUEST_FINGERPRINT_SHA256)
+          PY
+      - name: Enforce request-directory privacy boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          root = Path("validation/requests/gaze-in-wild")
+          expected = {"gaze-in-wild-first-party-resolution-request-v1.json"}
+          actual = {
+              path.relative_to(root).as_posix()
+              for path in root.rglob("*")
+              if path.is_file()
+          }
+          assert actual == expected, (
+              "Only the deterministic public request packet may be committed under "
+              f"{root}; found {sorted(actual)}"
+          )
+          PY
+      - name: Run focused first-party resolution tests
+        run: >-
+          pytest -q
+          tests/test_gaze_in_wild_first_party_resolution.py
+          tests/test_gaze_in_wild_first_party_resolution_cli.py
