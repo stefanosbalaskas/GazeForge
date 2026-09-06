@@ -3,11 +3,26 @@ name: Hollywood2 coordinate metadata probe
 on:
   push:
     branches:
+      - main
       - research/hollywood2-coordinate-metadata
     paths:
       - "src/gazeforge/hollywood2_coordinate_metadata.py"
+      - "src/gazeforge/hollywood2_coordinate_evidence.py"
       - "scripts/hollywood2_coordinate_metadata_probe.py"
       - "tests/test_hollywood2_coordinate_metadata.py"
+      - "tests/test_hollywood2_coordinate_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-coordinate-semantics-evidence-v1.json"
+      - "docs/hollywood2-coordinate-semantics.md"
+      - ".github/workflows/hollywood2-coordinate-metadata-probe.yml"
+  pull_request:
+    paths:
+      - "src/gazeforge/hollywood2_coordinate_metadata.py"
+      - "src/gazeforge/hollywood2_coordinate_evidence.py"
+      - "scripts/hollywood2_coordinate_metadata_probe.py"
+      - "tests/test_hollywood2_coordinate_metadata.py"
+      - "tests/test_hollywood2_coordinate_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-coordinate-semantics-evidence-v1.json"
+      - "docs/hollywood2-coordinate-semantics.md"
       - ".github/workflows/hollywood2-coordinate-metadata-probe.yml"
   workflow_dispatch:
 
@@ -33,10 +48,36 @@ jobs:
         run: |
           ruff check \
             src/gazeforge/hollywood2_coordinate_metadata.py \
+            src/gazeforge/hollywood2_coordinate_evidence.py \
             scripts/hollywood2_coordinate_metadata_probe.py \
-            tests/test_hollywood2_coordinate_metadata.py
-      - name: Run focused coordinate metadata tests
-        run: python -m pytest -q tests/test_hollywood2_coordinate_metadata.py
+            tests/test_hollywood2_coordinate_metadata.py \
+            tests/test_hollywood2_coordinate_evidence.py
+      - name: Run focused coordinate evidence tests
+        run: |
+          python -m pytest -q \
+            tests/test_hollywood2_coordinate_metadata.py \
+            tests/test_hollywood2_coordinate_evidence.py
+      - name: Revalidate exact author input convention
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://raw.githubusercontent.com/MikhailStartsev/deep_em_classifier/9a345a37aab47ac6780ce0d4b5798cc15291c75b/README.md"
+          curl --fail --show-error --silent --location --retry 3 --retry-all-errors \
+            "$url" -o _hollywood2_author_readme.md
+          observed="$(git hash-object _hollywood2_author_readme.md)"
+          test "$observed" = "112f5f2a235f059ac2394db3180956474e644c06"
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_coordinate_evidence import (
+              validate_author_input_convention,
+          )
+
+          validate_author_input_convention(
+              Path("_hollywood2_author_readme.md").read_text(encoding="utf-8")
+          )
+          print("exact author ARFF input convention verified")
+          PY
       - name: Acquire pinned canonical Hollywood2EM source
         shell: bash
         run: |
@@ -70,36 +111,32 @@ jobs:
           python scripts/hollywood2_coordinate_metadata_probe.py \
             --source-root _hollywood2_em \
             --output hollywood2-coordinate-metadata-live-probe.json
-      - name: Revalidate no-promotion and no-row boundary
+      - name: Bind fresh headers to immutable coordinate evidence
         run: |
           python - <<'PY'
-          import json
           from pathlib import Path
 
-          from gazeforge.hollywood2_coordinate_metadata import probe_fingerprint
-
-          path = Path("hollywood2-coordinate-metadata-live-probe.json")
-          record = json.loads(path.read_text(encoding="utf-8"))
-          assert record["probe_fingerprint_sha256"] == probe_fingerprint(record)
-          assert record["source_binding"]["commit_sha1"] == (
-              "870fa6d6209c9085260918d61433a0a2c70fd497"
+          from gazeforge.hollywood2_coordinate_evidence import (
+              validate_live_probe_against_coordinate_evidence,
           )
-          coordinate = record["coordinate_boundary"]
-          assert coordinate["coordinate_unit_verified"] is False
-          assert coordinate["coordinate_verification_basis_created"] is False
-          assert coordinate["pixel_to_visual_angle_conversion_verified"] is False
-          assert coordinate["unit_sensitive_cross_dataset_modelling_ready"] is False
-          scientific = record["scientific_boundary"]
-          assert scientific["raw_source_rows_read"] is False
-          assert scientific["raw_source_rows_embedded"] is False
-          assert scientific["source_filenames_embedded"] is False
-          assert scientific["participant_disjoint_validation_created"] is False
-          assert scientific["cross_dataset_validation_created"] is False
-          assert scientific["new_empirical_performance_claim_created"] is False
-          text = path.read_text(encoding="utf-8")
-          assert ".arff" not in text
-          print("coordinate metadata probe fingerprint:", record["probe_fingerprint_sha256"])
-          print("coordinate unit verified:", coordinate["coordinate_unit_verified"])
+
+          evidence = validate_live_probe_against_coordinate_evidence(
+              Path("hollywood2-coordinate-metadata-live-probe.json"),
+              Path(
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-coordinate-semantics-evidence-v1.json"
+              ),
+          )
+          print("coordinate evidence fingerprint:", evidence["evidence_fingerprint_sha256"])
+          print("verified coordinate unit:", evidence["verification"]["coordinate_unit"])
+          print(
+              "participant mapping verified:",
+              evidence["scientific_boundary"]["participant_identity_mapping_verified"],
+          )
+          print(
+              "cross-dataset validation created:",
+              evidence["scientific_boundary"]["cross_dataset_validation_created"],
+          )
           PY
       - name: Upload metadata-only probe artifact
         uses: actions/upload-artifact@v4
