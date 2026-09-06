@@ -33,6 +33,9 @@ _EXIT_ELIGIBLE_CANDIDATE_KINDS = {
     "candidate_original_layout_unverified",
 }
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+_STRUCTURED_EXACT_COPY_RE = re.compile(
+    r"^Structured GIW exact-copy review fingerprint: ([0-9a-f]{64})$"
+)
 _UNRESOLVED = {"", "review_required", "__unresolved__", "unknown", "none", "nan"}
 _SCIENTIFIC_BOUNDARY = {
     "quarantine_exit_review_only": True,
@@ -65,6 +68,17 @@ def _resolved(value: Any, *, field_name: str) -> str:
             f"Authorized quarantine exits require reviewed {field_name}."
         )
     return text
+
+
+def _structured_exact_copy_fingerprint(value: Any) -> str:
+    evidence = _resolved(value, field_name="exact_copy_identity_evidence")
+    match = _STRUCTURED_EXACT_COPY_RE.fullmatch(evidence)
+    if match is None:
+        raise BenchmarkIntegrityError(
+            "GIW exact-copy identity must be backed by the canonical structured exact-copy "
+            "review fingerprint, not free-text evidence."
+        )
+    return match.group(1)
 
 
 def _load_json_object(
@@ -352,6 +366,75 @@ def _validate_authorized_template_consistency(
             )
 
 
+def _validate_structured_exact_copy_binding(
+    authorization: GazeInWildQuarantineExitAuthorization,
+    *,
+    root: str | Path,
+    recovery_record_or_path: Mapping[str, Any] | str | Path,
+    exact_copy_review_record_or_path: Mapping[str, Any] | str | Path | None,
+    readiness_record_or_path: Mapping[str, Any] | str | Path | None,
+    candidate_screen_record_or_path: Mapping[str, Any] | str | Path | None,
+    reference_root: str | Path | None,
+    reference_provenance_path: str | Path | None,
+) -> None:
+    if not authorization.exact_copy_identity_verified:
+        return
+
+    expected_fingerprint = _structured_exact_copy_fingerprint(
+        authorization.exact_copy_identity_evidence
+    )
+    required_inputs = {
+        "exact_copy_review_record_or_path": exact_copy_review_record_or_path,
+        "readiness_record_or_path": readiness_record_or_path,
+        "candidate_screen_record_or_path": candidate_screen_record_or_path,
+        "reference_root": reference_root,
+        "reference_provenance_path": reference_provenance_path,
+    }
+    missing = [name for name, value in required_inputs.items() if value is None]
+    if missing:
+        raise BenchmarkIntegrityError(
+            "GIW quarantine-exit exact-copy identity requires fresh structured exact-copy live "
+            f"verification; missing inputs: {missing}."
+        )
+
+    from .gaze_in_wild_exact_copy_review import verify_gaze_in_wild_exact_copy_review
+
+    verified = verify_gaze_in_wild_exact_copy_review(
+        exact_copy_review_record_or_path,
+        readiness_record_or_path=readiness_record_or_path,
+        candidate_root=root,
+        recovery_record_or_path=recovery_record_or_path,
+        candidate_screen_record_or_path=candidate_screen_record_or_path,
+        reference_root=reference_root,
+        reference_provenance_path=reference_provenance_path,
+    )
+    if verified.exact_copy_identity_verified is not True:
+        raise BenchmarkIntegrityError(
+            "GIW quarantine exit cannot use a structured exact-copy review whose live decision is "
+            "not verified."
+        )
+    if verified.record_fingerprint_sha256 != expected_fingerprint:
+        raise BenchmarkIntegrityError(
+            "GIW quarantine-exit exact-copy evidence does not match the freshly verified "
+            "structured review fingerprint."
+        )
+    expected_bindings = {
+        "recovery_record_fingerprint_sha256": (
+            authorization.recovery_record_fingerprint_sha256
+        ),
+        "recovery_tree_fingerprint_sha256": authorization.recovery_tree_fingerprint_sha256,
+        "candidate_inventory_fingerprint_sha256": (
+            authorization.candidate_inventory_fingerprint_sha256
+        ),
+    }
+    for field_name, expected in expected_bindings.items():
+        if getattr(verified, field_name) != expected:
+            raise BenchmarkIntegrityError(
+                "GIW structured exact-copy review is not bound to this exact quarantine-exit "
+                f"{field_name}."
+            )
+
+
 def build_gaze_in_wild_quarantine_exit_authorization(
     root: str | Path,
     recovery_record_or_path: Mapping[str, Any] | str | Path,
@@ -423,8 +506,13 @@ def validate_gaze_in_wild_quarantine_exit_authorization(
     recovery_record_or_path: Mapping[str, Any] | str | Path,
     inventory: CandidateSourceInventory,
     spec: GazeInWildSourceAuditSpec,
+    exact_copy_review_record_or_path: Mapping[str, Any] | str | Path | None = None,
+    readiness_record_or_path: Mapping[str, Any] | str | Path | None = None,
+    candidate_screen_record_or_path: Mapping[str, Any] | str | Path | None = None,
+    reference_root: str | Path | None = None,
+    reference_provenance_path: str | Path | None = None,
 ) -> GazeInWildQuarantineExitAuthorization:
-    """Revalidate the exit record against the current exact candidate and audit template."""
+    """Revalidate the exit record, including any promoted structured exact-copy identity."""
     authorization = (
         authorization_or_path
         if isinstance(authorization_or_path, GazeInWildQuarantineExitAuthorization)
@@ -455,6 +543,16 @@ def validate_gaze_in_wild_quarantine_exit_authorization(
     if authorization.audit_template_fingerprint_sha256 != template_fingerprint:
         raise BenchmarkIntegrityError("GIW quarantine-exit audit-template identity drifted.")
     _validate_authorized_template_consistency(authorization, spec)
+    _validate_structured_exact_copy_binding(
+        authorization,
+        root=root,
+        recovery_record_or_path=recovery_record_or_path,
+        exact_copy_review_record_or_path=exact_copy_review_record_or_path,
+        readiness_record_or_path=readiness_record_or_path,
+        candidate_screen_record_or_path=candidate_screen_record_or_path,
+        reference_root=reference_root,
+        reference_provenance_path=reference_provenance_path,
+    )
     object.__setattr__(authorization, "_binding_validated", True)
     return authorization
 
@@ -465,10 +563,11 @@ def require_authorized_gaze_in_wild_quarantine_exit(
 ) -> None:
     """Require a freshly validated authorized exit bound to one exact GIW audit template.
 
-    Full candidate-tree/recovery revalidation is performed by
-    :func:`validate_gaze_in_wild_quarantine_exit_authorization`. The validation state is ephemeral:
-    it is not serialized, and editing/reloading a record requires another complete validation before
-    the generic source-audit authorization boundary will accept it.
+    Full candidate-tree/recovery revalidation and any positive structured exact-copy identity
+    revalidation are performed by :func:`validate_gaze_in_wild_quarantine_exit_authorization`.
+    The validation state is ephemeral: it is not serialized, and editing/reloading a record requires
+    another complete live validation before the generic source-audit authorization boundary will
+    accept it.
     """
     if not isinstance(authorization, GazeInWildQuarantineExitAuthorization):
         raise BenchmarkIntegrityError(
@@ -478,7 +577,8 @@ def require_authorized_gaze_in_wild_quarantine_exit(
     if authorization._binding_validated is not True:
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild quarantine-exit record must be freshly revalidated against the "
-            "current candidate tree, recovery review, candidate inventory, and audit template."
+            "current candidate tree, recovery review, candidate inventory, audit template, and "
+            "structured exact-copy evidence."
         )
     if authorization.decision != "authorized":
         raise BenchmarkIntegrityError(

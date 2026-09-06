@@ -3,9 +3,11 @@ from __future__ import annotations
 import json
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+import gazeforge.gaze_in_wild_exact_copy_review as exact_copy_module
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.gaze_in_wild_audit import (
     GazeInWildLabelFileRecord,
@@ -30,6 +32,8 @@ from gazeforge.source_candidate_authorization import (
     write_candidate_source_audit_authorization,
 )
 from gazeforge.source_candidate_cli import main
+
+_EXACT_COPY_FP = "a" * 64
 
 
 def _tree(tmp_path: Path) -> Path:
@@ -129,7 +133,46 @@ def _generic_authorization(template: GazeInWildSourceAuditSpec):
     )
 
 
-def test_cli_builds_validates_and_applies_giw_quarantine_exit(tmp_path, capsys):
+def _structured_cli_inputs(tmp_path: Path) -> dict[str, Path]:
+    reference_root = tmp_path / "reference"
+    reference_root.mkdir()
+    exact_copy_review = tmp_path / "exact-copy-review.json"
+    readiness_record = tmp_path / "readiness.json"
+    candidate_screen = tmp_path / "candidate-screen.json"
+    reference_provenance = tmp_path / "reference-provenance.txt"
+    exact_copy_review.write_text("{}\n", encoding="utf-8")
+    readiness_record.write_text("{}\n", encoding="utf-8")
+    candidate_screen.write_text("{}\n", encoding="utf-8")
+    reference_provenance.write_text("reviewed reference fixture\n", encoding="utf-8")
+    return {
+        "exact_copy_review": exact_copy_review,
+        "readiness_record": readiness_record,
+        "candidate_screen": candidate_screen,
+        "reference_root": reference_root,
+        "reference_provenance": reference_provenance,
+    }
+
+
+def _structured_cli_args(paths: dict[str, Path]) -> list[str]:
+    return [
+        "--exact-copy-review",
+        str(paths["exact_copy_review"]),
+        "--readiness-record",
+        str(paths["readiness_record"]),
+        "--candidate-screen",
+        str(paths["candidate_screen"]),
+        "--reference-root",
+        str(paths["reference_root"]),
+        "--reference-provenance",
+        str(paths["reference_provenance"]),
+    ]
+
+
+def test_cli_builds_validates_and_applies_giw_quarantine_exit(
+    tmp_path,
+    capsys,
+    monkeypatch: pytest.MonkeyPatch,
+):
     root, inventory_path, recovery_path, template, template_path = _artifacts(tmp_path)
     exit_path = tmp_path / "exit.json"
 
@@ -166,7 +209,9 @@ def test_cli_builds_validates_and_applies_giw_quarantine_exit(tmp_path, capsys):
         authoritative_source_revision=template.source_revision,
         source_authority_evidence="first-party authority evidence reviewed",
         exact_copy_identity_verified=True,
-        exact_copy_identity_evidence="exact candidate copy identity reviewed",
+        exact_copy_identity_evidence=(
+            f"Structured GIW exact-copy review fingerprint: {_EXACT_COPY_FP}"
+        ),
         dataset_file_rights_resolved=True,
         reuse_terms_verified=True,
         reuse_terms_source=template.reuse_terms_source,
@@ -184,6 +229,29 @@ def test_cli_builds_validates_and_applies_giw_quarantine_exit(tmp_path, capsys):
         overwrite=True,
     )
 
+    def fake_verify(*args, **kwargs):
+        return SimpleNamespace(
+            exact_copy_identity_verified=True,
+            record_fingerprint_sha256=_EXACT_COPY_FP,
+            recovery_record_fingerprint_sha256=(
+                authorized_exit.recovery_record_fingerprint_sha256
+            ),
+            recovery_tree_fingerprint_sha256=(
+                authorized_exit.recovery_tree_fingerprint_sha256
+            ),
+            candidate_inventory_fingerprint_sha256=(
+                authorized_exit.candidate_inventory_fingerprint_sha256
+            ),
+        )
+
+    monkeypatch.setattr(
+        exact_copy_module,
+        "verify_gaze_in_wild_exact_copy_review",
+        fake_verify,
+    )
+    structured_paths = _structured_cli_inputs(tmp_path)
+    structured_args = _structured_cli_args(structured_paths)
+
     assert (
         main(
             [
@@ -198,6 +266,7 @@ def test_cli_builds_validates_and_applies_giw_quarantine_exit(tmp_path, capsys):
                 str(template_path),
                 "--root",
                 str(root),
+                *structured_args,
             ]
         )
         == 0
@@ -230,6 +299,7 @@ def test_cli_builds_validates_and_applies_giw_quarantine_exit(tmp_path, capsys):
                 str(inventory_path),
                 "--root",
                 str(root),
+                *structured_args,
                 "--output",
                 str(empirical_path),
             ]
