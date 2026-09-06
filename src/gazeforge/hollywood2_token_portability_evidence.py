@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +32,7 @@ V2_CANONICAL_REPORT_FINGERPRINT = (
 V2_CANONICAL_REPORT_FILE_SHA256 = (
     "d69b8811bb2c3c11ea21737ddcb308e7c0b601afd8858e8e23248fd243b51f51"
 )
+HOLLYWOOD2_SOURCE_TOKEN_V1_V2_MAX_ABS_METRIC_DELTA = 1e-14
 
 
 def portability_evidence_fingerprint(record: dict[str, Any]) -> str:
@@ -43,6 +45,63 @@ def _load_record(source: str | Path | dict[str, Any]) -> dict[str, Any]:
     if isinstance(source, dict):
         return dict(source)
     return json.loads(Path(source).read_text(encoding="utf-8"))
+
+
+def validate_hollywood2_v1_v2_metric_equivalence(
+    v1_metrics: Any,
+    v2_metrics: Any,
+) -> float:
+    """Validate that v1→v2 differs only within the reviewed serialization bound.
+
+    Structure, keys, list lengths, scalar types, integers, strings, booleans, and nulls must be
+    identical. Finite floats may differ by at most 1e-14, which is wider than the observed direct
+    v1→v2 maximum (~7.1e-15) but remains narrower than the changed decimal place itself.
+    """
+
+    def walk(first: Any, second: Any, path: str) -> float:
+        if isinstance(first, dict):
+            if not isinstance(second, dict) or set(first) != set(second):
+                raise BenchmarkIntegrityError(
+                    f"Hollywood2 v1/v2 metric structure drifted at {path}."
+                )
+            return max(
+                (walk(first[key], second[key], f"{path}.{key}") for key in first),
+                default=0.0,
+            )
+        if isinstance(first, list):
+            if not isinstance(second, list) or len(first) != len(second):
+                raise BenchmarkIntegrityError(
+                    f"Hollywood2 v1/v2 metric list structure drifted at {path}."
+                )
+            return max(
+                (
+                    walk(item_first, item_second, f"{path}[{index}]")
+                    for index, (item_first, item_second) in enumerate(zip(first, second))
+                ),
+                default=0.0,
+            )
+        if isinstance(first, float):
+            if not isinstance(second, float):
+                raise BenchmarkIntegrityError(
+                    f"Hollywood2 v1/v2 metric scalar type drifted at {path}."
+                )
+            if not math.isfinite(first) or not math.isfinite(second):
+                raise BenchmarkIntegrityError(
+                    f"Hollywood2 v1/v2 metrics must be finite at {path}."
+                )
+            delta = abs(first - second)
+            if delta > HOLLYWOOD2_SOURCE_TOKEN_V1_V2_MAX_ABS_METRIC_DELTA:
+                raise BenchmarkIntegrityError(
+                    f"Hollywood2 v1/v2 metric delta exceeded portability bound at {path}."
+                )
+            return delta
+        if type(first) is not type(second) or first != second:
+            raise BenchmarkIntegrityError(
+                f"Hollywood2 v1/v2 non-float metric value drifted at {path}."
+            )
+        return 0.0
+
+    return walk(v1_metrics, v2_metrics, "metrics")
 
 
 def validate_hollywood2_source_token_portability_evidence(
