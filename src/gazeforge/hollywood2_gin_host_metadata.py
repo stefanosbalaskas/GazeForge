@@ -148,7 +148,16 @@ def summarize_datacite(fetch: dict[str, Any]) -> dict[str, Any]:
             if not isinstance(attributes, dict) or not _contains_repository_url(attributes):
                 continue
             match: dict[str, Any] = {"id": item.get("id")}
-            for key in ("doi", "url", "publisher", "publicationYear", "types", "titles", "rightsList"):
+            match_fields = (
+                "doi",
+                "url",
+                "publisher",
+                "publicationYear",
+                "types",
+                "titles",
+                "rightsList",
+            )
+            for key in match_fields:
                 value = attributes.get(key)
                 if isinstance(value, (str, int, float, bool, list, dict)) or value is None:
                     match[key] = value
