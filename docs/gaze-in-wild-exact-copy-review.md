@@ -55,6 +55,14 @@ Changes to the candidate tree, reference tree, provenance artifact, recovery rec
 
 The returned quarantine-exit record remains `decision="pending"`. Source authority, rights, analysis-use permission, redistribution terms, and the final quarantine-exit decision remain separate manual controls in the existing gate.
 
+### Structured binding is mandatory at final exit validation
+
+The pending handoff is not a reusable proof token. If a reviewer later promotes the quarantine-exit decision to `authorized`, `validate_gaze_in_wild_quarantine_exit_authorization()` must be given the exact-copy review record plus the live readiness record, candidate screen, separate reference tree, and reference-provenance artifact. The validator reruns `verify_gaze_in_wild_exact_copy_review()` and requires the resulting review fingerprint to match the canonical fingerprint carried by `exact_copy_identity_evidence`.
+
+An authorized quarantine exit therefore cannot be validated from a free-text statement such as “candidate manifest matched authoritative copy identity,” nor from a copied SHA-256 string without the live comparison inputs. Candidate-tree, recovery-record, inventory, and audit-template validation alone are insufficient once `exact_copy_identity_verified=True`.
+
+The validated state remains ephemeral and is not serialized. Reloading or editing an authorized exit record requires the complete structured exact-copy verification again before `require_authorized_gaze_in_wild_quarantine_exit()` will allow the downstream source-audit authorization boundary to use it.
+
 ## Claims that remain prohibited
 
 Even after a positive exact-copy review, this layer does **not** establish or create:
