@@ -6,11 +6,13 @@ on:
       - main
       - research/hollywood2-author-license-statement
     paths:
+      - "src/gazeforge/hollywood2_author_license_evidence.py"
       - "scripts/hollywood2_author_license_probe.py"
       - "tests/test_hollywood2_author_license_probe.py"
       - ".github/workflows/hollywood2-author-license-probe.yml"
   pull_request:
     paths:
+      - "src/gazeforge/hollywood2_author_license_evidence.py"
       - "scripts/hollywood2_author_license_probe.py"
       - "tests/test_hollywood2_author_license_probe.py"
       - ".github/workflows/hollywood2-author-license-probe.yml"
@@ -39,6 +41,7 @@ jobs:
       - name: Ruff probe tranche
         run: >-
           ruff check
+          src/gazeforge/hollywood2_author_license_evidence.py
           scripts/hollywood2_author_license_probe.py
           tests/test_hollywood2_author_license_probe.py
       - name: Run focused unit tests
