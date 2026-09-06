@@ -61,6 +61,8 @@ The pending handoff is not a reusable proof token. If a reviewer later promotes 
 
 An authorized quarantine exit therefore cannot be validated from a free-text statement such as “candidate manifest matched authoritative copy identity,” nor from a copied SHA-256 string without the live comparison inputs. Candidate-tree, recovery-record, inventory, and audit-template validation alone are insufficient once `exact_copy_identity_verified=True`.
 
+The JSON-only source-candidate CLI propagates the same live proof contract through `quarantine-exit-validate`, `authorization-apply`, and `lineage`. For a promoted exact-copy identity these commands accept `--exact-copy-review`, `--readiness-record`, `--candidate-screen`, `--reference-root`, and `--reference-provenance`; omitting the required live inputs causes the validator to fail closed rather than treating the stored fingerprint as reusable proof.
+
 The validated state remains ephemeral and is not serialized. Reloading or editing an authorized exit record requires the complete structured exact-copy verification again before `require_authorized_gaze_in_wild_quarantine_exit()` will allow the downstream source-audit authorization boundary to use it.
 
 ## Claims that remain prohibited
