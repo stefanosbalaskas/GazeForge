@@ -88,3 +88,54 @@ def test_non_json_api_response_is_retained_as_response_identity_only():
     assert record["api"]["json_object"] is False
     assert record["api"]["license_key_paths"] == []
     assert record["rights_interpretation"]["exact_license_identifier_verified"] is False
+
+
+def test_datacite_exact_repository_match_is_observed_but_not_auto_authorized():
+    datacite_body = json.dumps(
+        {
+            "meta": {"total": 1},
+            "data": [
+                {
+                    "id": "10.1234/example",
+                    "attributes": {
+                        "doi": "10.1234/example",
+                        "url": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em",
+                        "publisher": "Example",
+                        "publicationYear": 2020,
+                        "titles": [{"title": "Hollywood2EM"}],
+                        "rightsList": [
+                            {"rights": "MIT License", "rightsIdentifier": "MIT"}
+                        ],
+                    },
+                }
+            ],
+        }
+    ).encode()
+    record = build_probe_record(
+        _fetch(b"forbidden", url="https://example.test/api", status=403),
+        _fetch(b"forbidden", url="https://example.test/repo", status=403),
+        [_fetch(datacite_body, url="https://api.datacite.org/dois?query=hollywood2")],
+    )
+
+    registry = record["datacite_queries"][0]
+    rights = record["rights_interpretation"]
+    assert registry["exact_repository_match_count"] == 1
+    assert registry["exact_repository_matches"][0]["id"] == "10.1234/example"
+    assert rights["datacite_exact_repository_match_count"] == 1
+    assert rights["exact_license_identifier_verified"] is False
+    assert rights["analysis_use_authorized"] is False
+    assert rights["raw_data_redistribution_authorized"] is False
+
+
+def test_zero_datacite_match_never_becomes_global_absence_claim():
+    datacite_body = json.dumps({"meta": {"total": 0}, "data": []}).encode()
+    record = build_probe_record(
+        _fetch(b"forbidden", url="https://example.test/api", status=403),
+        _fetch(b"forbidden", url="https://example.test/repo", status=403),
+        [_fetch(datacite_body, url="https://api.datacite.org/dois?query=hollywood2")],
+    )
+
+    rights = record["rights_interpretation"]
+    assert rights["datacite_exact_repository_match_count"] == 0
+    assert rights["registry_zero_match_is_global_absence_claim"] is False
+    assert rights["exact_license_identifier_verified"] is False
