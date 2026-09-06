@@ -1,0 +1,69 @@
+{
+  "claim_limits": [
+    "This preflight verifies structural compatibility for one quarantined ProcessData object only.",
+    "ETG.Labels is not treated as separately distributed LabelData or an independent labeller stream.",
+    "The stored or timestamp-inferred processed rate is not promoted to acquisition-hardware cadence or corpus-wide cadence.",
+    "Presence and shape of ETG.POR/SceneResolution do not independently establish coordinate semantics for the historical distribution.",
+    "The result does not establish distribution identity, dataset-file rights, analysis permission, redistribution permission, or empirical eligibility."
+  ],
+  "processdata": {
+    "adapter_coordinate_fields_compatible": true,
+    "bytes": 40528499,
+    "confidence_shape": [
+      106225
+    ],
+    "inferred_processed_rate_hz": 299.9955942810773,
+    "labels_present": true,
+    "labels_shape": [
+      106225
+    ],
+    "participant_index": 2,
+    "path": "ProcessData.mat",
+    "por_shape": [
+      106225,
+      2
+    ],
+    "scene_resolution_px": [
+      1920,
+      1080
+    ],
+    "sha256": "d633bbf0a3a9224b71e286ada10a63abe7761264eec7e8c25c94fcf0bbbafc63",
+    "stored_rate_hz": 300.0,
+    "timestamp_count": 106225,
+    "timestamp_end_s": 354.0851999999941,
+    "timestamp_grid_valid": true,
+    "timestamp_start_s": 0.0,
+    "top_level_labeldata_present": false,
+    "trial_index": 2
+  },
+  "record_fingerprint_sha256": "d2ec4cc066302646e199b88d29e6f8c165b1ce735c61f1652b8e00b1511a75dd",
+  "record_type": "gaze-in-wild-processdata-preflight-v1",
+  "scientific_boundary": {
+    "adapter_coordinate_fields_compatible_for_this_sample": true,
+    "analysis_use_permitted": false,
+    "authoritative_original_or_canonical_dataset_copy_obtained": false,
+    "coordinate_semantics_verified": false,
+    "corpus_sampling_rate_distribution_verified": false,
+    "dataset_file_rights_resolved": false,
+    "empirical_evidence_eligible": false,
+    "full_distribution_recovered": false,
+    "independent_labeller_recoverability_verified": false,
+    "original_distribution_equivalence_verified": false,
+    "participant_mapping_complete": false,
+    "processdata_structural_preflight_verified": true,
+    "published_acquisition_cadence_verified_from_sample": false,
+    "quarantine_exit_authorized": false,
+    "redistribution_authorized": false,
+    "separate_labeldata_recovered": false,
+    "source_audit_ready": false,
+    "trial_task_mapping_complete": false
+  },
+  "source": {
+    "archive_path": "DataExtraction/all_preprocessing_steps.zip",
+    "archive_sha256": "5deef95a4d847b7b21a37c5d746212549b63217bd64159bec72992d82b575956",
+    "member_path": "exports/ProcessData.mat",
+    "parent_evidence_fingerprint_sha256": "f144f5b7edcdbd02e85b53e751812c41b6567105219fbfb63c097bcefc5c9ffc",
+    "repository": "https://github.com/RSKothari/Gaze-in-Wild",
+    "revision": "52262d44e366a53369e10ca73c5f41daf0e8f1e5"
+  }
+}
