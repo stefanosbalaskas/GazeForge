@@ -1,0 +1,70 @@
+name: Hollywood2 GIN host metadata probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/hollywood2-gin-host-metadata
+    paths:
+      - "src/gazeforge/hollywood2_gin_host_metadata.py"
+      - "scripts/hollywood2_gin_host_metadata_probe.py"
+      - "tests/test_hollywood2_gin_host_metadata.py"
+      - ".github/workflows/hollywood2-gin-host-metadata-probe.yml"
+  pull_request:
+    paths:
+      - "src/gazeforge/hollywood2_gin_host_metadata.py"
+      - "scripts/hollywood2_gin_host_metadata_probe.py"
+      - "tests/test_hollywood2_gin_host_metadata.py"
+      - ".github/workflows/hollywood2-gin-host-metadata-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test dependencies
+        run: python -m pip install -e ".[dev]"
+      - name: Ruff host-metadata tranche
+        run: >-
+          ruff check
+          src/gazeforge/hollywood2_gin_host_metadata.py
+          scripts/hollywood2_gin_host_metadata_probe.py
+          tests/test_hollywood2_gin_host_metadata.py
+      - name: Run focused unit tests
+        run: pytest -q tests/test_hollywood2_gin_host_metadata.py
+      - name: Probe public GIN host metadata
+        run: python scripts/hollywood2_gin_host_metadata_probe.py
+      - name: Summarize conservative result
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(Path("hollywood2_gin_host_metadata_live_probe.json").read_text())
+          print("API status:", record["api"]["http_status"])
+          print("API JSON object:", record["api"]["json_object"])
+          print("license key paths:", record["api"]["license_key_paths"])
+          print("page status:", record["page"]["http_status"])
+          print("page license word:", record["page"]["contains_license_word"])
+          print("exact license verified:", record["rights_interpretation"]["exact_license_identifier_verified"])
+          print("source audit ready:", record["scientific_boundary"]["source_audit_ready"])
+          print("probe fingerprint:", record["probe_fingerprint_sha256"])
+          PY
+      - name: Upload deterministic host-metadata record
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-gin-host-metadata-live-probe
+          path: hollywood2_gin_host_metadata_live_probe.json
+          if-no-files-found: error
+          retention-days: 30
