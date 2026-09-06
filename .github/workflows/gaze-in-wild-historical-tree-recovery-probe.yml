@@ -31,8 +31,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install bounded MAT inspection dependency
-        run: python -m pip install --disable-pip-version-check --quiet scipy
+      - name: Install package and test dependency
+        run: python -m pip install --disable-pip-version-check --quiet -e ".[dev]"
       - name: Clone complete pinned first-author repository history
         shell: bash
         run: |
@@ -52,83 +52,11 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          value = json.loads(Path('_giw_releases.json').read_text(encoding='utf-8'))
+          value = json.loads(Path("_giw_releases.json").read_text(encoding="utf-8"))
           assert isinstance(value, list)
-          print('release_count:', len(value))
+          assert value == []
           PY
-      - name: Inspect bundled preprocessing MAT structure
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import hashlib
-          import json
-          import tempfile
-          import zipfile
-          from pathlib import Path
-          import numpy as np
-          from scipy.io import loadmat, whosmat
-
-          archive_path = Path('_giw_history/DataExtraction/all_preprocessing_steps.zip')
-          with zipfile.ZipFile(archive_path) as zf:
-              rows = []
-              for info in zf.infolist():
-                  if info.is_dir():
-                      continue
-                  rows.append({
-                      'name': info.filename,
-                      'file_size': info.file_size,
-                      'compress_size': info.compress_size,
-                      'crc32': f'{info.CRC:08x}',
-                  })
-              print('archive_members:', json.dumps(rows, sort_keys=True))
-              export_info = zf.read('exports/export_info.csv').decode('utf-8', errors='replace').strip()
-              print('export_info_csv:', json.dumps(export_info))
-              with tempfile.TemporaryDirectory() as td:
-                  target = Path(zf.extract('exports/ProcessData.mat', path=td))
-                  member_sha256 = hashlib.sha256(target.read_bytes()).hexdigest()
-                  variables = [
-                      {'name': name, 'shape': list(shape), 'class': cls}
-                      for name, shape, cls in whosmat(target)
-                  ]
-                  print('processdata_member_sha256:', member_sha256)
-                  print('processdata_whosmat:', json.dumps(variables, sort_keys=True))
-                  data = loadmat(target, variable_names=['ProcessData'], squeeze_me=True, struct_as_record=False)
-                  process = data['ProcessData']
-                  fields = list(getattr(process, '_fieldnames', []) or [])
-                  described = {}
-                  for field in fields:
-                      value = getattr(process, field)
-                      row = {'python_type': type(value).__name__}
-                      if isinstance(value, np.ndarray):
-                          row['shape'] = list(value.shape)
-                          row['dtype'] = str(value.dtype)
-                      elif hasattr(value, '_fieldnames'):
-                          row['struct_fields'] = list(getattr(value, '_fieldnames', []) or [])
-                      described[field] = row
-                  etg = process.ETG
-                  imu = process.IMU
-                  zed = process.ZED
-                  giw = process.GIW
-                  identity = {
-                      'PrIdx': int(process.PrIdx),
-                      'TrIdx': int(process.TrIdx),
-                      'SR': int(process.SR),
-                      'DepthPresent': int(process.DepthPresent),
-                      'timestamp_count': int(np.asarray(process.T).size),
-                      'ETG.POR_shape': list(np.asarray(etg.POR).shape),
-                      'ETG.Labels_shape': list(np.asarray(etg.Labels).shape),
-                      'ETG.Confidence_shape': list(np.asarray(etg.Confidence).shape),
-                      'IMU.HeadVector_shape': list(np.asarray(imu.HeadVector).shape),
-                      'ZED.FrameNo_shape': list(np.asarray(zed.FrameNo).shape),
-                      'GIW.GIWvector_shape': list(np.asarray(giw.GIWvector).shape),
-                      'Path2Data_sha256': hashlib.sha256(str(process.Path2Data).encode('utf-8')).hexdigest(),
-                  }
-                  print('processdata_fields:', json.dumps(fields))
-                  print('processdata_field_shapes:', json.dumps(described, sort_keys=True))
-                  print('processdata_identity:', json.dumps(identity, sort_keys=True))
-          PY
-      - name: Audit all reachable commit trees and README endpoints
+      - name: Reproduce historical-tree and embedded-sample observation
         shell: bash
         run: |
           set -euo pipefail
@@ -136,35 +64,78 @@ jobs:
             _giw_history \
             --releases-json _giw_releases.json \
             --output gaze-in-wild-historical-tree-recovery-probe-v1.json
-      - name: Enforce recovery boundary
+      - name: Validate frozen evidence and live binding
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           import json
           from pathlib import Path
-          p = json.loads(Path('gaze-in-wild-historical-tree-recovery-probe-v1.json').read_text(encoding='utf-8'))
-          assert p['reachable_commit_count'] == 56
-          assert p['refs']['release_count'] == 0
-          assert p['refs']['tag_refs'] == []
-          assert len(p['refs']['local_branch_refs']) == 1
-          b = p['scientific_boundary']
-          assert b['all_reachable_commit_trees_checked'] is True
-          assert b['preprocessing_archive_members_checked'] is True
-          assert b['unreachable_or_external_objects_excluded_from_claim'] is True
+
+          from gazeforge.gaze_in_wild_historical_tree_recovery import load_evidence
+
+          frozen = load_evidence(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-historical-tree-recovery-evidence-v1.json"
+          )
+          live = json.loads(
+              Path("gaze-in-wild-historical-tree-recovery-probe-v1.json")
+              .read_text(encoding="utf-8")
+          )
+
+          assert live["reachable_commit_count"] == 56
+          assert live["refs"]["release_count"] == 0
+          assert live["refs"]["tag_refs"] == []
+          assert len(live["refs"]["local_branch_refs"]) == 1
+
+          tree = live["historical_tree_audit"]
+          assert tree["unique_mat_paths"] == []
+          assert tree["unique_exact_giw_data_paths"] == []
+          assert tree["unique_alternate_labeller_paths"] == []
+
+          archive = live["preprocessing_archive_audit"]
+          frozen_archive = frozen["preprocessing_archive"]
+          assert archive["blob_sha1"] == frozen_archive["git_blob_sha1"]
+          assert archive["sha256"] == frozen_archive["sha256"]
+          assert archive["size_bytes"] == frozen_archive["size_bytes"]
+          assert archive["member_count"] == frozen_archive["member_count"]
+          assert archive["labeldata_members"] == []
+          assert archive["exact_giw_data_members"] == []
+
+          sample = archive["embedded_processdata"]
+          frozen_sample = frozen["embedded_processdata"]
+          assert sample["member_sha256"] == frozen_sample["member_sha256"]
+          assert sample["member_size_bytes"] == frozen_sample["member_size_bytes"]
+          assert sample["member_crc32"] == frozen_sample["member_crc32"]
+          assert sample["identity"] == frozen_sample["identity"]
+          assert sample["processdata_fields"] == frozen_sample["processdata_fields"]
+          assert sample["exact_distribution_file_equivalence_verified"] is False
+          assert sample["separate_labeldata_recovered"] is False
+
+          boundary = live["scientific_boundary"]
+          assert boundary["embedded_first_party_processdata_object_verified"] is True
           for key in (
-              'authoritative_original_or_canonical_dataset_copy_obtained',
-              'original_distribution_equivalence_verified',
-              'dataset_file_rights_resolved',
-              'analysis_use_permitted',
-              'redistribution_authorized',
-              'quarantine_exit_authorized',
-              'source_audit_ready',
-              'empirical_evidence_eligible',
+              "full_distribution_recovered",
+              "authoritative_original_or_canonical_dataset_copy_obtained",
+              "original_distribution_equivalence_verified",
+              "dataset_file_rights_resolved",
+              "analysis_use_permitted",
+              "redistribution_authorized",
+              "quarantine_exit_authorized",
+              "source_audit_ready",
+              "independent_labeller_recoverability_verified",
+              "empirical_evidence_eligible",
           ):
-              assert b[key] is False
-          print('probe_fingerprint:', p['probe_fingerprint_sha256'])
+              assert boundary[key] is False
+
+          print("live_probe_fingerprint:", live["probe_fingerprint_sha256"])
+          print(
+              "frozen_evidence_fingerprint:",
+              frozen["evidence_fingerprint_sha256"],
+          )
           PY
+      - name: Run historical-tree recovery adversarial tests
+        run: pytest -q tests/test_gaze_in_wild_historical_tree_recovery.py
       - name: Upload deterministic historical-tree recovery probe
         uses: actions/upload-artifact@v4
         with:
