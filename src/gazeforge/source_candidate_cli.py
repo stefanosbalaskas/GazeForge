@@ -57,6 +57,34 @@ def _add_dataset_argument(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_giw_exact_copy_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--exact-copy-review",
+        type=Path,
+        help="Structured Gaze-in-the-Wild exact-copy review JSON used by a promoted exit.",
+    )
+    parser.add_argument(
+        "--readiness-record",
+        type=Path,
+        help="First-party readiness record bound by the structured exact-copy review.",
+    )
+    parser.add_argument(
+        "--candidate-screen",
+        type=Path,
+        help="Candidate ProcessData screening record bound by the exact-copy review.",
+    )
+    parser.add_argument(
+        "--reference-root",
+        type=Path,
+        help="Separate reviewed reference tree used for live exact-copy verification.",
+    )
+    parser.add_argument(
+        "--reference-provenance",
+        type=Path,
+        help="Local reference-provenance artifact used for live exact-copy verification.",
+    )
+
+
 def _load_audit_spec(path: Path, dataset: str):
     if dataset == "hollywood2em":
         return load_hollywood2_source_audit_spec(path)
@@ -97,6 +125,16 @@ def _require_giw_apply_inputs(args: argparse.Namespace) -> tuple[Path, Path, Pat
             f"quarantine lineage: {flags}."
         )
     return args.quarantine_exit, args.recovery_review, args.inventory
+
+
+def _giw_exact_copy_values(args: argparse.Namespace) -> tuple[object, ...]:
+    return (
+        getattr(args, "exact_copy_review", None),
+        getattr(args, "readiness_record", None),
+        getattr(args, "candidate_screen", None),
+        getattr(args, "reference_root", None),
+        getattr(args, "reference_provenance", None),
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -230,7 +268,8 @@ def build_parser() -> argparse.ArgumentParser:
         "quarantine-exit-validate",
         help=(
             "Validate an edited Gaze-in-the-Wild quarantine-exit decision against the exact "
-            "candidate tree, recovery review, inventory, and audit template."
+            "candidate tree, recovery review, inventory, audit template, and any promoted "
+            "structured exact-copy identity."
         ),
     )
     quarantine_exit_validate.add_argument(
@@ -260,6 +299,7 @@ def build_parser() -> argparse.ArgumentParser:
     quarantine_exit_validate.add_argument(
         "--root", required=True, type=Path, help="Candidate source directory."
     )
+    _add_giw_exact_copy_arguments(quarantine_exit_validate)
 
     authorization = subparsers.add_parser(
         "authorization",
@@ -327,6 +367,7 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="Exact generic candidate inventory JSON used by the exit decision.",
     )
+    _add_giw_exact_copy_arguments(authorization_apply)
     authorization_apply.add_argument(
         "--output",
         required=True,
@@ -370,6 +411,7 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="Exact generic candidate inventory JSON used by the exit decision.",
     )
+    _add_giw_exact_copy_arguments(lineage)
     lineage.add_argument(
         "--output",
         required=True,
@@ -395,6 +437,11 @@ def _validated_giw_exit_for_args(
         recovery_record_or_path=recovery_review,
         inventory=inventory,
         spec=template,
+        exact_copy_review_record_or_path=args.exact_copy_review,
+        readiness_record_or_path=args.readiness_record,
+        candidate_screen_record_or_path=args.candidate_screen,
+        reference_root=args.reference_root,
+        reference_provenance_path=args.reference_provenance,
     )
 
 
@@ -455,6 +502,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             recovery_record_or_path=args.recovery_review,
             inventory=inventory,
             spec=template,
+            exact_copy_review_record_or_path=args.exact_copy_review,
+            readiness_record_or_path=args.readiness_record,
+            candidate_screen_record_or_path=args.candidate_screen,
+            reference_root=args.reference_root,
+            reference_provenance_path=args.reference_provenance,
         )
     elif args.command == "authorization":
         template = _load_audit_spec(args.template, args.dataset)
@@ -483,7 +535,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             exit_record = _validated_giw_exit_for_args(args, template)
         elif any(
             value is not None
-            for value in (args.quarantine_exit, args.recovery_review, args.inventory)
+            for value in (
+                args.quarantine_exit,
+                args.recovery_review,
+                args.inventory,
+                *_giw_exact_copy_values(args),
+            )
         ):
             raise BenchmarkIntegrityError(
                 "Gaze-in-the-Wild recovery-lineage arguments cannot be used for Hollywood2EM."
@@ -511,7 +568,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             exit_record = _validated_giw_exit_for_args(args, template)
         elif any(
             value is not None
-            for value in (args.quarantine_exit, args.recovery_review, args.inventory)
+            for value in (
+                args.quarantine_exit,
+                args.recovery_review,
+                args.inventory,
+                *_giw_exact_copy_values(args),
+            )
         ):
             raise BenchmarkIntegrityError(
                 "Gaze-in-the-Wild recovery-lineage arguments cannot be used for Hollywood2EM."
