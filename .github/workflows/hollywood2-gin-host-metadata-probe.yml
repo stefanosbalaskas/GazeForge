@@ -7,16 +7,24 @@ on:
       - research/hollywood2-gin-host-metadata
     paths:
       - "src/gazeforge/hollywood2_gin_host_metadata.py"
+      - "src/gazeforge/hollywood2_gin_accessible_host_evidence.py"
       - "scripts/hollywood2_gin_host_metadata_probe.py"
       - "tests/test_hollywood2_gin_host_metadata.py"
+      - "tests/test_hollywood2_gin_accessible_host_evidence.py"
       - "validation/evidence/hollywood2/hollywood2-gin-host-metadata-evidence-v1.json"
+      - "validation/evidence/hollywood2/hollywood2-gin-host-metadata-accessible-evidence-v1.json"
+      - "docs/hollywood2-author-license-statement.md"
       - ".github/workflows/hollywood2-gin-host-metadata-probe.yml"
   pull_request:
     paths:
       - "src/gazeforge/hollywood2_gin_host_metadata.py"
+      - "src/gazeforge/hollywood2_gin_accessible_host_evidence.py"
       - "scripts/hollywood2_gin_host_metadata_probe.py"
       - "tests/test_hollywood2_gin_host_metadata.py"
+      - "tests/test_hollywood2_gin_accessible_host_evidence.py"
       - "validation/evidence/hollywood2/hollywood2-gin-host-metadata-evidence-v1.json"
+      - "validation/evidence/hollywood2/hollywood2-gin-host-metadata-accessible-evidence-v1.json"
+      - "docs/hollywood2-author-license-statement.md"
       - ".github/workflows/hollywood2-gin-host-metadata-probe.yml"
   workflow_dispatch:
 
@@ -41,27 +49,43 @@ jobs:
         run: >-
           ruff check
           src/gazeforge/hollywood2_gin_host_metadata.py
+          src/gazeforge/hollywood2_gin_accessible_host_evidence.py
           scripts/hollywood2_gin_host_metadata_probe.py
           tests/test_hollywood2_gin_host_metadata.py
+          tests/test_hollywood2_gin_accessible_host_evidence.py
       - name: Run focused unit tests
-        run: pytest -q tests/test_hollywood2_gin_host_metadata.py
+        run: >-
+          pytest -q
+          tests/test_hollywood2_gin_host_metadata.py
+          tests/test_hollywood2_gin_accessible_host_evidence.py
       - name: Probe public GIN and DataCite metadata
         run: python scripts/hollywood2_gin_host_metadata_probe.py
       - name: Verify live probe against frozen evidence
         run: |
           python - <<'PY'
+          from gazeforge.hollywood2_gin_accessible_host_evidence import (
+              validate_hollywood2_gin_accessible_host_live_probe,
+          )
           from gazeforge.hollywood2_gin_host_metadata import (
               validate_hollywood2_gin_host_metadata_live_probe,
           )
 
+          probe = "hollywood2_gin_host_metadata_live_probe.json"
           validate_hollywood2_gin_host_metadata_live_probe(
-              "hollywood2_gin_host_metadata_live_probe.json",
+              probe,
               (
                   "validation/evidence/hollywood2/"
                   "hollywood2-gin-host-metadata-evidence-v1.json"
               ),
           )
-          print("Fresh host/registry probe preserves the frozen fail-closed boundary.")
+          validate_hollywood2_gin_accessible_host_live_probe(
+              probe,
+              (
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-gin-host-metadata-accessible-evidence-v1.json"
+              ),
+          )
+          print("Fresh host/registry probe preserves both reviewed fail-closed records.")
           PY
       - name: Summarize conservative result
         run: |
@@ -75,6 +99,8 @@ jobs:
           print("GIN API JSON object:", record["api"]["json_object"])
           print("GIN license key paths:", record["api"]["license_key_paths"])
           print("GIN page status:", record["page"]["http_status"])
+          print("GIN page license keyword:", record["page"]["contains_license_word"])
+          print("GIN page licence keyword:", record["page"]["contains_licence_word"])
           for index, query in enumerate(record["datacite_queries"], start=1):
               print(
                   f"DataCite query {index}:",

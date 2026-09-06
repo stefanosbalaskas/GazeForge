@@ -1,0 +1,110 @@
+{
+  "canonical_repository_binding": {
+    "annotation_provenance_evidence_fingerprint_sha256": "a08510e43caca2a8e6d5c85e7b1ad41c9f312247cd9bd8367372f8ecad8aacab",
+    "author_license_statement_evidence_fingerprint_sha256": "b01da719afe18f4eb0103a17d6e8c85f3750ba299050f8026063a9ebb55b1b2e",
+    "authoritative_ground_truth_evidence_fingerprint_sha256": "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea",
+    "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "gin_history_evidence_fingerprint_sha256": "c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1",
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "underlying_source_rights_evidence_fingerprint_sha256": "6227045c3cc831b3669b34ca74b955847df4b26fafbf825c9a1b5473e25bc943"
+  },
+  "checked_on": "2026-09-06",
+  "claim_limits": [
+    "The reviewed first-party GIN API and repository page were inspectable in workflow 34058146019; the API exposed no license/licence key path and the page exposed no license/licence keyword.",
+    "This bounded host-surface observation does not establish global absence of license terms, nor does it identify an exact license or permission scope.",
+    "The four reviewed DataCite queries recovered no exact Hollywood2EM repository-URL match; zero bounded matches do not establish global DOI or license absence.",
+    "The author-authored open-license indication remains provenance context only and does not identify exact repository license terms.",
+    "The original Hollywood-2 academic-use terms are a separate rights scope and are not inherited automatically by the GIN annotations.",
+    "Exact GIN analysis-use and redistribution terms, participant mapping, source-audit readiness, participant-disjoint validation, cross-dataset validation, independent human-human agreement, and new performance Frozen Evidence remain unresolved or uncreated."
+  ],
+  "evidence_fingerprint_sha256": "9e09bfe43a273fbcd8cfe258be547aee18e96b8f0928198d1fb5411555024ced",
+  "execution": {
+    "artifact_id": 9996628764,
+    "artifact_zip_sha256": "ceb1da449b2407186ecfbae9eff09a3133050dc2b28f4330c54644fc8743a49d",
+    "live_probe_fingerprint_sha256": "fd66a389c0bfd6b9e225524bd6847eecd5bf21fba56a46c0aa897dac54aeae27",
+    "live_probe_json_sha256": "70f89cbacb30e874973b7f3af2f9851fd72c2630f2737759f8367e2825b3ad6e",
+    "live_probe_record_type": "hollywood2-gin-host-metadata-live-probe-v1",
+    "probe_head_sha": "7d0ba3fcb5a41c5771e7b64b4fcbf7aa5e27ee71",
+    "workflow_run_id": 34058146019
+  },
+  "live_observation": {
+    "datacite_queries": [
+      {
+        "exact_repository_match_count": 0,
+        "query_label": "hollywood2",
+        "reported_total": 27,
+        "response_sha256": "43a965da66f4b7587727e358a3b6780a84f7144fe808f78d837b7786af2f63d5",
+        "returned_record_count": 27
+      },
+      {
+        "exact_repository_match_count": 0,
+        "query_label": "hollywood2_em",
+        "reported_total": 0,
+        "response_sha256": "73cad5cc7fa1c12012f82d1963153aa0e7077956287fa8ecd7b92c333ef7a80f",
+        "returned_record_count": 0
+      },
+      {
+        "exact_repository_match_count": 0,
+        "query_label": "ioannis.agtzidis",
+        "reported_total": 1,
+        "response_sha256": "2e54db785c35e1694f5b45c52febe0d3bc43caf730c3cada46f52b1007797d9e",
+        "returned_record_count": 1
+      },
+      {
+        "exact_repository_match_count": 0,
+        "query_label": "exact_repository_fragment",
+        "reported_total": 0,
+        "response_sha256": "61a33d8d1b5a659c63bc60cb27fd80af75173a1b2aa0db1b4e35c6533a0fbca1",
+        "returned_record_count": 0
+      }
+    ],
+    "gin_api": {
+      "default_branch": "master",
+      "description": "Hand labelled eye movements for a subset of the Hollywood2 data set",
+      "empty": false,
+      "full_name": "ioannis.agtzidis/hollywood2_em",
+      "http_status": 200,
+      "id": 834,
+      "json_object": true,
+      "license_key_paths": [],
+      "name": "hollywood2_em",
+      "private": false,
+      "response_sha256": "02a2939efb657da36980e2367c79e226b3c7e8b52a9dd33468353b97ea0dbd78",
+      "size": 558329856,
+      "updated_at": "2020-02-19T15:57:34Z",
+      "website": ""
+    },
+    "gin_page": {
+      "contains_licence_word": false,
+      "contains_license_word": false,
+      "contains_repository_slug": true,
+      "http_status": 200,
+      "response_sha256": "41ad0e9f765dce722733b0cf113576b8a0a1fa27025d67f881f34108cd5dfb45"
+    }
+  },
+  "record_type": "hollywood2-gin-host-metadata-accessible-evidence-v1",
+  "rights_interpretation": {
+    "analysis_use_authorized": false,
+    "author_or_host_clarification_required_for_exact_terms": true,
+    "datacite_exact_repository_registration_recovered": false,
+    "exact_license_identifier_recovered": false,
+    "exact_license_text_recovered": false,
+    "gin_analysis_use_terms_status": "unresolved_exact_terms",
+    "gin_host_metadata_inspected": true,
+    "gin_raw_data_redistribution_terms_status": "unresolved_exact_terms",
+    "host_metadata_license_absence_verified_globally": false,
+    "raw_data_redistribution_authorized": false,
+    "registry_zero_match_is_global_absence_claim": false,
+    "reviewed_api_exposes_license_key": false,
+    "reviewed_page_exposes_license_keyword": false
+  },
+  "scientific_boundary": {
+    "cross_dataset_validation_created": false,
+    "frozen_evidence_performance_claim_created": false,
+    "independent_human_human_agreement_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_identity_mapping_verified": false,
+    "source_audit_ready": false
+  },
+  "status": "reviewed-first-party-host-metadata-no-exact-terms-recovered"
+}
