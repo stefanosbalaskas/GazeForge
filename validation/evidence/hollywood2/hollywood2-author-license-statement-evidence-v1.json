@@ -1,0 +1,65 @@
+{
+  "author_dissertation": {
+    "author": "Ioannis Agtzidis",
+    "bytes": 44587570,
+    "document_type": "doctoral_dissertation",
+    "final_url": "https://mediatum.ub.tum.de/doc/1538004/1538004.pdf",
+    "institution": "Technical University of Munich",
+    "normalised_extracted_text_sha256": "2e283d1f9f9f886c07f6629908f1cddc08b7d91fb1de76f50203b07e88974430",
+    "requested_url": "https://mediatum.ub.tum.de/doc/1538004/1538004.pdf",
+    "sha256": "f91705cafac65facf42563d6b3827148ef4114276759466a26afbc21ff4006ee",
+    "title": "Towards a better understanding of eye movements in natural contexts",
+    "year": 2020
+  },
+  "canonical_repository_binding": {
+    "authoritative_ground_truth_evidence_fingerprint_sha256": "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea",
+    "commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "underlying_source_rights_evidence_fingerprint_sha256": "6227045c3cc831b3669b34ca74b955847df4b26fafbf825c9a1b5473e25bc943"
+  },
+  "checked_on": "2026-09-06",
+  "evidence_fingerprint_sha256": "b01da719afe18f4eb0103a17d6e8c85f3750ba299050f8026063a9ebb55b1b2e",
+  "execution": {
+    "artifact_id": 9987884009,
+    "artifact_zip_sha256": "78a641ae66321ef22bf64d6543d533c483ffd99420faa937a09988272fac59be",
+    "live_probe_fingerprint_sha256": "f99aadc6e0c3bb694fe63321aeacd8f9203868e3b611c99e98b85ebbaafa0a47",
+    "live_probe_record_type": "hollywood2-author-license-live-probe-v1",
+    "probe_head_sha": "630405aee028263a45cd5756fef61bec64d53c9a",
+    "workflow_run_id": 34028659315
+  },
+  "observed_statement": {
+    "author_describes_chapter_data_as_publicly_available_with_open_source_license": true,
+    "chapter_4_hand_labeled_data_sets_present": true,
+    "hollywood2_gin_footnote_present": true,
+    "hollywood2_repository_footnote_url": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em",
+    "open_source_license_statement_present": true,
+    "statement_scope": "all_data_presented_in_dissertation_chapter_4"
+  },
+  "record_type": "hollywood2-author-license-statement-evidence-v1",
+  "rights_interpretation": {
+    "analysis_use_authorized": false,
+    "article_cc_by_is_dataset_license": false,
+    "exact_license_identifier_recovered": false,
+    "exact_license_text_recovered": false,
+    "general_open_license_indication_verified": true,
+    "gin_analysis_use_terms_status": "unresolved_exact_terms",
+    "gin_raw_data_redistribution_terms_status": "unresolved_exact_terms",
+    "license_inference_permitted": false,
+    "raw_data_redistribution_authorized": false,
+    "repository_license_file_recovered": false,
+    "underlying_hollywood2_terms_automatically_apply": false
+  },
+  "scientific_boundary": {
+    "author_dissertation_statement_verified": true,
+    "cross_dataset_validation_created": false,
+    "exact_gin_dataset_license_verified": false,
+    "frozen_evidence_performance_claim_created": false,
+    "gin_analysis_use_authorized": false,
+    "gin_raw_data_redistribution_authorized": false,
+    "hollywood2_gin_repository_footnote_verified": true,
+    "participant_disjoint_model_validation_created": false,
+    "participant_identity_mapping_verified": false,
+    "source_audit_ready": false
+  },
+  "status": "verified-author-dissertation-open-license-indication-exact-terms-unresolved"
+}
