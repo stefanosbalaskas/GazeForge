@@ -70,7 +70,10 @@ def test_public_readme_or_extra_links_do_not_promote_mapping():
         _fetch(b"academic use only", url="https://example.test/license.php"),
     )
     assert record["description"]["markers"]["public_readme_link_present"] is True
-    assert record["mapping_boundary"]["original_subject_ids_recovered_from_public_metadata"] is False
+    assert (
+        record["mapping_boundary"]["original_subject_ids_recovered_from_public_metadata"]
+        is False
+    )
 
 
 def test_failed_public_fetch_stays_fail_closed():
