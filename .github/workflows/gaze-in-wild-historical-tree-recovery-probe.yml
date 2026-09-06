@@ -61,6 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
+          import hashlib
           import json
           import tempfile
           import zipfile
@@ -85,10 +86,12 @@ jobs:
               print('export_info_csv:', json.dumps(export_info))
               with tempfile.TemporaryDirectory() as td:
                   target = Path(zf.extract('exports/ProcessData.mat', path=td))
+                  member_sha256 = hashlib.sha256(target.read_bytes()).hexdigest()
                   variables = [
                       {'name': name, 'shape': list(shape), 'class': cls}
                       for name, shape, cls in whosmat(target)
                   ]
+                  print('processdata_member_sha256:', member_sha256)
                   print('processdata_whosmat:', json.dumps(variables, sort_keys=True))
                   data = loadmat(target, variable_names=['ProcessData'], squeeze_me=True, struct_as_record=False)
                   process = data['ProcessData']
@@ -103,8 +106,27 @@ jobs:
                       elif hasattr(value, '_fieldnames'):
                           row['struct_fields'] = list(getattr(value, '_fieldnames', []) or [])
                       described[field] = row
+                  etg = process.ETG
+                  imu = process.IMU
+                  zed = process.ZED
+                  giw = process.GIW
+                  identity = {
+                      'PrIdx': int(process.PrIdx),
+                      'TrIdx': int(process.TrIdx),
+                      'SR': int(process.SR),
+                      'DepthPresent': int(process.DepthPresent),
+                      'timestamp_count': int(np.asarray(process.T).size),
+                      'ETG.POR_shape': list(np.asarray(etg.POR).shape),
+                      'ETG.Labels_shape': list(np.asarray(etg.Labels).shape),
+                      'ETG.Confidence_shape': list(np.asarray(etg.Confidence).shape),
+                      'IMU.HeadVector_shape': list(np.asarray(imu.HeadVector).shape),
+                      'ZED.FrameNo_shape': list(np.asarray(zed.FrameNo).shape),
+                      'GIW.GIWvector_shape': list(np.asarray(giw.GIWvector).shape),
+                      'Path2Data_sha256': hashlib.sha256(str(process.Path2Data).encode('utf-8')).hexdigest(),
+                  }
                   print('processdata_fields:', json.dumps(fields))
                   print('processdata_field_shapes:', json.dumps(described, sort_keys=True))
+                  print('processdata_identity:', json.dumps(identity, sort_keys=True))
           PY
       - name: Audit all reachable commit trees and README endpoints
         shell: bash
