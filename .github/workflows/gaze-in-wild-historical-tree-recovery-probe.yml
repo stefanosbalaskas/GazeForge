@@ -1,0 +1,145 @@
+name: Gaze-in-the-Wild historical tree recovery probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-historical-tree-recovery
+    paths:
+      - "scripts/probe_gaze_in_wild_historical_tree_recovery.py"
+      - ".github/workflows/gaze-in-wild-historical-tree-recovery-probe.yml"
+      - "src/gazeforge/gaze_in_wild_historical_tree_recovery.py"
+      - "tests/test_gaze_in_wild_historical_tree_recovery.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-historical-tree-recovery-evidence-v1.json"
+      - "docs/gaze-in-wild-historical-tree-recovery.md"
+      - "mkdocs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and test dependency
+        run: python -m pip install --disable-pip-version-check --quiet -e ".[dev]"
+      - name: Clone complete pinned first-author repository history
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/RSKothari/Gaze-in-Wild.git _giw_history
+          git -C _giw_history checkout --quiet 52262d44e366a53369e10ca73c5f41daf0e8f1e5
+          test "$(git -C _giw_history rev-list --count HEAD)" = "56"
+      - name: Record current public GitHub releases response
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            --retry 4 --retry-all-errors --connect-timeout 20 --max-time 120 \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/RSKothari/Gaze-in-Wild/releases \
+            --output _giw_releases.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path("_giw_releases.json").read_text(encoding="utf-8"))
+          assert isinstance(value, list)
+          assert value == []
+          PY
+      - name: Reproduce historical-tree and embedded-sample observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_historical_tree_recovery.py \
+            _giw_history \
+            --releases-json _giw_releases.json \
+            --output gaze-in-wild-historical-tree-recovery-probe-v1.json
+      - name: Validate frozen evidence and live binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_historical_tree_recovery import load_evidence
+
+          frozen = load_evidence(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-historical-tree-recovery-evidence-v1.json"
+          )
+          live = json.loads(
+              Path("gaze-in-wild-historical-tree-recovery-probe-v1.json")
+              .read_text(encoding="utf-8")
+          )
+
+          assert live["reachable_commit_count"] == 56
+          assert live["refs"]["release_count"] == 0
+          assert live["refs"]["tag_refs"] == []
+          assert len(live["refs"]["local_branch_refs"]) == 1
+
+          tree = live["historical_tree_audit"]
+          assert tree["unique_mat_paths"] == []
+          assert tree["unique_exact_giw_data_paths"] == []
+          assert tree["unique_alternate_labeller_paths"] == []
+
+          archive = live["preprocessing_archive_audit"]
+          frozen_archive = frozen["preprocessing_archive"]
+          assert archive["blob_sha1"] == frozen_archive["git_blob_sha1"]
+          assert archive["sha256"] == frozen_archive["sha256"]
+          assert archive["size_bytes"] == frozen_archive["size_bytes"]
+          assert archive["member_count"] == frozen_archive["member_count"]
+          assert archive["labeldata_members"] == []
+          assert archive["exact_giw_data_members"] == []
+
+          sample = archive["embedded_processdata"]
+          frozen_sample = frozen["embedded_processdata"]
+          assert sample["member_sha256"] == frozen_sample["member_sha256"]
+          assert sample["member_size_bytes"] == frozen_sample["member_size_bytes"]
+          assert sample["member_crc32"] == frozen_sample["member_crc32"]
+          assert sample["identity"] == frozen_sample["identity"]
+          assert sample["processdata_fields"] == frozen_sample["processdata_fields"]
+          assert sample["exact_distribution_file_equivalence_verified"] is False
+          assert sample["separate_labeldata_recovered"] is False
+
+          boundary = live["scientific_boundary"]
+          assert boundary["embedded_first_party_processdata_object_verified"] is True
+          for key in (
+              "full_distribution_recovered",
+              "authoritative_original_or_canonical_dataset_copy_obtained",
+              "original_distribution_equivalence_verified",
+              "dataset_file_rights_resolved",
+              "analysis_use_permitted",
+              "redistribution_authorized",
+              "quarantine_exit_authorized",
+              "source_audit_ready",
+              "independent_labeller_recoverability_verified",
+              "empirical_evidence_eligible",
+          ):
+              assert boundary[key] is False
+
+          print("live_probe_fingerprint:", live["probe_fingerprint_sha256"])
+          print(
+              "frozen_evidence_fingerprint:",
+              frozen["evidence_fingerprint_sha256"],
+          )
+          PY
+      - name: Run historical-tree recovery adversarial tests
+        run: pytest -q tests/test_gaze_in_wild_historical_tree_recovery.py
+      - name: Upload deterministic historical-tree recovery probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-historical-tree-recovery-probe
+          path: gaze-in-wild-historical-tree-recovery-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
