@@ -1,0 +1,14 @@
+# Frozen numeric runtime for the reviewed Hollywood2 source-token empirical evidence.
+# These are the exact resolved package versions from successful source-verified run
+# 33956874927 on 2026-09-05. Keep this lock scoped to the empirical evidence job;
+# package compatibility tests intentionally continue to exercise supported newer versions.
+numpy==2.5.2
+pandas==3.0.5
+scikit-learn==1.9.0
+scipy==1.18.1
+joblib==1.6.0
+threadpoolctl==3.6.0
+narwhals==2.25.0
+cloudpickle==3.1.2
+python-dateutil==2.9.0.post0
+six==1.17.0

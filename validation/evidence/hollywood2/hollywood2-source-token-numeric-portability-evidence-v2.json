@@ -1,0 +1,74 @@
+{
+  "evidence_fingerprint_sha256": "3cc1072e1a79e9451b4ef17f98072d7f546f8055096a61842e575e8dbace9272",
+  "migration": {
+    "from_contract": {
+      "benchmark_model_protocol_numeric_values_rounded": false,
+      "canonical_source_report_file_sha256": "a5e22948105321dc97dcffc66926c32a6c93c797722b879e38fd3c6860dde34e",
+      "canonical_source_report_fingerprint_sha256": "a7a6219d6ffcb1fc6622110887a95f2c9d0646fea6e22d0ada941fe07b90586a",
+      "frozen_summary_path": "validation/evidence/hollywood2/hollywood2-source-token-60hz-frozen-summary-v1.json",
+      "frozen_summary_report_fingerprint_sha256": "e1f1c030f843e118ebd65520dfab8e872efb4ea3e1d520299a993b0ca00ddabf",
+      "method": "recursive_round_finite_metric_floats",
+      "metric_float_decimal_places": 15,
+      "nonfinite_metric_floats_permitted": false
+    },
+    "rationale": "The v1 15-decimal metrics-only serialization was stable across the two original source-verified executions but a later exact-main rerun and an exact-software-runtime rerun differed in last-machine-bit aggregate calibration values on different GitHub-hosted workers. The v2 migration changes only publication serialization precision from 15 to 14 decimal places; model training, source rows, folds, predictions, metric definitions, benchmark metadata, model metadata, protocol parameters, and scientific claim boundaries are unchanged.",
+    "to_contract": {
+      "benchmark_model_protocol_numeric_values_rounded": false,
+      "canonical_source_report_file_sha256": "d69b8811bb2c3c11ea21737ddcb308e7c0b601afd8858e8e23248fd243b51f51",
+      "canonical_source_report_fingerprint_sha256": "35bdcca2f13a89805d68db1c3dca7e5106eb9533b8cf66024730031c5366d06d",
+      "method": "recursive_round_finite_metric_floats",
+      "metric_float_decimal_places": 14,
+      "nonfinite_metric_floats_permitted": false
+    }
+  },
+  "portability_observations": {
+    "exact_main_v1_binding_failure": {
+      "binding_failed_after_successful_empirical_compute": true,
+      "head_sha": "b5b863a9ffae5085f23c7d9c8aae2fdb0e67a9a7",
+      "same_runner_image_as_reviewed_execution": true,
+      "workflow_run_id": 34061388007
+    },
+    "exact_runtime_lock_v1_binding_failure": {
+      "binding_failed_after_successful_empirical_compute": true,
+      "frozen_python_runtime_verified": true,
+      "head_sha": "1d2a1afde38e4be3e56761d8b1fbc53ae599cec9",
+      "observed_v1_report_fingerprint_sha256": "4b92661e3b1e255f5728034a450b26ca013b0eed0e39e6c014d2529ad4bb5dd9",
+      "workflow_run_id": 34063743964
+    },
+    "interpretation": "These failures are portability evidence for the serialization boundary, not evidence of changed source identity, folds, participant mapping, model performance, or scientific results."
+  },
+  "record_type": "hollywood2-source-token-numeric-portability-evidence-v2",
+  "reviewed_source_verified_artifacts": {
+    "exact_merge": {
+      "artifact_id": 9966993646,
+      "artifact_zip_sha256": "3780e8d7a761e45e917e0229a02eeca332e9200473ef9a7489b1c41c5019a985",
+      "head_sha": "e0e47c47e0a2e42a4520bd14a126b23fc3b05644",
+      "uncanonicalized_report_file_sha256": "94d7393a62f995559f0807a3188e3b4f64fbe18af9db4677e59bc2493b37b1fc",
+      "uncanonicalized_report_fingerprint_sha256": "d0ac2b9fd6e7f888abcba59f558b2424237ba86b789b14be53aa3a9414731bed",
+      "workflow_run_id": 33956874927
+    },
+    "pre_merge": {
+      "artifact_id": 9966618539,
+      "artifact_zip_sha256": "a03b31f0a10f449aaa4212346f768be11797255eea9f9bc897b3baf8f575a8ae",
+      "head_sha": "5180d4e38a2f5929161b7baee6af18c5e9b43c4d",
+      "uncanonicalized_report_file_sha256": "0d3e0ad01d47e6f953fc233c2a1c1a491d3a418dd685b96919ccdda0b96aaa63",
+      "uncanonicalized_report_fingerprint_sha256": "6d6b7a0c677e278d3503ca5f6c4745430a037ea6b42a3000b93052fa7f2f0cab",
+      "workflow_run_id": 33955703630
+    },
+    "v2_recanonicalized_reports_byte_identical": true
+  },
+  "scientific_boundary": {
+    "cross_dataset_validation_created": false,
+    "fold_assignment_changed": false,
+    "model_configuration_changed": false,
+    "participant_disjoint_validation_created": false,
+    "participant_generalization_claim": false,
+    "participant_identity_mapping_verified": false,
+    "raw_source_redistributed_by_gazeforge": false,
+    "rights_status_changed": false,
+    "scientific_metrics_reestimated": false,
+    "source_rows_changed": false,
+    "v1_evidence_rewritten": false
+  },
+  "status": "verified-reviewed-artifact-portability-migration"
+}

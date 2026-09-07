@@ -3,7 +3,7 @@ from pathlib import Path
 
 from gazeforge.dashboard import load_frozen_benchmark_report
 from gazeforge.hollywood2_token_evidence import (
-    HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION,
+    HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1,
 )
 
 FROZEN = Path(
@@ -54,7 +54,7 @@ def test_committed_hollywood2_source_token_summary_is_immutable() -> None:
     assert protocol["source_validation_report_file_sha256"] == EXPECTED_SOURCE_REPORT_FILE_SHA256
     assert (
         protocol["source_validation_numeric_canonicalization"]
-        == HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION
+        == HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1
     )
 
 
