@@ -1,0 +1,67 @@
+name: Gaze-in-the-Wild task identity recovery probe
+
+on:
+  push:
+    branches:
+      - research/gaze-in-wild-task-identity-recovery
+    paths:
+      - "scripts/probe_gaze_in_wild_task_identity_recovery.py"
+      - ".github/workflows/gaze-in-wild-task-identity-recovery-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Clone exact first-author repository revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/RSKothari/Gaze-in-Wild.git _giw_source
+          git -C _giw_source checkout --quiet 52262d44e366a53369e10ca73c5f41daf0e8f1e5
+          test "$(git -C _giw_source rev-parse HEAD)" = "52262d44e366a53369e10ca73c5f41daf0e8f1e5"
+      - name: Inspect MLAPP and reachable source history
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_task_identity_recovery.py \
+            _giw_source \
+            --output gaze-in-wild-task-identity-recovery-probe-v1.json
+      - name: Enforce exploratory fail-closed boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path("gaze-in-wild-task-identity-recovery-probe-v1.json").read_text())
+          assert p["source"]["commit_sha1"] == "52262d44e366a53369e10ca73c5f41daf0e8f1e5"
+          assert p["mlapp"]["git_blob_sha1"] == "2d560af336af637e042ea7a96f4c3736a59d2a2f"
+          assert p["reachable_history"]["reachable_commit_count"] == 56
+          boundary = p["scientific_boundary"]
+          assert boundary["universal_tridx_to_task_mapping_verified"] is False
+          assert boundary["complete_per_file_task_mapping_verified"] is False
+          assert boundary["participant_disjoint_model_validation_created"] is False
+          assert boundary["cross_dataset_validation_created"] is False
+          assert boundary["new_empirical_performance_claim_created"] is False
+          print(json.dumps(p["review_queue"], indent=2, sort_keys=True))
+          PY
+      - name: Upload task-identity recovery probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-task-identity-recovery-probe
+          path: gaze-in-wild-task-identity-recovery-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
