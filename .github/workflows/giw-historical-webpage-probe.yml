@@ -1,0 +1,372 @@
+name: GIW historical webpage probe
+
+on:
+  push:
+    branches:
+      - research/giw-historical-webpage-probe
+    paths:
+      - .github/workflows/giw-historical-webpage-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Probe archived first-party project page
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import re
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          PAGE = 'http://www.cis.rit.edu/~rsk3900/gaze-in-wild/'
+          HTTPS_PAGE = 'https://www.cis.rit.edu/~rsk3900/gaze-in-wild/'
+          UA = (
+              'Mozilla/5.0 (compatible; GazeForgeEvidenceProbe/1.0; '
+              '+https://github.com/stefanosbalaskas/GazeForge)'
+          )
+          TERMS = (
+              'license', 'licence', 'terms', 'reuse', 're-use', 'redistribut',
+              'permission', 'copyright', 'creative commons', 'cc by', 'cc-by',
+              'mit license', 'non-commercial', 'noncommercial', 'research use',
+              'academic use', 'citation', 'cite', 'attribution',
+          )
+          DATA_SUFFIXES = (
+              '.zip', '.tar', '.tar.gz', '.tgz', '.gz', '.7z', '.rar', '.mat',
+              '.h5', '.hdf5', '.csv', '.tsv', '.json', '.txt',
+          )
+
+          class LinkParser(HTMLParser):
+              def __init__(self) -> None:
+                  super().__init__()
+                  self.links: list[tuple[str, str]] = []
+                  self._href: str | None = None
+                  self._text: list[str] = []
+                  self.title: list[str] = []
+                  self._in_title = False
+
+              def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+                  lowered = tag.lower()
+                  if lowered == 'a':
+                      self._href = dict(attrs).get('href')
+                      self._text = []
+                  elif lowered == 'title':
+                      self._in_title = True
+
+              def handle_endtag(self, tag: str) -> None:
+                  lowered = tag.lower()
+                  if lowered == 'a' and self._href:
+                      self.links.append((self._href, ' '.join(self._text).strip()))
+                      self._href = None
+                      self._text = []
+                  elif lowered == 'title':
+                      self._in_title = False
+
+              def handle_data(self, data: str) -> None:
+                  if self._href is not None:
+                      self._text.append(data)
+                  if self._in_title:
+                      self.title.append(data)
+
+          def request_bytes(url: str, timeout: int = 35) -> tuple[bytes | None, dict[str, object]]:
+              last: dict[str, object] = {'url': url}
+              for attempt in range(3):
+                  try:
+                      req = urllib.request.Request(
+                          url,
+                          headers={
+                              'User-Agent': UA,
+                              'Accept': '*/*',
+                          },
+                      )
+                      with urllib.request.urlopen(req, timeout=timeout) as response:
+                          body = response.read()
+                          return body, {
+                              'url': url,
+                              'status': int(response.status),
+                              'content_type': response.headers.get('Content-Type'),
+                              'final_url': response.geturl(),
+                          }
+                  except urllib.error.HTTPError as exc:
+                      last = {
+                          'url': url,
+                          'status': int(exc.code),
+                          'error': f'HTTPError:{exc.code}',
+                      }
+                      if exc.code not in {429, 500, 502, 503, 504}:
+                          break
+                  except Exception as exc:  # noqa: BLE001
+                      last = {
+                          'url': url,
+                          'error': f'{type(exc).__name__}:{exc}',
+                      }
+                  time.sleep(1.5 * (attempt + 1))
+              return None, last
+
+          def canonical_text(text: str) -> str:
+              return re.sub(r'\s+', ' ', text).strip()
+
+          def parse_cdx(payload: bytes) -> list[dict[str, str]]:
+              rows = json.loads(payload.decode('utf-8', errors='strict'))
+              if not isinstance(rows, list) or len(rows) < 2:
+                  return []
+              header = rows[0]
+              output = []
+              for row in rows[1:]:
+                  if isinstance(row, list) and len(row) == len(header):
+                      output.append(dict(zip(header, row, strict=True)))
+              return output
+
+          observations: dict[str, object] = {
+              'record_type': 'gaze-in-wild-historical-webpage-archive-probe-v1',
+              'historical_first_party_page': PAGE,
+              'scope': (
+                  'Metadata-only archival recovery probe. No dataset archive or raw data is '
+                  'downloaded. Archived page content is historical provenance evidence only.'
+              ),
+              'archive_provider': 'Internet Archive Wayback Machine',
+              'cdx_queries': [],
+              'page_snapshots': [],
+              'child_inventory_summary': {},
+              'boundaries': {
+                  'current_exact_authoritative_copy_obtained': False,
+                  'dataset_file_rights_resolved': False,
+                  'analysis_use_permitted': False,
+                  'redistribution_permission_verified': False,
+                  'archived_page_is_current_rights_evidence': False,
+                  'absence_of_terms_is_permission_evidence': False,
+                  'candidate_archive_links_downloaded': False,
+                  'empirical_analysis_eligible': False,
+              },
+          }
+
+          exact_cdx = (
+              'https://web.archive.org/cdx/search/cdx?'
+              + urllib.parse.urlencode({
+                  'url': PAGE,
+                  'output': 'json',
+                  'filter': 'statuscode:200',
+                  'collapse': 'digest',
+                  'fl': 'timestamp,original,mimetype,statuscode,digest,length',
+                  'filter': 'statuscode:200',
+              })
+          )
+          # urlencode cannot represent repeated filter parameters, but status=200 alone is enough
+          # for this metadata probe. Build a second exact HTTPS query as a transport alias.
+          exact_urls = [
+              exact_cdx,
+              (
+                  'https://web.archive.org/cdx/search/cdx?'
+                  + urllib.parse.urlencode({
+                      'url': HTTPS_PAGE,
+                      'output': 'json',
+                      'filter': 'statuscode:200',
+                      'collapse': 'digest',
+                      'fl': 'timestamp,original,mimetype,statuscode,digest,length',
+                  })
+              ),
+          ]
+
+          all_exact: list[dict[str, str]] = []
+          for cdx_url in exact_urls:
+              payload, transport = request_bytes(cdx_url)
+              entry: dict[str, object] = {'query': cdx_url, 'transport': transport}
+              if payload is not None:
+                  try:
+                      rows = parse_cdx(payload)
+                  except Exception as exc:  # noqa: BLE001
+                      rows = []
+                      entry['parse_error'] = f'{type(exc).__name__}:{exc}'
+                  entry['row_count'] = len(rows)
+                  all_exact.extend(rows)
+              observations['cdx_queries'].append(entry)
+
+          # De-duplicate exact snapshots by timestamp/digest, newest first.
+          unique_exact: dict[tuple[str, str], dict[str, str]] = {}
+          for row in all_exact:
+              key = (row.get('timestamp', ''), row.get('digest', ''))
+              unique_exact[key] = row
+          exact_rows = sorted(
+              unique_exact.values(),
+              key=lambda row: row.get('timestamp', ''),
+              reverse=True,
+          )
+
+          # Inspect at most six distinct archived page bodies across time.
+          selected: list[dict[str, str]] = []
+          if exact_rows:
+              if len(exact_rows) <= 6:
+                  selected = exact_rows
+              else:
+                  indexes = sorted({0, 1, len(exact_rows)//3, 2*len(exact_rows)//3, len(exact_rows)-2, len(exact_rows)-1})
+                  selected = [exact_rows[i] for i in indexes if 0 <= i < len(exact_rows)]
+
+          discovered_links: dict[str, dict[str, object]] = {}
+          for row in selected:
+              timestamp = row.get('timestamp', '')
+              original = row.get('original', PAGE)
+              archived_url = (
+                  f'https://web.archive.org/web/{timestamp}id_/{original}'
+              )
+              body, transport = request_bytes(archived_url)
+              snap: dict[str, object] = {
+                  'timestamp': timestamp,
+                  'cdx_original': original,
+                  'cdx_digest': row.get('digest'),
+                  'cdx_length': row.get('length'),
+                  'transport': transport,
+              }
+              if body is None:
+                  snap['body_recovered'] = False
+                  observations['page_snapshots'].append(snap)
+                  continue
+              snap['body_recovered'] = True
+              snap['byte_size'] = len(body)
+              snap['sha256'] = hashlib.sha256(body).hexdigest()
+              html = body.decode('utf-8', errors='replace')
+              parser = LinkParser()
+              parser.feed(html)
+              visible = canonical_text(re.sub(r'<[^>]+>', ' ', html))
+              lower = visible.lower()
+              snap['title'] = canonical_text(' '.join(parser.title))
+              snap['text_sha256_whitespace_canonical'] = hashlib.sha256(
+                  visible.encode('utf-8')
+              ).hexdigest()
+              snap['terms_markers'] = [term for term in TERMS if term in lower]
+              snap['text_markers'] = {
+                  'gaze_in_wild': 'gaze' in lower and 'wild' in lower,
+                  'processdata': 'processdata' in lower,
+                  'labeldata': 'labeldata' in lower,
+                  'download': 'download' in lower,
+                  'data_files': 'data files' in lower,
+              }
+
+              normalized_links = []
+              for href, anchor in parser.links:
+                  href = href.strip()
+                  if not href or href.startswith(('#', 'javascript:', 'mailto:')):
+                      continue
+                  absolute = urllib.parse.urljoin(original, href)
+                  parsed = urllib.parse.urlparse(absolute)
+                  path_lower = parsed.path.lower()
+                  candidate_data = (
+                      path_lower.endswith(DATA_SUFFIXES)
+                      or 'drive.google.com' in parsed.netloc.lower()
+                      or 'dropbox.com' in parsed.netloc.lower()
+                      or 'data' in path_lower
+                      or 'download' in path_lower
+                  )
+                  item = {
+                      'url': absolute,
+                      'anchor_text': canonical_text(anchor),
+                      'candidate_data_or_archive_link': candidate_data,
+                  }
+                  normalized_links.append(item)
+                  discovered_links.setdefault(absolute, item)
+              snap['links'] = normalized_links
+              observations['page_snapshots'].append(snap)
+
+          wildcard_cdx = (
+              'https://web.archive.org/cdx/search/cdx?'
+              + urllib.parse.urlencode({
+                  'url': PAGE + '*',
+                  'output': 'json',
+                  'filter': 'statuscode:200',
+                  'collapse': 'urlkey',
+                  'fl': 'timestamp,original,mimetype,statuscode,digest,length',
+                  'limit': '5000',
+              })
+          )
+          child_payload, child_transport = request_bytes(wildcard_cdx, timeout=45)
+          child_rows: list[dict[str, str]] = []
+          if child_payload is not None:
+              try:
+                  child_rows = parse_cdx(child_payload)
+              except Exception as exc:  # noqa: BLE001
+                  observations['child_inventory_parse_error'] = f'{type(exc).__name__}:{exc}'
+          observations['cdx_queries'].append({
+              'query': wildcard_cdx,
+              'transport': child_transport,
+              'row_count': len(child_rows),
+          })
+
+          candidate_children = []
+          for row in child_rows:
+              original = row.get('original', '')
+              parsed = urllib.parse.urlparse(original)
+              path_lower = parsed.path.lower()
+              if (
+                  path_lower.endswith(DATA_SUFFIXES)
+                  or 'drive.google.com' in parsed.netloc.lower()
+                  or 'dropbox.com' in parsed.netloc.lower()
+                  or '/data' in path_lower
+                  or '/download' in path_lower
+              ):
+                  candidate_children.append({
+                      'timestamp': row.get('timestamp'),
+                      'original': original,
+                      'mimetype': row.get('mimetype'),
+                      'digest': row.get('digest'),
+                      'length': row.get('length'),
+                  })
+
+          observations['child_inventory_summary'] = {
+              'captured_child_url_count': len(child_rows),
+              'candidate_data_or_archive_child_count': len(candidate_children),
+              'candidate_data_or_archive_children': candidate_children[:500],
+              'truncated_to_500_candidates': len(candidate_children) > 500,
+          }
+          observations['page_discovered_link_count'] = len(discovered_links)
+          observations['page_discovered_links'] = sorted(
+              discovered_links.values(), key=lambda item: str(item['url'])
+          )
+
+          recovered_count = sum(
+              bool(snapshot.get('body_recovered'))
+              for snapshot in observations['page_snapshots']
+          )
+          observations['summary'] = {
+              'exact_cdx_snapshot_count': len(exact_rows),
+              'selected_snapshot_count': len(selected),
+              'recovered_snapshot_body_count': recovered_count,
+              'meaningful_archival_observation_created': bool(
+                  exact_rows or child_rows or recovered_count
+              ),
+          }
+          if not observations['summary']['meaningful_archival_observation_created']:
+              raise SystemExit('No meaningful Wayback archival observation could be recovered.')
+
+          out = Path('gaze-in-wild-historical-webpage-probe.json')
+          out.write_text(
+              json.dumps(observations, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(observations['summary'], indent=2, sort_keys=True))
+          print('candidate children:', len(candidate_children))
+          print('page links:', len(discovered_links))
+          PY
+
+      - name: Upload metadata-only archival probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-historical-webpage-probe
+          path: gaze-in-wild-historical-webpage-probe.json
+          if-no-files-found: error
+          retention-days: 30
