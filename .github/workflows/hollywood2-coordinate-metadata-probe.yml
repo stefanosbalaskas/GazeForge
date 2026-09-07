@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - research/hollywood2-coordinate-metadata
+      - research/hollywood2-coordinate-metadata-mainline
     paths:
       - "src/gazeforge/hollywood2_coordinate_metadata.py"
       - "src/gazeforge/hollywood2_coordinate_evidence.py"
