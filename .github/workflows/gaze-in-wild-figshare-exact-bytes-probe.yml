@@ -1,5 +1,6 @@
 name: Gaze-in-the-Wild exact Figshare bytes
 
+# Full transport verification is intentionally isolated to this dedicated workflow.
 on:
   push:
     branches:
