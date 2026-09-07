@@ -1,0 +1,181 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to build and release (optional)
+        required: false
+        type: string
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: build and create immutable GitHub release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - name: Checkout exact release tag
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Verify tag, package version, citation, and Zenodo metadata
+        run: |
+          set -euo pipefail
+          case "$RELEASE_TAG" in
+            v*) VERSION="${RELEASE_TAG#v}" ;;
+            *) echo "Release tag must start with v: $RELEASE_TAG" >&2; exit 1 ;;
+          esac
+          test "$(git rev-parse HEAD)" = "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")"
+          export VERSION
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import re
+          import tomllib
+
+          version = os.environ["VERSION"]
+          project = tomllib.loads(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+          if project["name"] != "gazeforge":
+              raise SystemExit(f"Unexpected project name: {project['name']}")
+          if project["version"] != version:
+              raise SystemExit(f"Tag/version mismatch: {version} vs {project['version']}")
+
+          cff = pathlib.Path("CITATION.cff").read_text(encoding="utf-8")
+          if not re.search(rf"(?m)^version:\s*{re.escape(version)}\s*$", cff):
+              raise SystemExit(f"CITATION.cff version does not match {version}")
+
+          zenodo = json.loads(pathlib.Path(".zenodo.json").read_text(encoding="utf-8"))
+          if zenodo.get("version") != version:
+              raise SystemExit(f"Zenodo version mismatch: {zenodo.get('version')} vs {version}")
+          if zenodo.get("upload_type") != "software":
+              raise SystemExit("Zenodo metadata must declare upload_type=software")
+          if zenodo.get("access_right") != "open":
+              raise SystemExit("Zenodo metadata must declare open access")
+          if zenodo.get("license") != "mit":
+              raise SystemExit("Zenodo metadata must declare the MIT license")
+          creators = zenodo.get("creators", [])
+          if not creators or creators[0].get("name") != "Balaskas, Stefanos":
+              raise SystemExit("Zenodo creator metadata is missing or incorrect")
+          print(f"Verified release metadata for GazeForge {version}")
+          PY
+
+      - name: Require successful exact-main validation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          TARGET_SHA="$(git rev-parse HEAD)"
+          MAIN_SHA="$(git rev-parse origin/main)"
+          test "$TARGET_SHA" = "$MAIN_SHA" || {
+            echo "Release tag must point at exact current main: tag=$TARGET_SHA main=$MAIN_SHA" >&2
+            exit 1
+          }
+          for workflow in ci.yml docs.yml pages.yml; do
+            echo "Checking $workflow for exact main $TARGET_SHA..."
+            ok="$(gh run list --workflow "$workflow" --commit "$TARGET_SHA" --branch main --limit 30 \
+              --json conclusion \
+              --jq '[.[] | select(.conclusion == "success")] | length')"
+            test "$ok" -ge 1 || {
+              echo "Missing successful exact-main validation for $workflow at $TARGET_SHA" >&2
+              exit 1
+            }
+          done
+
+      - name: Install build and validation tools
+        run: python -m pip install "build>=1.2" "twine==7.0.0"
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Check distribution metadata
+        run: python -m twine check dist/*
+
+      - name: Smoke-install wheel and sdist
+        run: |
+          set -euo pipefail
+          VERSION="${RELEASE_TAG#v}"
+          export VERSION
+          test -f "dist/gazeforge-${VERSION}-py3-none-any.whl"
+          test -f "dist/gazeforge-${VERSION}.tar.gz"
+          for artifact in "dist/gazeforge-${VERSION}-py3-none-any.whl" "dist/gazeforge-${VERSION}.tar.gz"; do
+            envdir="$(mktemp -d)"
+            python -m venv "$envdir/venv"
+            "$envdir/venv/bin/python" -m pip install --upgrade pip
+            "$envdir/venv/bin/python" -m pip install "$artifact"
+            "$envdir/venv/bin/python" - <<'PY'
+          import os
+          from importlib.metadata import version
+
+          import gazeforge
+          from gazeforge import canonicalize_gaze, simulate_gaze
+
+          expected = os.environ["VERSION"]
+          assert version("gazeforge") == expected
+          assert gazeforge.__version__ == expected
+          frame = canonicalize_gaze(simulate_gaze(n_participants=1, n_trials=1, samples_per_trial=12), sampling_rate_hz=60)
+          assert len(frame.data) == 12
+          print("distribution smoke PASS", expected)
+          PY
+            rm -rf "$envdir"
+          done
+
+      - name: Write SHA-256 manifest
+        run: sha256sum dist/* > SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: distributions
+          path: |
+            dist/*
+            SHA256SUMS.txt
+
+      - name: Create immutable GitHub Release if absent
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists; preserving existing assets unchanged."
+          else
+            prerelease=()
+            if [[ "$RELEASE_TAG" =~ (a|b|rc|dev)[0-9]*$ ]]; then prerelease+=(--prerelease); fi
+            gh release create "$RELEASE_TAG" dist/* SHA256SUMS.txt \
+              --verify-tag \
+              --title "$RELEASE_TAG" \
+              --notes-file RELEASE_NOTES_0.1.0a1.md \
+              "${prerelease[@]}"
+          fi
+
+      - name: Dispatch protected PyPI Trusted Publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VERSION="${RELEASE_TAG#v}"
+          if curl --fail --silent --show-error "https://pypi.org/pypi/gazeforge/${VERSION}/json" >/dev/null 2>&1; then
+            echo "gazeforge ${VERSION} is already on PyPI; skipping duplicate publication dispatch."
+          else
+            gh workflow run pypi.yml --ref "$RELEASE_TAG" -f tag="$RELEASE_TAG"
+            echo "Dispatched pypi.yml for $RELEASE_TAG"
+          fi

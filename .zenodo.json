@@ -1,0 +1,28 @@
+{
+  "creators": [
+    {
+      "name": "Balaskas, Stefanos",
+      "orcid": "0000-0003-2444-9796",
+      "affiliation": "University of Patras"
+    }
+  ],
+  "title": "GazeForge: Auditable AI for Eye-Tracking Analysis",
+  "description": "GazeForge is vendor-neutral Python research software for auditable AI-assisted eye-tracking analysis. It provides machine-learning-assisted quality control, transparent and learned eye-event modelling, semantic and dynamic AOIs with human review, scanpath representations, participant-held-out and dataset-held-out validation, calibration diagnostics, deterministic provenance, and frozen benchmark evidence. Version 0.1.0a1 is the first public alpha release. It includes the reviewed Lund2013 external evidence suite and the provenance/rights infrastructure developed for additional external benchmarks. This alpha release does not claim native 60 Hz/GP3 device validation, completed Gaze-in-the-Wild model or human-agreement evidence, completed VISUS/Hollywood2 empirical validation, or stable API guarantees.",
+  "access_right": "open",
+  "license": "mit",
+  "upload_type": "software",
+  "language": "eng",
+  "keywords": [
+    "eye tracking",
+    "gaze",
+    "artificial intelligence",
+    "machine learning",
+    "human-computer interaction",
+    "areas of interest",
+    "scanpaths",
+    "event classification",
+    "research software",
+    "reproducible research"
+  ],
+  "version": "0.1.0a1"
+}
