@@ -89,6 +89,7 @@ nav:
       - Gaze-in-the-Wild recovery candidate quarantine: gaze-in-wild-recovery-candidates.md
       - Gaze-in-the-Wild layout convergence: gaze-in-wild-layout-convergence.md
       - Gaze-in-the-Wild historical-tree recovery: gaze-in-wild-historical-tree-recovery.md
+      - Gaze-in-the-Wild task-identity source recovery: gaze-in-wild-task-identity-source-recovery.md
       - Gaze-in-the-Wild ProcessData preflight: gaze-in-wild-processdata-preflight.md
       - Gaze-in-the-Wild candidate ProcessData preflight: gaze-in-wild-candidate-preflight.md
       - Gaze-in-the-Wild source audit: gaze-in-wild-source-audit.md

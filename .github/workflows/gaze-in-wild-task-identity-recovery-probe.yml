@@ -1,0 +1,97 @@
+name: Gaze-in-the-Wild task identity recovery probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-task-identity-recovery
+    paths:
+      - "scripts/probe_gaze_in_wild_task_identity_recovery.py"
+      - ".github/workflows/gaze-in-wild-task-identity-recovery-probe.yml"
+      - "src/gazeforge/gaze_in_wild_task_identity_source_recovery.py"
+      - "tests/test_gaze_in_wild_task_identity_source_recovery.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-task-identity-source-recovery-evidence-v1.json"
+      - "docs/gaze-in-wild-task-identity-source-recovery.md"
+      - "mkdocs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and tests
+        run: python -m pip install --disable-pip-version-check --quiet -e ".[dev]"
+      - name: Clone exact first-author repository revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/RSKothari/Gaze-in-Wild.git _giw_source
+          git -C _giw_source checkout --quiet 52262d44e366a53369e10ca73c5f41daf0e8f1e5
+          test "$(git -C _giw_source rev-parse HEAD)" = "52262d44e366a53369e10ca73c5f41daf0e8f1e5"
+      - name: Reproduce task-identity source observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/probe_gaze_in_wild_task_identity_recovery.py \
+            _giw_source \
+            --output gaze-in-wild-task-identity-recovery-probe-v1.json
+      - name: Validate frozen evidence and live observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_task_identity_source_recovery import load_evidence
+
+          frozen = load_evidence(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-task-identity-source-recovery-evidence-v1.json"
+          )
+          live = json.loads(
+              Path("gaze-in-wild-task-identity-recovery-probe-v1.json")
+              .read_text(encoding="utf-8")
+          )
+          assert live["source"]["commit_sha1"] == frozen["source_scope"]["pinned_commit_sha1"]
+          assert live["reachable_history"]["reachable_commit_count"] == frozen["source_scope"]["reachable_commit_count"]
+          assert live["reachable_history"]["unique_text_blob_count"] == frozen["source_scope"]["unique_text_blob_count"]
+          assert live["reachable_history"]["task_related_blob_count"] == frozen["source_scope"]["task_related_blob_count"]
+          assert live["mlapp"]["git_blob_sha1"] == frozen["mlapp_audit"]["git_blob_sha1"]
+          assert live["mlapp"]["sha256"] == frozen["mlapp_audit"]["sha256"]
+          assert len(live["mlapp"]["members"]) == frozen["mlapp_audit"]["member_count"]
+          assert len(live["mlapp"]["task_contexts"]) == frozen["mlapp_audit"]["task_context_count"]
+          assert live["review_queue"]["task_context_count"] == frozen["reachable_history_observation"]["task_context_count"]
+          assert live["review_queue"]["identity_plus_tridx_candidate_context_count"] == 0
+          assert live["reachable_history"]["task_contexts"][0]["source"] == "history:PlotLabels.m"
+          assert live["reachable_history"]["task_contexts"][0]["nearby_tridx_assignments"] == []
+          boundary = live["scientific_boundary"]
+          assert boundary["universal_tridx_to_task_mapping_verified"] is False
+          assert boundary["complete_per_file_task_mapping_verified"] is False
+          assert boundary["participant_disjoint_model_validation_created"] is False
+          assert boundary["cross_dataset_validation_created"] is False
+          assert boundary["new_empirical_performance_claim_created"] is False
+          print("live_probe_fingerprint:", live["probe_fingerprint_sha256"])
+          print("frozen_evidence_fingerprint:", frozen["evidence_fingerprint_sha256"])
+          PY
+      - name: Run task-identity source-recovery adversarial tests
+        run: pytest -q tests/test_gaze_in_wild_task_identity_source_recovery.py
+      - name: Upload deterministic task-identity recovery probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-task-identity-recovery-probe
+          path: gaze-in-wild-task-identity-recovery-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
