@@ -66,9 +66,12 @@ class GazeInWildFreshByteIdentity:
 
 
 def _canonical_bytes(value: Any) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
-        "utf-8"
-    )
+    return json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
 
 
 def evidence_fingerprint(record: Mapping[str, Any]) -> str:
@@ -77,7 +80,10 @@ def evidence_fingerprint(record: Mapping[str, Any]) -> str:
     return hashlib.sha256(_canonical_bytes(body)).hexdigest()
 
 
-def _load(value: Mapping[str, Any] | str | Path, label: str) -> tuple[dict[str, Any], Path | None]:
+def _load(
+    value: Mapping[str, Any] | str | Path,
+    label: str,
+) -> tuple[dict[str, Any], Path | None]:
     if isinstance(value, Mapping):
         return dict(value), None
     path = Path(value)
@@ -112,10 +118,8 @@ def _false(value: Any, label: str) -> None:
         raise BenchmarkIntegrityError(f"GIW exact-byte must not promote {label}.")
 
 
-def _validate_boundaries(record: Mapping[str, Any]) -> None:
-    boundary = _mapping(record, "scientific_boundary")
-    _true(boundary.get("exact_original_distribution_bytes_verified"), "exact-byte verification")
-    for key in (
+def _boundary_keys() -> tuple[str, ...]:
+    return (
         "universal_tridx_to_task_mapping_verified",
         "complete_file_to_task_mapping_verified",
         "participant_disjoint_model_validation_created",
@@ -124,8 +128,56 @@ def _validate_boundaries(record: Mapping[str, Any]) -> None:
         "gp3_validity_claim_created",
         "quarantine_exit_authorized",
         "new_empirical_performance_claim_created",
-    ):
+    )
+
+
+def _validate_boundaries(record: Mapping[str, Any]) -> None:
+    boundary = _mapping(record, "scientific_boundary")
+    _true(
+        boundary.get("exact_original_distribution_bytes_verified"),
+        "exact-byte verification",
+    )
+    for key in _boundary_keys():
         _false(boundary.get(key), key)
+
+
+def _expected_articles() -> dict[str, dict[str, Any]]:
+    return {
+        "ProcessData": {
+            "figshare_id": 11673645,
+            "doi": "10.6084/m9.figshare.11673645.v1",
+            "file_count": 68,
+            "total_size_bytes": 2_384_573_418,
+            "frozen_manifest_sha256": (
+                "cc82a05fa64d35f76f955ebe231c27ff858d9d53de714ffa92d9d9c21828aaa8"
+            ),
+            "stable_file_identity_manifest_sha256": (
+                EXPECTED_PROCESSDATA_STABLE_MANIFEST_SHA256
+            ),
+            "verified_file_identity_manifest_sha256": (
+                "b1a252480e75ff322e40fc8182af2a2b845e267d0c5bf99fd4801fbbc73b7004"
+            ),
+            "distinct_container_schema_count": 13,
+            "struct_key": "all_files_have_processdata_struct_1x1",
+        },
+        "LabelData": {
+            "figshare_id": 11673696,
+            "doi": "10.6084/m9.figshare.11673696.v1",
+            "file_count": 50,
+            "total_size_bytes": 28_725_824,
+            "frozen_manifest_sha256": (
+                "65d934d3d3e2ebb04e639fc16435bf3383882340996a211159c5ccb67c71b35d"
+            ),
+            "stable_file_identity_manifest_sha256": (
+                EXPECTED_LABELDATA_STABLE_MANIFEST_SHA256
+            ),
+            "verified_file_identity_manifest_sha256": (
+                "72fb67dab5085043c4dab079327354f5ddf9c8a4ec490d546688a8d7b9a3f2d2"
+            ),
+            "distinct_container_schema_count": 1,
+            "struct_key": "all_files_have_labeldata_struct_1x1",
+        },
+    }
 
 
 def validate_gaze_in_wild_figshare_exact_bytes_evidence(
@@ -134,7 +186,7 @@ def validate_gaze_in_wild_figshare_exact_bytes_evidence(
     rights_evidence_or_path: Mapping[str, Any] | str | Path,
     summary_or_path: Mapping[str, Any] | str | Path,
 ) -> GazeInWildExactBytesEvidence:
-    """Validate the immutable reviewed exact-byte result and its parent evidence."""
+    """Validate immutable reviewed exact-byte evidence and its parent evidence."""
 
     record, path = _load(evidence_or_path, "GIW exact-byte reviewed evidence")
     rights = validate_gaze_in_wild_figshare_evidence(
@@ -196,11 +248,21 @@ def validate_gaze_in_wild_figshare_exact_bytes_evidence(
     )
 
     verified = _mapping(record, "verified_distribution")
-    _equal(verified.get("article_labels"), ["ProcessData", "LabelData"], "article labels")
+    _equal(
+        verified.get("article_labels"),
+        ["ProcessData", "LabelData"],
+        "article labels",
+    )
     _equal(verified.get("file_count"), 118, "file count")
     _equal(verified.get("total_size_bytes"), 2_413_299_242, "total bytes")
-    _true(verified.get("all_files_matched_frozen_size_and_md5"), "frozen size/MD5 checks")
-    _true(verified.get("all_downloads_succeeded_on_first_attempt"), "discovery transport result")
+    _true(
+        verified.get("all_files_matched_frozen_size_and_md5"),
+        "frozen size/MD5 checks",
+    )
+    _true(
+        verified.get("all_downloads_succeeded_on_first_attempt"),
+        "discovery transport result",
+    )
     _false(verified.get("raw_dataset_bytes_retained"), "raw-byte retention")
     _equal(
         verified.get("stable_exact_byte_identity_fingerprint_sha256"),
@@ -208,48 +270,34 @@ def validate_gaze_in_wild_figshare_exact_bytes_evidence(
         "stable exact-byte identity",
     )
 
-    expected = {
-        "ProcessData": (
-            11673645,
-            "10.6084/m9.figshare.11673645.v1",
-            68,
-            2_384_573_418,
-            "cc82a05fa64d35f76f955ebe231c27ff858d9d53de714ffa92d9d9c21828aaa8",
-            EXPECTED_PROCESSDATA_STABLE_MANIFEST_SHA256,
-            "b1a252480e75ff322e40fc8182af2a2b845e267d0c5bf99fd4801fbbc73b7004",
-            13,
-            "all_files_have_processdata_struct_1x1",
-        ),
-        "LabelData": (
-            11673696,
-            "10.6084/m9.figshare.11673696.v1",
-            50,
-            28_725_824,
-            "65d934d3d3e2ebb04e639fc16435bf3383882340996a211159c5ccb67c71b35d",
-            EXPECTED_LABELDATA_STABLE_MANIFEST_SHA256,
-            "72fb67dab5085043c4dab079327354f5ddf9c8a4ec490d546688a8d7b9a3f2d2",
-            1,
-            "all_files_have_labeldata_struct_1x1",
-        ),
-    }
-    for label, values in expected.items():
+    for label, expected in _expected_articles().items():
         section = _mapping(verified, label)
-        article_id, doi, count, total, frozen_manifest, stable_manifest, discovery_manifest, schemas, struct_key = values
-        _equal(section.get("figshare_id"), article_id, f"{label} article id")
-        _equal(section.get("doi"), doi, f"{label} DOI")
-        _equal(section.get("file_count"), count, f"{label} file count")
-        _equal(section.get("total_size_bytes"), total, f"{label} total bytes")
-        _equal(section.get("frozen_manifest_sha256"), frozen_manifest, f"{label} frozen manifest")
-        _equal(section.get("stable_file_identity_manifest_sha256"), stable_manifest, f"{label} stable manifest")
-        _equal(section.get("verified_file_identity_manifest_sha256"), discovery_manifest, f"{label} discovery manifest")
-        _equal(section.get("matlab_format"), "matlab-level-5-compatible", f"{label} MATLAB format")
-        _equal(section.get("distinct_container_schema_count"), schemas, f"{label} schema count")
-        _true(section.get(struct_key), f"{label} primary struct")
+        for key in (
+            "figshare_id",
+            "doi",
+            "file_count",
+            "total_size_bytes",
+            "frozen_manifest_sha256",
+            "stable_file_identity_manifest_sha256",
+            "verified_file_identity_manifest_sha256",
+            "distinct_container_schema_count",
+        ):
+            _equal(section.get(key), expected[key], f"{label} {key}")
+        _equal(
+            section.get("matlab_format"),
+            "matlab-level-5-compatible",
+            f"{label} MATLAB format",
+        )
+        _true(section.get(expected["struct_key"]), f"{label} primary struct")
 
     excluded = _mapping(record, "excluded_distribution")
     _equal(excluded.get("label"), "ProcessData_cleaned", "excluded label")
     _equal(excluded.get("figshare_id"), 11673717, "excluded article id")
-    _equal(excluded.get("doi"), "10.6084/m9.figshare.11673717.v1", "excluded DOI")
+    _equal(
+        excluded.get("doi"),
+        "10.6084/m9.figshare.11673717.v1",
+        "excluded DOI",
+    )
     _false(excluded.get("downloaded"), "cleaned data download")
     _validate_boundaries(record)
 
@@ -264,35 +312,68 @@ def validate_gaze_in_wild_figshare_exact_bytes_evidence(
     )
 
 
+def _raw_items(raw: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
+    items = raw.get("items")
+    if not isinstance(items, list):
+        raise BenchmarkIntegrityError("GIW frozen raw metadata items are missing.")
+    return {
+        str(item.get("label")): item
+        for item in items
+        if isinstance(item, Mapping)
+    }
+
+
+def _stable_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "figshare_file_id": row.get("figshare_file_id"),
+        "name": row.get("name"),
+        "size_bytes": row.get("size_bytes"),
+        "md5": row.get("md5"),
+        "sha256": row.get("sha256"),
+        "mat_schema": row.get("mat_schema"),
+        "raw_bytes_retained": row.get("raw_bytes_retained"),
+    }
+
+
 def validate_fresh_gaze_in_wild_exact_byte_probe(
     probe_or_path: Mapping[str, Any] | str | Path,
     raw_or_path: Mapping[str, Any] | str | Path,
 ) -> GazeInWildFreshByteIdentity:
-    """Validate a fresh full-byte run against frozen metadata and reviewed identities."""
+    """Validate a fresh full-byte run against frozen metadata and identities."""
 
     probe, _ = _load(probe_or_path, "GIW fresh exact-byte probe")
     raw, _ = _load(raw_or_path, "GIW frozen raw metadata")
-    _equal(probe.get("record_type"), "gaze-in-wild-figshare-exact-bytes-probe-v1", "fresh probe type")
-    _equal(probe.get("verified_article_labels"), ["ProcessData", "LabelData"], "fresh probe labels")
+    _equal(
+        probe.get("record_type"),
+        "gaze-in-wild-figshare-exact-bytes-probe-v1",
+        "fresh probe type",
+    )
+    _equal(
+        probe.get("verified_article_labels"),
+        ["ProcessData", "LabelData"],
+        "fresh probe labels",
+    )
     _equal(probe.get("verified_file_count"), 118, "fresh file count")
-    _equal(probe.get("verified_total_size_bytes"), 2_413_299_242, "fresh total bytes")
-    _true(probe.get("exact_original_distribution_bytes_verified"), "fresh exact-byte verification")
+    _equal(
+        probe.get("verified_total_size_bytes"),
+        2_413_299_242,
+        "fresh total bytes",
+    )
+    _true(
+        probe.get("exact_original_distribution_bytes_verified"),
+        "fresh exact-byte verification",
+    )
     _false(probe.get("raw_dataset_bytes_retained"), "fresh raw-byte retention")
 
-    raw_items = raw.get("items")
-    if not isinstance(raw_items, list):
-        raise BenchmarkIntegrityError("GIW frozen raw metadata items are missing.")
-    raw_by_label = {
-        str(item.get("label")): item
-        for item in raw_items
-        if isinstance(item, Mapping)
-    }
+    raw_by_label = _raw_items(raw)
     verified_items = probe.get("verified_items")
-    if not isinstance(verified_items, list) or [item.get("label") for item in verified_items] != [
-        "ProcessData",
-        "LabelData",
-    ]:
-        raise BenchmarkIntegrityError("GIW fresh exact-byte item ordering drifted.")
+    if not isinstance(verified_items, list):
+        raise BenchmarkIntegrityError("GIW fresh exact-byte item list is missing.")
+    _equal(
+        [item.get("label") for item in verified_items],
+        ["ProcessData", "LabelData"],
+        "fresh item order",
+    )
 
     expanded_items: list[dict[str, Any]] = []
     article_manifests: dict[str, str] = {}
@@ -304,50 +385,82 @@ def validate_fresh_gaze_in_wild_exact_byte_probe(
         fresh_files = item.get("files")
         frozen_files = frozen_item.get("files")
         if not isinstance(fresh_files, list) or not isinstance(frozen_files, list):
-            raise BenchmarkIntegrityError(f"GIW fresh exact-byte {label} file manifest is missing.")
+            raise BenchmarkIntegrityError(
+                f"GIW fresh exact-byte {label} file manifest is missing."
+            )
         _equal(len(fresh_files), len(frozen_files), f"fresh {label} file count")
         frozen_by_id = {
             int(row["id"]): row
             for row in frozen_files
             if isinstance(row, Mapping)
         }
-        stable_rows = []
+        stable_rows: list[dict[str, Any]] = []
         schemas: set[bytes] = set()
+        seen_ids: set[int] = set()
         for row in fresh_files:
             if not isinstance(row, Mapping):
-                raise BenchmarkIntegrityError(f"GIW fresh exact-byte {label} file row is invalid.")
+                raise BenchmarkIntegrityError(
+                    f"GIW fresh exact-byte {label} file row is invalid."
+                )
             file_id = int(row.get("figshare_file_id", -1))
-            if file_id not in frozen_by_id:
-                raise BenchmarkIntegrityError(f"GIW fresh exact-byte {label} file id drifted.")
+            if file_id in seen_ids or file_id not in frozen_by_id:
+                raise BenchmarkIntegrityError(
+                    f"GIW fresh exact-byte {label} file id drifted."
+                )
+            seen_ids.add(file_id)
             frozen_row = frozen_by_id[file_id]
-            _equal(row.get("name"), frozen_row.get("name"), f"fresh {label} filename")
-            _equal(row.get("size_bytes"), frozen_row.get("size"), f"fresh {label} size")
-            _equal(row.get("md5"), frozen_row.get("supplied_md5"), f"fresh {label} MD5")
+            _equal(
+                row.get("name"),
+                frozen_row.get("name"),
+                f"fresh {label} filename",
+            )
+            _equal(
+                row.get("size_bytes"),
+                frozen_row.get("size"),
+                f"fresh {label} size",
+            )
+            _equal(
+                row.get("md5"),
+                frozen_row.get("supplied_md5"),
+                f"fresh {label} MD5",
+            )
             if HEX64.fullmatch(str(row.get("sha256", ""))) is None:
-                raise BenchmarkIntegrityError(f"GIW fresh exact-byte {label} SHA-256 is invalid.")
-            _false(row.get("raw_bytes_retained"), f"fresh {label} raw-byte retention")
+                raise BenchmarkIntegrityError(
+                    f"GIW fresh exact-byte {label} SHA-256 is invalid."
+                )
+            _false(
+                row.get("raw_bytes_retained"),
+                f"fresh {label} raw-byte retention",
+            )
             schema = row.get("mat_schema")
             if not isinstance(schema, Mapping):
-                raise BenchmarkIntegrityError(f"GIW fresh exact-byte {label} schema is missing.")
-            _equal(schema.get("format"), "matlab-level-5-compatible", f"fresh {label} MATLAB format")
+                raise BenchmarkIntegrityError(
+                    f"GIW fresh exact-byte {label} schema is missing."
+                )
+            _equal(
+                schema.get("format"),
+                "matlab-level-5-compatible",
+                f"fresh {label} MATLAB format",
+            )
             variables = schema.get("variables")
             if not isinstance(variables, list):
-                raise BenchmarkIntegrityError(f"GIW fresh exact-byte {label} variables are missing.")
+                raise BenchmarkIntegrityError(
+                    f"GIW fresh exact-byte {label} variables are missing."
+                )
             primary = "ProcessData" if label == "ProcessData" else "LabelData"
-            if not variables or variables[0] != {"class": "struct", "name": primary, "shape": [1, 1]}:
-                raise BenchmarkIntegrityError(f"GIW fresh exact-byte {label} primary struct drifted.")
+            wanted_primary = {
+                "class": "struct",
+                "name": primary,
+                "shape": [1, 1],
+            }
+            if not variables or variables[0] != wanted_primary:
+                raise BenchmarkIntegrityError(
+                    f"GIW fresh exact-byte {label} primary struct drifted."
+                )
             schemas.add(_canonical_bytes(schema))
-            stable_rows.append(
-                {
-                    "figshare_file_id": row.get("figshare_file_id"),
-                    "name": row.get("name"),
-                    "size_bytes": row.get("size_bytes"),
-                    "md5": row.get("md5"),
-                    "sha256": row.get("sha256"),
-                    "mat_schema": row.get("mat_schema"),
-                    "raw_bytes_retained": row.get("raw_bytes_retained"),
-                }
-            )
+            stable_rows.append(_stable_row(row))
+
+        _equal(len(seen_ids), len(frozen_files), f"fresh {label} unique ids")
         expected_schemas = 13 if label == "ProcessData" else 1
         _equal(len(schemas), expected_schemas, f"fresh {label} schema count")
         article_manifest = hashlib.sha256(_canonical_bytes(stable_rows)).hexdigest()
@@ -374,22 +487,17 @@ def validate_fresh_gaze_in_wild_exact_byte_probe(
         "fresh LabelData stable manifest",
     )
     stable = hashlib.sha256(_canonical_bytes(expanded_items)).hexdigest()
-    _equal(stable, EXPECTED_STABLE_IDENTITY_FINGERPRINT_SHA256, "fresh stable identity")
+    _equal(
+        stable,
+        EXPECTED_STABLE_IDENTITY_FINGERPRINT_SHA256,
+        "fresh stable identity",
+    )
 
     excluded = _mapping(probe, "excluded_cleaned_deposit")
     _equal(excluded.get("label"), "ProcessData_cleaned", "fresh excluded label")
     _false(excluded.get("downloaded"), "fresh cleaned data download")
     boundary = _mapping(probe, "scientific_boundary")
-    for key in (
-        "universal_tridx_to_task_mapping_verified",
-        "complete_file_to_task_mapping_verified",
-        "participant_disjoint_model_validation_created",
-        "human_human_agreement_created",
-        "cross_dataset_validation_created",
-        "gp3_validity_claim_created",
-        "quarantine_exit_authorized",
-        "new_empirical_performance_claim_created",
-    ):
+    for key in _boundary_keys():
         _false(boundary.get(key), f"fresh {key}")
 
     return GazeInWildFreshByteIdentity(
