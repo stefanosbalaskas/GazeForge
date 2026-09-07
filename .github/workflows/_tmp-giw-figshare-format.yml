@@ -1,0 +1,54 @@
+name: Temporary GIW Figshare formatter
+
+on:
+  push:
+    branches:
+      - research/giw-figshare-distribution-rights
+    paths:
+      - .github/workflows/_tmp-giw-figshare-format.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/giw-figshare-distribution-rights
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Ruff
+        run: python -m pip install ruff
+      - name: Apply focused Ruff fixes and formatting
+        run: |
+          ruff check --fix \
+            src/gazeforge/gaze_in_wild_figshare_evidence.py \
+            scripts/gaze_in_wild_figshare_live_probe.py \
+            tests/test_gaze_in_wild_figshare_evidence.py || true
+          ruff format \
+            src/gazeforge/gaze_in_wild_figshare_evidence.py \
+            scripts/gaze_in_wild_figshare_live_probe.py \
+            tests/test_gaze_in_wild_figshare_evidence.py
+          ruff check \
+            src/gazeforge/gaze_in_wild_figshare_evidence.py \
+            scripts/gaze_in_wild_figshare_live_probe.py \
+            tests/test_gaze_in_wild_figshare_evidence.py
+      - name: Commit mechanical formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'No formatting changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            src/gazeforge/gaze_in_wild_figshare_evidence.py \
+            scripts/gaze_in_wild_figshare_live_probe.py \
+            tests/test_gaze_in_wild_figshare_evidence.py
+          git commit -m 'style: format GIW Figshare tranche'
+          git push origin HEAD:research/giw-figshare-distribution-rights
