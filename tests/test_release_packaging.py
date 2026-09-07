@@ -57,6 +57,9 @@ def test_release_workflow_builds_exact_tag_and_requires_exact_main() -> None:
         "Checkout exact release tag",
         "Tag/version mismatch",
         "Release tag must point at exact current main",
+        "for workflow in ci.yml docs.yml; do",
+        "full OS/Python matrix",
+        "Pages is deliberately not required here",
         "python -m build",
         "python -m twine check dist/*",
         "SHA256SUMS.txt",
@@ -65,6 +68,7 @@ def test_release_workflow_builds_exact_tag_and_requires_exact_main() -> None:
     )
     for phrase in required:
         assert phrase in workflow
+    assert "for workflow in ci.yml docs.yml pages.yml; do" not in workflow
 
 
 def test_pypi_workflow_uses_oidc_and_exact_github_release_assets() -> None:
