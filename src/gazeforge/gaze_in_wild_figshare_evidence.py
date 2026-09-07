@@ -42,9 +42,9 @@ class GazeInWildFigshareEvidence:
 
 
 def _canonical_bytes(value: Any) -> bytes:
-    return json.dumps(
-        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-    ).encode("utf-8")
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
+        "utf-8"
+    )
 
 
 def evidence_fingerprint(record: Mapping[str, Any]) -> str:
@@ -59,9 +59,7 @@ def _record_fingerprint(record: Mapping[str, Any], stored_key: str) -> str:
     return hashlib.sha256(_canonical_bytes(body)).hexdigest()
 
 
-def _load(
-    value: Mapping[str, Any] | str | Path, label: str
-) -> tuple[dict[str, Any], Path | None]:
+def _load(value: Mapping[str, Any] | str | Path, label: str) -> tuple[dict[str, Any], Path | None]:
     if isinstance(value, Mapping):
         return dict(value), None
     path = Path(value)
@@ -129,9 +127,7 @@ def _validate_raw(raw: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
 
     items = raw.get("items")
     if not isinstance(items, list) or len(items) != 3:
-        raise BenchmarkIntegrityError(
-            "GIW Figshare raw probe must contain exactly three items."
-        )
+        raise BenchmarkIntegrityError("GIW Figshare raw probe must contain exactly three items.")
     by_label: dict[str, Mapping[str, Any]] = {}
     for item in items:
         if not isinstance(item, Mapping):
@@ -141,12 +137,10 @@ def _validate_raw(raw: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
         _equal(item.get("defined_type_name"), "dataset", f"{label} type")
         _equal(item.get("version"), 1, f"{label} version")
         authors = item.get("authors")
-        if not isinstance(authors, list) or [
-            author.get("full_name") for author in authors
-        ] != ["Rakshit Kothari"]:
-            raise BenchmarkIntegrityError(
-                f"GIW Figshare {label} author identity drifted."
-            )
+        if not isinstance(authors, list) or [author.get("full_name") for author in authors] != [
+            "Rakshit Kothari"
+        ]:
+            raise BenchmarkIntegrityError(f"GIW Figshare {label} author identity drifted.")
         license_value = item.get("license")
         if not isinstance(license_value, Mapping):
             raise BenchmarkIntegrityError(f"GIW Figshare {label} license is missing.")
@@ -168,20 +162,14 @@ def _validate_raw(raw: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
         )
         for row in files:
             if not isinstance(row, Mapping):
-                raise BenchmarkIntegrityError(
-                    f"GIW Figshare {label} file row is invalid."
-                )
+                raise BenchmarkIntegrityError(f"GIW Figshare {label} file row is invalid.")
             if not str(row.get("name", "")).endswith(".mat"):
-                raise BenchmarkIntegrityError(
-                    f"GIW Figshare {label} contains a non-MAT file."
-                )
+                raise BenchmarkIntegrityError(f"GIW Figshare {label} contains a non-MAT file.")
             _false(row.get("is_link_only"), f"{label} link-only file")
             supplied = str(row.get("supplied_md5", ""))
             computed = str(row.get("computed_md5", ""))
             if MD5_RE.fullmatch(supplied) is None or supplied != computed:
-                raise BenchmarkIntegrityError(
-                    f"GIW Figshare {label} MD5 metadata is invalid."
-                )
+                raise BenchmarkIntegrityError(f"GIW Figshare {label} MD5 metadata is invalid.")
     _equal(
         sorted(by_label),
         ["LabelData", "ProcessData", "ProcessData_cleaned"],

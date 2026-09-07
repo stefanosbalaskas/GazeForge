@@ -122,10 +122,7 @@ def main() -> int:
     live = {
         "project_id": PROJECT_ID,
         "project_articles": _project_articles(),
-        "items": [
-            _item(label, article_id)
-            for label, article_id in ARTICLE_IDS.items()
-        ],
+        "items": [_item(label, article_id) for label, article_id in ARTICLE_IDS.items()],
     }
     live["items"].sort(key=lambda item: str(item["label"]))
 
@@ -157,9 +154,7 @@ def main() -> int:
         encoding="utf-8",
     )
     if not matched:
-        raise SystemExit(
-            "Live GIW Figshare metadata no longer matches the frozen review."
-        )
+        raise SystemExit("Live GIW Figshare metadata no longer matches the frozen review.")
     print("live metadata binding passed")
     print(
         "stable metadata fingerprint:",

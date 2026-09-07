@@ -14,9 +14,14 @@ from gazeforge.gaze_in_wild_figshare_evidence import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-EVIDENCE = ROOT / "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-distribution-rights-evidence-v1.json"
+EVIDENCE = (
+    ROOT
+    / "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-distribution-rights-evidence-v1.json"
+)
 RAW = ROOT / "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json"
-SUMMARY = ROOT / "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-summary-v1.json"
+SUMMARY = (
+    ROOT / "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-summary-v1.json"
+)
 
 
 def _load(path: Path) -> dict:
@@ -41,16 +46,12 @@ def _refresh_evidence(record: dict) -> dict:
 
 
 def _refresh_raw(record: dict) -> dict:
-    record["probe_fingerprint_sha256"] = _fingerprint(
-        record, "probe_fingerprint_sha256"
-    )
+    record["probe_fingerprint_sha256"] = _fingerprint(record, "probe_fingerprint_sha256")
     return record
 
 
 def _refresh_summary(record: dict) -> dict:
-    record["summary_fingerprint_sha256"] = _fingerprint(
-        record, "summary_fingerprint_sha256"
-    )
+    record["summary_fingerprint_sha256"] = _fingerprint(record, "summary_fingerprint_sha256")
     return record
 
 
@@ -82,9 +83,7 @@ def test_live_item_license_cannot_drift_even_with_rehashed_probe() -> None:
 def test_link_only_file_is_rejected() -> None:
     raw = _load(RAW)
     raw["items"][0]["files"][0]["is_link_only"] = True
-    raw["items"][0]["manifest_sha256"] = _fingerprint(
-        {"files": raw["items"][0]["files"]}, "unused"
-    )
+    raw["items"][0]["manifest_sha256"] = _fingerprint({"files": raw["items"][0]["files"]}, "unused")
     _refresh_raw(raw)
     with pytest.raises(BenchmarkIntegrityError):
         validate_gaze_in_wild_figshare_evidence(EVIDENCE, raw, SUMMARY)
@@ -116,9 +115,7 @@ def test_pridx_4_manifest_mismatch_cannot_be_erased() -> None:
 
 def test_participant_mapping_cannot_be_promoted() -> None:
     record = _load(EVIDENCE)
-    record["manifest_structure"][
-        "published_participant_to_distribution_mapping_complete"
-    ] = True
+    record["manifest_structure"]["published_participant_to_distribution_mapping_complete"] = True
     _refresh_evidence(record)
     with pytest.raises(BenchmarkIntegrityError, match="participant mapping"):
         validate_gaze_in_wild_figshare_evidence(record, RAW, SUMMARY)
@@ -126,9 +123,9 @@ def test_participant_mapping_cannot_be_promoted() -> None:
 
 def test_cleaned_data_cannot_be_promoted_to_original() -> None:
     record = _load(EVIDENCE)
-    record["deposits"]["ProcessData_cleaned"][
-        "is_original_publication_processed_distribution"
-    ] = True
+    record["deposits"]["ProcessData_cleaned"]["is_original_publication_processed_distribution"] = (
+        True
+    )
     _refresh_evidence(record)
     with pytest.raises(BenchmarkIntegrityError, match="cleaned data as original"):
         validate_gaze_in_wild_figshare_evidence(record, RAW, SUMMARY)
