@@ -1,0 +1,1833 @@
+{
+  "api_base": "https://api.figshare.com/v2",
+  "checked_at_utc": "2026-09-07T16:34:32.435580+00:00",
+  "items": [
+    {
+      "authors": [
+        {
+          "full_name": "Rakshit Kothari",
+          "id": 8338416,
+          "orcid_id": ""
+        }
+      ],
+      "defined_type_name": "dataset",
+      "description": "<div>This folder contains [ProcessData], a matlab structure file which contains information pertaining to the Gaze-In-Wild project. For more information, please visit: http://www.cis.rit.edu/~rsk3900/gaze-in-wild/<br></div>",
+      "doi": "10.6084/m9.figshare.11673645.v1",
+      "file_count": 68,
+      "files": [
+        {
+          "computed_md5": "5e67a2737fd156727365d651f8e5c691",
+          "download_url": "https://ndownloader.figshare.com/files/21212301",
+          "id": 21212301,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_1.mat",
+          "size": 36357323,
+          "supplied_md5": "5e67a2737fd156727365d651f8e5c691"
+        },
+        {
+          "computed_md5": "928f0bf6ff513ea02cb323c6811ac7db",
+          "download_url": "https://ndownloader.figshare.com/files/21212283",
+          "id": 21212283,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_2.mat",
+          "size": 38157595,
+          "supplied_md5": "928f0bf6ff513ea02cb323c6811ac7db"
+        },
+        {
+          "computed_md5": "31106f40806c9042d6411de6ae0278d5",
+          "download_url": "https://ndownloader.figshare.com/files/21212274",
+          "id": 21212274,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_3.mat",
+          "size": 27561374,
+          "supplied_md5": "31106f40806c9042d6411de6ae0278d5"
+        },
+        {
+          "computed_md5": "6036e715647da35cf160daf75708c84d",
+          "download_url": "https://ndownloader.figshare.com/files/21212265",
+          "id": 21212265,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_4.mat",
+          "size": 29782336,
+          "supplied_md5": "6036e715647da35cf160daf75708c84d"
+        },
+        {
+          "computed_md5": "5bc250a0e2170985bc8547f75e453e8b",
+          "download_url": "https://ndownloader.figshare.com/files/21212298",
+          "id": 21212298,
+          "is_link_only": false,
+          "name": "PrIdx_11_TrIdx_1.mat",
+          "size": 37861066,
+          "supplied_md5": "5bc250a0e2170985bc8547f75e453e8b"
+        },
+        {
+          "computed_md5": "62541f15017e6cd8402e6def62f9f19d",
+          "download_url": "https://ndownloader.figshare.com/files/21212289",
+          "id": 21212289,
+          "is_link_only": false,
+          "name": "PrIdx_11_TrIdx_2.mat",
+          "size": 29761728,
+          "supplied_md5": "62541f15017e6cd8402e6def62f9f19d"
+        },
+        {
+          "computed_md5": "3673f600853be2cbd0e67169fc107329",
+          "download_url": "https://ndownloader.figshare.com/files/21212145",
+          "id": 21212145,
+          "is_link_only": false,
+          "name": "PrIdx_11_TrIdx_4.mat",
+          "size": 27385537,
+          "supplied_md5": "3673f600853be2cbd0e67169fc107329"
+        },
+        {
+          "computed_md5": "7a185d987818038a121b55eac7adde74",
+          "download_url": "https://ndownloader.figshare.com/files/21212304",
+          "id": 21212304,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_1.mat",
+          "size": 33267867,
+          "supplied_md5": "7a185d987818038a121b55eac7adde74"
+        },
+        {
+          "computed_md5": "a5dd585ae5ad3c6b27fb75a60f66ab09",
+          "download_url": "https://ndownloader.figshare.com/files/21212292",
+          "id": 21212292,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_2.mat",
+          "size": 30324950,
+          "supplied_md5": "a5dd585ae5ad3c6b27fb75a60f66ab09"
+        },
+        {
+          "computed_md5": "1104f16fd395d2f53d96e39e1fb4ce20",
+          "download_url": "https://ndownloader.figshare.com/files/21212277",
+          "id": 21212277,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_3.mat",
+          "size": 28532116,
+          "supplied_md5": "1104f16fd395d2f53d96e39e1fb4ce20"
+        },
+        {
+          "computed_md5": "c6e6297dbd580b02441a4c996644f74e",
+          "download_url": "https://ndownloader.figshare.com/files/21212268",
+          "id": 21212268,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_4.mat",
+          "size": 27907439,
+          "supplied_md5": "c6e6297dbd580b02441a4c996644f74e"
+        },
+        {
+          "computed_md5": "c2786253595fd5fc345d1da8ab2b3dbf",
+          "download_url": "https://ndownloader.figshare.com/files/21212295",
+          "id": 21212295,
+          "is_link_only": false,
+          "name": "PrIdx_13_TrIdx_1.mat",
+          "size": 38364883,
+          "supplied_md5": "c2786253595fd5fc345d1da8ab2b3dbf"
+        },
+        {
+          "computed_md5": "a307a21e00c88b957bee655b2cf9951b",
+          "download_url": "https://ndownloader.figshare.com/files/21212280",
+          "id": 21212280,
+          "is_link_only": false,
+          "name": "PrIdx_13_TrIdx_2.mat",
+          "size": 33472899,
+          "supplied_md5": "a307a21e00c88b957bee655b2cf9951b"
+        },
+        {
+          "computed_md5": "84306a69da56297dfd709e98bca2b922",
+          "download_url": "https://ndownloader.figshare.com/files/21212271",
+          "id": 21212271,
+          "is_link_only": false,
+          "name": "PrIdx_13_TrIdx_3.mat",
+          "size": 30622031,
+          "supplied_md5": "84306a69da56297dfd709e98bca2b922"
+        },
+        {
+          "computed_md5": "048a1c6c794de52758d8093075f73a90",
+          "download_url": "https://ndownloader.figshare.com/files/21212262",
+          "id": 21212262,
+          "is_link_only": false,
+          "name": "PrIdx_13_TrIdx_4.mat",
+          "size": 27012558,
+          "supplied_md5": "048a1c6c794de52758d8093075f73a90"
+        },
+        {
+          "computed_md5": "c68832a58c70d234516be8ed2d7aa80a",
+          "download_url": "https://ndownloader.figshare.com/files/21212259",
+          "id": 21212259,
+          "is_link_only": false,
+          "name": "PrIdx_14_TrIdx_1.mat",
+          "size": 35024900,
+          "supplied_md5": "c68832a58c70d234516be8ed2d7aa80a"
+        },
+        {
+          "computed_md5": "e3d34061c1814d16ca0e4480f8326cb5",
+          "download_url": "https://ndownloader.figshare.com/files/21212232",
+          "id": 21212232,
+          "is_link_only": false,
+          "name": "PrIdx_14_TrIdx_2.mat",
+          "size": 37321364,
+          "supplied_md5": "e3d34061c1814d16ca0e4480f8326cb5"
+        },
+        {
+          "computed_md5": "380c3762a4c4a7f57dfa77e1708ca214",
+          "download_url": "https://ndownloader.figshare.com/files/21212223",
+          "id": 21212223,
+          "is_link_only": false,
+          "name": "PrIdx_14_TrIdx_3.mat",
+          "size": 31141856,
+          "supplied_md5": "380c3762a4c4a7f57dfa77e1708ca214"
+        },
+        {
+          "computed_md5": "217b475aaa0fee8ebbc1009efb80d9ac",
+          "download_url": "https://ndownloader.figshare.com/files/21212211",
+          "id": 21212211,
+          "is_link_only": false,
+          "name": "PrIdx_14_TrIdx_4.mat",
+          "size": 20827578,
+          "supplied_md5": "217b475aaa0fee8ebbc1009efb80d9ac"
+        },
+        {
+          "computed_md5": "3a059417462c705059c9239e108b41d0",
+          "download_url": "https://ndownloader.figshare.com/files/21212247",
+          "id": 21212247,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_1.mat",
+          "size": 35768880,
+          "supplied_md5": "3a059417462c705059c9239e108b41d0"
+        },
+        {
+          "computed_md5": "63bc7ce88fa486751361b67729abe26c",
+          "download_url": "https://ndownloader.figshare.com/files/21212238",
+          "id": 21212238,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_2.mat",
+          "size": 30975798,
+          "supplied_md5": "63bc7ce88fa486751361b67729abe26c"
+        },
+        {
+          "computed_md5": "912cd8f7a3ea6360a166e4279ab04203",
+          "download_url": "https://ndownloader.figshare.com/files/21212220",
+          "id": 21212220,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_3.mat",
+          "size": 37204950,
+          "supplied_md5": "912cd8f7a3ea6360a166e4279ab04203"
+        },
+        {
+          "computed_md5": "8d4131f82a50879b0eff922c8a5dcd74",
+          "download_url": "https://ndownloader.figshare.com/files/21212208",
+          "id": 21212208,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_4.mat",
+          "size": 49187337,
+          "supplied_md5": "8d4131f82a50879b0eff922c8a5dcd74"
+        },
+        {
+          "computed_md5": "1ec9dadde4cba6cc0234ad81c0ebaed7",
+          "download_url": "https://ndownloader.figshare.com/files/21212256",
+          "id": 21212256,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_1.mat",
+          "size": 34882857,
+          "supplied_md5": "1ec9dadde4cba6cc0234ad81c0ebaed7"
+        },
+        {
+          "computed_md5": "453b3fd0f508f8a67e0373898c9e4f80",
+          "download_url": "https://ndownloader.figshare.com/files/21212235",
+          "id": 21212235,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_2.mat",
+          "size": 32813460,
+          "supplied_md5": "453b3fd0f508f8a67e0373898c9e4f80"
+        },
+        {
+          "computed_md5": "a237b12499f6158b94582a80c1bb608f",
+          "download_url": "https://ndownloader.figshare.com/files/21212229",
+          "id": 21212229,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_3.mat",
+          "size": 26541856,
+          "supplied_md5": "a237b12499f6158b94582a80c1bb608f"
+        },
+        {
+          "computed_md5": "a399150920089f57b8aba479ed7b447c",
+          "download_url": "https://ndownloader.figshare.com/files/21212214",
+          "id": 21212214,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_4.mat",
+          "size": 26225668,
+          "supplied_md5": "a399150920089f57b8aba479ed7b447c"
+        },
+        {
+          "computed_md5": "27ae18ebe53ea397e9e589c4ea07b2b6",
+          "download_url": "https://ndownloader.figshare.com/files/21212244",
+          "id": 21212244,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_1.mat",
+          "size": 40146288,
+          "supplied_md5": "27ae18ebe53ea397e9e589c4ea07b2b6"
+        },
+        {
+          "computed_md5": "5070dfa6f1d352bd3618074961e26560",
+          "download_url": "https://ndownloader.figshare.com/files/21212199",
+          "id": 21212199,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_2.mat",
+          "size": 36406872,
+          "supplied_md5": "5070dfa6f1d352bd3618074961e26560"
+        },
+        {
+          "computed_md5": "c168508c954ae10bce9f244235645048",
+          "download_url": "https://ndownloader.figshare.com/files/21212193",
+          "id": 21212193,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_3.mat",
+          "size": 28223955,
+          "supplied_md5": "c168508c954ae10bce9f244235645048"
+        },
+        {
+          "computed_md5": "0c3c001aaa94023cecb1ddcb094d6ca1",
+          "download_url": "https://ndownloader.figshare.com/files/21212184",
+          "id": 21212184,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_4.mat",
+          "size": 22332155,
+          "supplied_md5": "0c3c001aaa94023cecb1ddcb094d6ca1"
+        },
+        {
+          "computed_md5": "2d5a531c12ae8c95758d2698152d48a9",
+          "download_url": "https://ndownloader.figshare.com/files/21212250",
+          "id": 21212250,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_1.mat",
+          "size": 37122306,
+          "supplied_md5": "2d5a531c12ae8c95758d2698152d48a9"
+        },
+        {
+          "computed_md5": "056712d817fcad84e44c4ad99507059e",
+          "download_url": "https://ndownloader.figshare.com/files/21212241",
+          "id": 21212241,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_2.mat",
+          "size": 30837486,
+          "supplied_md5": "056712d817fcad84e44c4ad99507059e"
+        },
+        {
+          "computed_md5": "adb04e8a05d7355446cf60cbf326a52f",
+          "download_url": "https://ndownloader.figshare.com/files/21212226",
+          "id": 21212226,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_3.mat",
+          "size": 30986344,
+          "supplied_md5": "adb04e8a05d7355446cf60cbf326a52f"
+        },
+        {
+          "computed_md5": "d8f94f4d00332de533f45fd4bfda6a71",
+          "download_url": "https://ndownloader.figshare.com/files/21212217",
+          "id": 21212217,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_4.mat",
+          "size": 25937817,
+          "supplied_md5": "d8f94f4d00332de533f45fd4bfda6a71"
+        },
+        {
+          "computed_md5": "59911c4c56aaced5b5b69aa8e472db62",
+          "download_url": "https://ndownloader.figshare.com/files/21212205",
+          "id": 21212205,
+          "is_link_only": false,
+          "name": "PrIdx_19_TrIdx_1.mat",
+          "size": 37914934,
+          "supplied_md5": "59911c4c56aaced5b5b69aa8e472db62"
+        },
+        {
+          "computed_md5": "26def89f53c963e9506d14fa669808c3",
+          "download_url": "https://ndownloader.figshare.com/files/21212166",
+          "id": 21212166,
+          "is_link_only": false,
+          "name": "PrIdx_19_TrIdx_2.mat",
+          "size": 40683649,
+          "supplied_md5": "26def89f53c963e9506d14fa669808c3"
+        },
+        {
+          "computed_md5": "8b278a71c0fb780b6c92fd1189e20603",
+          "download_url": "https://ndownloader.figshare.com/files/21212142",
+          "id": 21212142,
+          "is_link_only": false,
+          "name": "PrIdx_19_TrIdx_3.mat",
+          "size": 52872634,
+          "supplied_md5": "8b278a71c0fb780b6c92fd1189e20603"
+        },
+        {
+          "computed_md5": "e6650fe2f37d19c605344355ea5c62b5",
+          "download_url": "https://ndownloader.figshare.com/files/21212364",
+          "id": 21212364,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_1.mat",
+          "size": 40496594,
+          "supplied_md5": "e6650fe2f37d19c605344355ea5c62b5"
+        },
+        {
+          "computed_md5": "a81542e6d939d89fe9789fc165e5f405",
+          "download_url": "https://ndownloader.figshare.com/files/21212361",
+          "id": 21212361,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_2.mat",
+          "size": 28531338,
+          "supplied_md5": "a81542e6d939d89fe9789fc165e5f405"
+        },
+        {
+          "computed_md5": "da1760577537704b7e06099a4baf5799",
+          "download_url": "https://ndownloader.figshare.com/files/21212172",
+          "id": 21212172,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_1.mat",
+          "size": 38822983,
+          "supplied_md5": "da1760577537704b7e06099a4baf5799"
+        },
+        {
+          "computed_md5": "8dd22f56eda2e17f9447d9ec044e7509",
+          "download_url": "https://ndownloader.figshare.com/files/21212160",
+          "id": 21212160,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_2.mat",
+          "size": 37683003,
+          "supplied_md5": "8dd22f56eda2e17f9447d9ec044e7509"
+        },
+        {
+          "computed_md5": "96c270a76af6776ba153800913348efd",
+          "download_url": "https://ndownloader.figshare.com/files/21212334",
+          "id": 21212334,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_3.mat",
+          "size": 46098079,
+          "supplied_md5": "96c270a76af6776ba153800913348efd"
+        },
+        {
+          "computed_md5": "95344adebec25cf2871ebc8c417396ff",
+          "download_url": "https://ndownloader.figshare.com/files/21212148",
+          "id": 21212148,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_4.mat",
+          "size": 27186206,
+          "supplied_md5": "95344adebec25cf2871ebc8c417396ff"
+        },
+        {
+          "computed_md5": "82c7849263d37c7b29462923a017e97f",
+          "download_url": "https://ndownloader.figshare.com/files/21212202",
+          "id": 21212202,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_1.mat",
+          "size": 37632951,
+          "supplied_md5": "82c7849263d37c7b29462923a017e97f"
+        },
+        {
+          "computed_md5": "b98f1b6960f2973a4e80b20d8b20e71a",
+          "download_url": "https://ndownloader.figshare.com/files/21212190",
+          "id": 21212190,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_2.mat",
+          "size": 40364043,
+          "supplied_md5": "b98f1b6960f2973a4e80b20d8b20e71a"
+        },
+        {
+          "computed_md5": "2d4fdc24b39ff9dd7649b425ba44593b",
+          "download_url": "https://ndownloader.figshare.com/files/21212181",
+          "id": 21212181,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_3.mat",
+          "size": 38276369,
+          "supplied_md5": "2d4fdc24b39ff9dd7649b425ba44593b"
+        },
+        {
+          "computed_md5": "fe47d7b24fc6ad2887440dac4040f90a",
+          "download_url": "https://ndownloader.figshare.com/files/21212178",
+          "id": 21212178,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_4.mat",
+          "size": 19941473,
+          "supplied_md5": "fe47d7b24fc6ad2887440dac4040f90a"
+        },
+        {
+          "computed_md5": "e877e059a57e27c2edcaf82184a4e268",
+          "download_url": "https://ndownloader.figshare.com/files/21212196",
+          "id": 21212196,
+          "is_link_only": false,
+          "name": "PrIdx_23_TrIdx_1.mat",
+          "size": 37381199,
+          "supplied_md5": "e877e059a57e27c2edcaf82184a4e268"
+        },
+        {
+          "computed_md5": "ff3dac2fecec257e4c7adb8605807064",
+          "download_url": "https://ndownloader.figshare.com/files/21212187",
+          "id": 21212187,
+          "is_link_only": false,
+          "name": "PrIdx_23_TrIdx_2.mat",
+          "size": 32325133,
+          "supplied_md5": "ff3dac2fecec257e4c7adb8605807064"
+        },
+        {
+          "computed_md5": "46700299eb77e8bd8cd61a1f28db5779",
+          "download_url": "https://ndownloader.figshare.com/files/21212175",
+          "id": 21212175,
+          "is_link_only": false,
+          "name": "PrIdx_23_TrIdx_3.mat",
+          "size": 53499826,
+          "supplied_md5": "46700299eb77e8bd8cd61a1f28db5779"
+        },
+        {
+          "computed_md5": "b115864a39c1bd60ce89e30a49fe74ad",
+          "download_url": "https://ndownloader.figshare.com/files/21212151",
+          "id": 21212151,
+          "is_link_only": false,
+          "name": "PrIdx_23_TrIdx_4.mat",
+          "size": 32074184,
+          "supplied_md5": "b115864a39c1bd60ce89e30a49fe74ad"
+        },
+        {
+          "computed_md5": "0a805a117411e8e020f2ad61305b68b2",
+          "download_url": "https://ndownloader.figshare.com/files/21212370",
+          "id": 21212370,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_1.mat",
+          "size": 39988985,
+          "supplied_md5": "0a805a117411e8e020f2ad61305b68b2"
+        },
+        {
+          "computed_md5": "6d61bebd1ab4c5b0fe58327ad9c463d2",
+          "download_url": "https://ndownloader.figshare.com/files/21212367",
+          "id": 21212367,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_2.mat",
+          "size": 42484504,
+          "supplied_md5": "6d61bebd1ab4c5b0fe58327ad9c463d2"
+        },
+        {
+          "computed_md5": "339bbb27daa2cd2983d05f863b8271fa",
+          "download_url": "https://ndownloader.figshare.com/files/21212355",
+          "id": 21212355,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_3.mat",
+          "size": 48787874,
+          "supplied_md5": "339bbb27daa2cd2983d05f863b8271fa"
+        },
+        {
+          "computed_md5": "c0ab2dd0a0ac14272a128cdeccdba835",
+          "download_url": "https://ndownloader.figshare.com/files/21212346",
+          "id": 21212346,
+          "is_link_only": false,
+          "name": "PrIdx_3_TrIdx_1.mat",
+          "size": 42416420,
+          "supplied_md5": "c0ab2dd0a0ac14272a128cdeccdba835"
+        },
+        {
+          "computed_md5": "f1efe21933eb0e1c8138ca94cefc8568",
+          "download_url": "https://ndownloader.figshare.com/files/21212154",
+          "id": 21212154,
+          "is_link_only": false,
+          "name": "PrIdx_3_TrIdx_2.mat",
+          "size": 33684493,
+          "supplied_md5": "f1efe21933eb0e1c8138ca94cefc8568"
+        },
+        {
+          "computed_md5": "02b4796951150a61df73aad0d3f2bc59",
+          "download_url": "https://ndownloader.figshare.com/files/21212358",
+          "id": 21212358,
+          "is_link_only": false,
+          "name": "PrIdx_4_TrIdx_1.mat",
+          "size": 34816034,
+          "supplied_md5": "02b4796951150a61df73aad0d3f2bc59"
+        },
+        {
+          "computed_md5": "43d2cdf0977c59eb8b17fa9b48199ddc",
+          "download_url": "https://ndownloader.figshare.com/files/21212343",
+          "id": 21212343,
+          "is_link_only": false,
+          "name": "PrIdx_4_TrIdx_3.mat",
+          "size": 42719320,
+          "supplied_md5": "43d2cdf0977c59eb8b17fa9b48199ddc"
+        },
+        {
+          "computed_md5": "6a4c12cd1bfcbb08d1dd5ffa40c76939",
+          "download_url": "https://ndownloader.figshare.com/files/21212337",
+          "id": 21212337,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_1.mat",
+          "size": 36097473,
+          "supplied_md5": "6a4c12cd1bfcbb08d1dd5ffa40c76939"
+        },
+        {
+          "computed_md5": "5db43935eeb8402cd93fa74e731beffe",
+          "download_url": "https://ndownloader.figshare.com/files/21212331",
+          "id": 21212331,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_2.mat",
+          "size": 25261387,
+          "supplied_md5": "5db43935eeb8402cd93fa74e731beffe"
+        },
+        {
+          "computed_md5": "0c0b9de7dd83bcf50009ebeb888a4b05",
+          "download_url": "https://ndownloader.figshare.com/files/21212328",
+          "id": 21212328,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_3.mat",
+          "size": 30999244,
+          "supplied_md5": "0c0b9de7dd83bcf50009ebeb888a4b05"
+        },
+        {
+          "computed_md5": "a942afc6d821f015a1b0fafd34258c42",
+          "download_url": "https://ndownloader.figshare.com/files/21212340",
+          "id": 21212340,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_1.mat",
+          "size": 38677123,
+          "supplied_md5": "a942afc6d821f015a1b0fafd34258c42"
+        },
+        {
+          "computed_md5": "98cb995b0234ef483f071c8a6233a524",
+          "download_url": "https://ndownloader.figshare.com/files/21212322",
+          "id": 21212322,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_2.mat",
+          "size": 33994776,
+          "supplied_md5": "98cb995b0234ef483f071c8a6233a524"
+        },
+        {
+          "computed_md5": "5a009c0fab964cfca9b033cc3a7e4bdc",
+          "download_url": "https://ndownloader.figshare.com/files/21212316",
+          "id": 21212316,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_3.mat",
+          "size": 55409576,
+          "supplied_md5": "5a009c0fab964cfca9b033cc3a7e4bdc"
+        },
+        {
+          "computed_md5": "a62c39e8ffbd9d7e27fdb700464fc2d6",
+          "download_url": "https://ndownloader.figshare.com/files/21212319",
+          "id": 21212319,
+          "is_link_only": false,
+          "name": "PrIdx_9_TrIdx_1.mat",
+          "size": 39316157,
+          "supplied_md5": "a62c39e8ffbd9d7e27fdb700464fc2d6"
+        },
+        {
+          "computed_md5": "4922fc2b4adebc59fc48fbe5e57ffd8b",
+          "download_url": "https://ndownloader.figshare.com/files/21212313",
+          "id": 21212313,
+          "is_link_only": false,
+          "name": "PrIdx_9_TrIdx_2.mat",
+          "size": 37212177,
+          "supplied_md5": "4922fc2b4adebc59fc48fbe5e57ffd8b"
+        },
+        {
+          "computed_md5": "6ea7afd13c25c0e232c82bb650dad323",
+          "download_url": "https://ndownloader.figshare.com/files/21212310",
+          "id": 21212310,
+          "is_link_only": false,
+          "name": "PrIdx_9_TrIdx_3.mat",
+          "size": 34641848,
+          "supplied_md5": "6ea7afd13c25c0e232c82bb650dad323"
+        }
+      ],
+      "id": 11673645,
+      "keywords": [
+        "eyetracking",
+        "headtracking",
+        "machine learning",
+        "event detection",
+        "gaze classification",
+        "behavioral analysis",
+        "Behavioral Neuroscience"
+      ],
+      "label": "ProcessData",
+      "license": {
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "value": 1
+      },
+      "manifest_sha256": "cc82a05fa64d35f76f955ebe231c27ff858d9d53de714ffa92d9d9c21828aaa8",
+      "modified_date": "2023-05-31T11:57:52Z",
+      "published_date": "2020-01-21T15:32:26Z",
+      "references": [
+        "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/"
+      ],
+      "title": "ProcessData",
+      "total_size_bytes": 2384573418,
+      "url": "https://api.figshare.com/v2/articles/11673645",
+      "url_public_api": "https://api.figshare.com/v2/articles/11673645",
+      "version": 1
+    },
+    {
+      "authors": [
+        {
+          "full_name": "Rakshit Kothari",
+          "id": 8338416,
+          "orcid_id": ""
+        }
+      ],
+      "defined_type_name": "dataset",
+      "description": "<div>This folder contains improved versions of eye and head movement signals. This data is not published as part of the original publication, Gaze-in-Wild, as is offered in good faith for researchers to build upon.</div><div><br></div><div>For more information, please visit: http://www.cis.rit.edu/~rsk3900/gaze-in-wild/<br></div>",
+      "doi": "10.6084/m9.figshare.11673717.v1",
+      "file_count": 68,
+      "files": [
+        {
+          "computed_md5": "f4a8007c888b24b1421a29877db48715",
+          "download_url": "https://ndownloader.figshare.com/files/21212778",
+          "id": 21212778,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_1.mat",
+          "size": 35178987,
+          "supplied_md5": "f4a8007c888b24b1421a29877db48715"
+        },
+        {
+          "computed_md5": "29546e093bce60e7a9aa3fd01a0c63e3",
+          "download_url": "https://ndownloader.figshare.com/files/21212775",
+          "id": 21212775,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_2.mat",
+          "size": 36956624,
+          "supplied_md5": "29546e093bce60e7a9aa3fd01a0c63e3"
+        },
+        {
+          "computed_md5": "0322f4f3b5181b60e37b60bef9cdc256",
+          "download_url": "https://ndownloader.figshare.com/files/21212772",
+          "id": 21212772,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_3.mat",
+          "size": 26432088,
+          "supplied_md5": "0322f4f3b5181b60e37b60bef9cdc256"
+        },
+        {
+          "computed_md5": "fd594f4156487b082ea1dd48416b89f8",
+          "download_url": "https://ndownloader.figshare.com/files/21212766",
+          "id": 21212766,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_4.mat",
+          "size": 28905432,
+          "supplied_md5": "fd594f4156487b082ea1dd48416b89f8"
+        },
+        {
+          "computed_md5": "02d2080778291604768b2acccca416b6",
+          "download_url": "https://ndownloader.figshare.com/files/21212763",
+          "id": 21212763,
+          "is_link_only": false,
+          "name": "PrIdx_11_TrIdx_1.mat",
+          "size": 36593604,
+          "supplied_md5": "02d2080778291604768b2acccca416b6"
+        },
+        {
+          "computed_md5": "f955cce5b4fc4069f71ed3c5c3827c41",
+          "download_url": "https://ndownloader.figshare.com/files/21212760",
+          "id": 21212760,
+          "is_link_only": false,
+          "name": "PrIdx_11_TrIdx_2.mat",
+          "size": 28517167,
+          "supplied_md5": "f955cce5b4fc4069f71ed3c5c3827c41"
+        },
+        {
+          "computed_md5": "392253bc14bc3771c6632521a88b7dfe",
+          "download_url": "https://ndownloader.figshare.com/files/21212757",
+          "id": 21212757,
+          "is_link_only": false,
+          "name": "PrIdx_11_TrIdx_4.mat",
+          "size": 25914361,
+          "supplied_md5": "392253bc14bc3771c6632521a88b7dfe"
+        },
+        {
+          "computed_md5": "6f5f6e0fe174b43b6d02a122484ab55a",
+          "download_url": "https://ndownloader.figshare.com/files/21212754",
+          "id": 21212754,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_1.mat",
+          "size": 32061051,
+          "supplied_md5": "6f5f6e0fe174b43b6d02a122484ab55a"
+        },
+        {
+          "computed_md5": "1d2120dcca415096d0a0d095a33564c4",
+          "download_url": "https://ndownloader.figshare.com/files/21212751",
+          "id": 21212751,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_2.mat",
+          "size": 29148426,
+          "supplied_md5": "1d2120dcca415096d0a0d095a33564c4"
+        },
+        {
+          "computed_md5": "e98446cdb98c9b8704296fedd93e927c",
+          "download_url": "https://ndownloader.figshare.com/files/21212748",
+          "id": 21212748,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_3.mat",
+          "size": 27374735,
+          "supplied_md5": "e98446cdb98c9b8704296fedd93e927c"
+        },
+        {
+          "computed_md5": "d948b44a453bb18e9440ebcfd6546422",
+          "download_url": "https://ndownloader.figshare.com/files/21212745",
+          "id": 21212745,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_4.mat",
+          "size": 27457041,
+          "supplied_md5": "d948b44a453bb18e9440ebcfd6546422"
+        },
+        {
+          "computed_md5": "1f9df376c7dd0ae4b60760e7f656e358",
+          "download_url": "https://ndownloader.figshare.com/files/21212742",
+          "id": 21212742,
+          "is_link_only": false,
+          "name": "PrIdx_13_TrIdx_1.mat",
+          "size": 37310902,
+          "supplied_md5": "1f9df376c7dd0ae4b60760e7f656e358"
+        },
+        {
+          "computed_md5": "1440dceb754971c524df79c5649532e2",
+          "download_url": "https://ndownloader.figshare.com/files/21212739",
+          "id": 21212739,
+          "is_link_only": false,
+          "name": "PrIdx_13_TrIdx_2.mat",
+          "size": 32679909,
+          "supplied_md5": "1440dceb754971c524df79c5649532e2"
+        },
+        {
+          "computed_md5": "2c6be7bd7bb1e7ad293f6476bf4b89f8",
+          "download_url": "https://ndownloader.figshare.com/files/21212736",
+          "id": 21212736,
+          "is_link_only": false,
+          "name": "PrIdx_13_TrIdx_3.mat",
+          "size": 29893394,
+          "supplied_md5": "2c6be7bd7bb1e7ad293f6476bf4b89f8"
+        },
+        {
+          "computed_md5": "921e49d56682ee22c629077edf8663fc",
+          "download_url": "https://ndownloader.figshare.com/files/21212733",
+          "id": 21212733,
+          "is_link_only": false,
+          "name": "PrIdx_13_TrIdx_4.mat",
+          "size": 26212110,
+          "supplied_md5": "921e49d56682ee22c629077edf8663fc"
+        },
+        {
+          "computed_md5": "575cf4f51c1dca411917d7f50c92e331",
+          "download_url": "https://ndownloader.figshare.com/files/21212730",
+          "id": 21212730,
+          "is_link_only": false,
+          "name": "PrIdx_14_TrIdx_1.mat",
+          "size": 33789049,
+          "supplied_md5": "575cf4f51c1dca411917d7f50c92e331"
+        },
+        {
+          "computed_md5": "3801f0ee02f0d1f9621226bc3df62a86",
+          "download_url": "https://ndownloader.figshare.com/files/21212727",
+          "id": 21212727,
+          "is_link_only": false,
+          "name": "PrIdx_14_TrIdx_2.mat",
+          "size": 36320140,
+          "supplied_md5": "3801f0ee02f0d1f9621226bc3df62a86"
+        },
+        {
+          "computed_md5": "a8492e8e35efee02b40f1558b8465fe7",
+          "download_url": "https://ndownloader.figshare.com/files/21212724",
+          "id": 21212724,
+          "is_link_only": false,
+          "name": "PrIdx_14_TrIdx_3.mat",
+          "size": 30428001,
+          "supplied_md5": "a8492e8e35efee02b40f1558b8465fe7"
+        },
+        {
+          "computed_md5": "287fbb3bbd28bc05d66880586e4ec31c",
+          "download_url": "https://ndownloader.figshare.com/files/21212721",
+          "id": 21212721,
+          "is_link_only": false,
+          "name": "PrIdx_14_TrIdx_4.mat",
+          "size": 20188677,
+          "supplied_md5": "287fbb3bbd28bc05d66880586e4ec31c"
+        },
+        {
+          "computed_md5": "802bab61e7ab119fa24ed225da76c344",
+          "download_url": "https://ndownloader.figshare.com/files/21212718",
+          "id": 21212718,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_1.mat",
+          "size": 34539547,
+          "supplied_md5": "802bab61e7ab119fa24ed225da76c344"
+        },
+        {
+          "computed_md5": "dae04b1dc8745718cda53c37960438ef",
+          "download_url": "https://ndownloader.figshare.com/files/21212715",
+          "id": 21212715,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_2.mat",
+          "size": 30045894,
+          "supplied_md5": "dae04b1dc8745718cda53c37960438ef"
+        },
+        {
+          "computed_md5": "21b8acaa5296cf86da5f17d86a78ab53",
+          "download_url": "https://ndownloader.figshare.com/files/21212712",
+          "id": 21212712,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_3.mat",
+          "size": 36449041,
+          "supplied_md5": "21b8acaa5296cf86da5f17d86a78ab53"
+        },
+        {
+          "computed_md5": "4ed01cafa23194f309acb99f7fa0b975",
+          "download_url": "https://ndownloader.figshare.com/files/21212709",
+          "id": 21212709,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_4.mat",
+          "size": 47791684,
+          "supplied_md5": "4ed01cafa23194f309acb99f7fa0b975"
+        },
+        {
+          "computed_md5": "d39d8ffc1aa2aa259a8bfdf7d7146cae",
+          "download_url": "https://ndownloader.figshare.com/files/21212706",
+          "id": 21212706,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_1.mat",
+          "size": 33673995,
+          "supplied_md5": "d39d8ffc1aa2aa259a8bfdf7d7146cae"
+        },
+        {
+          "computed_md5": "0be22cfeb7fb230147f7de5211b79cd8",
+          "download_url": "https://ndownloader.figshare.com/files/21212703",
+          "id": 21212703,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_2.mat",
+          "size": 31818656,
+          "supplied_md5": "0be22cfeb7fb230147f7de5211b79cd8"
+        },
+        {
+          "computed_md5": "a4d8e56b6339179b4d83590f77afd9f3",
+          "download_url": "https://ndownloader.figshare.com/files/21212700",
+          "id": 21212700,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_3.mat",
+          "size": 25817409,
+          "supplied_md5": "a4d8e56b6339179b4d83590f77afd9f3"
+        },
+        {
+          "computed_md5": "eede20797cc074882e0acbef4cdaf517",
+          "download_url": "https://ndownloader.figshare.com/files/21212697",
+          "id": 21212697,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_4.mat",
+          "size": 25497635,
+          "supplied_md5": "eede20797cc074882e0acbef4cdaf517"
+        },
+        {
+          "computed_md5": "bb23240f006db8687f5500f8d036352d",
+          "download_url": "https://ndownloader.figshare.com/files/21212694",
+          "id": 21212694,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_1.mat",
+          "size": 39146803,
+          "supplied_md5": "bb23240f006db8687f5500f8d036352d"
+        },
+        {
+          "computed_md5": "ef4cff774ec78b6050f3befb3723c31c",
+          "download_url": "https://ndownloader.figshare.com/files/21212691",
+          "id": 21212691,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_2.mat",
+          "size": 35671770,
+          "supplied_md5": "ef4cff774ec78b6050f3befb3723c31c"
+        },
+        {
+          "computed_md5": "dcbc010c504d8ee01c73caf29cb68fbe",
+          "download_url": "https://ndownloader.figshare.com/files/21212688",
+          "id": 21212688,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_3.mat",
+          "size": 27535204,
+          "supplied_md5": "dcbc010c504d8ee01c73caf29cb68fbe"
+        },
+        {
+          "computed_md5": "2ccde062b0c81ab497d6a2cebe26ef69",
+          "download_url": "https://ndownloader.figshare.com/files/21212685",
+          "id": 21212685,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_4.mat",
+          "size": 21676302,
+          "supplied_md5": "2ccde062b0c81ab497d6a2cebe26ef69"
+        },
+        {
+          "computed_md5": "5b6cd3e8f6d355538368f0d844851b9c",
+          "download_url": "https://ndownloader.figshare.com/files/21212682",
+          "id": 21212682,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_1.mat",
+          "size": 35438376,
+          "supplied_md5": "5b6cd3e8f6d355538368f0d844851b9c"
+        },
+        {
+          "computed_md5": "5398a12a3ff3b3b861b244630098a5c7",
+          "download_url": "https://ndownloader.figshare.com/files/21212679",
+          "id": 21212679,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_2.mat",
+          "size": 29696255,
+          "supplied_md5": "5398a12a3ff3b3b861b244630098a5c7"
+        },
+        {
+          "computed_md5": "2ca29d1210d86b7345aacb3b3ba96a0c",
+          "download_url": "https://ndownloader.figshare.com/files/21212676",
+          "id": 21212676,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_3.mat",
+          "size": 30317756,
+          "supplied_md5": "2ca29d1210d86b7345aacb3b3ba96a0c"
+        },
+        {
+          "computed_md5": "feed87a0e284bd84ef0049a59397a44f",
+          "download_url": "https://ndownloader.figshare.com/files/21212673",
+          "id": 21212673,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_4.mat",
+          "size": 24575645,
+          "supplied_md5": "feed87a0e284bd84ef0049a59397a44f"
+        },
+        {
+          "computed_md5": "cff19cf9173c7d2eb8ed54f0bff6796f",
+          "download_url": "https://ndownloader.figshare.com/files/21212670",
+          "id": 21212670,
+          "is_link_only": false,
+          "name": "PrIdx_19_TrIdx_1.mat",
+          "size": 36653606,
+          "supplied_md5": "cff19cf9173c7d2eb8ed54f0bff6796f"
+        },
+        {
+          "computed_md5": "7b953b76b07ae75b0294deb9eb063005",
+          "download_url": "https://ndownloader.figshare.com/files/21212667",
+          "id": 21212667,
+          "is_link_only": false,
+          "name": "PrIdx_19_TrIdx_2.mat",
+          "size": 38927997,
+          "supplied_md5": "7b953b76b07ae75b0294deb9eb063005"
+        },
+        {
+          "computed_md5": "69a6711c74a082f5362b3f5fb7a02b2e",
+          "download_url": "https://ndownloader.figshare.com/files/21212664",
+          "id": 21212664,
+          "is_link_only": false,
+          "name": "PrIdx_19_TrIdx_3.mat",
+          "size": 51463698,
+          "supplied_md5": "69a6711c74a082f5362b3f5fb7a02b2e"
+        },
+        {
+          "computed_md5": "2a045de7f1e766ee356ea81a24adb703",
+          "download_url": "https://ndownloader.figshare.com/files/21212658",
+          "id": 21212658,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_1.mat",
+          "size": 37945139,
+          "supplied_md5": "2a045de7f1e766ee356ea81a24adb703"
+        },
+        {
+          "computed_md5": "e740abdd08648da3b8bcc1344e94a165",
+          "download_url": "https://ndownloader.figshare.com/files/21212655",
+          "id": 21212655,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_2.mat",
+          "size": 27216842,
+          "supplied_md5": "e740abdd08648da3b8bcc1344e94a165"
+        },
+        {
+          "computed_md5": "6d9bbf41286810afcf379dd23d5b64f0",
+          "download_url": "https://ndownloader.figshare.com/files/21212652",
+          "id": 21212652,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_1.mat",
+          "size": 37121031,
+          "supplied_md5": "6d9bbf41286810afcf379dd23d5b64f0"
+        },
+        {
+          "computed_md5": "7ebbe2228f11e17a2eb36ed4af9774a0",
+          "download_url": "https://ndownloader.figshare.com/files/21212649",
+          "id": 21212649,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_2.mat",
+          "size": 36469473,
+          "supplied_md5": "7ebbe2228f11e17a2eb36ed4af9774a0"
+        },
+        {
+          "computed_md5": "5c41aad9f53c82ffd7e4a329aba1ddbe",
+          "download_url": "https://ndownloader.figshare.com/files/21212646",
+          "id": 21212646,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_3.mat",
+          "size": 45052116,
+          "supplied_md5": "5c41aad9f53c82ffd7e4a329aba1ddbe"
+        },
+        {
+          "computed_md5": "bdb5a47c3b083b8c7508acbd7dbd4435",
+          "download_url": "https://ndownloader.figshare.com/files/21212643",
+          "id": 21212643,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_4.mat",
+          "size": 26731617,
+          "supplied_md5": "bdb5a47c3b083b8c7508acbd7dbd4435"
+        },
+        {
+          "computed_md5": "fccb4605672814e086603e6d90a3f3b2",
+          "download_url": "https://ndownloader.figshare.com/files/21212640",
+          "id": 21212640,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_1.mat",
+          "size": 35909907,
+          "supplied_md5": "fccb4605672814e086603e6d90a3f3b2"
+        },
+        {
+          "computed_md5": "a8b6efc9e8f48a270db6f67b20f7a78b",
+          "download_url": "https://ndownloader.figshare.com/files/21212637",
+          "id": 21212637,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_2.mat",
+          "size": 39335724,
+          "supplied_md5": "a8b6efc9e8f48a270db6f67b20f7a78b"
+        },
+        {
+          "computed_md5": "68b82b054c608e84aa1269d53b0b6adf",
+          "download_url": "https://ndownloader.figshare.com/files/21212634",
+          "id": 21212634,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_3.mat",
+          "size": 37530707,
+          "supplied_md5": "68b82b054c608e84aa1269d53b0b6adf"
+        },
+        {
+          "computed_md5": "4db100ef35155c5a31ab5a709b097d8c",
+          "download_url": "https://ndownloader.figshare.com/files/21212631",
+          "id": 21212631,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_4.mat",
+          "size": 19640781,
+          "supplied_md5": "4db100ef35155c5a31ab5a709b097d8c"
+        },
+        {
+          "computed_md5": "e877e059a57e27c2edcaf82184a4e268",
+          "download_url": "https://ndownloader.figshare.com/files/21212793",
+          "id": 21212793,
+          "is_link_only": false,
+          "name": "PrIdx_23_TrIdx_1.mat",
+          "size": 37381199,
+          "supplied_md5": "e877e059a57e27c2edcaf82184a4e268"
+        },
+        {
+          "computed_md5": "ff3dac2fecec257e4c7adb8605807064",
+          "download_url": "https://ndownloader.figshare.com/files/21212790",
+          "id": 21212790,
+          "is_link_only": false,
+          "name": "PrIdx_23_TrIdx_2.mat",
+          "size": 32325133,
+          "supplied_md5": "ff3dac2fecec257e4c7adb8605807064"
+        },
+        {
+          "computed_md5": "46700299eb77e8bd8cd61a1f28db5779",
+          "download_url": "https://ndownloader.figshare.com/files/21212787",
+          "id": 21212787,
+          "is_link_only": false,
+          "name": "PrIdx_23_TrIdx_3.mat",
+          "size": 53499826,
+          "supplied_md5": "46700299eb77e8bd8cd61a1f28db5779"
+        },
+        {
+          "computed_md5": "b115864a39c1bd60ce89e30a49fe74ad",
+          "download_url": "https://ndownloader.figshare.com/files/21212781",
+          "id": 21212781,
+          "is_link_only": false,
+          "name": "PrIdx_23_TrIdx_4.mat",
+          "size": 32074184,
+          "supplied_md5": "b115864a39c1bd60ce89e30a49fe74ad"
+        },
+        {
+          "computed_md5": "3992a6fbe9460f5863b72e3180861f85",
+          "download_url": "https://ndownloader.figshare.com/files/21212628",
+          "id": 21212628,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_1.mat",
+          "size": 37804220,
+          "supplied_md5": "3992a6fbe9460f5863b72e3180861f85"
+        },
+        {
+          "computed_md5": "81337732deba40fa19d2ed7e05a5a914",
+          "download_url": "https://ndownloader.figshare.com/files/21212625",
+          "id": 21212625,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_2.mat",
+          "size": 40528499,
+          "supplied_md5": "81337732deba40fa19d2ed7e05a5a914"
+        },
+        {
+          "computed_md5": "4ce31d139479b80fea8b848cd5ee04bf",
+          "download_url": "https://ndownloader.figshare.com/files/21212622",
+          "id": 21212622,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_3.mat",
+          "size": 47143241,
+          "supplied_md5": "4ce31d139479b80fea8b848cd5ee04bf"
+        },
+        {
+          "computed_md5": "55071a09032a7400ba31cd448612aaff",
+          "download_url": "https://ndownloader.figshare.com/files/21212619",
+          "id": 21212619,
+          "is_link_only": false,
+          "name": "PrIdx_3_TrIdx_1.mat",
+          "size": 40847488,
+          "supplied_md5": "55071a09032a7400ba31cd448612aaff"
+        },
+        {
+          "computed_md5": "94efc8db286c92459e99626a0e895ebd",
+          "download_url": "https://ndownloader.figshare.com/files/21212616",
+          "id": 21212616,
+          "is_link_only": false,
+          "name": "PrIdx_3_TrIdx_2.mat",
+          "size": 32214677,
+          "supplied_md5": "94efc8db286c92459e99626a0e895ebd"
+        },
+        {
+          "computed_md5": "aa1002f491dc432865218d24c3ca8c8e",
+          "download_url": "https://ndownloader.figshare.com/files/21212613",
+          "id": 21212613,
+          "is_link_only": false,
+          "name": "PrIdx_4_TrIdx_1.mat",
+          "size": 32867177,
+          "supplied_md5": "aa1002f491dc432865218d24c3ca8c8e"
+        },
+        {
+          "computed_md5": "85bfc1cfc87d216615e34e2254e5aae6",
+          "download_url": "https://ndownloader.figshare.com/files/21212610",
+          "id": 21212610,
+          "is_link_only": false,
+          "name": "PrIdx_4_TrIdx_3.mat",
+          "size": 40968579,
+          "supplied_md5": "85bfc1cfc87d216615e34e2254e5aae6"
+        },
+        {
+          "computed_md5": "9b1d9b8e543f2f822efeda8153df1166",
+          "download_url": "https://ndownloader.figshare.com/files/21212607",
+          "id": 21212607,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_1.mat",
+          "size": 34624669,
+          "supplied_md5": "9b1d9b8e543f2f822efeda8153df1166"
+        },
+        {
+          "computed_md5": "08b65d8bcccc9e5723f22a12470d97e0",
+          "download_url": "https://ndownloader.figshare.com/files/21212604",
+          "id": 21212604,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_2.mat",
+          "size": 24088231,
+          "supplied_md5": "08b65d8bcccc9e5723f22a12470d97e0"
+        },
+        {
+          "computed_md5": "5927da2fc9e400dc4f7e7deedfbcf40b",
+          "download_url": "https://ndownloader.figshare.com/files/21212601",
+          "id": 21212601,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_3.mat",
+          "size": 30021793,
+          "supplied_md5": "5927da2fc9e400dc4f7e7deedfbcf40b"
+        },
+        {
+          "computed_md5": "cc35f80f2f9a96d93d79ff81a8d463a4",
+          "download_url": "https://ndownloader.figshare.com/files/21212598",
+          "id": 21212598,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_1.mat",
+          "size": 36941660,
+          "supplied_md5": "cc35f80f2f9a96d93d79ff81a8d463a4"
+        },
+        {
+          "computed_md5": "827fe636dd2174e8b400b8fa1562b739",
+          "download_url": "https://ndownloader.figshare.com/files/21212595",
+          "id": 21212595,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_2.mat",
+          "size": 32982433,
+          "supplied_md5": "827fe636dd2174e8b400b8fa1562b739"
+        },
+        {
+          "computed_md5": "924eb5a17d61bbd1bd98aba3bc092019",
+          "download_url": "https://ndownloader.figshare.com/files/21212592",
+          "id": 21212592,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_3.mat",
+          "size": 54541801,
+          "supplied_md5": "924eb5a17d61bbd1bd98aba3bc092019"
+        },
+        {
+          "computed_md5": "64ab5a91c92fa1bcad20a5992830b5a9",
+          "download_url": "https://ndownloader.figshare.com/files/21212589",
+          "id": 21212589,
+          "is_link_only": false,
+          "name": "PrIdx_9_TrIdx_1.mat",
+          "size": 38009062,
+          "supplied_md5": "64ab5a91c92fa1bcad20a5992830b5a9"
+        },
+        {
+          "computed_md5": "13b0073b979e4b31182d3fd206af2751",
+          "download_url": "https://ndownloader.figshare.com/files/21212586",
+          "id": 21212586,
+          "is_link_only": false,
+          "name": "PrIdx_9_TrIdx_2.mat",
+          "size": 35973021,
+          "supplied_md5": "13b0073b979e4b31182d3fd206af2751"
+        },
+        {
+          "computed_md5": "952f09ca6cce8f7db42fec8691856e04",
+          "download_url": "https://ndownloader.figshare.com/files/21212583",
+          "id": 21212583,
+          "is_link_only": false,
+          "name": "PrIdx_9_TrIdx_3.mat",
+          "size": 33387601,
+          "supplied_md5": "952f09ca6cce8f7db42fec8691856e04"
+        }
+      ],
+      "id": 11673717,
+      "keywords": [
+        "eyetracking",
+        "headtracking",
+        "machine learning",
+        "pattern recognition",
+        "behavioral analysis",
+        "saliency",
+        "event detection",
+        "gaze classification",
+        "Behavioral Neuroscience"
+      ],
+      "label": "ProcessData_cleaned",
+      "license": {
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "value": 1
+      },
+      "manifest_sha256": "eda07ca38dfd6b8313b3240c169b274453586c5cdc94f44ca08d83adf19e4d3b",
+      "modified_date": "2020-01-21T15:31:35Z",
+      "published_date": "2020-01-21T15:31:34Z",
+      "references": [],
+      "title": "ProcessData_cleaned",
+      "total_size_bytes": 2309276802,
+      "url": "https://api.figshare.com/v2/articles/11673717",
+      "url_public_api": "https://api.figshare.com/v2/articles/11673717",
+      "version": 1
+    },
+    {
+      "authors": [
+        {
+          "full_name": "Rakshit Kothari",
+          "id": 8338416,
+          "orcid_id": ""
+        }
+      ],
+      "defined_type_name": "dataset",
+      "description": "These files contains labels associated the Gaze-In-Wild project. For more information, please visit: http://www.cis.rit.edu/~rsk3900/gaze-in-wild/<br>",
+      "doi": "10.6084/m9.figshare.11673696.v1",
+      "file_count": 50,
+      "files": [
+        {
+          "computed_md5": "3d49538629e3940636a31906e2c9e56d",
+          "download_url": "https://ndownloader.figshare.com/files/21212556",
+          "id": 21212556,
+          "is_link_only": false,
+          "name": "PrIdx_10_TrIdx_1_Lbr_6.mat",
+          "size": 565537,
+          "supplied_md5": "3d49538629e3940636a31906e2c9e56d"
+        },
+        {
+          "computed_md5": "1165259e12e55647869034caa70c912e",
+          "download_url": "https://ndownloader.figshare.com/files/21212553",
+          "id": 21212553,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_1_Lbr_6.mat",
+          "size": 524441,
+          "supplied_md5": "1165259e12e55647869034caa70c912e"
+        },
+        {
+          "computed_md5": "0774c1ca69331a1db5afeb50a897299e",
+          "download_url": "https://ndownloader.figshare.com/files/21212550",
+          "id": 21212550,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_2_Lbr_6.mat",
+          "size": 466765,
+          "supplied_md5": "0774c1ca69331a1db5afeb50a897299e"
+        },
+        {
+          "computed_md5": "59b73b9675179f63596de6324d5d467a",
+          "download_url": "https://ndownloader.figshare.com/files/21212547",
+          "id": 21212547,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_3_Lbr_6.mat",
+          "size": 448743,
+          "supplied_md5": "59b73b9675179f63596de6324d5d467a"
+        },
+        {
+          "computed_md5": "557d02d92f4d04aa0d20cf46cbaa29f7",
+          "download_url": "https://ndownloader.figshare.com/files/21212544",
+          "id": 21212544,
+          "is_link_only": false,
+          "name": "PrIdx_12_TrIdx_4_Lbr_5.mat",
+          "size": 450371,
+          "supplied_md5": "557d02d92f4d04aa0d20cf46cbaa29f7"
+        },
+        {
+          "computed_md5": "cfba24c1292fdc71ed864878533ad8ed",
+          "download_url": "https://ndownloader.figshare.com/files/21212541",
+          "id": 21212541,
+          "is_link_only": false,
+          "name": "PrIdx_15_TrIdx_3_Lbr_2.mat",
+          "size": 599821,
+          "supplied_md5": "cfba24c1292fdc71ed864878533ad8ed"
+        },
+        {
+          "computed_md5": "e1981487e393103a4a2efe8eb60237af",
+          "download_url": "https://ndownloader.figshare.com/files/21212538",
+          "id": 21212538,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_1_Lbr_2.mat",
+          "size": 553173,
+          "supplied_md5": "e1981487e393103a4a2efe8eb60237af"
+        },
+        {
+          "computed_md5": "fdd4d18b80c721d301355c18075e3981",
+          "download_url": "https://ndownloader.figshare.com/files/21212535",
+          "id": 21212535,
+          "is_link_only": false,
+          "name": "PrIdx_16_TrIdx_2_Lbr_6.mat",
+          "size": 514791,
+          "supplied_md5": "fdd4d18b80c721d301355c18075e3981"
+        },
+        {
+          "computed_md5": "7af7e5992d4ffbeeab8c747435074a28",
+          "download_url": "https://ndownloader.figshare.com/files/21212532",
+          "id": 21212532,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_1_Lbr_5.mat",
+          "size": 633077,
+          "supplied_md5": "7af7e5992d4ffbeeab8c747435074a28"
+        },
+        {
+          "computed_md5": "665b9c6bd4aaafda8057cd9f9887ebad",
+          "download_url": "https://ndownloader.figshare.com/files/21212529",
+          "id": 21212529,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_2_Lbr_6.mat",
+          "size": 570140,
+          "supplied_md5": "665b9c6bd4aaafda8057cd9f9887ebad"
+        },
+        {
+          "computed_md5": "27d831789a21752ec4c768b202145e32",
+          "download_url": "https://ndownloader.figshare.com/files/21212526",
+          "id": 21212526,
+          "is_link_only": false,
+          "name": "PrIdx_17_TrIdx_3_Lbr_5.mat",
+          "size": 457154,
+          "supplied_md5": "27d831789a21752ec4c768b202145e32"
+        },
+        {
+          "computed_md5": "70a0ef876ebd4d73f37f11a387d5e11c",
+          "download_url": "https://ndownloader.figshare.com/files/21212523",
+          "id": 21212523,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_1_Lbr_5.mat",
+          "size": 582219,
+          "supplied_md5": "70a0ef876ebd4d73f37f11a387d5e11c"
+        },
+        {
+          "computed_md5": "95f94873602e7ba2212a895e0661a33e",
+          "download_url": "https://ndownloader.figshare.com/files/21212520",
+          "id": 21212520,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_3_Lbr_5.mat",
+          "size": 495910,
+          "supplied_md5": "95f94873602e7ba2212a895e0661a33e"
+        },
+        {
+          "computed_md5": "917f3c6b717758c58f9c5032fcacba0f",
+          "download_url": "https://ndownloader.figshare.com/files/21212517",
+          "id": 21212517,
+          "is_link_only": false,
+          "name": "PrIdx_18_TrIdx_4_Lbr_6.mat",
+          "size": 402003,
+          "supplied_md5": "917f3c6b717758c58f9c5032fcacba0f"
+        },
+        {
+          "computed_md5": "21184bdb420bae10cf0312e79b7786c2",
+          "download_url": "https://ndownloader.figshare.com/files/21212511",
+          "id": 21212511,
+          "is_link_only": false,
+          "name": "PrIdx_19_TrIdx_2_Lbr_5.mat",
+          "size": 626436,
+          "supplied_md5": "21184bdb420bae10cf0312e79b7786c2"
+        },
+        {
+          "computed_md5": "bbe154c9e62004251f75ba0b2f4a048d",
+          "download_url": "https://ndownloader.figshare.com/files/21212514",
+          "id": 21212514,
+          "is_link_only": false,
+          "name": "PrIdx_19_TrIdx_3_Lbr_6.mat",
+          "size": 827713,
+          "supplied_md5": "bbe154c9e62004251f75ba0b2f4a048d"
+        },
+        {
+          "computed_md5": "2b52f0fe471e8249c127b49af79ec042",
+          "download_url": "https://ndownloader.figshare.com/files/21212508",
+          "id": 21212508,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_1_Lbr_1.mat",
+          "size": 614958,
+          "supplied_md5": "2b52f0fe471e8249c127b49af79ec042"
+        },
+        {
+          "computed_md5": "d855ff6be5ce1140881f57ffefe2d312",
+          "download_url": "https://ndownloader.figshare.com/files/21212505",
+          "id": 21212505,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_1_Lbr_2.mat",
+          "size": 613295,
+          "supplied_md5": "d855ff6be5ce1140881f57ffefe2d312"
+        },
+        {
+          "computed_md5": "c12eda43d7a55d68447292dea92a653a",
+          "download_url": "https://ndownloader.figshare.com/files/21212502",
+          "id": 21212502,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_1_Lbr_5.mat",
+          "size": 618536,
+          "supplied_md5": "c12eda43d7a55d68447292dea92a653a"
+        },
+        {
+          "computed_md5": "e84636b19bfc06256fbab4d08ca02033",
+          "download_url": "https://ndownloader.figshare.com/files/21212499",
+          "id": 21212499,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_1_Lbr_6.mat",
+          "size": 610847,
+          "supplied_md5": "e84636b19bfc06256fbab4d08ca02033"
+        },
+        {
+          "computed_md5": "2ab76f8208704b0cd4b1f8caf527359e",
+          "download_url": "https://ndownloader.figshare.com/files/21212496",
+          "id": 21212496,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_2_Lbr_1.mat",
+          "size": 449556,
+          "supplied_md5": "2ab76f8208704b0cd4b1f8caf527359e"
+        },
+        {
+          "computed_md5": "f31fb31798cac8f35a0fba7b7674cf94",
+          "download_url": "https://ndownloader.figshare.com/files/21212493",
+          "id": 21212493,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_2_Lbr_2.mat",
+          "size": 446219,
+          "supplied_md5": "f31fb31798cac8f35a0fba7b7674cf94"
+        },
+        {
+          "computed_md5": "8b741423d8744fad45302360a5929213",
+          "download_url": "https://ndownloader.figshare.com/files/21212490",
+          "id": 21212490,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_2_Lbr_5.mat",
+          "size": 449147,
+          "supplied_md5": "8b741423d8744fad45302360a5929213"
+        },
+        {
+          "computed_md5": "721608b99d4f35af15f7a3fcab51988b",
+          "download_url": "https://ndownloader.figshare.com/files/21212487",
+          "id": 21212487,
+          "is_link_only": false,
+          "name": "PrIdx_1_TrIdx_2_Lbr_6.mat",
+          "size": 448336,
+          "supplied_md5": "721608b99d4f35af15f7a3fcab51988b"
+        },
+        {
+          "computed_md5": "6d6b47ef32cda14f16c86d1b21207837",
+          "download_url": "https://ndownloader.figshare.com/files/21212484",
+          "id": 21212484,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_1_Lbr_3.mat",
+          "size": 602191,
+          "supplied_md5": "6d6b47ef32cda14f16c86d1b21207837"
+        },
+        {
+          "computed_md5": "a92fc9f4c6ce6d7de129a1ace0af9f92",
+          "download_url": "https://ndownloader.figshare.com/files/21212481",
+          "id": 21212481,
+          "is_link_only": false,
+          "name": "PrIdx_20_TrIdx_3_Lbr_5.mat",
+          "size": 724550,
+          "supplied_md5": "a92fc9f4c6ce6d7de129a1ace0af9f92"
+        },
+        {
+          "computed_md5": "9d3f2ddae6f4799f637f544f6509253b",
+          "download_url": "https://ndownloader.figshare.com/files/21212478",
+          "id": 21212478,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_1_Lbr_5.mat",
+          "size": 573911,
+          "supplied_md5": "9d3f2ddae6f4799f637f544f6509253b"
+        },
+        {
+          "computed_md5": "4795022a78c934b803c9d3f1de35f57b",
+          "download_url": "https://ndownloader.figshare.com/files/21212475",
+          "id": 21212475,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_2_Lbr_3.mat",
+          "size": 635774,
+          "supplied_md5": "4795022a78c934b803c9d3f1de35f57b"
+        },
+        {
+          "computed_md5": "6a915a167ca0fc0b7a08b821b12ddc7d",
+          "download_url": "https://ndownloader.figshare.com/files/21212472",
+          "id": 21212472,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_3_Lbr_2.mat",
+          "size": 612465,
+          "supplied_md5": "6a915a167ca0fc0b7a08b821b12ddc7d"
+        },
+        {
+          "computed_md5": "6ba414dea32df2ae5c63ca0d45ba82bd",
+          "download_url": "https://ndownloader.figshare.com/files/21212469",
+          "id": 21212469,
+          "is_link_only": false,
+          "name": "PrIdx_22_TrIdx_4_Lbr_6.mat",
+          "size": 317755,
+          "supplied_md5": "6ba414dea32df2ae5c63ca0d45ba82bd"
+        },
+        {
+          "computed_md5": "d7ed051a77cffd6d40b28dbc7141773c",
+          "download_url": "https://ndownloader.figshare.com/files/21212463",
+          "id": 21212463,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_1_Lbr_1.mat",
+          "size": 637214,
+          "supplied_md5": "d7ed051a77cffd6d40b28dbc7141773c"
+        },
+        {
+          "computed_md5": "86119e66871deff0cb781207bf6278cb",
+          "download_url": "https://ndownloader.figshare.com/files/21212466",
+          "id": 21212466,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_1_Lbr_2.mat",
+          "size": 635912,
+          "supplied_md5": "86119e66871deff0cb781207bf6278cb"
+        },
+        {
+          "computed_md5": "2e4117d2eab3ef3ead04c873bbc31ba3",
+          "download_url": "https://ndownloader.figshare.com/files/21212460",
+          "id": 21212460,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_1_Lbr_5.mat",
+          "size": 636170,
+          "supplied_md5": "2e4117d2eab3ef3ead04c873bbc31ba3"
+        },
+        {
+          "computed_md5": "d3643c369310e90bed8759a47e3f0ae4",
+          "download_url": "https://ndownloader.figshare.com/files/21212457",
+          "id": 21212457,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_1_Lbr_6.mat",
+          "size": 633038,
+          "supplied_md5": "d3643c369310e90bed8759a47e3f0ae4"
+        },
+        {
+          "computed_md5": "8272b80496100ce8d407e71a238b0b43",
+          "download_url": "https://ndownloader.figshare.com/files/21212454",
+          "id": 21212454,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_2_Lbr_1.mat",
+          "size": 676210,
+          "supplied_md5": "8272b80496100ce8d407e71a238b0b43"
+        },
+        {
+          "computed_md5": "d59aa5c3e3a6d31bc9392f2cb5f14541",
+          "download_url": "https://ndownloader.figshare.com/files/21212451",
+          "id": 21212451,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_2_Lbr_2.mat",
+          "size": 672393,
+          "supplied_md5": "d59aa5c3e3a6d31bc9392f2cb5f14541"
+        },
+        {
+          "computed_md5": "0f936b64cb4ccedbbcdb2f6ac379cc36",
+          "download_url": "https://ndownloader.figshare.com/files/21212448",
+          "id": 21212448,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_2_Lbr_5.mat",
+          "size": 674232,
+          "supplied_md5": "0f936b64cb4ccedbbcdb2f6ac379cc36"
+        },
+        {
+          "computed_md5": "0aaa09a148c36310ab383405220ae473",
+          "download_url": "https://ndownloader.figshare.com/files/21212442",
+          "id": 21212442,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_2_Lbr_6.mat",
+          "size": 673548,
+          "supplied_md5": "0aaa09a148c36310ab383405220ae473"
+        },
+        {
+          "computed_md5": "fde31b40f05d5fca41bb8cc01bfb77ba",
+          "download_url": "https://ndownloader.figshare.com/files/21212439",
+          "id": 21212439,
+          "is_link_only": false,
+          "name": "PrIdx_2_TrIdx_3_Lbr_1.mat",
+          "size": 757657,
+          "supplied_md5": "fde31b40f05d5fca41bb8cc01bfb77ba"
+        },
+        {
+          "computed_md5": "88e56bf57f6c2f12d15d069e610b4a30",
+          "download_url": "https://ndownloader.figshare.com/files/21212445",
+          "id": 21212445,
+          "is_link_only": false,
+          "name": "PrIdx_3_TrIdx_1_Lbr_5.mat",
+          "size": 664200,
+          "supplied_md5": "88e56bf57f6c2f12d15d069e610b4a30"
+        },
+        {
+          "computed_md5": "d3ef7e188fe27b5a22feed11f85a6e88",
+          "download_url": "https://ndownloader.figshare.com/files/21212436",
+          "id": 21212436,
+          "is_link_only": false,
+          "name": "PrIdx_3_TrIdx_2_Lbr_6.mat",
+          "size": 537090,
+          "supplied_md5": "d3ef7e188fe27b5a22feed11f85a6e88"
+        },
+        {
+          "computed_md5": "7cde70ea47f51464d82a74ea06d8b32a",
+          "download_url": "https://ndownloader.figshare.com/files/21212433",
+          "id": 21212433,
+          "is_link_only": false,
+          "name": "PrIdx_4_TrIdx_1_Lbr_5.mat",
+          "size": 548033,
+          "supplied_md5": "7cde70ea47f51464d82a74ea06d8b32a"
+        },
+        {
+          "computed_md5": "aeb29615101023f90753f348d029f1b8",
+          "download_url": "https://ndownloader.figshare.com/files/21212427",
+          "id": 21212427,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_1_Lbr_5.mat",
+          "size": 566627,
+          "supplied_md5": "aeb29615101023f90753f348d029f1b8"
+        },
+        {
+          "computed_md5": "0b3ed45874b3b246fc47d62f2735e03a",
+          "download_url": "https://ndownloader.figshare.com/files/21212430",
+          "id": 21212430,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_2_Lbr_5.mat",
+          "size": 391633,
+          "supplied_md5": "0b3ed45874b3b246fc47d62f2735e03a"
+        },
+        {
+          "computed_md5": "09ad091366bc1e9fa1af7efa48d356ec",
+          "download_url": "https://ndownloader.figshare.com/files/21212424",
+          "id": 21212424,
+          "is_link_only": false,
+          "name": "PrIdx_6_TrIdx_2_Lbr_6.mat",
+          "size": 393067,
+          "supplied_md5": "09ad091366bc1e9fa1af7efa48d356ec"
+        },
+        {
+          "computed_md5": "9424281ea0f7156c88b2de7db5ed4734",
+          "download_url": "https://ndownloader.figshare.com/files/21212421",
+          "id": 21212421,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_1_Lbr_5.mat",
+          "size": 593018,
+          "supplied_md5": "9424281ea0f7156c88b2de7db5ed4734"
+        },
+        {
+          "computed_md5": "f9dbdbd0e9bed11936bacecad0b24f8d",
+          "download_url": "https://ndownloader.figshare.com/files/21212418",
+          "id": 21212418,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_2_Lbr_5.mat",
+          "size": 526716,
+          "supplied_md5": "f9dbdbd0e9bed11936bacecad0b24f8d"
+        },
+        {
+          "computed_md5": "b19cccb0f547e3b76770d14c032ddcc8",
+          "download_url": "https://ndownloader.figshare.com/files/21212415",
+          "id": 21212415,
+          "is_link_only": false,
+          "name": "PrIdx_8_TrIdx_3_Lbr_6.mat",
+          "size": 881265,
+          "supplied_md5": "b19cccb0f547e3b76770d14c032ddcc8"
+        },
+        {
+          "computed_md5": "6754cc23cfbd679b38712fdaff208d40",
+          "download_url": "https://ndownloader.figshare.com/files/21212412",
+          "id": 21212412,
+          "is_link_only": false,
+          "name": "PrIdx_9_TrIdx_1_Lbr_1.mat",
+          "size": 614876,
+          "supplied_md5": "6754cc23cfbd679b38712fdaff208d40"
+        },
+        {
+          "computed_md5": "cc84bf69f667b7dcd99204b63368515f",
+          "download_url": "https://ndownloader.figshare.com/files/21212409",
+          "id": 21212409,
+          "is_link_only": false,
+          "name": "PrIdx_9_TrIdx_2_Lbr_1.mat",
+          "size": 577091,
+          "supplied_md5": "cc84bf69f667b7dcd99204b63368515f"
+        }
+      ],
+      "id": 11673696,
+      "keywords": [
+        "eyetracking",
+        "machine learning",
+        "head tracking",
+        "event detection",
+        "gaze classification",
+        "behavorial analysis",
+        "Behavioral Neuroscience"
+      ],
+      "label": "LabelData",
+      "license": {
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "value": 1
+      },
+      "manifest_sha256": "65d934d3d3e2ebb04e639fc16435bf3383882340996a211159c5ccb67c71b35d",
+      "modified_date": "2023-05-30T10:37:46Z",
+      "published_date": "2020-01-21T15:33:30Z",
+      "references": [
+        "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/"
+      ],
+      "title": "LabelData",
+      "total_size_bytes": 28725824,
+      "url": "https://api.figshare.com/v2/articles/11673696",
+      "url_public_api": "https://api.figshare.com/v2/articles/11673696",
+      "version": 1
+    }
+  ],
+  "probe_fingerprint_sha256": "5df3f539b1d28adfcd4b4e26392622654612e5acdb3415ffe911d3acedda50b5",
+  "probe_scope": "public_metadata_only_no_dataset_file_downloads",
+  "project_articles": [
+    {
+      "doi": "10.6084/m9.figshare.11673645.v1",
+      "id": 11673645,
+      "published_date": "2020-01-21T15:32:26Z",
+      "title": "ProcessData",
+      "url": "https://api.figshare.com/v2/articles/11673645"
+    },
+    {
+      "doi": "10.6084/m9.figshare.11673696.v1",
+      "id": 11673696,
+      "published_date": "2020-01-21T15:33:30Z",
+      "title": "LabelData",
+      "url": "https://api.figshare.com/v2/articles/11673696"
+    },
+    {
+      "doi": "10.6084/m9.figshare.11673717.v1",
+      "id": 11673717,
+      "published_date": "2020-01-21T15:31:34Z",
+      "title": "ProcessData_cleaned",
+      "url": "https://api.figshare.com/v2/articles/11673717"
+    }
+  ],
+  "project_id": 74580,
+  "record_type": "gaze-in-wild-figshare-exploratory-metadata-v2"
+}
