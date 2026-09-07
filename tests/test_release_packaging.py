@@ -79,3 +79,23 @@ def test_pypi_workflow_uses_oidc_and_exact_github_release_assets() -> None:
     assert "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33" in workflow
     assert "PYPI_API_TOKEN" not in workflow
     assert "password:" not in workflow
+
+
+def test_first_release_tag_bootstrap_is_exact_main_and_dual_gate_guarded() -> None:
+    workflow = (ROOT / ".github/workflows/bootstrap-first-release.yml").read_text(
+        encoding="utf-8"
+    )
+    required = (
+        'workflows: ["CI", "Docs"]',
+        "github.event.workflow_run.head_branch == 'main'",
+        "github.event.workflow_run.conclusion == 'success'",
+        "TARGET_SHA: ${{ github.event.workflow_run.head_sha }}",
+        "RELEASE_TAG: v0.1.0a1",
+        "Stale workflow_run",
+        "for workflow in ci.yml docs.yml; do",
+        "git ls-remote --exit-code --tags origin",
+        "git tag -a \"$RELEASE_TAG\" \"$TARGET_SHA\"",
+        "git push origin \"refs/tags/$RELEASE_TAG\"",
+    )
+    for phrase in required:
+        assert phrase in workflow
