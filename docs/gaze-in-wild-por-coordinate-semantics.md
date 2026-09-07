@@ -26,7 +26,9 @@ That exact source establishes the following chain:
 
 Therefore the first-party `ProcessData.ETG.POR` field is treated as
 **normalized scene-image coordinates**, with its y axis already flipped to the
-MATLAB convention. It is not treated as pixel-valued POR.
+MATLAB convention. It is not treated as pixel-valued POR. This is a source-code
+semantics result; it does not by itself verify the empirical coordinate range of
+every file in the unrecovered distributed dataset.
 
 ## GazeForge canonical conversion
 
