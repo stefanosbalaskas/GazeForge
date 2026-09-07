@@ -1,0 +1,393 @@
+{
+  "analysis_protocol": {
+    "coordinate_data_used": false,
+    "event_label_match_required": true,
+    "event_matching": "one_to_one_hungarian_temporal_iou_equivalent_sparse_components",
+    "event_metrics_bidirectional": true,
+    "event_min_iou": 0.5,
+    "event_unlabelled_code_0_policy": "hard_separator_and_excluded_event_class",
+    "neither_labeller_treated_as_truth": true,
+    "pairwise_clearly_labelled_definition": "retain a sample only when both selected labellers have nonzero label codes",
+    "processdata_loaded": false,
+    "resampling": null,
+    "sample_all_labels_includes_unlabelled_code_0": true,
+    "sampling_rate_policy": "timestamp_inferred_per_recording",
+    "scope": "distributed_multi_labeller_overlap_subset_only",
+    "tridx_to_publication_task_mapping_used": false
+  },
+  "evidence_fingerprint_sha256": "7e6d6180b01417d7be2e07483cc0c7e0feb86a1d08be6b8aeba03f48fdb27f02",
+  "limitations": [
+    "PrIdx and TrIdx are verified distribution-native identity tokens only; no publication task-name mapping is asserted.",
+    "Agreement is limited to five recordings with distributed multi-labeller overlap, not all 50 LabelData files or all 37 recording tokens.",
+    "This is a human-human annotation baseline, not GazeForge model validation or a model-performance result.",
+    "No gaze coordinates or ProcessData were used in this agreement computation.",
+    "This evidence does not establish native Gazepoint GP3 validity, cross-dataset validity, participant-disjoint model validation, or quarantine exit."
+  ],
+  "pair_results": [
+    {
+      "event_agreement": {
+        "f1": 0.7681537405628003,
+        "left_as_reference": {
+          "false_negative": 1067,
+          "false_positive": 622,
+          "n_predicted_events": 3420,
+          "n_reference_events": 3865,
+          "precision": 0.8181286549707603,
+          "recall": 0.7239327296248383
+        },
+        "mean_abs_duration_error_ms": 28.52078956006488,
+        "mean_abs_offset_error_ms": 16.908752441365625,
+        "mean_abs_onset_error_ms": 16.93972967261389,
+        "mean_matched_iou": 0.8106737013694209,
+        "right_as_reference": {
+          "false_negative": 622,
+          "false_positive": 1067,
+          "n_predicted_events": 3865,
+          "n_reference_events": 3420,
+          "precision": 0.7239327296248383,
+          "recall": 0.8181286549707603
+        },
+        "true_positive": 2798
+      },
+      "left_labeller_id": 1,
+      "n_aligned_samples": 371723,
+      "n_pairwise_clearly_labelled_samples": 212644,
+      "pairwise_clearly_labelled_fraction": 0.5720496175915938,
+      "right_labeller_id": 2,
+      "sample_all_labels": {
+        "cohen_kappa": 0.7919788713053041,
+        "exact_agreement": 0.8466680834922778
+      },
+      "sample_pairwise_clearly_labelled": {
+        "cohen_kappa": 0.8148159177461165,
+        "exact_agreement": 0.8722089501702376
+      },
+      "shared_recording_count": 4,
+      "shared_recordings": [
+        "PrIdx_1_TrIdx_1",
+        "PrIdx_1_TrIdx_2",
+        "PrIdx_2_TrIdx_1",
+        "PrIdx_2_TrIdx_2"
+      ]
+    },
+    {
+      "event_agreement": {
+        "f1": 0.7537533684075451,
+        "left_as_reference": {
+          "false_negative": 928,
+          "false_positive": 991,
+          "n_predicted_events": 3928,
+          "n_reference_events": 3865,
+          "precision": 0.7477087576374746,
+          "recall": 0.7598965071151358
+        },
+        "mean_abs_duration_error_ms": 26.42190897873181,
+        "mean_abs_offset_error_ms": 15.951888570358868,
+        "mean_abs_onset_error_ms": 15.845202413234684,
+        "mean_matched_iou": 0.8156726485700971,
+        "right_as_reference": {
+          "false_negative": 991,
+          "false_positive": 928,
+          "n_predicted_events": 3865,
+          "n_reference_events": 3928,
+          "precision": 0.7598965071151358,
+          "recall": 0.7477087576374746
+        },
+        "true_positive": 2937
+      },
+      "left_labeller_id": 1,
+      "n_aligned_samples": 371723,
+      "n_pairwise_clearly_labelled_samples": 213470,
+      "pairwise_clearly_labelled_fraction": 0.5742717023159718,
+      "right_labeller_id": 5,
+      "sample_all_labels": {
+        "cohen_kappa": 0.8010612427027279,
+        "exact_agreement": 0.8532025190800677
+      },
+      "sample_pairwise_clearly_labelled": {
+        "cohen_kappa": 0.8419405981045955,
+        "exact_agreement": 0.891432051342109
+      },
+      "shared_recording_count": 4,
+      "shared_recordings": [
+        "PrIdx_1_TrIdx_1",
+        "PrIdx_1_TrIdx_2",
+        "PrIdx_2_TrIdx_1",
+        "PrIdx_2_TrIdx_2"
+      ]
+    },
+    {
+      "event_agreement": {
+        "f1": 0.6760523722370829,
+        "left_as_reference": {
+          "false_negative": 1464,
+          "false_positive": 837,
+          "n_predicted_events": 3238,
+          "n_reference_events": 3865,
+          "precision": 0.7415071031500926,
+          "recall": 0.6212160413971539
+        },
+        "mean_abs_duration_error_ms": 36.504785679332954,
+        "mean_abs_offset_error_ms": 20.582009687539966,
+        "mean_abs_onset_error_ms": 21.523303299877508,
+        "mean_matched_iou": 0.7933892585589369,
+        "right_as_reference": {
+          "false_negative": 837,
+          "false_positive": 1464,
+          "n_predicted_events": 3865,
+          "n_reference_events": 3238,
+          "precision": 0.6212160413971539,
+          "recall": 0.7415071031500926
+        },
+        "true_positive": 2401
+      },
+      "left_labeller_id": 1,
+      "n_aligned_samples": 371723,
+      "n_pairwise_clearly_labelled_samples": 210567,
+      "pairwise_clearly_labelled_fraction": 0.5664621236781151,
+      "right_labeller_id": 6,
+      "sample_all_labels": {
+        "cohen_kappa": 0.7810584537163028,
+        "exact_agreement": 0.8380460719406655
+      },
+      "sample_pairwise_clearly_labelled": {
+        "cohen_kappa": 0.8245276146100345,
+        "exact_agreement": 0.8778346084619147
+      },
+      "shared_recording_count": 4,
+      "shared_recordings": [
+        "PrIdx_1_TrIdx_1",
+        "PrIdx_1_TrIdx_2",
+        "PrIdx_2_TrIdx_1",
+        "PrIdx_2_TrIdx_2"
+      ]
+    },
+    {
+      "event_agreement": {
+        "f1": 0.7555797495917257,
+        "left_as_reference": {
+          "false_negative": 644,
+          "false_positive": 1152,
+          "n_predicted_events": 3928,
+          "n_reference_events": 3420,
+          "precision": 0.7067209775967414,
+          "recall": 0.8116959064327486
+        },
+        "mean_abs_duration_error_ms": 24.589702100716934,
+        "mean_abs_offset_error_ms": 14.942584085146942,
+        "mean_abs_onset_error_ms": 14.71923824547313,
+        "mean_matched_iou": 0.8312264103755215,
+        "right_as_reference": {
+          "false_negative": 1152,
+          "false_positive": 644,
+          "n_predicted_events": 3420,
+          "n_reference_events": 3928,
+          "precision": 0.8116959064327486,
+          "recall": 0.7067209775967414
+        },
+        "true_positive": 2776
+      },
+      "left_labeller_id": 2,
+      "n_aligned_samples": 371723,
+      "n_pairwise_clearly_labelled_samples": 206447,
+      "pairwise_clearly_labelled_fraction": 0.5553786018083358,
+      "right_labeller_id": 5,
+      "sample_all_labels": {
+        "cohen_kappa": 0.8477044025395616,
+        "exact_agreement": 0.8906363071426842
+      },
+      "sample_pairwise_clearly_labelled": {
+        "cohen_kappa": 0.8401293562088297,
+        "exact_agreement": 0.8909163126613611
+      },
+      "shared_recording_count": 4,
+      "shared_recordings": [
+        "PrIdx_1_TrIdx_1",
+        "PrIdx_1_TrIdx_2",
+        "PrIdx_2_TrIdx_1",
+        "PrIdx_2_TrIdx_2"
+      ]
+    },
+    {
+      "event_agreement": {
+        "f1": 0.7188344848302792,
+        "left_as_reference": {
+          "false_negative": 1027,
+          "false_positive": 845,
+          "n_predicted_events": 3238,
+          "n_reference_events": 3420,
+          "precision": 0.7390364422483015,
+          "recall": 0.6997076023391813
+        },
+        "mean_abs_duration_error_ms": 28.711953062586964,
+        "mean_abs_offset_error_ms": 16.861929142681618,
+        "mean_abs_onset_error_ms": 17.18789275711903,
+        "mean_matched_iou": 0.8336374774783023,
+        "right_as_reference": {
+          "false_negative": 845,
+          "false_positive": 1027,
+          "n_predicted_events": 3420,
+          "n_reference_events": 3238,
+          "precision": 0.6997076023391813,
+          "recall": 0.7390364422483015
+        },
+        "true_positive": 2393
+      },
+      "left_labeller_id": 2,
+      "n_aligned_samples": 371723,
+      "n_pairwise_clearly_labelled_samples": 202917,
+      "pairwise_clearly_labelled_fraction": 0.5458822833131122,
+      "right_labeller_id": 6,
+      "sample_all_labels": {
+        "cohen_kappa": 0.8325958712354011,
+        "exact_agreement": 0.8796846038582493
+      },
+      "sample_pairwise_clearly_labelled": {
+        "cohen_kappa": 0.8409054275740202,
+        "exact_agreement": 0.8903443279764632
+      },
+      "shared_recording_count": 4,
+      "shared_recordings": [
+        "PrIdx_1_TrIdx_1",
+        "PrIdx_1_TrIdx_2",
+        "PrIdx_2_TrIdx_1",
+        "PrIdx_2_TrIdx_2"
+      ]
+    },
+    {
+      "event_agreement": {
+        "f1": 0.7012295601470403,
+        "left_as_reference": {
+          "false_negative": 1487,
+          "false_positive": 870,
+          "n_predicted_events": 3636,
+          "n_reference_events": 4253,
+          "precision": 0.7607260726072608,
+          "recall": 0.6503644486245004
+        },
+        "mean_abs_duration_error_ms": 31.392433333727336,
+        "mean_abs_offset_error_ms": 17.457515236115707,
+        "mean_abs_onset_error_ms": 18.480663908812165,
+        "mean_matched_iou": 0.8095908688752063,
+        "right_as_reference": {
+          "false_negative": 870,
+          "false_positive": 1487,
+          "n_predicted_events": 4253,
+          "n_reference_events": 3636,
+          "precision": 0.6503644486245004,
+          "recall": 0.7607260726072608
+        },
+        "true_positive": 2766
+      },
+      "left_labeller_id": 5,
+      "n_aligned_samples": 432444,
+      "n_pairwise_clearly_labelled_samples": 219425,
+      "pairwise_clearly_labelled_fraction": 0.5074067393697219,
+      "right_labeller_id": 6,
+      "sample_all_labels": {
+        "cohen_kappa": 0.8304109011251608,
+        "exact_agreement": 0.8809256227395917
+      },
+      "sample_pairwise_clearly_labelled": {
+        "cohen_kappa": 0.8442586888702425,
+        "exact_agreement": 0.8908693175344651
+      },
+      "shared_recording_count": 5,
+      "shared_recordings": [
+        "PrIdx_1_TrIdx_1",
+        "PrIdx_1_TrIdx_2",
+        "PrIdx_2_TrIdx_1",
+        "PrIdx_2_TrIdx_2",
+        "PrIdx_6_TrIdx_2"
+      ]
+    }
+  ],
+  "pair_shared_recording_counts": {
+    "1-2": 4,
+    "1-5": 4,
+    "1-6": 4,
+    "2-5": 4,
+    "2-6": 4,
+    "5-6": 5
+  },
+  "range_summary": {
+    "all_label_cohen_kappa": [
+      0.7810584537163028,
+      0.8477044025395616
+    ],
+    "all_label_exact_agreement": [
+      0.8380460719406655,
+      0.8906363071426842
+    ],
+    "event_f1": [
+      0.6760523722370829,
+      0.7681537405628003
+    ],
+    "mean_matched_event_iou": [
+      0.7933892585589369,
+      0.8336374774783023
+    ],
+    "pairwise_clearly_labelled_cohen_kappa": [
+      0.8148159177461165,
+      0.8442586888702425
+    ],
+    "pairwise_clearly_labelled_exact_agreement": [
+      0.8722089501702376,
+      0.891432051342109
+    ]
+  },
+  "raw_dataset_bytes_retained": false,
+  "record_type": "gaze-in-wild-distributed-overlap-human-human-agreement-evidence-v1",
+  "reviewed_on": "2026-09-08",
+  "scientific_boundary": {
+    "complete_file_to_publication_task_mapping_verified": false,
+    "cross_dataset_validation_created": false,
+    "full_distributed_labeldata_hha_created": false,
+    "gaze_coordinate_validation_created": false,
+    "gp3_validity_claim_created": false,
+    "human_human_agreement_created_for_distributed_overlap_subset": true,
+    "new_model_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "quarantine_exit_authorized": false,
+    "task_stratified_hha_created": false
+  },
+  "source_binding": {
+    "artifact_id": 10035567001,
+    "artifact_name": "gaze-in-wild-labeldata-hha-discovery",
+    "artifact_zip_sha256": "67bebc822a3633b03e81914c542abb78c64c1e75d42c13a95be60dfd3ad4f87c",
+    "candidate_selection_evidence_fingerprint_sha256": "46967ca0d96e0dd1c87d6f781234b1f4e3c3d8bf2318e697524c8b8b33f32a87",
+    "discovery_fingerprint_sha256": "ed0af8abff6d235c71810f3964dc0c9a3dafd33d8260415e333d199da5713569",
+    "exact_byte_reviewed_evidence_fingerprint_sha256": "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00",
+    "feasibility_probe_fingerprint_sha256": "90249ed3daf543910ab1c269520246cf6dd12fb94d136f875729fb444407590c",
+    "verification_manifest_sha256": "b93b8a89b5cc72c057973bddeccb17f15114afa7865d44ddf460b9762dd85c0a",
+    "workflow_head_sha": "94996d99010ca5ed5f988bcb60cebb053923ffc2",
+    "workflow_job_id": 101889768746,
+    "workflow_run_id": 34170510919
+  },
+  "status": "verified-distributed-overlap-subset-human-human-agreement",
+  "verified_inputs": {
+    "all_files_matched_prior_size_md5_sha256": true,
+    "all_filename_internal_pridx_tridx_lbridx_agree": true,
+    "all_raw_mat_bytes_deleted_after_inspection": true,
+    "distinct_inferred_sampling_rates_hz": [
+      299.990148050583,
+      299.993916027871,
+      299.99537216017,
+      299.995594281077,
+      299.996710812083
+    ],
+    "download_attempt_distribution": {
+      "1": 18
+    },
+    "recording_tokens": [
+      "PrIdx_1_TrIdx_1",
+      "PrIdx_1_TrIdx_2",
+      "PrIdx_2_TrIdx_1",
+      "PrIdx_2_TrIdx_2",
+      "PrIdx_6_TrIdx_2"
+    ],
+    "selected_label_file_count": 18,
+    "selected_recording_count": 5,
+    "selected_total_size_bytes": 10274311
+  }
+}

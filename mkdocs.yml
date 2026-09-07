@@ -95,6 +95,7 @@ nav:
       - Gaze-in-the-Wild candidate ProcessData preflight: gaze-in-wild-candidate-preflight.md
       - Gaze-in-the-Wild source audit: gaze-in-wild-source-audit.md
       - Gaze-in-the-Wild labeller agreement: gaze-in-wild-labeller-agreement.md
+      - Gaze-in-the-Wild overlap human-human agreement: gaze-in-wild-overlap-human-human-agreement.md
       - Gaze-in-the-Wild model validation: gaze-in-wild-model-validation.md
       - VISUS public partial 60 Hz evidence: visus-public-partial-evidence.md
       - VISUS public 60 Hz event extension: visus-public-event-extension-evidence.md

@@ -181,6 +181,123 @@ def _validate_event_frame(
                 raise SchemaError(f"{name} event intervals cannot overlap within a group.")
 
 
+def _positive_overlap_edges(
+    pred: pd.DataFrame,
+    ref: pd.DataFrame,
+    *,
+    label_col: str,
+    require_label_match: bool,
+) -> list[tuple[int, int, float]]:
+    """Enumerate positive temporal-IoU edges for two non-overlapping event streams."""
+    pred_starts = pred["start_ms"].to_numpy(dtype=float)
+    pred_ends = pred["end_ms"].to_numpy(dtype=float)
+    ref_starts = ref["start_ms"].to_numpy(dtype=float)
+    ref_ends = ref["end_ms"].to_numpy(dtype=float)
+    pred_labels = pred[label_col].astype(str).to_numpy(dtype=object)
+    ref_labels = ref[label_col].astype(str).to_numpy(dtype=object)
+    pred_order = np.argsort(pred_starts, kind="stable")
+    ref_order = np.argsort(ref_starts, kind="stable")
+
+    edges: list[tuple[int, int, float]] = []
+    pred_pos = 0
+    ref_pos = 0
+    while pred_pos < len(pred_order) and ref_pos < len(ref_order):
+        pred_idx = int(pred_order[pred_pos])
+        ref_idx = int(ref_order[ref_pos])
+        p_start = float(pred_starts[pred_idx])
+        p_end = float(pred_ends[pred_idx])
+        r_start = float(ref_starts[ref_idx])
+        r_end = float(ref_ends[ref_idx])
+
+        if p_end <= r_start:
+            pred_pos += 1
+            continue
+        if r_end <= p_start:
+            ref_pos += 1
+            continue
+
+        if not require_label_match or pred_labels[pred_idx] == ref_labels[ref_idx]:
+            overlap = min(p_end, r_end) - max(p_start, r_start)
+            union = (p_end - p_start) + (r_end - r_start) - overlap
+            if overlap > 0.0 and union > 0.0:
+                edges.append((pred_idx, ref_idx, float(overlap / union)))
+
+        if p_end < r_end:
+            pred_pos += 1
+        elif r_end < p_end:
+            ref_pos += 1
+        else:
+            pred_pos += 1
+            ref_pos += 1
+    return edges
+
+
+def _component_assignments(
+    edges: list[tuple[int, int, float]],
+) -> list[tuple[int, int, float]]:
+    """Solve disconnected positive-IoU components with the original Hungarian objective."""
+    if not edges:
+        return []
+
+    parent: dict[tuple[str, int], tuple[str, int]] = {}
+
+    def find(node: tuple[str, int]) -> tuple[str, int]:
+        parent.setdefault(node, node)
+        root = node
+        while parent[root] != root:
+            root = parent[root]
+        while parent[node] != node:
+            next_node = parent[node]
+            parent[node] = root
+            node = next_node
+        return root
+
+    def union(left: tuple[str, int], right: tuple[str, int]) -> None:
+        left_root = find(left)
+        right_root = find(right)
+        if left_root != right_root:
+            parent[right_root] = left_root
+
+    for pred_idx, ref_idx, _ in edges:
+        union(("p", pred_idx), ("r", ref_idx))
+
+    components: dict[tuple[str, int], list[tuple[int, int, float]]] = {}
+    for edge in edges:
+        root = find(("p", edge[0]))
+        components.setdefault(root, []).append(edge)
+
+    component_rows: list[
+        tuple[int, int, list[int], list[int], list[tuple[int, int, float]]]
+    ] = []
+    for component_edges in components.values():
+        pred_ids = sorted({edge[0] for edge in component_edges})
+        ref_ids = sorted({edge[1] for edge in component_edges})
+        component_rows.append((pred_ids[0], ref_ids[0], pred_ids, ref_ids, component_edges))
+
+    chosen: list[tuple[int, int, float]] = []
+    for _, _, pred_ids, ref_ids, component_edges in sorted(component_rows):
+        if len(pred_ids) == 1 and len(ref_ids) == 1:
+            chosen.append(component_edges[0])
+            continue
+        pred_lookup = {value: index for index, value in enumerate(pred_ids)}
+        ref_lookup = {value: index for index, value in enumerate(ref_ids)}
+        ious = np.zeros((len(pred_ids), len(ref_ids)), dtype=float)
+        for pred_idx, ref_idx, iou in component_edges:
+            ious[pred_lookup[pred_idx], ref_lookup[ref_idx]] = iou
+        pred_local, ref_local = linear_sum_assignment(1.0 - ious)
+        for pred_position, ref_position in zip(pred_local, ref_local, strict=True):
+            iou = float(ious[pred_position, ref_position])
+            if iou > 0.0:
+                chosen.append(
+                    (
+                        pred_ids[int(pred_position)],
+                        ref_ids[int(ref_position)],
+                        iou,
+                    )
+                )
+    return sorted(chosen, key=lambda item: (item[0], item[1]))
+
+
 def match_event_intervals(
     predicted: pd.DataFrame,
     reference: pd.DataFrame,
@@ -190,7 +307,13 @@ def match_event_intervals(
     min_iou: float = 0.50,
     require_label_match: bool = True,
 ) -> pd.DataFrame:
-    """One-to-one match predicted events to references within each participant/trial group."""
+    """One-to-one match predicted events to references within each participant/trial group.
+
+    The maximum-total-IoU Hungarian objective is unchanged. Because each validated event stream is
+    internally non-overlapping, only positive temporal-overlap edges can influence that objective.
+    The positive-edge graph is decomposed into independent components before assignment, avoiding a
+    corpus-scale dense Cartesian IoU matrix without changing accepted matches.
+    """
     if not 0.0 <= float(min_iou) <= 1.0:
         raise ValueError("min_iou must be in [0, 1].")
     _validate_event_frame(predicted, name="predicted", group_cols=group_cols, label_col=label_col)
@@ -213,21 +336,15 @@ def match_event_intervals(
         matched_pred: set[int] = set()
         matched_ref: set[int] = set()
         if len(pred) and len(ref):
-            ious = np.zeros((len(pred), len(ref)), dtype=float)
-            for i, p_row in pred.iterrows():
-                for j, r_row in ref.iterrows():
-                    if require_label_match and str(p_row[label_col]) != str(r_row[label_col]):
-                        continue
-                    ious[i, j] = temporal_event_iou(
-                        p_row["start_ms"],
-                        p_row["end_ms"],
-                        r_row["start_ms"],
-                        r_row["end_ms"],
-                    )
-            pred_idx, ref_idx = linear_sum_assignment(1.0 - ious)
-            for i, j in zip(pred_idx, ref_idx, strict=True):
-                iou = float(ious[i, j])
-                if iou <= 0.0 or iou < float(min_iou):
+            edges = _positive_overlap_edges(
+                pred,
+                ref,
+                label_col=label_col,
+                require_label_match=require_label_match,
+            )
+            assignments = _component_assignments(edges)
+            for i, j, iou in assignments:
+                if iou < float(min_iou):
                     continue
                 p_row = pred.iloc[int(i)]
                 r_row = ref.iloc[int(j)]

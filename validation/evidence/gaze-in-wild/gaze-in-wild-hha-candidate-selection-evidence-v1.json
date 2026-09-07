@@ -1,0 +1,48 @@
+{
+  "candidate_subset": {
+    "label_file_count": 18,
+    "label_files": [
+      {"figshare_file_id":21212508,"md5":"2b52f0fe471e8249c127b49af79ec042","name":"PrIdx_1_TrIdx_1_Lbr_1.mat","sha256":"e334f5b1028d74491254e59d0944bf0cf888b5b65e4dd42ec9d8cbbf82ec52f1","size_bytes":614958},
+      {"figshare_file_id":21212505,"md5":"d855ff6be5ce1140881f57ffefe2d312","name":"PrIdx_1_TrIdx_1_Lbr_2.mat","sha256":"380de7ba09041d7cdfc56c3b64ca54219abe9b49f0339e0fe42e6f9e1fbe5c2f","size_bytes":613295},
+      {"figshare_file_id":21212502,"md5":"c12eda43d7a55d68447292dea92a653a","name":"PrIdx_1_TrIdx_1_Lbr_5.mat","sha256":"c1cd3d156fcfa353f791887a6e12e81b8a608f7ce99fb663657c351567762181","size_bytes":618536},
+      {"figshare_file_id":21212499,"md5":"e84636b19bfc06256fbab4d08ca02033","name":"PrIdx_1_TrIdx_1_Lbr_6.mat","sha256":"b335706236f48a55aa3db022f53d715e081657fd0d56fd1f61dd51cf62766270","size_bytes":610847},
+      {"figshare_file_id":21212496,"md5":"2ab76f8208704b0cd4b1f8caf527359e","name":"PrIdx_1_TrIdx_2_Lbr_1.mat","sha256":"4de010b68eaba00f289204d4bdd90565b2c4b0fa51f57f9ad38d9f4fe3aeeeaf","size_bytes":449556},
+      {"figshare_file_id":21212493,"md5":"f31fb31798cac8f35a0fba7b7674cf94","name":"PrIdx_1_TrIdx_2_Lbr_2.mat","sha256":"58c6913bb7ff4584d80ad381437dd8fead3abbf536c316bca1071b7f72d3339c","size_bytes":446219},
+      {"figshare_file_id":21212490,"md5":"8b741423d8744fad45302360a5929213","name":"PrIdx_1_TrIdx_2_Lbr_5.mat","sha256":"7c9dd7807272f94e2261669af1cb7465a16118926ffcfad6ee2e55daf3d966f8","size_bytes":449147},
+      {"figshare_file_id":21212487,"md5":"721608b99d4f35af15f7a3fcab51988b","name":"PrIdx_1_TrIdx_2_Lbr_6.mat","sha256":"d5c7c506d6e5bfc3cfe14c4dae544c920cefdc7f6be8191ddde9317614221c85","size_bytes":448336},
+      {"figshare_file_id":21212463,"md5":"d7ed051a77cffd6d40b28dbc7141773c","name":"PrIdx_2_TrIdx_1_Lbr_1.mat","sha256":"ae8534078ebd41d10ff262cce07ab34a727c623ff79c397c8e345df31657dc7f","size_bytes":637214},
+      {"figshare_file_id":21212466,"md5":"86119e66871deff0cb781207bf6278cb","name":"PrIdx_2_TrIdx_1_Lbr_2.mat","sha256":"46859119d087e658c203b62a0f5d5dcf34a46c1081cbf24ef820a103b93c0184","size_bytes":635912},
+      {"figshare_file_id":21212460,"md5":"2e4117d2eab3ef3ead04c873bbc31ba3","name":"PrIdx_2_TrIdx_1_Lbr_5.mat","sha256":"85a81efe87f17e567266d048b84fd794f8e78931f7b50d9143064d672f87de94","size_bytes":636170},
+      {"figshare_file_id":21212457,"md5":"d3643c369310e90bed8759a47e3f0ae4","name":"PrIdx_2_TrIdx_1_Lbr_6.mat","sha256":"117dbbab13446cddaf429580e78a59776c8a4bf51e72df34282964ae0544b046","size_bytes":633038},
+      {"figshare_file_id":21212454,"md5":"8272b80496100ce8d407e71a238b0b43","name":"PrIdx_2_TrIdx_2_Lbr_1.mat","sha256":"8512b1ca26ba0020526b04070a0ed36f5c988ce0b46272c4947e5892ad41f4dd","size_bytes":676210},
+      {"figshare_file_id":21212451,"md5":"d59aa5c3e3a6d31bc9392f2cb5f14541","name":"PrIdx_2_TrIdx_2_Lbr_2.mat","sha256":"7325d7642eaffcb08ffefe903e32766ffb8c0e8c3fda90731fff155b485ca74f","size_bytes":672393},
+      {"figshare_file_id":21212448,"md5":"0f936b64cb4ccedbbcdb2f6ac379cc36","name":"PrIdx_2_TrIdx_2_Lbr_5.mat","sha256":"82486f8eb6e096938959aa477bb9100188dd19f43fed9ecd860a4fb26ea85014","size_bytes":674232},
+      {"figshare_file_id":21212442,"md5":"0aaa09a148c36310ab383405220ae473","name":"PrIdx_2_TrIdx_2_Lbr_6.mat","sha256":"fea333c6a1fa55058c3c5260ac58f533900b6be8de60c3c789f2fda50ebd2f36","size_bytes":673548},
+      {"figshare_file_id":21212430,"md5":"0b3ed45874b3b246fc47d62f2735e03a","name":"PrIdx_6_TrIdx_2_Lbr_5.mat","sha256":"36e6306485026e710c0f04a6ce22609e16d7a0011ae7c09eb9b4ace7ef3f9fa6","size_bytes":391633},
+      {"figshare_file_id":21212424,"md5":"09ad091366bc1e9fa1af7efa48d356ec","name":"PrIdx_6_TrIdx_2_Lbr_6.mat","sha256":"53b03cda2c3e46f22085359c132c4529e81e546b02ce0288de71cf3ca17f5db1","size_bytes":393067}
+    ],
+    "process_file_count": 5,
+    "process_files": [
+      {"figshare_file_id":21212364,"md5":"e6650fe2f37d19c605344355ea5c62b5","name":"PrIdx_1_TrIdx_1.mat","sha256":"88ef67bce79e0c4cc4478ad0cac1a858845d6f82ad5cbd5f902f75605469f90d","size_bytes":40496594},
+      {"figshare_file_id":21212361,"md5":"a81542e6d939d89fe9789fc165e5f405","name":"PrIdx_1_TrIdx_2.mat","sha256":"2442393ec93528faae8ec76ac4552275ed6d322a87370521fd8a0e8d94488b3d","size_bytes":28531338},
+      {"figshare_file_id":21212370,"md5":"0a805a117411e8e020f2ad61305b68b2","name":"PrIdx_2_TrIdx_1.mat","sha256":"60dd72570858da270ff99f74bdc876089f538e7c2e3ff86af14b69cb04368aeb","size_bytes":39988985},
+      {"figshare_file_id":21212367,"md5":"6d61bebd1ab4c5b0fe58327ad9c463d2","name":"PrIdx_2_TrIdx_2.mat","sha256":"7f0b3dfc01cae982f7d00bb2d0d089daf64dff8bdb3f369aee6d8c6218950188","size_bytes":42484504},
+      {"figshare_file_id":21212331,"md5":"5db43935eeb8402cd93fa74e731beffe","name":"PrIdx_6_TrIdx_2.mat","sha256":"64f7775c76264354a3414e9c704d536ce23fdc812714360feddaf3d383b3e09c","size_bytes":25261387}
+    ],
+    "recording_count": 5,
+    "recordings": [
+      {"exact_timestamp_vector_shared":true,"labeller_ids":[1,2,5,6],"n_samples":96881,"pairing_preconditions_verified":true,"participant_token":"PrIdx_1","process_filename":"PrIdx_1_TrIdx_1.mat","recording_token":"PrIdx_1_TrIdx_1","same_inferred_sampling_rate":true,"same_process_file":true,"trial_token":"TrIdx_1"},
+      {"exact_timestamp_vector_shared":true,"labeller_ids":[1,2,5,6],"n_samples":69137,"pairing_preconditions_verified":true,"participant_token":"PrIdx_1","process_filename":"PrIdx_1_TrIdx_2.mat","recording_token":"PrIdx_1_TrIdx_2","same_inferred_sampling_rate":true,"same_process_file":true,"trial_token":"TrIdx_2"},
+      {"exact_timestamp_vector_shared":true,"labeller_ids":[1,2,5,6],"n_samples":99480,"pairing_preconditions_verified":true,"participant_token":"PrIdx_2","process_filename":"PrIdx_2_TrIdx_1.mat","recording_token":"PrIdx_2_TrIdx_1","same_inferred_sampling_rate":true,"same_process_file":true,"trial_token":"TrIdx_1"},
+      {"exact_timestamp_vector_shared":true,"labeller_ids":[1,2,5,6],"n_samples":106225,"pairing_preconditions_verified":true,"participant_token":"PrIdx_2","process_filename":"PrIdx_2_TrIdx_2.mat","recording_token":"PrIdx_2_TrIdx_2","same_inferred_sampling_rate":true,"same_process_file":true,"trial_token":"TrIdx_2"},
+      {"exact_timestamp_vector_shared":true,"labeller_ids":[5,6],"n_samples":60721,"pairing_preconditions_verified":true,"participant_token":"PrIdx_6","process_filename":"PrIdx_6_TrIdx_2.mat","recording_token":"PrIdx_6_TrIdx_2","same_inferred_sampling_rate":true,"same_process_file":true,"trial_token":"TrIdx_2"}
+    ]
+  },
+  "evidence_fingerprint_sha256": "46967ca0d96e0dd1c87d6f781234b1f4e3c3d8bf2318e697524c8b8b33f32a87",
+  "identity_semantics": {"lbridx_is_distribution_native_labeller_index_token":true,"pridx_is_distribution_native_participant_index_token":true,"publication_task_name_mapping_created":false,"task_stratified_claims_authorized":false,"tridx_is_distribution_native_trial_index_token":true},
+  "record_type": "gaze-in-wild-hha-candidate-selection-evidence-v1",
+  "reviewed_on": "2026-09-08",
+  "scientific_boundary": {"cross_dataset_validation_created":false,"gp3_validity_claim_created":false,"hha_candidate_subset_selected":true,"human_human_agreement_created":false,"new_empirical_performance_claim_created":false,"participant_disjoint_model_validation_created":false,"quarantine_exit_authorized":false},
+  "source_binding": {"exact_byte_reviewed_evidence_fingerprint_sha256":"dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00","exact_main_byte_artifact_id":10034317317,"exact_main_byte_artifact_zip_sha256":"59877acf43c5c337b0715a26688fea77c6a9ddabf8fcd56bc12a24f892dce82c","exact_main_byte_workflow_head_sha":"f4cfdf30aebd01bbb1404ddc83229361c4b23a58","exact_main_byte_workflow_run_id":34166212306,"figshare_project_id":74580,"labeldata_article_id":11673696,"labeldata_feasibility_artifact_id":10034627331,"labeldata_feasibility_artifact_zip_sha256":"75be0e75c8279c2fbf987a02cb8cbbdcd86ccdd46e80a84807e50bf2d9610ba1","labeldata_feasibility_probe_fingerprint_sha256":"90249ed3daf543910ab1c269520246cf6dd12fb94d136f875729fb444407590c","labeldata_feasibility_workflow_head_sha":"893bc13281b298b2831ae3eb87f3977df560f343","labeldata_feasibility_workflow_run_id":34167419322,"processdata_article_id":11673645,"stable_exact_byte_identity_fingerprint_sha256":"8d36884daf76e26ded3d31c32bd334bf8f358b49efdb7accbb20c6c569abdda0"},
+  "status": "distribution_native_hha_candidate_subset_bound_to_prior_exact_byte_and_pairing_evidence"
+}
