@@ -8,11 +8,13 @@
 
 [![CI](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml/badge.svg)](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml)
 [![Docs](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml/badge.svg)](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml)
+[![PyPI](https://img.shields.io/badge/PyPI-0.1.0a1-blue)](https://pypi.org/project/gazeforge/0.1.0a1/)
+[![DOI](https://zenodo.org/badge/1355235505.svg)](https://doi.org/10.5281/zenodo.22650012)
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.12%20%7C%203.14-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-alpha-orange)](CHANGELOG.md)
 
-[Website](https://stefanosbalaskas.github.io/GazeForge/) · [Frozen evidence](docs/frozen-evidence.md) · [Validation status](docs/validation-status.md) · [For Gazepoint / GP3](docs/gazepoint-gp3.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
+[Website](https://stefanosbalaskas.github.io/GazeForge/) · [PyPI](https://pypi.org/project/gazeforge/) · [Zenodo](https://doi.org/10.5281/zenodo.22650013) · [Frozen evidence](docs/frozen-evidence.md) · [Validation status](docs/validation-status.md) · [For Gazepoint / GP3](docs/gazepoint-gp3.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
 
 </div>
 
@@ -23,6 +25,17 @@ GazeForge is a vendor-neutral Python research-software package for integrating *
 > **Scientific contract:** AI may propose, score, classify, embed, or flag. It must not silently alter the empirical record.
 
 GazeForge does **not** infer diagnoses, emotions, personality, protected traits, or unsupported latent mental states from gaze.
+
+## Public alpha release
+
+**GazeForge 0.1.0a1** is the first public alpha release. It is published on [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) through GitHub OIDC Trusted Publishing and archived on Zenodo as [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The release is intentionally alpha: APIs may change while native 60 Hz/GP3-class validation, broader external benchmark qualification, and remaining dynamic-detection validation are completed.
+
+The exact GitHub Release distributions are identity-matched to the PyPI publication:
+
+```text
+gazeforge-0.1.0a1-py3-none-any.whl  sha256:3e409fbfc3c194db30ba25fefdf7f6459a3a003aefa0ab4303555d96982fbb46
+gazeforge-0.1.0a1.tar.gz            sha256:cee4e061a90d74b3a354a0fb4aa5c7bd00d53577e17167f75342cd476a5c25fa
+```
 
 ## First frozen external empirical evidence
 
@@ -97,19 +110,25 @@ GazeForge never upgrades derived evidence into a stronger evidence category. Res
 
 ## Installation
 
-GazeForge is currently alpha research software and is developed from GitHub.
+GazeForge is alpha research software. Install the exact first public alpha from PyPI with:
+
+```bash
+python -m pip install "gazeforge==0.1.0a1"
+```
+
+Optional open-vocabulary semantic AOI detection:
+
+```bash
+python -m pip install "gazeforge[vision]==0.1.0a1"
+```
+
+For development, validation work, or analyses that should be tied to an exact repository commit:
 
 ```bash
 git clone https://github.com/stefanosbalaskas/GazeForge.git
 cd GazeForge
 python -m pip install -e ".[dev]"
 pytest
-```
-
-Optional open-vocabulary semantic AOI detection:
-
-```bash
-python -m pip install -e ".[vision]"
 ```
 
 ## Minimal workflow
@@ -211,7 +230,7 @@ Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event
 
 ## Project status
 
-GazeForge is under active alpha development. The first external empirical benchmark tranche is now frozen and publicly rendered, but that does not establish mature performance across trackers or tasks.
+GazeForge is under active public alpha development. Version `0.1.0a1` is published on PyPI through Trusted Publishing and archived on Zenodo, while the first external empirical benchmark tranche remains frozen and publicly rendered. This does not establish mature performance across trackers or tasks.
 
 ### Implemented and frozen
 
@@ -238,7 +257,7 @@ GazeForge is under active alpha development. The first external empirical benchm
 - authoritative audits and frozen cross-dataset results for additional external benchmarks
 - validated dynamic object-detection/tracking backend results
 - broader cross-dataset validation after coordinate and identity audits
-- final API stability and release packaging
+- final API stability beyond the public alpha series
 
 The active benchmark plan is tracked in [Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1).
 
@@ -260,7 +279,11 @@ The documentation source lives under `docs/`, is strict-built with MkDocs Materi
 
 ## Citation
 
-A formal software-paper citation will be added with the public release/paper freeze. Until then, cite the repository together with the exact GazeForge version or commit SHA used in reproducible work. Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff).
+For work using the first public alpha, cite the archived software release:
+
+> Balaskas, S. (2026). *GazeForge: Auditable AI for Eye-Tracking Analysis* (Version 0.1.0a1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22650013
+
+Use the exact GazeForge version or commit SHA in reproducible methods. The version DOI for `0.1.0a1` is [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013); the Zenodo concept/latest-release DOI is [`10.5281/zenodo.22650012`](https://doi.org/10.5281/zenodo.22650012). Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff).
 
 ## License
 

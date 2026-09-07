@@ -74,6 +74,9 @@ Homepage = "https://github.com/stefanosbalaskas/GazeForge"
 Documentation = "https://stefanosbalaskas.github.io/GazeForge/"
 Repository = "https://github.com/stefanosbalaskas/GazeForge"
 Issues = "https://github.com/stefanosbalaskas/GazeForge/issues"
+PyPI = "https://pypi.org/project/gazeforge/"
+DOI = "https://doi.org/10.5281/zenodo.22650013"
+Release = "https://github.com/stefanosbalaskas/GazeForge/releases/tag/v0.1.0a1"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/gazeforge"]
