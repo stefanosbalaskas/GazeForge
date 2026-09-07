@@ -1,0 +1,68 @@
+{
+  "canonical_source": {
+    "commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "git_blob_sha1": "36d81839fb9f9eadb1274b998d2a8652fb0840ca",
+    "path": "DataExtraction/ReadData_function.m",
+    "repository": "https://github.com/RSKothari/Gaze-in-Wild"
+  },
+  "distribution_boundary": {
+    "authoritative_full_distribution_obtained": false,
+    "corpus_wide_por_ranges_empirically_verified": false,
+    "exact_distributed_file_equivalence_verified": false,
+    "quarantined_processdata_sample_promoted": false
+  },
+  "evidence_fingerprint_sha256": "5eb245979385283571d6d9a5dda9a5d74dea6c00165bbe3a2587fcfa80e9adfb",
+  "gaze_forge_contract": {
+    "adapter_path": "src/gazeforge/gaze_in_wild.py",
+    "coordinate_output_unit_after_conversion": "pixels",
+    "normalized_por_to_canonical_pixels": true,
+    "pixel_kinematics_requires_canonical_conversion": true
+  },
+  "mapping_boundary": {
+    "participant_identity_mapping_verified": false,
+    "participant_task_mapping_verified": false,
+    "trial_index_to_task_name_mapping_verified": false
+  },
+  "record_type": "gaze-in-wild-por-coordinate-semantics-evidence-v1",
+  "reviewed_source_semantics": {
+    "etg_por_assignment": "ETG.POR = [Gaze_Data.norm_pos_x, Gaze_Data.norm_pos_y]",
+    "matlab_y_transform": "ETG.POR(:, 2) = 1 - ETG.POR(:, 2)",
+    "por_multiplied_by_scene_resolution_in_first_party_preprocessing": false,
+    "processdata_por_is_interpolated_from_etg_por": true,
+    "pupil_source_fields": [
+      "norm_pos_x",
+      "norm_pos_y"
+    ],
+    "scene_resolution_px": [
+      1920,
+      1080
+    ],
+    "scene_resolution_stored_separately": true
+  },
+  "rights_boundary": {
+    "analysis_use_permitted": false,
+    "redistribution_permission_verified": false,
+    "reuse_terms_verified": false
+  },
+  "scientific_boundary": {
+    "cross_dataset_validation_created": false,
+    "human_human_agreement_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "per_file_sampling_rate_distribution_frozen": false
+  },
+  "status": "verified-first-party-normalized-por-semantics",
+  "verification": {
+    "canonical_pixel_conversion": {
+      "x_px": "por_x * scene_width_px",
+      "y_px": "por_y * scene_height_px"
+    },
+    "canonical_pixel_conversion_supported": true,
+    "first_party_pixel_por_claim": false,
+    "processdata_por_coordinate_semantics_verified": true,
+    "processdata_por_coordinate_space": "normalized_scene_image",
+    "processdata_por_x_range_semantics": "Pupil norm_pos_x convention",
+    "processdata_por_y_range_semantics": "Pupil norm_pos_y transformed as 1-y for MATLAB image convention",
+    "scene_resolution_metadata_unit": "pixels"
+  }
+}
