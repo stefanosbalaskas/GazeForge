@@ -1,24 +1,29 @@
 # Getting started
 
-GazeForge is currently alpha research software. The recommended installation path is an editable development checkout so that the exact commit used for analysis is visible and reproducible.
+GazeForge is currently alpha research software. The first public alpha release is available from PyPI, while editable development checkouts remain the preferred path when an analysis must be tied to an exact commit.
 
-## Install
+## Install the public alpha
 
 ```bash
-git clone https://github.com/stefanosbalaskas/GazeForge.git
-cd GazeForge
-python -m pip install -e ".[dev]"
+python -m pip install "gazeforge==0.1.0a1"
 ```
 
 Optional open-vocabulary semantic AOI detection:
 
 ```bash
-python -m pip install -e ".[vision]"
+python -m pip install "gazeforge[vision]==0.1.0a1"
 ```
 
-Run the test suite before using a development checkout in a study:
+The archived release is available as **GazeForge 0.1.0a1**, DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013).
+
+## Development checkout
+
+For development, validation work, or analyses that must preserve the exact repository commit:
 
 ```bash
+git clone https://github.com/stefanosbalaskas/GazeForge.git
+cd GazeForge
+python -m pip install -e ".[dev]"
 pytest
 ```
 
@@ -167,5 +172,7 @@ At minimum, report:
 - calibration/event-level metrics where applicable;
 - human-human reference agreement when available;
 - whether evidence is native or derived.
+
+For the public alpha, cite the exact version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013) and record `0.1.0a1` in the analysis environment.
 
 Continue with [Scientific governance](scientific-governance.md) and [Validation status](validation-status.md).
