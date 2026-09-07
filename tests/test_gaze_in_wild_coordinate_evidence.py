@@ -33,6 +33,11 @@ ProcessData.ETG.SceneResolution = ETG.SceneResolution;
 ProcessData.ETG.POR = interp1(ETG.T, ETG.POR, ProcessData.T,  'pchip', 'extrap');
 """
 
+PROCESSDATA_POR_ASSIGNMENT = (
+    "ProcessData.ETG.POR = interp1(ETG.T, ETG.POR, ProcessData.T, "
+    "'pchip', 'extrap');"
+)
+
 
 def _live_probe() -> dict:
     record = {
@@ -103,7 +108,7 @@ def test_missing_y_flip_is_rejected():
 
 
 def test_duplicate_processdata_por_assignment_is_rejected():
-    source = SOURCE_SNIPPET + "\nProcessData.ETG.POR = ProcessData.ETG.POR;\n"
+    source = SOURCE_SNIPPET + "\n" + PROCESSDATA_POR_ASSIGNMENT + "\n"
     with pytest.raises(BenchmarkIntegrityError, match="exactly one reviewed"):
         validate_first_party_por_source(source)
 
