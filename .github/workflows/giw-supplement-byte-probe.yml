@@ -94,7 +94,6 @@ jobs:
                       canonical.encode('utf-8')
                   ).hexdigest(),
                   'markers': {
-                      'supplementary_information': 'Supplementary Information' in text,
                       'dataset_status_and_error_measures': 'Dataset status and error measures' in text,
                       'indoor_navigation': 'Indoor navigation' in text,
                       'ball_catching': 'Ball catching' in text,
@@ -129,6 +128,23 @@ jobs:
               encoding='utf-8',
           )
           print(json.dumps(result, indent=2, sort_keys=True))
+          PY
+      - name: Inspect escaped official table extraction
+        if: env.SPRINGER_FETCHED == '1'
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pypdf import PdfReader
+
+          reader = PdfReader('giw-springer-supplement.pdf')
+          for page_index, page in enumerate(reader.pages):
+              text = page.extract_text() or ''
+              if 'Dataset status and error measures' not in text:
+                  continue
+              print(f'TABLE_PAGE={page_index}')
+              for line in text.splitlines():
+                  escaped = line.encode('unicode_escape').decode('ascii')
+                  print(escaped)
           PY
       - name: Upload metadata-only probe
         uses: actions/upload-artifact@v4
