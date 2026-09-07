@@ -1,0 +1,93 @@
+name: Gaze-in-the-Wild exact Figshare bytes
+
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-exact-figshare-bytes
+    paths:
+      - ".github/workflows/gaze-in-wild-figshare-exact-bytes-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  exact-bytes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install probe dependencies
+        run: python -m pip install --disable-pip-version-check --quiet . h5py ruff
+      - name: Ruff exact-byte probe
+        run: ruff check scripts/probe_gaze_in_wild_figshare_exact_bytes.py
+      - name: Require fresh Figshare metadata identity before byte acquisition
+        run: |
+          python scripts/gaze_in_wild_figshare_live_probe.py \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --output gaze-in-wild-figshare-live-binding-before-bytes.json
+      - name: Stream, verify, inspect, and discard original publication bytes
+        run: |
+          python scripts/probe_gaze_in_wild_figshare_exact_bytes.py \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --output gaze-in-wild-figshare-exact-bytes-probe-v1.json \
+            --retries 3
+      - name: Enforce exact-byte scientific boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(
+              Path("gaze-in-wild-figshare-exact-bytes-probe-v1.json")
+              .read_text(encoding="utf-8")
+          )
+          assert report["verified_article_labels"] == ["ProcessData", "LabelData"]
+          assert report["verified_file_count"] == 118
+          assert report["verified_total_size_bytes"] == 2_413_299_242
+          assert report["exact_original_distribution_bytes_verified"] is True
+          assert report["raw_dataset_bytes_retained"] is False
+          excluded = report["excluded_cleaned_deposit"]
+          assert excluded["label"] == "ProcessData_cleaned"
+          assert excluded["article_id"] == 11673717
+          assert excluded["downloaded"] is False
+          for article in report["verified_items"]:
+              assert article["all_frozen_size_md5_checks_passed"] is True
+              assert article["raw_bytes_retained"] is False
+              assert all(row["raw_bytes_retained"] is False for row in article["files"])
+          boundary = report["scientific_boundary"]
+          assert boundary["universal_tridx_to_task_mapping_verified"] is False
+          assert boundary["complete_file_to_task_mapping_verified"] is False
+          assert boundary["participant_disjoint_model_validation_created"] is False
+          assert boundary["human_human_agreement_created"] is False
+          assert boundary["cross_dataset_validation_created"] is False
+          assert boundary["gp3_validity_claim_created"] is False
+          assert boundary["quarantine_exit_authorized"] is False
+          assert boundary["new_empirical_performance_claim_created"] is False
+          print("probe_fingerprint_sha256", report["probe_fingerprint_sha256"])
+          PY
+      - name: Confirm raw dataset was not retained in workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f \( -name 'PrIdx_*_TrIdx_*.mat' -o -name 'PrIdx_*_TrIdx_*_Lbr_*.mat' \) -print -quit | grep -q .; then
+            echo "Raw GIW MAT file unexpectedly retained in workspace." >&2
+            exit 1
+          fi
+      - name: Upload fingerprinted summaries only
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-figshare-exact-bytes-probe
+          path: |
+            gaze-in-wild-figshare-live-binding-before-bytes.json
+            gaze-in-wild-figshare-exact-bytes-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
