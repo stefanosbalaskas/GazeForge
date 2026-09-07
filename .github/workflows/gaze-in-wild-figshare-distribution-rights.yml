@@ -1,0 +1,81 @@
+name: Gaze-in-the-Wild Figshare distribution rights
+
+on:
+  push:
+    branches:
+      - main
+      - research/giw-figshare-distribution-rights
+    paths:
+      - .github/workflows/gaze-in-wild-figshare-distribution-rights.yml
+      - docs/gaze-in-wild-figshare-distribution-rights.md
+      - scripts/gaze_in_wild_figshare_live_probe.py
+      - src/gazeforge/gaze_in_wild_figshare_evidence.py
+      - tests/test_gaze_in_wild_figshare_evidence.py
+      - validation/evidence/gaze-in-wild/gaze-in-wild-figshare-distribution-rights-evidence-v1.json
+      - validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json
+      - validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-summary-v1.json
+  pull_request:
+    paths:
+      - .github/workflows/gaze-in-wild-figshare-distribution-rights.yml
+      - docs/gaze-in-wild-figshare-distribution-rights.md
+      - scripts/gaze_in_wild_figshare_live_probe.py
+      - src/gazeforge/gaze_in_wild_figshare_evidence.py
+      - tests/test_gaze_in_wild_figshare_evidence.py
+      - validation/evidence/gaze-in-wild/gaze-in-wild-figshare-distribution-rights-evidence-v1.json
+      - validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json
+      - validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-summary-v1.json
+
+permissions:
+  contents: read
+
+jobs:
+  provenance:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install package and focused tooling
+        run: python -m pip install . pytest ruff
+      - name: Ruff focused files
+        run: |
+          ruff check \
+            src/gazeforge/gaze_in_wild_figshare_evidence.py \
+            scripts/gaze_in_wild_figshare_live_probe.py \
+            tests/test_gaze_in_wild_figshare_evidence.py
+      - name: Run focused evidence tests
+        run: python -m pytest -q tests/test_gaze_in_wild_figshare_evidence.py
+      - name: Validate immutable reviewed evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from gazeforge.gaze_in_wild_figshare_evidence import (
+              validate_gaze_in_wild_figshare_evidence,
+          )
+
+          base = Path('validation/evidence/gaze-in-wild')
+          result = validate_gaze_in_wild_figshare_evidence(
+              base / 'gaze-in-wild-figshare-distribution-rights-evidence-v1.json',
+              base / 'gaze-in-wild-figshare-public-metadata-raw-v1.json',
+              base / 'gaze-in-wild-figshare-public-metadata-summary-v1.json',
+          )
+          print('evidence fingerprint:', result.fingerprint_sha256)
+          print('deposit rights resolved:', result.deposit_rights_resolved)
+          print('analysis use permitted:', result.analysis_use_permitted)
+          print('redistribution permitted:', result.redistribution_permitted)
+          print('exact bytes verified:', result.exact_file_bytes_verified)
+          print('quarantine exit authorized:', result.quarantine_exit_authorized)
+          PY
+      - name: Bind fresh public Figshare metadata to frozen manifests
+        run: |
+          python scripts/gaze_in_wild_figshare_live_probe.py \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --output gaze-in-wild-figshare-live-binding.json
+      - name: Upload metadata-only live binding
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-figshare-live-binding
+          path: gaze-in-wild-figshare-live-binding.json
+          if-no-files-found: error
+          retention-days: 30
