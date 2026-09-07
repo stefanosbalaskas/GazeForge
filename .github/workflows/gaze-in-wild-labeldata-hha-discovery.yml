@@ -11,11 +11,14 @@ on:
       - "scripts/run_gaze_in_wild_labeldata_hha_discovery.py"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-hha-candidate-selection-evidence-v1.json"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-distributed-overlap-human-human-agreement-evidence-v1.json"
       - "src/gazeforge/evaluation.py"
       - "src/gazeforge/event_evaluation.py"
       - "src/gazeforge/gaze_in_wild.py"
+      - "src/gazeforge/gaze_in_wild_overlap_hha_evidence.py"
       - "tests/test_event_evaluation.py"
       - "tests/test_event_evaluation_sparse_equivalence.py"
+      - "tests/test_gaze_in_wild_overlap_hha_evidence.py"
 
 permissions:
   contents: read
@@ -34,18 +37,21 @@ jobs:
       - name: Install package and discovery dependencies
         run: python -m pip install --disable-pip-version-check --quiet . pytest ruff
 
-      - name: Ruff HHA discovery and sparse matcher
+      - name: Ruff HHA discovery, evidence, and sparse matcher
         run: |
           ruff check \
             scripts/run_gaze_in_wild_labeldata_hha_discovery.py \
             src/gazeforge/event_evaluation.py \
-            tests/test_event_evaluation_sparse_equivalence.py
+            src/gazeforge/gaze_in_wild_overlap_hha_evidence.py \
+            tests/test_event_evaluation_sparse_equivalence.py \
+            tests/test_gaze_in_wild_overlap_hha_evidence.py
 
-      - name: Prove sparse matcher preserves dense objective
+      - name: Prove sparse matcher and frozen HHA evidence
         run: |
           pytest -q \
             tests/test_event_evaluation.py \
-            tests/test_event_evaluation_sparse_equivalence.py
+            tests/test_event_evaluation_sparse_equivalence.py \
+            tests/test_gaze_in_wild_overlap_hha_evidence.py
 
       - name: Run prior-byte-bound label-only HHA discovery
         run: |
@@ -94,6 +100,35 @@ jobs:
               assert boundary[key] is False, key
           assert record["raw_dataset_bytes_retained"] is False
           assert len(record["pair_results"]) == 6
+          PY
+
+      - name: Bind live reproduction to frozen reviewed HHA evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_overlap_hha_evidence import (
+              validate_gaze_in_wild_overlap_hha_evidence,
+          )
+
+          evidence_path = Path(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-distributed-overlap-human-human-agreement-evidence-v1.json"
+          )
+          reviewed = json.loads(evidence_path.read_text(encoding="utf-8"))
+          discovery = json.loads(
+              Path("gaze-in-wild-labeldata-hha-discovery-v1.json").read_text(encoding="utf-8")
+          )
+          validate_gaze_in_wild_overlap_hha_evidence(reviewed)
+          assert (
+              discovery["discovery_fingerprint_sha256"]
+              == reviewed["source_binding"]["discovery_fingerprint_sha256"]
+          )
+          assert (
+              discovery["input_verification"]["verification_manifest_sha256"]
+              == reviewed["source_binding"]["verification_manifest_sha256"]
+          )
           PY
 
       - name: Confirm raw LabelData was not retained in workspace
