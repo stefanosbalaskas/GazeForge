@@ -3,20 +3,27 @@ from __future__ import annotations
 import json
 import pathlib
 import re
-import tomllib
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
-def _project() -> dict[str, object]:
-    return tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+def _project_name_version() -> tuple[str, str]:
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    project_match = re.search(r"(?ms)^\[project\]\s*(.*?)(?=^\[|\Z)", pyproject)
+    assert project_match is not None
+    project = project_match.group(1)
+    name_match = re.search(r'(?m)^name\s*=\s*"([^"]+)"\s*$', project)
+    version_match = re.search(r'(?m)^version\s*=\s*"([^"]+)"\s*$', project)
+    assert name_match is not None
+    assert version_match is not None
+    return name_match.group(1), version_match.group(1)
 
 
 def test_first_public_alpha_release_metadata_is_synchronized() -> None:
-    project = _project()
-    assert project["name"] == "gazeforge"
-    assert project["version"] == "0.1.0a1"
+    name, version = _project_name_version()
+    assert name == "gazeforge"
+    assert version == "0.1.0a1"
 
     cff = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert re.search(r"(?m)^version:\s*0\.1\.0a1\s*$", cff)
