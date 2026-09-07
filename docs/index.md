@@ -15,6 +15,8 @@ Machine learning, computer vision, temporal event modelling, semantic AOIs, scan
 [Get started](getting-started.md){ .md-button .md-button--primary }
 [Frozen evidence](frozen-evidence.md){ .md-button }
 [For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
+[PyPI](https://pypi.org/project/gazeforge/){ .md-button }
+[DOI](https://doi.org/10.5281/zenodo.22650013){ .md-button }
 [GitHub](https://github.com/stefanosbalaskas/GazeForge){ .md-button }
 
 </div>
@@ -64,6 +66,10 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
     [Frozen empirical evidence →](frozen-evidence.md)
 
 </div>
+
+## Public alpha release
+
+**GazeForge 0.1.0a1** is the first public alpha release. It is available from [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) and archived on Zenodo with version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The release remains intentionally alpha: APIs may change while native 60 Hz/GP3-class validation, broader external benchmark qualification, and remaining dynamic-detection validation are completed.
 
 ## First frozen empirical checkpoint
 
@@ -124,6 +130,14 @@ GazeForge never silently upgrades evidence strength. Resampled lower-rate eviden
 
 ## Quick start
 
+Install the exact public alpha from PyPI:
+
+```bash
+python -m pip install "gazeforge==0.1.0a1"
+```
+
+For development or commit-pinned research work:
+
 ```bash
 git clone https://github.com/stefanosbalaskas/GazeForge.git
 cd GazeForge
@@ -143,7 +157,7 @@ flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 
 ## Current project phase
 
-GazeForge is **alpha research software with its first frozen external empirical tranche**. The architecture, tests, validation machinery, and benchmark evidence are now substantial, but a stable scientific-performance claim still requires broader independent validation.
+GazeForge is **public alpha research software with its first frozen external empirical tranche**. Version `0.1.0a1` is published through PyPI Trusted Publishing and archived on Zenodo, but a stable scientific-performance claim still requires broader independent validation.
 
 - CI spans Python 3.10, 3.12, and 3.14 on Linux, Windows, and macOS.
 - Documentation is built strictly and deployed through GitHub Pages.
