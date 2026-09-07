@@ -11,7 +11,7 @@ concurrency:
 
 permissions:
   contents: write
-  actions: read
+  actions: write
 
 jobs:
   tag:
@@ -40,7 +40,7 @@ jobs:
           git fetch origin main --tags
           MAIN_SHA="$(git rev-parse origin/main)"
           if [ "$TARGET_SHA" != "$MAIN_SHA" ]; then
-            echo "Stale workflow_run: target=$TARGET_SHA current-main=$MAIN_SHA; not tagging."
+            echo "Stale workflow_run: target=$TARGET_SHA current-main=$MAIN_SHA; not releasing."
             exit 0
           fi
 
@@ -54,11 +54,6 @@ jobs:
             exit 1
           }
 
-          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
-            echo "$RELEASE_TAG already exists; preserving immutable tag."
-            exit 0
-          fi
-
           for workflow in ci.yml docs.yml; do
             echo "Requiring successful push run for $workflow at $TARGET_SHA..."
             ok="$(gh run list --workflow "$workflow" --commit "$TARGET_SHA" --branch main --limit 30 \
@@ -70,8 +65,33 @@ jobs:
             }
           done
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$RELEASE_TAG" "$TARGET_SHA" -m "GazeForge ${RELEASE_TAG} - first public alpha release"
-          git push origin "refs/tags/$RELEASE_TAG"
-          echo "Created immutable release tag $RELEASE_TAG at $TARGET_SHA"
+          if git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"; then
+            TAG_COMMIT="$(git rev-list -n 1 "$RELEASE_TAG")"
+            test "$TAG_COMMIT" = "$TARGET_SHA" || {
+              echo "Existing immutable tag points elsewhere: tag=$TAG_COMMIT target=$TARGET_SHA" >&2
+              exit 1
+            }
+            echo "$RELEASE_TAG already exists at exact validated main; preserving immutable tag."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$RELEASE_TAG" "$TARGET_SHA" -m "GazeForge ${RELEASE_TAG} - first public alpha release"
+            git push origin "refs/tags/$RELEASE_TAG"
+            echo "Created immutable release tag $RELEASE_TAG at $TARGET_SHA"
+          fi
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists; no dispatch needed."
+            exit 0
+          fi
+
+          active="$(gh run list --workflow release.yml --limit 30 \
+            --json status,headBranch \
+            --jq "[.[] | select(.headBranch == \"$RELEASE_TAG\" and (.status == \"queued\" or .status == \"in_progress\"))] | length")"
+          if [ "$active" -ge 1 ]; then
+            echo "Release workflow for $RELEASE_TAG is already active; not dispatching a duplicate."
+            exit 0
+          fi
+
+          gh workflow run release.yml --ref "$RELEASE_TAG" -f tag="$RELEASE_TAG"
+          echo "Dispatched release.yml explicitly for $RELEASE_TAG because GITHUB_TOKEN tag pushes do not recursively trigger workflows."

@@ -87,15 +87,22 @@ def test_first_release_tag_bootstrap_is_exact_main_and_dual_gate_guarded() -> No
     )
     required = (
         'workflows: ["CI", "Docs"]',
+        "actions: write",
         "github.event.workflow_run.head_branch == 'main'",
         "github.event.workflow_run.conclusion == 'success'",
         "TARGET_SHA: ${{ github.event.workflow_run.head_sha }}",
         "RELEASE_TAG: v0.1.0a1",
         "Stale workflow_run",
         "for workflow in ci.yml docs.yml; do",
-        "git ls-remote --exit-code --tags origin",
+        "git show-ref --verify --quiet",
+        "TAG_COMMIT=\"$(git rev-list -n 1 \"$RELEASE_TAG\")\"",
+        "Existing immutable tag points elsewhere",
         "git tag -a \"$RELEASE_TAG\" \"$TARGET_SHA\"",
         "git push origin \"refs/tags/$RELEASE_TAG\"",
+        "gh release view \"$RELEASE_TAG\"",
+        "gh run list --workflow release.yml",
+        "gh workflow run release.yml --ref \"$RELEASE_TAG\" -f tag=\"$RELEASE_TAG\"",
+        "GITHUB_TOKEN tag pushes do not recursively trigger workflows",
     )
     for phrase in required:
         assert phrase in workflow
