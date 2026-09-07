@@ -1,0 +1,310 @@
+name: Hollywood2 coordinate metadata probe
+
+on:
+  push:
+    branches:
+      - main
+      - research/hollywood2-coordinate-metadata-mainline
+    paths:
+      - "src/gazeforge/hollywood2_coordinate_metadata.py"
+      - "src/gazeforge/hollywood2_coordinate_evidence.py"
+      - "scripts/hollywood2_coordinate_metadata_probe.py"
+      - "tests/test_hollywood2_coordinate_metadata.py"
+      - "tests/test_hollywood2_coordinate_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-coordinate-semantics-evidence-v1.json"
+      - "docs/hollywood2-coordinate-semantics.md"
+      - ".github/workflows/hollywood2-coordinate-metadata-probe.yml"
+  pull_request:
+    paths:
+      - "src/gazeforge/hollywood2_coordinate_metadata.py"
+      - "src/gazeforge/hollywood2_coordinate_evidence.py"
+      - "scripts/hollywood2_coordinate_metadata_probe.py"
+      - "tests/test_hollywood2_coordinate_metadata.py"
+      - "tests/test_hollywood2_coordinate_evidence.py"
+      - "validation/evidence/hollywood2/hollywood2-coordinate-semantics-evidence-v1.json"
+      - "docs/hollywood2-coordinate-semantics.md"
+      - ".github/workflows/hollywood2-coordinate-metadata-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package and focused tooling
+        run: python -m pip install . pytest ruff
+      - name: Ruff focused files
+        run: |
+          ruff check \
+            src/gazeforge/hollywood2_coordinate_metadata.py \
+            src/gazeforge/hollywood2_coordinate_evidence.py \
+            scripts/hollywood2_coordinate_metadata_probe.py \
+            tests/test_hollywood2_coordinate_metadata.py \
+            tests/test_hollywood2_coordinate_evidence.py
+      - name: Run focused coordinate evidence tests
+        run: |
+          python -m pytest -q \
+            tests/test_hollywood2_coordinate_metadata.py \
+            tests/test_hollywood2_coordinate_evidence.py
+      - name: Revalidate exact author input convention
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://raw.githubusercontent.com/MikhailStartsev/deep_em_classifier/9a345a37aab47ac6780ce0d4b5798cc15291c75b/README.md"
+          curl --fail --show-error --silent --location --retry 3 --retry-all-errors \
+            "$url" -o _hollywood2_author_readme.md
+          observed="$(git hash-object _hollywood2_author_readme.md)"
+          test "$observed" = "112f5f2a235f059ac2394db3180956474e644c06"
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_coordinate_evidence import (
+              validate_author_input_convention,
+          )
+
+          validate_author_input_convention(
+              Path("_hollywood2_author_readme.md").read_text(encoding="utf-8")
+          )
+          print("exact author ARFF input convention verified")
+          PY
+      - name: Acquire pinned canonical Hollywood2EM headers
+        shell: bash
+        run: |
+          set -u -o pipefail
+          expected="870fa6d6209c9085260918d61433a0a2c70fd497"
+          canonical="https://gin.g-node.org/ioannis.agtzidis/hollywood2_em"
+          legacy="https://web.gin.g-node.org/ioannis.agtzidis/hollywood2_em"
+          all_403=true
+
+          clone_once() {
+            local endpoint="$1"
+            rm -rf _hollywood2_em
+            set +e
+            output="$(git clone --depth 1 "$endpoint" _hollywood2_em 2>&1)"
+            rc=$?
+            set -e
+            printf '%s\n' "$output"
+            if [ "$rc" -ne 0 ]; then
+              if printf '%s' "$output" | grep -q "403"; then
+                return 10
+              fi
+              return 11
+            fi
+            observed="$(git -C _hollywood2_em rev-parse HEAD)"
+            if [ "$observed" != "$expected" ]; then
+              echo "GIN source was reachable but HEAD drifted: ${observed}" >&2
+              return 12
+            fi
+            if [ -n "$(git -C _hollywood2_em status --porcelain --untracked-files=no)" ]; then
+              echo "GIN source checkout contains tracked modifications." >&2
+              return 13
+            fi
+            return 0
+          }
+
+          set -e
+          for endpoint in "$canonical" "$canonical" "$canonical" "$legacy" "$legacy"; do
+            set +e
+            clone_once "$endpoint"
+            rc=$?
+            set -e
+            if [ "$rc" -eq 0 ]; then
+              echo "Pinned Hollywood2EM source acquired through Git transport."
+              exit 0
+            fi
+            if [ "$rc" -ne 10 ]; then
+              all_403=false
+            fi
+            sleep 10
+          done
+
+          if [ "$all_403" != true ]; then
+            echo "GIN acquisition failed outside the reviewed HTTP-403 host condition." >&2
+            exit 1
+          fi
+
+          echo "Git transport returned only HTTP 403; using pinned GIN API header transport."
+          python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+          from typing import Any
+
+          API = "https://gin.g-node.org/api/v1/repos/ioannis.agtzidis/hollywood2_em"
+          PAGE = "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em"
+          SHA = "870fa6d6209c9085260918d61433a0a2c70fd497"
+          EXPECTED_FILES = 697
+          HEADER_LIMIT = 262_144
+          USER_AGENT = "GazeForge/hollywood2-coordinate-header-probe"
+
+          def request(url: str, *, accept: str) -> urllib.request.Request:
+              return urllib.request.Request(
+                  url,
+                  headers={"User-Agent": USER_AGENT, "Accept": accept},
+              )
+
+          def fetch_json(url: str) -> dict[str, Any]:
+              last: Exception | None = None
+              for attempt in range(1, 4):
+                  try:
+                      with urllib.request.urlopen(  # noqa: S310
+                          request(url, accept="application/json"), timeout=90
+                      ) as response:
+                          if response.status != 200:
+                              raise RuntimeError(f"Unexpected HTTP {response.status} for {url}")
+                          payload = json.loads(response.read().decode("utf-8"))
+                          if not isinstance(payload, dict):
+                              raise RuntimeError(f"GIN API did not return an object for {url}")
+                          return payload
+                  except (OSError, UnicodeError, json.JSONDecodeError, RuntimeError) as exc:
+                      last = exc
+                      if attempt < 3:
+                          time.sleep(attempt * 5)
+              raise RuntimeError(f"GIN API request failed for {url}: {last}")
+
+          repo = fetch_json(API)
+          if repo.get("full_name") != "ioannis.agtzidis/hollywood2_em":
+              raise RuntimeError("GIN API repository identity drifted.")
+
+          tree_url = f"{API}/git/trees/{SHA}?recursive=true"
+          tree = fetch_json(tree_url)
+          if tree.get("truncated") is True:
+              raise RuntimeError("GIN API recursive tree was truncated.")
+          entries = tree.get("tree")
+          if not isinstance(entries, list):
+              raise RuntimeError("GIN API tree payload is missing the tree list.")
+          paths = sorted(
+              str(item["path"])
+              for item in entries
+              if isinstance(item, dict)
+              and item.get("type") == "blob"
+              and isinstance(item.get("path"), str)
+              and str(item["path"]).startswith("ground_truth/")
+              and str(item["path"]).lower().endswith(".arff")
+          )
+          if len(paths) != EXPECTED_FILES:
+              raise RuntimeError(
+                  f"Expected {EXPECTED_FILES} pinned ARFF paths from GIN API, found {len(paths)}."
+              )
+
+          def read_header(path: str) -> bytes:
+              quoted = urllib.parse.quote(path, safe="/")
+              urls = (
+                  f"{API}/raw/{SHA}/{quoted}",
+                  f"{API}/raw/{quoted}?ref={SHA}",
+                  f"{PAGE}/raw/commit/{SHA}/{quoted}",
+              )
+              failures: list[str] = []
+              for url in urls:
+                  for attempt in range(1, 4):
+                      try:
+                          with urllib.request.urlopen(  # noqa: S310
+                              request(url, accept="application/octet-stream,*/*"), timeout=90
+                          ) as response:
+                              if response.status != 200:
+                                  raise RuntimeError(
+                                      f"Unexpected HTTP {response.status} for {url}"
+                                  )
+                              pieces: list[bytes] = []
+                              total = 0
+                              while True:
+                                  line = response.readline()
+                                  if not line:
+                                      break
+                                  total += len(line)
+                                  if total > HEADER_LIMIT:
+                                      raise RuntimeError(
+                                          f"ARFF header exceeded {HEADER_LIMIT} bytes for {path}"
+                                      )
+                                  pieces.append(line)
+                                  if line.lstrip().lower().startswith(b"@data"):
+                                      header = b"".join(pieces)
+                                      if b"@attribute" not in header.lower():
+                                          raise RuntimeError(
+                                              f"ARFF schema marker missing for {path}"
+                                          )
+                                      return header
+                              raise RuntimeError(f"ARFF @data marker missing for {path}")
+                      except urllib.error.HTTPError as exc:
+                          failures.append(f"{url}: HTTP {exc.code}")
+                          if exc.code not in {403, 429, 500, 502, 503, 504}:
+                              break
+                      except (OSError, RuntimeError) as exc:
+                          failures.append(f"{url}: {exc}")
+                      if attempt < 3:
+                          time.sleep(attempt * 2)
+              raise RuntimeError(
+                  "Could not retrieve pinned ARFF header for "
+                  f"{path}; failures: {'; '.join(failures[-6:])}"
+              )
+
+          root = Path("_hollywood2_em")
+          if root.exists():
+              import shutil
+
+              shutil.rmtree(root)
+          for index, path in enumerate(paths, start=1):
+              header = read_header(path)
+              target = root / path
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(header)
+              if index % 100 == 0 or index == len(paths):
+                  print(f"materialized pinned headers: {index}/{len(paths)}")
+
+          print("Pinned GIN API header transport complete; no ARFF data rows materialized.")
+          PY
+      - name: Run header-only coordinate metadata probe
+        run: |
+          python scripts/hollywood2_coordinate_metadata_probe.py \
+            --source-root _hollywood2_em \
+            --output hollywood2-coordinate-metadata-live-probe.json
+      - name: Bind fresh headers to immutable coordinate evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.hollywood2_coordinate_evidence import (
+              validate_live_probe_against_coordinate_evidence,
+          )
+
+          evidence = validate_live_probe_against_coordinate_evidence(
+              Path("hollywood2-coordinate-metadata-live-probe.json"),
+              Path(
+                  "validation/evidence/hollywood2/"
+                  "hollywood2-coordinate-semantics-evidence-v1.json"
+              ),
+          )
+          print("coordinate evidence fingerprint:", evidence["evidence_fingerprint_sha256"])
+          print("verified coordinate unit:", evidence["verification"]["coordinate_unit"])
+          print(
+              "participant mapping verified:",
+              evidence["scientific_boundary"]["participant_identity_mapping_verified"],
+          )
+          print(
+              "cross-dataset validation created:",
+              evidence["scientific_boundary"]["cross_dataset_validation_created"],
+          )
+          PY
+      - name: Upload metadata-only probe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollywood2-coordinate-metadata-live-probe
+          path: hollywood2-coordinate-metadata-live-probe.json
+          if-no-files-found: error
+          retention-days: 30
