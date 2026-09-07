@@ -151,10 +151,10 @@ def validate_gaze_in_wild_participant_task_evidence(
     record = _load_record(record_or_path)
     if record.get("record_type") != RECORD_TYPE or record.get("status") != STATUS:
         raise BenchmarkIntegrityError("Unexpected GIW participant/task evidence identity.")
-    if record.get("evidence_fingerprint_sha256") != EVIDENCE_FINGERPRINT:
-        raise BenchmarkIntegrityError("GIW participant/task stored fingerprint drifted.")
-    if evidence_fingerprint(record) != EVIDENCE_FINGERPRINT:
-        raise BenchmarkIntegrityError("GIW participant/task content fingerprint drifted.")
+
+    stored_fingerprint = record.get("evidence_fingerprint_sha256")
+    if stored_fingerprint != evidence_fingerprint(record):
+        raise BenchmarkIntegrityError("GIW participant/task stored fingerprint is invalid.")
 
     publication = record.get("publication_source", {})
     if publication.get("doi") != "10.1038/s41598-020-59251-5":
@@ -249,6 +249,9 @@ def validate_gaze_in_wild_participant_task_evidence(
         "gp3_validity_claim_created",
         "new_empirical_performance_claim_created",
     )
+
+    if stored_fingerprint != EVIDENCE_FINGERPRINT:
+        raise BenchmarkIntegrityError("GIW participant/task immutable fingerprint drifted.")
     return record
 
 
