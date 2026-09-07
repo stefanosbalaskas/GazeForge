@@ -72,6 +72,42 @@ def _assert_no_promotion(report: dict[str, Any], text: str) -> None:
     assert "_hollywood2_em" not in text
 
 
+def _assert_frozen_scientific_identity(
+    report: dict[str, Any],
+    frozen: dict[str, Any],
+) -> None:
+    assert report["benchmark"] == frozen["benchmark"]
+    assert report["model"] == frozen["model"]
+
+    preparation = report["protocol"]["preparation"]
+    inventory = preparation["inventory"]
+    frozen_preparation = frozen["protocol"]["preparation"]
+
+    assert preparation["analysis_rows"] == frozen_preparation["analysis_rows"]
+    assert preparation["analysis_sampling_rate_hz"] == (
+        frozen_preparation["analysis_sampling_rate_hz"]
+    )
+    assert preparation["prepared_rows_before_exclusions"] == (
+        frozen_preparation["prepared_rows_before_exclusions"]
+    )
+    assert preparation["excluded_rows"] == frozen_preparation["excluded_rows"]
+    assert inventory["ground_truth_file_count"] == (
+        frozen_preparation["ground_truth_file_count"]
+    )
+    assert inventory["ground_truth_sample_count"] == (
+        frozen_preparation["ground_truth_sample_count"]
+    )
+    assert inventory["source_tokens"] == frozen_preparation["source_tokens"]
+    assert inventory["source_token_count"] == frozen_preparation["source_token_count"]
+
+    assert report["metrics"]["analysis_label_counts"] == frozen["metrics"][
+        "analysis_label_counts"
+    ]
+    assert report["metrics"]["source_token_fold_assignment"] == frozen["metrics"][
+        "source_token_fold_assignment"
+    ]
+
+
 def _load_raw_reviewed_report(
     path: Path,
     lineage: dict[str, Any],
@@ -80,7 +116,9 @@ def _load_raw_reviewed_report(
     assert hashlib.sha256(raw_bytes).hexdigest() == (
         lineage["uncanonicalized_report_file_sha256"]
     )
-    raw = validate_hollywood2_source_token_validation_report(json.loads(raw_bytes))
+    raw = validate_hollywood2_source_token_validation_report(
+        json.loads(raw_bytes)
+    )
     assert raw["report_fingerprint_sha256"] == (
         lineage["uncanonicalized_report_fingerprint_sha256"]
     )
@@ -100,7 +138,9 @@ def _canonicalize_and_bind(
     )
     text = _canonical_text(report)
     assert report["report_fingerprint_sha256"] == expected_fingerprint
-    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == expected_file_sha256
+    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == (
+        expected_file_sha256
+    )
     return report, text
 
 
@@ -112,9 +152,11 @@ def replay_reviewed_artifacts(
     v2_evidence_path: Path = DEFAULT_V2_EVIDENCE,
     v3_evidence_path: Path = DEFAULT_V3_EVIDENCE,
 ) -> None:
-    """Replay v1, v2, and v3 from both original reviewed raw artifacts."""
+    """Replay exact v1, v2, and v3 identities from both reviewed raw artifacts."""
     frozen = load_frozen_benchmark_report(frozen_path)
-    v2_evidence = validate_hollywood2_source_token_portability_evidence(v2_evidence_path)
+    v2_evidence = validate_hollywood2_source_token_portability_evidence(
+        v2_evidence_path
+    )
     v3_evidence = validate_hollywood2_source_token_portability_v3_evidence(
         v3_evidence_path
     )
@@ -138,7 +180,9 @@ def replay_reviewed_artifacts(
             expected_fingerprint=v1_expected[
                 "canonical_source_report_fingerprint_sha256"
             ],
-            expected_file_sha256=v1_expected["canonical_source_report_file_sha256"],
+            expected_file_sha256=v1_expected[
+                "canonical_source_report_file_sha256"
+            ],
         )
         v2, v2_text = _canonicalize_and_bind(
             raw,
@@ -146,7 +190,9 @@ def replay_reviewed_artifacts(
             expected_fingerprint=v2_expected[
                 "canonical_source_report_fingerprint_sha256"
             ],
-            expected_file_sha256=v2_expected["canonical_source_report_file_sha256"],
+            expected_file_sha256=v2_expected[
+                "canonical_source_report_file_sha256"
+            ],
         )
         v3, v3_text = _canonicalize_and_bind(
             raw,
@@ -154,21 +200,18 @@ def replay_reviewed_artifacts(
             expected_fingerprint=v3_expected[
                 "canonical_source_report_fingerprint_sha256"
             ],
-            expected_file_sha256=v3_expected["canonical_source_report_file_sha256"],
+            expected_file_sha256=v3_expected[
+                "canonical_source_report_file_sha256"
+            ],
         )
 
-        assert v1["benchmark"] == frozen["benchmark"] == v2["benchmark"] == v3["benchmark"]
-        assert v1["model"] == frozen["model"] == v2["model"] == v3["model"]
-        assert v1["protocol"]["preparation"] == frozen["protocol"]["preparation"]
-        assert v2["protocol"]["preparation"] == frozen["protocol"]["preparation"]
-        assert v3["protocol"]["preparation"] == frozen["protocol"]["preparation"]
-        assert v1["metrics"]["analysis_label_counts"] == frozen["metrics"][
-            "analysis_label_counts"
-        ]
-        assert v1["metrics"]["source_token_fold_assignment"] == frozen["metrics"][
-            "source_token_fold_assignment"
-        ]
-        _assert_no_promotion(v3, v3_text)
+        for report, text in (
+            (v1, v1_text),
+            (v2, v2_text),
+            (v3, v3_text),
+        ):
+            _assert_frozen_scientific_identity(report, frozen)
+            _assert_no_promotion(report, text)
 
         v1_texts.append(v1_text)
         v2_texts.append(v2_text)
@@ -182,9 +225,8 @@ def replay_reviewed_artifacts(
     assert v3_texts[0] == v3_texts[1]
     assert v1_texts[0] != v2_texts[0]
     assert v2_texts[0] != v3_texts[0]
-    assert v3_evidence["reviewed_source_verified_artifacts"][
-        "v3_recanonicalized_reviewed_reports_byte_identical"
-    ] is True
+    assert reviewed["v3_recanonicalized_reviewed_reports_byte_identical"] is True
+    assert reviewed["v3_cross_worker_full_report_match_verified"] is True
     assert frozen["report_fingerprint_sha256"] == (
         v3_evidence["historical_evidence"][
             "v1_frozen_summary_report_fingerprint_sha256"
@@ -203,16 +245,13 @@ def bind_live_v3_report(
     """Fail closed unless a live aggregate report exactly reproduces the v3 identity."""
     report = validate_hollywood2_source_token_validation_report(report_path)
     frozen = load_frozen_benchmark_report(frozen_path)
-    evidence = validate_hollywood2_source_token_portability_v3_evidence(v3_evidence_path)
+    evidence = validate_hollywood2_source_token_portability_v3_evidence(
+        v3_evidence_path
+    )
     expected = evidence["migration"]["to_contract"]
     text = report_path.read_text(encoding="utf-8")
 
-    protocol = report["protocol"]
-    preparation = protocol["preparation"]
-    inventory = preparation["inventory"]
-    frozen_preparation = frozen["protocol"]["preparation"]
-
-    assert protocol["numeric_canonicalization"] == (
+    assert report["protocol"]["numeric_canonicalization"] == (
         HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V3
     )
     assert report["report_fingerprint_sha256"] == V3_CANONICAL_REPORT_FINGERPRINT
@@ -223,35 +262,15 @@ def bind_live_v3_report(
     assert observed_file_sha == V3_CANONICAL_REPORT_FILE_SHA256
     assert observed_file_sha == expected["canonical_source_report_file_sha256"]
 
-    assert report["benchmark"] == frozen["benchmark"]
-    assert report["model"] == frozen["model"]
-    assert preparation["analysis_rows"] == frozen_preparation["analysis_rows"]
-    assert preparation["analysis_sampling_rate_hz"] == (
-        frozen_preparation["analysis_sampling_rate_hz"]
-    )
-    assert preparation["prepared_rows_before_exclusions"] == (
-        frozen_preparation["prepared_rows_before_exclusions"]
-    )
-    assert preparation["excluded_rows"] == frozen_preparation["excluded_rows"]
-    assert inventory["ground_truth_file_count"] == (
-        frozen_preparation["ground_truth_file_count"]
-    )
-    assert inventory["ground_truth_sample_count"] == (
-        frozen_preparation["ground_truth_sample_count"]
-    )
-    assert inventory["source_tokens"] == frozen_preparation["source_tokens"]
-    assert inventory["source_token_count"] == frozen_preparation["source_token_count"]
-    assert report["metrics"]["analysis_label_counts"] == frozen["metrics"][
-        "analysis_label_counts"
-    ]
-    assert report["metrics"]["source_token_fold_assignment"] == frozen["metrics"][
-        "source_token_fold_assignment"
-    ]
+    _assert_frozen_scientific_identity(report, frozen)
     _assert_no_promotion(report, text)
 
     print("v3 canonical report fingerprint:", report["report_fingerprint_sha256"])
     print("v3 canonical report file sha256:", observed_file_sha)
-    print("v1 frozen scientific summary preserved:", frozen["report_fingerprint_sha256"])
+    print(
+        "v1 frozen scientific summary preserved:",
+        frozen["report_fingerprint_sha256"],
+    )
     print("claim boundary: source-token-held-out only")
 
 
