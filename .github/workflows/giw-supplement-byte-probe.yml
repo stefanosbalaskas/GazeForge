@@ -23,21 +23,46 @@ jobs:
       - name: Acquire reviewed public documents
         shell: bash
         run: |
-          set -euo pipefail
-          curl --fail --show-error --silent --location \
-            --retry 3 --retry-all-errors \
-            'https://arxiv.org/pdf/1905.13146v1' \
-            -o giw-arxiv-v1.pdf
+          set -u -o pipefail
+          ua='Mozilla/5.0 (compatible; GazeForgeEvidenceProbe/1.0; +https://github.com/stefanosbalaskas/GazeForge)'
 
+          ARXIV_FETCHED=0
+          ARXIV_SOURCE_URL=''
+          for url in \
+            'https://export.arxiv.org/pdf/1905.13146v1' \
+            'https://arxiv.org/pdf/1905.13146' \
+            'https://export.arxiv.org/pdf/1905.13146'; do
+            rm -f giw-arxiv-v1.pdf
+            if curl --fail --show-error --silent --location \
+              --user-agent "$ua" --retry 2 --retry-all-errors \
+              "$url" -o giw-arxiv-v1.pdf; then
+              if head -c 4 giw-arxiv-v1.pdf | grep -q '%PDF'; then
+                ARXIV_FETCHED=1
+                ARXIV_SOURCE_URL="$url"
+                break
+              fi
+            fi
+          done
+          echo "ARXIV_FETCHED=$ARXIV_FETCHED" >> "$GITHUB_ENV"
+          echo "ARXIV_SOURCE_URL=$ARXIV_SOURCE_URL" >> "$GITHUB_ENV"
+          if [ "$ARXIV_FETCHED" != 1 ]; then rm -f giw-arxiv-v1.pdf; fi
+
+          SPRINGER_FETCHED=0
           springer_url='https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs41598-020-59251-5/MediaObjects/41598_2020_59251_MOESM1_ESM.pdf'
+          rm -f giw-springer-supplement.pdf
           if curl --fail --show-error --silent --location \
-            --retry 3 --retry-all-errors \
-            "$springer_url" \
-            -o giw-springer-supplement.pdf; then
-            echo 'SPRINGER_FETCHED=1' >> "$GITHUB_ENV"
-          else
-            rm -f giw-springer-supplement.pdf
-            echo 'SPRINGER_FETCHED=0' >> "$GITHUB_ENV"
+            --user-agent "$ua" --retry 2 --retry-all-errors \
+            "$springer_url" -o giw-springer-supplement.pdf; then
+            if head -c 4 giw-springer-supplement.pdf | grep -q '%PDF'; then
+              SPRINGER_FETCHED=1
+            fi
+          fi
+          echo "SPRINGER_FETCHED=$SPRINGER_FETCHED" >> "$GITHUB_ENV"
+          if [ "$SPRINGER_FETCHED" != 1 ]; then rm -f giw-springer-supplement.pdf; fi
+
+          if [ "$ARXIV_FETCHED" != 1 ] && [ "$SPRINGER_FETCHED" != 1 ]; then
+            echo 'Neither reviewed author nor publisher PDF was recoverable.' >&2
+            exit 1
           fi
       - name: Build metadata-only probe
         shell: bash
@@ -53,13 +78,6 @@ jobs:
           from pathlib import Path
 
           from pypdf import PdfReader
-
-          def sha256(path: Path) -> str:
-              h = hashlib.sha256()
-              with path.open('rb') as stream:
-                  for chunk in iter(lambda: stream.read(1024 * 1024), b''):
-                      h.update(chunk)
-              return h.hexdigest()
 
           def inspect_pdf(path: Path) -> dict[str, object]:
               raw = path.read_bytes()
@@ -87,11 +105,11 @@ jobs:
                   },
               }
 
-          arxiv = Path('giw-arxiv-v1.pdf')
           result: dict[str, object] = {
               'record_type': 'giw-supplement-byte-probe-v1',
               'arxiv_identifier': '1905.13146v1',
-              'arxiv': inspect_pdf(arxiv),
+              'arxiv_fetch_succeeded': os.environ.get('ARXIV_FETCHED') == '1',
+              'arxiv_source_url': os.environ.get('ARXIV_SOURCE_URL', ''),
               'springer_official_supplement_url': (
                   'https://media.springernature.com/original/springer-static/esm/'
                   'art%3A10.1038%2Fs41598-020-59251-5/MediaObjects/'
@@ -99,6 +117,9 @@ jobs:
               ),
               'springer_fetch_succeeded': os.environ.get('SPRINGER_FETCHED') == '1',
           }
+          arxiv = Path('giw-arxiv-v1.pdf')
+          if arxiv.exists():
+              result['arxiv'] = inspect_pdf(arxiv)
           springer = Path('giw-springer-supplement.pdf')
           if springer.exists():
               result['springer'] = inspect_pdf(springer)
