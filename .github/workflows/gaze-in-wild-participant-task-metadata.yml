@@ -1,0 +1,153 @@
+name: Gaze-in-the-Wild participant task metadata
+
+on:
+  push:
+    branches:
+      - main
+      - research/giw-participant-task-metadata
+    paths:
+      - .github/workflows/gaze-in-wild-participant-task-metadata.yml
+      - docs/gaze-in-wild-participant-task-metadata.md
+      - scripts/gaze_in_wild_participant_task_probe.py
+      - src/gazeforge/gaze_in_wild_participant_task_evidence.py
+      - tests/test_gaze_in_wild_participant_task_evidence.py
+      - validation/evidence/gaze-in-wild/gaze-in-wild-participant-task-metadata-evidence-v2.json
+  pull_request:
+    paths:
+      - .github/workflows/gaze-in-wild-participant-task-metadata.yml
+      - docs/gaze-in-wild-participant-task-metadata.md
+      - scripts/gaze_in_wild_participant_task_probe.py
+      - src/gazeforge/gaze_in_wild_participant_task_evidence.py
+      - tests/test_gaze_in_wild_participant_task_evidence.py
+      - validation/evidence/gaze-in-wild/gaze-in-wild-participant-task-metadata-evidence-v2.json
+
+permissions:
+  contents: read
+
+jobs:
+  provenance:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install package and focused tooling
+        run: python -m pip install . pytest ruff pypdf
+      - name: Ruff focused files
+        run: |
+          ruff check \
+            src/gazeforge/gaze_in_wild_participant_task_evidence.py \
+            scripts/gaze_in_wild_participant_task_probe.py \
+            tests/test_gaze_in_wild_participant_task_evidence.py
+      - name: Run focused and historical supplementary tests
+        run: |
+          python -m pytest -q \
+            tests/test_gaze_in_wild_participant_task_evidence.py \
+            tests/test_gaze_in_wild_supplementary_evidence.py
+      - name: Validate immutable participant task evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from gazeforge.gaze_in_wild_participant_task_evidence import (
+              validate_gaze_in_wild_participant_task_evidence,
+          )
+
+          record = validate_gaze_in_wild_participant_task_evidence(
+              Path(
+                  'validation/evidence/gaze-in-wild/'
+                  'gaze-in-wild-participant-task-metadata-evidence-v2.json'
+              )
+          )
+          print('evidence fingerprint:', record['evidence_fingerprint_sha256'])
+          print('participants:', record['publication_matrix']['participant_count'])
+          print('tasks:', record['publication_matrix']['task_columns'])
+          print(
+              'universal TrIdx mapping:',
+              record['task_mapping_boundary'][
+                  'universal_tridx_to_task_name_mapping_verified'
+              ],
+          )
+          PY
+      - name: Revalidate exact pinned first-party identity sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://raw.githubusercontent.com/RSKothari/Gaze-in-Wild/52262d44e366a53369e10ca73c5f41daf0e8f1e5'
+          curl --fail --show-error --silent --location --retry 3 --retry-all-errors \
+            "$base/README.md" -o _giw_README.md
+          curl --fail --show-error --silent --location --retry 3 --retry-all-errors \
+            "$base/DataExtraction/AutomatedProcess.m" -o _giw_AutomatedProcess.m
+          curl --fail --show-error --silent --location --retry 3 --retry-all-errors \
+            "$base/DataExtraction/GetParticipantInfo.m" -o _giw_GetParticipantInfo.m
+          curl --fail --show-error --silent --location --retry 3 --retry-all-errors \
+            "$base/SupportFunctions/ReadDataset.m" -o _giw_ReadDataset.m
+          curl --fail --show-error --silent --location --retry 3 --retry-all-errors \
+            "$base/PlotLabels.m" -o _giw_PlotLabels.m
+
+          test "$(git hash-object _giw_README.md)" = \
+            '5b8536d0166d8c58e33d908fccd9c3f9c2b59a12'
+          test "$(git hash-object _giw_AutomatedProcess.m)" = \
+            'be7d76cd3d5b511b4febab393789b3fbd9a3ad9b'
+          test "$(git hash-object _giw_GetParticipantInfo.m)" = \
+            '6c21df7554891015a1ae09182867b5d707b6a505'
+          test "$(git hash-object _giw_ReadDataset.m)" = \
+            '83e1b33eb10352688d9b397d4f798fc32fa4b502'
+          test "$(git hash-object _giw_PlotLabels.m)" = \
+            '511581250e04c62037c71d2da16271be4979d434'
+
+          grep -Fq 'official list of participants, tasks and availability of labels' \
+            _giw_README.md
+          grep -Fq 'ParticipantInfo(PrIdx).Name' _giw_AutomatedProcess.m
+          grep -Fq 'ReadData_function(PrIdx, TrIdx)' _giw_AutomatedProcess.m
+          grep -Fq "ParticipantInfo(18).Age = 45;" _giw_GetParticipantInfo.m
+          grep -Fq "PrIdx_%d_TrIdx_%d.mat" _giw_ReadDataset.m
+          grep -Fq "PrIdx_%d_TrIdx_%d_Lbr_%d.mat" _giw_ReadDataset.m
+          grep -Fq 'Indoor_Walk' _giw_PlotLabels.m
+          grep -Fq 'TrIdx = 1;' _giw_PlotLabels.m
+      - name: Acquire exact publication PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          ua='Mozilla/5.0 (compatible; GazeForgeEvidenceProbe/1.0; +https://github.com/stefanosbalaskas/GazeForge)'
+          curl --fail --show-error --silent --location \
+            --user-agent "$ua" --retry 3 --retry-all-errors \
+            'https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs41598-020-59251-5/MediaObjects/41598_2020_59251_MOESM1_ESM.pdf' \
+            -o _giw_springer_supplement.pdf
+          curl --fail --show-error --silent --location \
+            --user-agent "$ua" --retry 3 --retry-all-errors \
+            'https://export.arxiv.org/pdf/1905.13146v1' \
+            -o _giw_arxiv_v1.pdf
+          test "$(sha256sum _giw_springer_supplement.pdf | cut -d' ' -f1)" = \
+            'b700b1deec97be82d81cba2cf4eba605d110ec5d8175b6c5681ac372b61c7f3d'
+          test "$(sha256sum _giw_arxiv_v1.pdf | cut -d' ' -f1)" = \
+            'b4db32a89765aa96952ee2ae88e502600c1f97a607e3c58f9550ceb36e37fdd5'
+      - name: Build and bind metadata-only publication probe
+        run: |
+          python scripts/gaze_in_wild_participant_task_probe.py \
+            --springer _giw_springer_supplement.pdf \
+            --arxiv _giw_arxiv_v1.pdf \
+            --output gaze-in-wild-participant-task-live-probe.json
+          python - <<'PY'
+          from pathlib import Path
+          from gazeforge.gaze_in_wild_participant_task_evidence import (
+              validate_live_publication_probe,
+          )
+
+          evidence = validate_live_publication_probe(
+              Path('gaze-in-wild-participant-task-live-probe.json'),
+              Path(
+                  'validation/evidence/gaze-in-wild/'
+                  'gaze-in-wild-participant-task-metadata-evidence-v2.json'
+              ),
+          )
+          print('live publication binding passed')
+          print('evidence fingerprint:', evidence['evidence_fingerprint_sha256'])
+          PY
+      - name: Upload metadata-only publication probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-participant-task-live-probe
+          path: gaze-in-wild-participant-task-live-probe.json
+          if-no-files-found: error
+          retention-days: 30
