@@ -216,7 +216,12 @@ def validate_gaze_in_wild_participant_task_evidence(
     mapping = record.get("task_mapping_boundary", {})
     if mapping.get("publication_person_to_task_status_matrix_verified") is not True:
         raise BenchmarkIntegrityError("GIW publication task matrix is not verified.")
-    if mapping.get("indoor_walk_context_for_tridx_1_observed_in_first_party_plotting_code") is not True:
+    if (
+        mapping.get(
+            "indoor_walk_context_for_tridx_1_observed_in_first_party_plotting_code"
+        )
+        is not True
+    ):
         raise BenchmarkIntegrityError("GIW reviewed indoor-walk context drifted.")
     _require_false(
         mapping,
