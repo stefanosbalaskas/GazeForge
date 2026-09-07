@@ -1,0 +1,102 @@
+name: Gaze-in-the-Wild LabelData HHA discovery
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-labeldata-hha-feasibility
+    paths:
+      - ".github/workflows/gaze-in-wild-labeldata-hha-discovery.yml"
+      - "scripts/run_gaze_in_wild_labeldata_hha_discovery.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-hha-candidate-selection-evidence-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json"
+      - "src/gazeforge/evaluation.py"
+      - "src/gazeforge/event_evaluation.py"
+      - "src/gazeforge/gaze_in_wild.py"
+
+permissions:
+  contents: read
+
+jobs:
+  labeldata-hha-discovery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and discovery dependencies
+        run: python -m pip install --disable-pip-version-check --quiet . ruff
+
+      - name: Ruff HHA discovery runner
+        run: ruff check scripts/run_gaze_in_wild_labeldata_hha_discovery.py
+
+      - name: Run prior-byte-bound label-only HHA discovery
+        run: |
+          python scripts/run_gaze_in_wild_labeldata_hha_discovery.py \
+            --selection validation/evidence/gaze-in-wild/gaze-in-wild-hha-candidate-selection-evidence-v1.json \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --output gaze-in-wild-labeldata-hha-discovery-v1.json \
+            --retries 3
+
+      - name: Require fail-closed HHA scientific boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("gaze-in-wild-labeldata-hha-discovery-v1.json")
+          record = json.loads(path.read_text(encoding="utf-8"))
+          verification = record["input_verification"]
+          design = record["analysis_design"]
+          boundary = record["scientific_boundary"]
+
+          assert verification["selected_label_file_count"] == 18
+          assert verification["selected_recording_count"] == 5
+          assert verification["all_files_matched_prior_size_md5_sha256"] is True
+          assert verification["all_filename_internal_pridx_tridx_lbridx_agree"] is True
+          assert verification["all_raw_mat_bytes_deleted_after_inspection"] is True
+          assert design["scope"] == "distributed_multi_labeller_overlap_subset_only"
+          assert design["coordinate_data_used"] is False
+          assert design["processdata_loaded"] is False
+          assert design["tridx_to_publication_task_mapping_used"] is False
+          assert design["event_metrics_bidirectional"] is True
+          assert design["neither_labeller_treated_as_truth"] is True
+
+          assert boundary["human_human_agreement_created_for_distributed_overlap_subset"] is True
+          for key in (
+              "full_distributed_labeldata_hha_created",
+              "task_stratified_hha_created",
+              "gaze_coordinate_validation_created",
+              "participant_disjoint_model_validation_created",
+              "cross_dataset_validation_created",
+              "gp3_validity_claim_created",
+              "complete_file_to_publication_task_mapping_verified",
+              "quarantine_exit_authorized",
+              "new_model_performance_claim_created",
+          ):
+              assert boundary[key] is False, key
+          assert record["raw_dataset_bytes_retained"] is False
+          assert len(record["pair_results"]) == 6
+          PY
+
+      - name: Confirm raw LabelData was not retained in workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f -name 'PrIdx_*_TrIdx_*_Lbr_*.mat' -print -quit | grep -q .; then
+            echo "Raw GIW LabelData MAT file unexpectedly retained in workspace." >&2
+            exit 1
+          fi
+
+      - name: Upload HHA discovery summary only
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-labeldata-hha-discovery
+          path: gaze-in-wild-labeldata-hha-discovery-v1.json
+          if-no-files-found: error
+          retention-days: 30
