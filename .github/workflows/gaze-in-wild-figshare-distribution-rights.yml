@@ -1,6 +1,7 @@
 name: Gaze-in-the-Wild Figshare distribution rights
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -8,6 +9,7 @@ on:
     paths:
       - .github/workflows/gaze-in-wild-figshare-distribution-rights.yml
       - docs/gaze-in-wild-figshare-distribution-rights.md
+      - mkdocs.yml
       - scripts/gaze_in_wild_figshare_live_probe.py
       - src/gazeforge/gaze_in_wild_figshare_evidence.py
       - tests/test_gaze_in_wild_figshare_evidence.py
@@ -18,6 +20,7 @@ on:
     paths:
       - .github/workflows/gaze-in-wild-figshare-distribution-rights.yml
       - docs/gaze-in-wild-figshare-distribution-rights.md
+      - mkdocs.yml
       - scripts/gaze_in_wild_figshare_live_probe.py
       - src/gazeforge/gaze_in_wild_figshare_evidence.py
       - tests/test_gaze_in_wild_figshare_evidence.py
