@@ -79,31 +79,46 @@ jobs:
           print(f"Verified release metadata for GazeForge {version}")
           PY
 
-      - name: Require successful exact-main package validation
+      - name: Require certified release tag and successful package validation
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          git fetch origin main
+          git fetch origin main --tags
           TARGET_SHA="$(git rev-parse HEAD)"
           MAIN_SHA="$(git rev-parse origin/main)"
-          test "$TARGET_SHA" = "$MAIN_SHA" || {
-            echo "Release tag must point at exact current main: tag=$TARGET_SHA main=$MAIN_SHA" >&2
-            exit 1
-          }
+
+          if [ "$TARGET_SHA" != "$MAIN_SHA" ]; then
+            git merge-base --is-ancestor "$TARGET_SHA" "$MAIN_SHA" || {
+              echo "Release tag is not an ancestor of current main: tag=$TARGET_SHA main=$MAIN_SHA" >&2
+              exit 1
+            }
+            mapfile -t post_tag_paths < <(git diff --name-only "$TARGET_SHA..$MAIN_SHA")
+            for path in "${post_tag_paths[@]}"; do
+              case "$path" in
+                .github/workflows/bootstrap-first-release.yml|.github/workflows/release.yml|tests/test_release_packaging.py)
+                  ;;
+                *)
+                  echo "Post-tag main contains non-orchestration change: $path" >&2
+                  exit 1
+                  ;;
+              esac
+            done
+            echo "Certified immutable tag $TARGET_SHA remains releasable; current main $MAIN_SHA differs only by allowlisted release orchestration."
+          fi
+
           # CI is the package release gate (full OS/Python matrix, tests,
           # package smoke, and source-resolution governance). Docs is also
           # required because release metadata/citation changes are public docs.
           # Pages is deliberately not required here: pages.yml is path-filtered
-          # and does not run for release-only changes, so requiring it would make
-          # a valid exact-main release impossible without an unrelated mutation.
+          # and does not run for release-only changes.
           for workflow in ci.yml docs.yml; do
-            echo "Checking $workflow for exact main $TARGET_SHA..."
+            echo "Checking $workflow for certified release commit $TARGET_SHA..."
             ok="$(gh run list --workflow "$workflow" --commit "$TARGET_SHA" --branch main --limit 30 \
-              --json conclusion \
-              --jq '[.[] | select(.conclusion == "success")] | length')"
+              --json conclusion,event,headSha \
+              --jq "[.[] | select(.event == \"push\" and .headSha == \"$TARGET_SHA\" and .conclusion == \"success\")] | length")"
             test "$ok" -ge 1 || {
-              echo "Missing successful exact-main validation for $workflow at $TARGET_SHA" >&2
+              echo "Missing successful validation for $workflow at certified release commit $TARGET_SHA" >&2
               exit 1
             }
           done
