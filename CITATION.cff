@@ -9,6 +9,7 @@ authors:
     affiliation: "University of Patras"
 version: 0.1.0a1
 date-released: 2026-09-07
+doi: "10.5281/zenodo.22650013"
 license: MIT
 repository-code: "https://github.com/stefanosbalaskas/GazeForge"
 url: "https://github.com/stefanosbalaskas/GazeForge"
