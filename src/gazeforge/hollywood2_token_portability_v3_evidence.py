@@ -14,6 +14,8 @@ from .hollywood2_token_evidence import (
 )
 from .hollywood2_token_portability_evidence import (
     PORTABILITY_EVIDENCE_FINGERPRINT as V2_PORTABILITY_EVIDENCE_FINGERPRINT,
+)
+from .hollywood2_token_portability_evidence import (
     V1_CANONICAL_REPORT_FILE_SHA256,
     V1_CANONICAL_REPORT_FINGERPRINT,
     V1_FROZEN_SUMMARY_FINGERPRINT,
@@ -229,7 +231,9 @@ def validate_hollywood2_source_token_portability_v3_evidence(
     if reviewed.get("v3_recanonicalized_reviewed_reports_byte_identical") is not True:
         raise BenchmarkIntegrityError("Hollywood2 v3 reviewed-artifact replay is not verified.")
     if reviewed.get("v3_cross_worker_full_report_match_verified") is not True:
-        raise BenchmarkIntegrityError("Hollywood2 v3 cross-worker full-report match is not verified.")
+        raise BenchmarkIntegrityError(
+            "Hollywood2 v3 cross-worker full-report match is not verified."
+        )
 
     boundary = record.get("scientific_boundary")
     if not isinstance(boundary, dict):
