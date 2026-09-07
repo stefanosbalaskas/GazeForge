@@ -95,7 +95,8 @@ def validate_first_party_por_source(source_text: str) -> dict[str, int]:
             f"Gaze-in-the-Wild POR source markers are missing: {missing}."
         )
 
-    process_por_count = normalized.count("ProcessData.ETG.POR")
+    assignment_marker = _normalized_source(_REQUIRED_SOURCE_MARKERS[-1])
+    process_por_count = normalized.count(assignment_marker)
     if process_por_count != 1:
         raise BenchmarkIntegrityError(
             "ProcessData.ETG.POR must have exactly one reviewed first-party assignment."
