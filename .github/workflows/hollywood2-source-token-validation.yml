@@ -12,6 +12,7 @@ on:
       - "src/gazeforge/hollywood2_token_validation.py"
       - "src/gazeforge/hollywood2_token_evidence.py"
       - "src/gazeforge/hollywood2_token_portability_evidence.py"
+      - "src/gazeforge/hollywood2_token_portability_v3_evidence.py"
       - "src/gazeforge/resampling.py"
       - "src/gazeforge/comparison.py"
       - "src/gazeforge/hollywood2.py"
@@ -20,11 +21,14 @@ on:
       - "src/gazeforge/paired.py"
       - "src/gazeforge/stratified.py"
       - "scripts/run_hollywood2_source_token_validation.py"
+      - "scripts/diagnose_hollywood2_source_token_portability.py"
       - "scripts/validate_hollywood2_source_token_portability.py"
+      - "scripts/validate_hollywood2_source_token_portability_v3.py"
       - "tests/test_hollywood2_token_validation.py"
       - "tests/test_hollywood2_token_evidence.py"
       - "tests/test_hollywood2_token_frozen_evidence.py"
       - "tests/test_hollywood2_token_portability_evidence.py"
+      - "tests/test_hollywood2_token_portability_v3_evidence.py"
       - "tests/test_resampling.py"
       - "validation/governance/hollywood2-source-token-analysis-authorization-v1.json"
       - "validation/governance/hollywood2-source-token-runtime-v1.txt"
@@ -56,11 +60,15 @@ jobs:
           ruff check \
             src/gazeforge/hollywood2_token_evidence.py \
             src/gazeforge/hollywood2_token_portability_evidence.py \
+            src/gazeforge/hollywood2_token_portability_v3_evidence.py \
             scripts/run_hollywood2_source_token_validation.py \
+            scripts/diagnose_hollywood2_source_token_portability.py \
             scripts/validate_hollywood2_source_token_portability.py \
+            scripts/validate_hollywood2_source_token_portability_v3.py \
             tests/test_hollywood2_token_evidence.py \
             tests/test_hollywood2_token_frozen_evidence.py \
-            tests/test_hollywood2_token_portability_evidence.py
+            tests/test_hollywood2_token_portability_evidence.py \
+            tests/test_hollywood2_token_portability_v3_evidence.py
       - name: Run source-token, portability, and resampling contract tests
         run: |
           python -m pytest -q \
@@ -68,12 +76,16 @@ jobs:
             tests/test_hollywood2_token_evidence.py \
             tests/test_hollywood2_token_frozen_evidence.py \
             tests/test_hollywood2_token_portability_evidence.py \
+            tests/test_hollywood2_token_portability_v3_evidence.py \
             tests/test_resampling.py
-      - name: Validate committed authorization and portability evidence
+      - name: Validate authorization and immutable portability evidence
         run: |
           python - <<'PY'
           from gazeforge.hollywood2_token_portability_evidence import (
               validate_hollywood2_source_token_portability_evidence,
+          )
+          from gazeforge.hollywood2_token_portability_v3_evidence import (
+              validate_hollywood2_source_token_portability_v3_evidence,
           )
           from gazeforge.hollywood2_token_validation import (
               authorization_fingerprint,
@@ -84,12 +96,17 @@ jobs:
               "validation/governance/"
               "hollywood2-source-token-analysis-authorization-v1.json"
           )
-          portability = validate_hollywood2_source_token_portability_evidence(
+          v2 = validate_hollywood2_source_token_portability_evidence(
               "validation/evidence/hollywood2/"
               "hollywood2-source-token-numeric-portability-evidence-v2.json"
           )
+          v3 = validate_hollywood2_source_token_portability_v3_evidence(
+              "validation/evidence/hollywood2/"
+              "hollywood2-source-token-numeric-portability-evidence-v3.json"
+          )
           print("authorization fingerprint:", authorization_fingerprint(authorization))
-          print("portability fingerprint:", portability["evidence_fingerprint_sha256"])
+          print("v2 portability fingerprint:", v2["evidence_fingerprint_sha256"])
+          print("v3 portability fingerprint:", v3["evidence_fingerprint_sha256"])
           assert authorization.participant_identity_mapping_verified is False
           assert authorization.raw_source_redistribution_authorized is False
           PY
@@ -109,13 +126,13 @@ jobs:
           python - <<'PY'
           import os
 
-          from gazeforge.hollywood2_token_portability_evidence import (
-              validate_hollywood2_source_token_portability_evidence,
+          from gazeforge.hollywood2_token_portability_v3_evidence import (
+              validate_hollywood2_source_token_portability_v3_evidence,
           )
 
-          evidence = validate_hollywood2_source_token_portability_evidence(
+          evidence = validate_hollywood2_source_token_portability_v3_evidence(
               "validation/evidence/hollywood2/"
-              "hollywood2-source-token-numeric-portability-evidence-v2.json"
+              "hollywood2-source-token-numeric-portability-evidence-v3.json"
           )
           reviewed = evidence["reviewed_source_verified_artifacts"]
           values = {
@@ -150,13 +167,15 @@ jobs:
             "${headers[@]}" \
             "${api}/${MERGE_ARTIFACT_ID}/zip" \
             -o _reviewed/merge.zip
-          echo "${PRE_ARTIFACT_ZIP_SHA256}  _reviewed/pre.zip" | sha256sum --check --strict
-          echo "${MERGE_ARTIFACT_ZIP_SHA256}  _reviewed/merge.zip" | sha256sum --check --strict
+          echo "${PRE_ARTIFACT_ZIP_SHA256}  _reviewed/pre.zip" \
+            | sha256sum --check --strict
+          echo "${MERGE_ARTIFACT_ZIP_SHA256}  _reviewed/merge.zip" \
+            | sha256sum --check --strict
           unzip -q _reviewed/pre.zip -d _reviewed/pre
           unzip -q _reviewed/merge.zip -d _reviewed/merge
-      - name: Replay historical v1 and portability v2 contracts
+      - name: Replay exact historical v1, v2, and v3 report identities
         run: |
-          python scripts/validate_hollywood2_source_token_portability.py replay \
+          python scripts/validate_hollywood2_source_token_portability_v3.py replay \
             --pre-report _reviewed/pre/hollywood2-source-token-validation-v1.json \
             --merge-report _reviewed/merge/hollywood2-source-token-validation-v1.json
 
@@ -222,7 +241,8 @@ jobs:
             set -e
             printf '%s\n' "$output"
             if [ "$rc" -ne 0 ]; then
-              if [ "$label" = "canonical" ] && printf '%s' "$output" | grep -q "403"; then
+              if [ "$label" = "canonical" ] \
+                && printf '%s' "$output" | grep -q "403"; then
                 canonical_403_count=$((canonical_403_count + 1))
               fi
               return 1
@@ -264,13 +284,14 @@ jobs:
           done
           if [ "$canonical_403_count" -eq "$canonical_attempts" ]; then
             echo "source_available=false" >> "$GITHUB_OUTPUT"
-            echo "source_unavailable_reason=canonical_gin_http_403" >> "$GITHUB_OUTPUT"
+            echo "source_unavailable_reason=canonical_gin_http_403" \
+              >> "$GITHUB_OUTPUT"
             {
               echo "### Hollywood2 live-source availability"
               echo
               echo "The canonical GIN endpoint returned HTTP 403 on all bounded attempts."
-              echo "No source bytes were acquired in this job. Reviewed-artifact replay"
-              echo "remains the blocking v1/v2 portability evidence gate."
+              echo "No source bytes were acquired in this job."
+              echo "Reviewed exact v1/v2/v3 artifact replay remains authoritative."
               echo
               echo "This is not a fresh empirical rerun or a model-validation failure."
             } >> "$GITHUB_STEP_SUMMARY"
@@ -289,12 +310,12 @@ jobs:
             --rf-trees 100 \
             --context-hidden 32,16 \
             --context-max-iter 50 \
-            --output hollywood2-source-token-validation-v2.json
-      - name: Bind live aggregate report to portability v2 evidence
+            --output hollywood2-source-token-validation-v3.json
+      - name: Bind live aggregate report to portability v3 evidence
         if: steps.acquire.outputs.source_available == 'true'
         run: |
-          python scripts/validate_hollywood2_source_token_portability.py bind-live \
-            --report hollywood2-source-token-validation-v2.json
+          python scripts/validate_hollywood2_source_token_portability_v3.py bind-live \
+            --report hollywood2-source-token-validation-v3.json
       - name: Record replay-backed availability fallback
         if: steps.acquire.outputs.source_available == 'false'
         run: |
@@ -302,20 +323,28 @@ jobs:
           from gazeforge.hollywood2_token_portability_evidence import (
               validate_hollywood2_source_token_portability_evidence,
           )
+          from gazeforge.hollywood2_token_portability_v3_evidence import (
+              validate_hollywood2_source_token_portability_v3_evidence,
+          )
 
-          evidence = validate_hollywood2_source_token_portability_evidence(
+          v2 = validate_hollywood2_source_token_portability_evidence(
               "validation/evidence/hollywood2/"
               "hollywood2-source-token-numeric-portability-evidence-v2.json"
           )
+          v3 = validate_hollywood2_source_token_portability_v3_evidence(
+              "validation/evidence/hollywood2/"
+              "hollywood2-source-token-numeric-portability-evidence-v3.json"
+          )
           print("live source unavailable through audited route")
-          print("v2 portability evidence:", evidence["evidence_fingerprint_sha256"])
-          print("reviewed artifact replay is the active evidence gate")
+          print("v2 historical evidence:", v2["evidence_fingerprint_sha256"])
+          print("v3 portability evidence:", v3["evidence_fingerprint_sha256"])
+          print("reviewed v1/v2/v3 artifact replay is the active evidence gate")
           PY
-      - name: Upload aggregate validation report only
-        if: steps.acquire.outputs.source_available == 'true'
+      - name: Upload aggregate v3 validation report
+        if: ${{ always() && steps.acquire.outputs.source_available == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: hollywood2-source-token-validation-v2
-          path: hollywood2-source-token-validation-v2.json
-          if-no-files-found: error
+          name: hollywood2-source-token-validation-v3
+          path: hollywood2-source-token-validation-v3.json
+          if-no-files-found: warn
           retention-days: 30
