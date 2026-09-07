@@ -1,0 +1,110 @@
+{
+  "claim_limits": [
+    "This evidence exhausts the reviewed task-related plain-text/printable-string route across the pinned reachable first-party Git history and the pinned GIWApp.mlapp container; it is not proof that no mapping exists in private, deleted, unreachable, externally hosted, or semantically encoded binary material.",
+    "The Indoor_Walk path in PlotLabels.m is task context only. Because no nearby explicit TrIdx assignment was recovered, it is not promoted into a universal TrIdx-to-task lookup.",
+    "Publication label-status patterns and Figshare LabelData filename counts may constrain individual participant/trial identities, but they do not justify a universal task-number mapping where zero-labelled trials remain ambiguous between not-labelled and discarded states.",
+    "No participant-disjoint model validation, human-human agreement estimate, cross-dataset performance result, GP3 validity claim, quarantine exit, or new empirical performance claim is created by this source-recovery tranche."
+  ],
+  "evidence_fingerprint_sha256": "caac3aebc99be005f8c2dcf431041e1d727b9ca07f2e4509c06d40b4f3452212",
+  "mlapp_audit": {
+    "git_blob_sha1": "2d560af336af637e042ea7a96f4c3736a59d2a2f",
+    "member_count": 9,
+    "members": [
+      {
+        "name": "[Content_Types].xml",
+        "sha256": "3d79efdbe86cfdd6b9f26ae51780a8151217c40a9f14cfefef25c78b826b1097",
+        "size": 997
+      },
+      {
+        "name": "_rels/.rels",
+        "sha256": "1f06b33a649a9e6490c3424deab8a8d45a602c112db457837cacd7413f35cc97",
+        "size": 1318
+      },
+      {
+        "name": "appdesigner/appModel.mat",
+        "sha256": "b42a8012940209d40ba3a06a6e6e382c4d0721244e10551aeef320bffdf99dcb",
+        "size": 61138
+      },
+      {
+        "name": "matlab/document.xml",
+        "sha256": "faac14edff75c87f3ec5b1d195fe09c625284d589b82cb7b72d90ec85cc7d8e1",
+        "size": 22807
+      },
+      {
+        "name": "metadata/appMetadata.xml",
+        "sha256": "656537ac41661678a6712fc607389b3f67817d428389a99c168004bc061e6880",
+        "size": 406
+      },
+      {
+        "name": "metadata/appScreenshot.png",
+        "sha256": "43e651e706dab391fc520a32785398a663f150e9eeb6301ca7e355d756d0dbf8",
+        "size": 42657
+      },
+      {
+        "name": "metadata/coreProperties.xml",
+        "sha256": "e2ca963398ae15fad6dd59d79905677c9d6d037ddb444557744f140b078228af",
+        "size": 641
+      },
+      {
+        "name": "metadata/mwcoreProperties.xml",
+        "sha256": "fcc47c3f0e4c122acb64917ff6e3cd566d99db9ad821a1a4137e78c12e1b8172",
+        "size": 319
+      },
+      {
+        "name": "metadata/mwcorePropertiesExtension.xml",
+        "sha256": "b0ef1de8a558ab3c82ee96e8da0c78ac6af8a266aa294aacd0c0a2a434a89ed7",
+        "size": 211
+      }
+    ],
+    "path": "GIWApp.mlapp",
+    "sha256": "38eaa6acbd47ec6a35f750d715c2a2dc9e0b22e1c9bc9414c353dc4f8d209693",
+    "size_bytes": 99566,
+    "task_context_count": 0,
+    "zip_container": true
+  },
+  "parent_evidence": {
+    "figshare_public_metadata_summary_fingerprint_sha256": "32b14b0daf4d73204fc52b1da2205d634097a934c51746798b4c2205e620389d",
+    "historical_tree_recovery_fingerprint_sha256": "f144f5b7edcdbd02e85b53e751812c41b6567105219fbfb63c097bcefc5c9ffc",
+    "participant_task_metadata_fingerprint_sha256": "55b279fadd969e23b535fff3aac92327a45eb89cd0f365d90c0e5c6cae351017"
+  },
+  "probe_binding": {
+    "artifact_id": 10033447214,
+    "artifact_name": "gaze-in-wild-task-identity-recovery-probe",
+    "artifact_zip_sha256": "117aec161bcc1d75eafc612f160c54a4d33381fcae6e5fe24c2216a6867ddcae",
+    "exact_gazeforge_head_sha1": "a7b21c151439e03ad29e4e157024f83062186bab",
+    "probe_fingerprint_sha256": "3821dd2f2e0cd720c34837a1f20b51bb208c584739054b4a4543ce0048acbd57",
+    "workflow_run_id": 34163709562
+  },
+  "reachable_history_observation": {
+    "explicit_task_to_trial_mapping_recovered": false,
+    "identity_plus_tridx_candidate_context_count": 0,
+    "nearby_tridx_assignments": [],
+    "only_task_related_git_blob_sha1": "511581250e04c62037c71d2da16271be4979d434",
+    "only_task_related_path": "PlotLabels.m",
+    "task_context_count": 2,
+    "task_terms": [
+      "giw_rearranged",
+      "indoor_walk"
+    ]
+  },
+  "record_type": "gaze-in-wild-task-identity-source-recovery-evidence-v1",
+  "review_date": "2026-09-08",
+  "scientific_boundary": {
+    "complete_per_file_task_mapping_verified": false,
+    "cross_dataset_validation_created": false,
+    "gp3_validity_claim_created": false,
+    "human_human_agreement_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "quarantine_exit_authorized": false,
+    "universal_tridx_to_task_mapping_verified": false
+  },
+  "source_scope": {
+    "pinned_commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "reachable_commit_count": 56,
+    "repository": "https://github.com/RSKothari/Gaze-in-Wild",
+    "task_related_blob_count": 1,
+    "unique_text_blob_count": 302
+  },
+  "status": "pinned-first-party-task-identity-route-exhausted-no-explicit-mapping-recovered"
+}
