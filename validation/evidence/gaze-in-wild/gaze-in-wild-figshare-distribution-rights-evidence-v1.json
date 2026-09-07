@@ -1,0 +1,223 @@
+{
+  "checked_on": "2026-09-07",
+  "claim_limits": [
+    "This record verifies public Figshare metadata, exact item identities, file manifests, and the CC BY 4.0 license attached to the three named deposits; it does not assert that dataset bytes were downloaded or checked.",
+    "ProcessData_cleaned is explicitly distinguished from the original-publication ProcessData and must not substitute for it in an original-copy claim.",
+    "The official ProcessData manifest contains PrIdx_4 and therefore does not by itself establish a one-to-one mapping to the 19-observer publication matrix.",
+    "Numeric TrIdx values are not promoted to universal task names.",
+    "The official LabelData manifest proves separate labeller-specific files exist, but no human-human agreement is created until exact file bytes are acquired and validated.",
+    "CC BY 4.0 terms do not remove independent privacy, publicity, moral-rights, ethics, or other applicable obligations."
+  ],
+  "dataset": "Gaze-in-the-Wild naturalistic eye-head event benchmark",
+  "deposits": {
+    "LabelData": {
+      "defined_type_name": "dataset",
+      "doi": "10.6084/m9.figshare.11673696.v1",
+      "figshare_id": 11673696,
+      "file_count": 50,
+      "license_name": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "manifest_sha256": "65d934d3d3e2ebb04e639fc16435bf3383882340996a211159c5ccb67c71b35d",
+      "title": "LabelData",
+      "total_size_bytes": 28725824,
+      "version": 1
+    },
+    "ProcessData": {
+      "defined_type_name": "dataset",
+      "doi": "10.6084/m9.figshare.11673645.v1",
+      "figshare_id": 11673645,
+      "file_count": 68,
+      "is_original_publication_processed_distribution": true,
+      "license_name": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "manifest_sha256": "cc82a05fa64d35f76f955ebe231c27ff858d9d53de714ffa92d9d9c21828aaa8",
+      "title": "ProcessData",
+      "total_size_bytes": 2384573418,
+      "version": 1
+    },
+    "ProcessData_cleaned": {
+      "defined_type_name": "dataset",
+      "doi": "10.6084/m9.figshare.11673717.v1",
+      "figshare_id": 11673717,
+      "file_count": 68,
+      "is_original_publication_processed_distribution": false,
+      "license_name": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "manifest_sha256": "eda07ca38dfd6b8313b3240c169b274453586c5cdc94f44ca08d83adf19e4d3b",
+      "publisher_description_explicitly_says_not_published_as_part_of_original_publication": true,
+      "title": "ProcessData_cleaned",
+      "total_size_bytes": 2309276802,
+      "version": 1
+    }
+  },
+  "evidence_fingerprint_sha256": "25d4b56e1dc4888b034b5de91cb14f712aaa0e3470cde7a1246f30c3880e63c7",
+  "manifest_structure": {
+    "distribution_contains_pridx_4_absent_from_publication_matrix": true,
+    "independent_labeller_file_contents_obtained": false,
+    "labeldata_labeller_ids": [
+      1,
+      2,
+      3,
+      5,
+      6
+    ],
+    "labeldata_multiple_labeller_cells": [
+      {
+        "PrIdx": 1,
+        "TrIdx": 1,
+        "labellers": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "PrIdx": 1,
+        "TrIdx": 2,
+        "labellers": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "PrIdx": 2,
+        "TrIdx": 1,
+        "labellers": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "PrIdx": 2,
+        "TrIdx": 2,
+        "labellers": [
+          1,
+          2,
+          5,
+          6
+        ]
+      },
+      {
+        "PrIdx": 6,
+        "TrIdx": 2,
+        "labellers": [
+          5,
+          6
+        ]
+      }
+    ],
+    "labeldata_participant_ids": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      9,
+      10,
+      12,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      22
+    ],
+    "labeldata_participant_trial_cell_count": 37,
+    "processdata_cell_count": 68,
+    "processdata_cleaned_filename_set_equal": true,
+    "processdata_participant_count": 20,
+    "processdata_participant_ids": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      22,
+      23
+    ],
+    "processdata_tridx_values": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "publication_participant_count": 19,
+    "published_participant_to_distribution_mapping_complete": false,
+    "separate_labeller_specific_files_verified_in_official_manifest": true,
+    "universal_tridx_to_task_name_mapping_verified": false
+  },
+  "record_type": "gaze-in-wild-figshare-distribution-rights-evidence-v1",
+  "rights_boundary": {
+    "adaptation_permitted_by_deposit_license": true,
+    "analysis_use_permitted_by_deposit_license": true,
+    "attribution_required": true,
+    "deposit_reuse_terms_verified": true,
+    "license_inference_from_article_or_software_license_used": false,
+    "license_is_not_blanket_adjudication_of_privacy_publicity_moral_or_other_rights": true,
+    "license_terms_source": "https://creativecommons.org/licenses/by/4.0/",
+    "redistribution_permitted_by_deposit_license": true,
+    "verified_license_name": "CC BY 4.0"
+  },
+  "scientific_boundary": {
+    "analysis_use_permitted_by_named_deposit_license": true,
+    "complete_trial_to_task_mapping_verified": false,
+    "cross_dataset_performance_created": false,
+    "current_exact_authoritative_files_downloaded": false,
+    "dataset_file_rights_resolved_for_named_figshare_deposits": true,
+    "empirical_evidence_created": false,
+    "exact_file_bytes_verified_against_manifest": false,
+    "gp3_validity_created": false,
+    "human_human_agreement_created": false,
+    "independent_labeller_stream_contents_recovered": false,
+    "official_distribution_manifest_metadata_verified": true,
+    "official_figshare_distribution_identity_verified": true,
+    "participant_disjoint_model_validation_created": false,
+    "published_participant_mapping_complete": false,
+    "quarantine_exit_authorized": false,
+    "redistribution_permitted_by_named_deposit_license": true,
+    "source_audit_ready": false
+  },
+  "scope": {
+    "authoritative_publication_doi": "10.1038/s41598-020-59251-5",
+    "figshare_api_base": "https://api.figshare.com/v2",
+    "figshare_project_id": 74580,
+    "historical_first_party_distribution_url": "http://www.cis.rit.edu/~rsk3900/gaze-in-wild/",
+    "pinned_processing_commit_sha1": "52262d44e366a53369e10ca73c5f41daf0e8f1e5",
+    "pinned_processing_repository": "https://github.com/RSKothari/Gaze-in-Wild"
+  },
+  "source_binding": {
+    "deposit_author_name": "Rakshit Kothari",
+    "deposit_descriptions_point_to_same_historical_first_party_url": true,
+    "frozen_raw_metadata_path": "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json",
+    "frozen_summary_path": "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-summary-v1.json",
+    "historical_distribution_identity_fingerprint_sha256": "2400c81a0897fb414285069c368a8a9d96de1d18eb185b1073cf15bb1c8bd1da",
+    "live_metadata_probe_fingerprint_sha256": "5df3f539b1d28adfcd4b4e26392622654612e5acdb3415ffe911d3acedda50b5",
+    "live_metadata_summary_fingerprint_sha256": "32b14b0daf4d73204fc52b1da2205d634097a934c51746798b4c2205e620389d",
+    "project_exact_article_ids": [
+      11673645,
+      11673696,
+      11673717
+    ]
+  },
+  "status": "official_figshare_distribution_and_cc_by_4_0_terms_verified_bytes_not_acquired"
+}
