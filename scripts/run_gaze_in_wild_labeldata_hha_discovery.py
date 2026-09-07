@@ -115,7 +115,11 @@ def _frozen_label_rows(frozen: dict[str, Any]) -> dict[str, dict[str, Any]]:
     items = frozen.get("items")
     if not isinstance(items, list):
         raise HHAError("Frozen Figshare items are missing.")
-    matches = [item for item in items if isinstance(item, dict) and item.get("label") == "LabelData"]
+    matches = [
+        item
+        for item in items
+        if isinstance(item, dict) and item.get("label") == "LabelData"
+    ]
     if len(matches) != 1:
         raise HHAError("Expected exactly one frozen LabelData item.")
     files = matches[0].get("files")
@@ -444,7 +448,10 @@ def run_discovery(
     frozen_rows = _frozen_label_rows(frozen)
     subset = selection["candidate_subset"]
     selected_rows = subset["label_files"]
-    if not isinstance(selected_rows, list) or len(selected_rows) != EXPECTED_SELECTED_LABEL_FILE_COUNT:
+    if (
+        not isinstance(selected_rows, list)
+        or len(selected_rows) != EXPECTED_SELECTED_LABEL_FILE_COUNT
+    ):
         raise HHAError("Selected LabelData inventory is malformed.")
 
     inspected: list[dict[str, Any]] = []
