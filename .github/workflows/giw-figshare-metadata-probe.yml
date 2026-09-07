@@ -1,0 +1,221 @@
+name: GIW Figshare metadata probe
+
+on:
+  push:
+    branches:
+      - research/giw-historical-webpage-probe
+    paths:
+      - .github/workflows/giw-figshare-metadata-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Probe public Figshare metadata only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import time
+          import urllib.error
+          import urllib.request
+          from pathlib import Path
+
+          UA = (
+              'Mozilla/5.0 (compatible; GazeForgeEvidenceProbe/1.0; '
+              '+https://github.com/stefanosbalaskas/GazeForge)'
+          )
+          BASE = 'https://api.figshare.com/v2'
+          ARTICLE_IDS = (11673645, 11673717)
+          PROJECT_ID = 74580
+
+          def get_json(url: str) -> tuple[object | None, dict[str, object]]:
+              last: dict[str, object] = {'url': url}
+              for attempt in range(3):
+                  try:
+                      req = urllib.request.Request(
+                          url,
+                          headers={
+                              'User-Agent': UA,
+                              'Accept': 'application/json',
+                          },
+                      )
+                      with urllib.request.urlopen(req, timeout=35) as response:
+                          raw = response.read()
+                          return json.loads(raw), {
+                              'url': url,
+                              'status': int(response.status),
+                              'content_type': response.headers.get('Content-Type'),
+                              'raw_sha256': hashlib.sha256(raw).hexdigest(),
+                              'raw_byte_size': len(raw),
+                          }
+                  except urllib.error.HTTPError as exc:
+                      last = {
+                          'url': url,
+                          'status': int(exc.code),
+                          'error': f'HTTPError:{exc.code}',
+                      }
+                      if exc.code not in {429, 500, 502, 503, 504}:
+                          break
+                  except Exception as exc:  # noqa: BLE001
+                      last = {
+                          'url': url,
+                          'error': f'{type(exc).__name__}:{exc}',
+                      }
+                  time.sleep(1.5 * (attempt + 1))
+              return None, last
+
+          def clean_file(file_record: object) -> dict[str, object]:
+              if not isinstance(file_record, dict):
+                  return {'invalid_file_record': True}
+              return {
+                  'id': file_record.get('id'),
+                  'name': file_record.get('name'),
+                  'size': file_record.get('size'),
+                  'is_link_only': file_record.get('is_link_only'),
+                  'supplied_md5': file_record.get('supplied_md5'),
+                  'computed_md5': file_record.get('computed_md5'),
+                  'download_url': file_record.get('download_url'),
+              }
+
+          result: dict[str, object] = {
+              'record_type': 'gaze-in-wild-figshare-metadata-probe-v1',
+              'scope': (
+                  'Metadata-only query of public Figshare API records linked directly from '
+                  'the archived first-party RIT Gaze-in-the-Wild project page. No Figshare '
+                  'data file is downloaded.'
+              ),
+              'archive_page_binding': {
+                  'snapshot_timestamp': '20220707164555',
+                  'snapshot_html_sha256': (
+                      '30d3fd79dabaf43bb4e60a58bab43634424b6d408727ce0beeddcbc1a4eca9a4'
+                  ),
+                  'processdata_article_id': 11673645,
+                  'processdata_cleaned_article_id': 11673717,
+                  'project_id': PROJECT_ID,
+              },
+              'articles': [],
+              'project': None,
+              'project_articles': None,
+              'transports': [],
+              'boundaries': {
+                  'data_files_downloaded': False,
+                  'current_exact_authoritative_copy_obtained': False,
+                  'figshare_metadata_is_exact_local_copy_equivalence': False,
+                  'analysis_use_permitted': False,
+                  'redistribution_permission_verified': False,
+                  'license_scope_review_required': True,
+                  'empirical_analysis_eligible': False,
+              },
+          }
+
+          for article_id in ARTICLE_IDS:
+              details_url = f'{BASE}/articles/{article_id}'
+              details, transport = get_json(details_url)
+              result['transports'].append(transport)
+              if not isinstance(details, dict):
+                  raise SystemExit(f'Could not recover Figshare article {article_id} metadata')
+
+              versions_url = f'{BASE}/articles/{article_id}/versions'
+              versions, versions_transport = get_json(versions_url)
+              result['transports'].append(versions_transport)
+
+              article = {
+                  'id': details.get('id'),
+                  'title': details.get('title'),
+                  'description': details.get('description'),
+                  'doi': details.get('doi'),
+                  'url': details.get('url'),
+                  'url_public_api': details.get('url_public_api'),
+                  'url_private_api': details.get('url_private_api'),
+                  'url_public_html': details.get('url_public_html'),
+                  'published_date': details.get('published_date'),
+                  'modified_date': details.get('modified_date'),
+                  'defined_type': details.get('defined_type'),
+                  'defined_type_name': details.get('defined_type_name'),
+                  'license': details.get('license'),
+                  'authors': details.get('authors'),
+                  'owner': details.get('owner'),
+                  'tags': details.get('tags'),
+                  'categories': details.get('categories'),
+                  'references': details.get('references'),
+                  'project_id': details.get('project_id'),
+                  'files': [clean_file(item) for item in details.get('files', [])],
+                  'version': details.get('version'),
+                  'versions': versions,
+              }
+              result['articles'].append(article)
+
+          project_url = f'{BASE}/projects/{PROJECT_ID}'
+          project, project_transport = get_json(project_url)
+          result['transports'].append(project_transport)
+          if isinstance(project, dict):
+              result['project'] = {
+                  'id': project.get('id'),
+                  'title': project.get('title'),
+                  'description': project.get('description'),
+                  'url': project.get('url'),
+                  'public_url': project.get('public_url'),
+                  'created_date': project.get('created_date'),
+                  'modified_date': project.get('modified_date'),
+                  'funding': project.get('funding'),
+                  'collaborators': project.get('collaborators'),
+              }
+
+          project_articles_url = f'{BASE}/projects/{PROJECT_ID}/articles?page_size=1000'
+          project_articles, project_articles_transport = get_json(project_articles_url)
+          result['transports'].append(project_articles_transport)
+          if isinstance(project_articles, list):
+              result['project_articles'] = [
+                  {
+                      'id': item.get('id'),
+                      'title': item.get('title'),
+                      'doi': item.get('doi'),
+                      'url': item.get('url'),
+                      'published_date': item.get('published_date'),
+                      'modified_date': item.get('modified_date'),
+                  }
+                  for item in project_articles
+                  if isinstance(item, dict)
+              ]
+
+          if not result['articles']:
+              raise SystemExit('No linked Figshare article metadata recovered.')
+
+          out = Path('gaze-in-wild-figshare-metadata-probe.json')
+          out.write_text(
+              json.dumps(result, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps({
+              'article_count': len(result['articles']),
+              'project_recovered': result['project'] is not None,
+              'project_article_count': (
+                  len(result['project_articles'])
+                  if isinstance(result['project_articles'], list)
+                  else None
+              ),
+              'file_counts': [len(article['files']) for article in result['articles']],
+              'licenses': [article['license'] for article in result['articles']],
+          }, indent=2, sort_keys=True))
+          PY
+
+      - name: Upload Figshare metadata-only probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-figshare-metadata-probe
+          path: gaze-in-wild-figshare-metadata-probe.json
+          if-no-files-found: error
+          retention-days: 30
