@@ -51,12 +51,16 @@ def test_release_notes_preserve_alpha_scientific_boundaries() -> None:
         assert phrase in notes
 
 
-def test_release_workflow_builds_exact_tag_and_requires_exact_main() -> None:
+def test_release_workflow_builds_exact_tag_and_requires_certified_validation() -> None:
     workflow = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
     required = (
         "Checkout exact release tag",
         "Tag/version mismatch",
-        "Release tag must point at exact current main",
+        "Require certified release tag and successful package validation",
+        "git merge-base --is-ancestor \"$TARGET_SHA\" \"$MAIN_SHA\"",
+        "git diff --name-only \"$TARGET_SHA..$MAIN_SHA\"",
+        "Post-tag main contains non-orchestration change",
+        ".github/workflows/bootstrap-first-release.yml|.github/workflows/release.yml|tests/test_release_packaging.py",
         "for workflow in ci.yml docs.yml; do",
         "full OS/Python matrix",
         "Pages is deliberately not required here",
@@ -69,6 +73,7 @@ def test_release_workflow_builds_exact_tag_and_requires_exact_main() -> None:
     for phrase in required:
         assert phrase in workflow
     assert "for workflow in ci.yml docs.yml pages.yml; do" not in workflow
+    assert "Release tag must point at exact current main" not in workflow
 
 
 def test_pypi_workflow_uses_oidc_and_exact_github_release_assets() -> None:
@@ -81,7 +86,7 @@ def test_pypi_workflow_uses_oidc_and_exact_github_release_assets() -> None:
     assert "password:" not in workflow
 
 
-def test_first_release_tag_bootstrap_is_exact_main_and_dual_gate_guarded() -> None:
+def test_first_release_bootstrap_preserves_certified_tag_and_dispatches_current_main() -> None:
     workflow = (ROOT / ".github/workflows/bootstrap-first-release.yml").read_text(
         encoding="utf-8"
     )
@@ -96,13 +101,15 @@ def test_first_release_tag_bootstrap_is_exact_main_and_dual_gate_guarded() -> No
         "for workflow in ci.yml docs.yml; do",
         "git show-ref --verify --quiet",
         "TAG_COMMIT=\"$(git rev-list -n 1 \"$RELEASE_TAG\")\"",
-        "Existing immutable tag points elsewhere",
+        "git merge-base --is-ancestor \"$TAG_COMMIT\" \"$TARGET_SHA\"",
+        "Existing release tag is stale because post-tag main contains non-orchestration change",
+        ".github/workflows/bootstrap-first-release.yml|.github/workflows/release.yml|tests/test_release_packaging.py",
         "git tag -a \"$RELEASE_TAG\" \"$TARGET_SHA\"",
         "git push origin \"refs/tags/$RELEASE_TAG\"",
         "gh release view \"$RELEASE_TAG\"",
         "gh run list --workflow release.yml",
-        "gh workflow run release.yml --ref \"$RELEASE_TAG\" -f tag=\"$RELEASE_TAG\"",
-        "GITHUB_TOKEN tag pushes do not recursively trigger workflows",
+        "gh workflow run release.yml --ref main -f tag=\"$RELEASE_TAG\"",
+        "certified immutable tag",
     )
     for phrase in required:
         assert phrase in workflow
