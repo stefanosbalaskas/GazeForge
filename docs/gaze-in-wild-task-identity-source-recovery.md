@@ -66,4 +66,4 @@ python scripts/probe_gaze_in_wild_task_identity_recovery.py \
   --output gaze-in-wild-task-identity-recovery-probe-v1.json
 ```
 
-It then validates the live observation against [`gaze-in-wild-task-identity-source-recovery-evidence-v1.json`](../validation/evidence/gaze-in-wild/gaze-in-wild-task-identity-source-recovery-evidence-v1.json) and runs adversarial tests that reject attempts to promote the negative result into a universal mapping or model-validity claim.
+It then validates the live observation against the frozen [`gaze-in-wild-task-identity-source-recovery-evidence-v1.json`](https://github.com/stefanosbalaskas/GazeForge/blob/main/validation/evidence/gaze-in-wild/gaze-in-wild-task-identity-source-recovery-evidence-v1.json) and runs adversarial tests that reject attempts to promote the negative result into a universal mapping or model-validity claim.
