@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import tempfile
 import time
 import urllib.request
@@ -90,7 +89,10 @@ def _download_verified(row: dict[str, Any], destination: Path, retries: int) -> 
         observed_size = 0
         try:
             request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(request, timeout=180) as response, destination.open("wb") as out:
+            with (
+                urllib.request.urlopen(request, timeout=180) as response,
+                destination.open("wb") as out,
+            ):
                 while True:
                     chunk = response.read(CHUNK_SIZE)
                     if not chunk:
@@ -119,7 +121,8 @@ def _download_verified(row: dict[str, Any], destination: Path, retries: int) -> 
                 "sha256": sha256.hexdigest(),
                 "attempt": attempt,
             }
-        except Exception as exc:  # network failures are retried; integrity failures still fail eventually
+        except Exception as exc:
+            # Network failures are retried; integrity failures still fail eventually.
             last_error = exc
             destination.unlink(missing_ok=True)
             if attempt == retries:
