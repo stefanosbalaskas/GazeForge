@@ -67,17 +67,29 @@ jobs:
 
           if git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"; then
             TAG_COMMIT="$(git rev-list -n 1 "$RELEASE_TAG")"
-            test "$TAG_COMMIT" = "$TARGET_SHA" || {
-              echo "Existing immutable tag points elsewhere: tag=$TAG_COMMIT target=$TARGET_SHA" >&2
+            git merge-base --is-ancestor "$TAG_COMMIT" "$TARGET_SHA" || {
+              echo "Existing immutable tag is not an ancestor of current main: tag=$TAG_COMMIT main=$TARGET_SHA" >&2
               exit 1
             }
-            echo "$RELEASE_TAG already exists at exact validated main; preserving immutable tag."
+            mapfile -t post_tag_paths < <(git diff --name-only "$TAG_COMMIT..$TARGET_SHA")
+            for path in "${post_tag_paths[@]}"; do
+              case "$path" in
+                .github/workflows/bootstrap-first-release.yml|.github/workflows/release.yml|tests/test_release_packaging.py)
+                  ;;
+                *)
+                  echo "Existing release tag is stale because post-tag main contains non-orchestration change: $path" >&2
+                  exit 1
+                  ;;
+              esac
+            done
+            echo "$RELEASE_TAG remains the certified immutable package tag at $TAG_COMMIT; post-tag main is orchestration-only."
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git tag -a "$RELEASE_TAG" "$TARGET_SHA" -m "GazeForge ${RELEASE_TAG} - first public alpha release"
             git push origin "refs/tags/$RELEASE_TAG"
-            echo "Created immutable release tag $RELEASE_TAG at $TARGET_SHA"
+            TAG_COMMIT="$TARGET_SHA"
+            echo "Created immutable release tag $RELEASE_TAG at $TAG_COMMIT"
           fi
 
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
@@ -86,12 +98,12 @@ jobs:
           fi
 
           active="$(gh run list --workflow release.yml --limit 30 \
-            --json status,headBranch \
-            --jq "[.[] | select(.headBranch == \"$RELEASE_TAG\" and (.status == \"queued\" or .status == \"in_progress\"))] | length")"
+            --json status,headBranch,event \
+            --jq '[.[] | select(.headBranch == "main" and .event == "workflow_dispatch" and (.status == "queued" or .status == "in_progress"))] | length')"
           if [ "$active" -ge 1 ]; then
-            echo "Release workflow for $RELEASE_TAG is already active; not dispatching a duplicate."
+            echo "Release workflow is already active from current main; not dispatching a duplicate."
             exit 0
           fi
 
-          gh workflow run release.yml --ref "$RELEASE_TAG" -f tag="$RELEASE_TAG"
-          echo "Dispatched release.yml explicitly for $RELEASE_TAG because GITHUB_TOKEN tag pushes do not recursively trigger workflows."
+          gh workflow run release.yml --ref main -f tag="$RELEASE_TAG"
+          echo "Dispatched current-main release.yml explicitly for certified immutable tag $RELEASE_TAG."
