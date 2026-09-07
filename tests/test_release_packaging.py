@@ -27,6 +27,7 @@ def test_first_public_alpha_release_metadata_is_synchronized() -> None:
     cff = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert re.search(r"(?m)^version:\s*0\.1\.0a1\s*$", cff)
     assert re.search(r"(?m)^date-released:\s*2026-09-07\s*$", cff)
+    assert re.search(r'(?m)^doi:\s*"10\.5281/zenodo\.22650013"\s*$', cff)
     assert "https://orcid.org/0000-0003-2444-9796" in cff
 
     zenodo = json.loads((ROOT / ".zenodo.json").read_text(encoding="utf-8"))
@@ -36,6 +37,20 @@ def test_first_public_alpha_release_metadata_is_synchronized() -> None:
     assert zenodo["license"] == "mit"
     assert zenodo["creators"][0]["name"] == "Balaskas, Stefanos"
     assert zenodo["creators"][0]["orcid"] == "0000-0003-2444-9796"
+
+
+def test_public_alpha_metadata_is_exposed_in_readme() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    required = (
+        "https://pypi.org/project/gazeforge/0.1.0a1/",
+        "https://doi.org/10.5281/zenodo.22650013",
+        "https://doi.org/10.5281/zenodo.22650012",
+        'python -m pip install "gazeforge==0.1.0a1"',
+        "3e409fbfc3c194db30ba25fefdf7f6459a3a003aefa0ab4303555d96982fbb46",
+        "cee4e061a90d74b3a354a0fb4aa5c7bd00d53577e17167f75342cd476a5c25fa",
+    )
+    for phrase in required:
+        assert phrase in readme
 
 
 def test_release_notes_preserve_alpha_scientific_boundaries() -> None:
@@ -60,7 +75,7 @@ def test_release_workflow_builds_exact_tag_and_requires_certified_validation() -
         "git merge-base --is-ancestor \"$TARGET_SHA\" \"$MAIN_SHA\"",
         "git diff --name-only \"$TARGET_SHA..$MAIN_SHA\"",
         "Post-tag main contains non-orchestration change",
-        ".github/workflows/bootstrap-first-release.yml|.github/workflows/release.yml|tests/test_release_packaging.py",
+        ".github/workflows/release.yml|tests/test_release_packaging.py",
         "for workflow in ci.yml docs.yml; do",
         "full OS/Python matrix",
         "Pages is deliberately not required here",
@@ -74,6 +89,7 @@ def test_release_workflow_builds_exact_tag_and_requires_certified_validation() -
         assert phrase in workflow
     assert "for workflow in ci.yml docs.yml pages.yml; do" not in workflow
     assert "Release tag must point at exact current main" not in workflow
+    assert ".github/workflows/bootstrap-first-release.yml" not in workflow
 
 
 def test_pypi_workflow_uses_oidc_and_exact_github_release_assets() -> None:
@@ -86,30 +102,5 @@ def test_pypi_workflow_uses_oidc_and_exact_github_release_assets() -> None:
     assert "password:" not in workflow
 
 
-def test_first_release_bootstrap_preserves_certified_tag_and_dispatches_current_main() -> None:
-    workflow = (ROOT / ".github/workflows/bootstrap-first-release.yml").read_text(
-        encoding="utf-8"
-    )
-    required = (
-        'workflows: ["CI", "Docs"]',
-        "actions: write",
-        "github.event.workflow_run.head_branch == 'main'",
-        "github.event.workflow_run.conclusion == 'success'",
-        "TARGET_SHA: ${{ github.event.workflow_run.head_sha }}",
-        "RELEASE_TAG: v0.1.0a1",
-        "Stale workflow_run",
-        "for workflow in ci.yml docs.yml; do",
-        "git show-ref --verify --quiet",
-        "TAG_COMMIT=\"$(git rev-list -n 1 \"$RELEASE_TAG\")\"",
-        "git merge-base --is-ancestor \"$TAG_COMMIT\" \"$TARGET_SHA\"",
-        "Existing release tag is stale because post-tag main contains non-orchestration change",
-        ".github/workflows/bootstrap-first-release.yml|.github/workflows/release.yml|tests/test_release_packaging.py",
-        "git tag -a \"$RELEASE_TAG\" \"$TARGET_SHA\"",
-        "git push origin \"refs/tags/$RELEASE_TAG\"",
-        "gh release view \"$RELEASE_TAG\"",
-        "gh run list --workflow release.yml",
-        "gh workflow run release.yml --ref main -f tag=\"$RELEASE_TAG\"",
-        "certified immutable tag",
-    )
-    for phrase in required:
-        assert phrase in workflow
+def test_one_shot_first_release_bootstrap_is_retired() -> None:
+    assert not (ROOT / ".github/workflows/bootstrap-first-release.yml").exists()
