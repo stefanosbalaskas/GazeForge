@@ -1,0 +1,77 @@
+name: Bootstrap first release tag
+
+on:
+  workflow_run:
+    workflows: ["CI", "Docs"]
+    types: [completed]
+
+concurrency:
+  group: bootstrap-first-release-v0.1.0a1
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  tag:
+    if: >-
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact validated main candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Require exact current main and both successful release gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: ${{ github.event.workflow_run.head_sha }}
+          RELEASE_TAG: v0.1.0a1
+        run: |
+          set -euo pipefail
+          git fetch origin main --tags
+          MAIN_SHA="$(git rev-parse origin/main)"
+          if [ "$TARGET_SHA" != "$MAIN_SHA" ]; then
+            echo "Stale workflow_run: target=$TARGET_SHA current-main=$MAIN_SHA; not tagging."
+            exit 0
+          fi
+
+          VERSION="$(python - <<'PY'
+          import pathlib, tomllib
+          print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])
+          PY
+          )"
+          test "$VERSION" = "${RELEASE_TAG#v}" || {
+            echo "Version/tag mismatch: version=$VERSION tag=$RELEASE_TAG" >&2
+            exit 1
+          }
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "$RELEASE_TAG already exists; preserving immutable tag."
+            exit 0
+          fi
+
+          for workflow in ci.yml docs.yml; do
+            echo "Requiring successful push run for $workflow at $TARGET_SHA..."
+            ok="$(gh run list --workflow "$workflow" --commit "$TARGET_SHA" --branch main --limit 30 \
+              --json conclusion,event,headSha \
+              --jq "[.[] | select(.event == \"push\" and .headSha == \"$TARGET_SHA\" and .conclusion == \"success\")] | length")"
+            test "$ok" -ge 1 || {
+              echo "Other release gate is not yet green for exact main; a later workflow_run event will retry."
+              exit 0
+            }
+          done
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$RELEASE_TAG" "$TARGET_SHA" -m "GazeForge ${RELEASE_TAG} - first public alpha release"
+          git push origin "refs/tags/$RELEASE_TAG"
+          echo "Created immutable release tag $RELEASE_TAG at $TARGET_SHA"
