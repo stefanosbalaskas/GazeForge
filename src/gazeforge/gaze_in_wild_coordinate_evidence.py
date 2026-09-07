@@ -141,7 +141,10 @@ def validate_gaze_in_wild_por_coordinate_evidence(
         raise BenchmarkIntegrityError("Scene resolution must remain separate from POR.")
     if semantics.get("processdata_por_is_interpolated_from_etg_por") is not True:
         raise BenchmarkIntegrityError("ProcessData POR lineage drifted.")
-    if semantics.get("por_multiplied_by_scene_resolution_in_first_party_preprocessing") is not False:
+    first_party_pixel_scaling = semantics.get(
+        "por_multiplied_by_scene_resolution_in_first_party_preprocessing"
+    )
+    if first_party_pixel_scaling is not False:
         raise BenchmarkIntegrityError("First-party POR must not be promoted to pixel POR.")
 
     verification = record.get("verification", {})
