@@ -78,34 +78,197 @@ jobs:
           )
           print("exact author ARFF input convention verified")
           PY
-      - name: Acquire pinned canonical Hollywood2EM source
+      - name: Acquire pinned canonical Hollywood2EM headers
         shell: bash
         run: |
-          set -euo pipefail
+          set -u -o pipefail
           expected="870fa6d6209c9085260918d61433a0a2c70fd497"
           canonical="https://gin.g-node.org/ioannis.agtzidis/hollywood2_em"
           legacy="https://web.gin.g-node.org/ioannis.agtzidis/hollywood2_em"
+          all_403=true
 
           clone_once() {
             local endpoint="$1"
             rm -rf _hollywood2_em
-            if ! git clone --depth 1 "$endpoint" _hollywood2_em; then
-              return 1
+            set +e
+            output="$(git clone --depth 1 "$endpoint" _hollywood2_em 2>&1)"
+            rc=$?
+            set -e
+            printf '%s\n' "$output"
+            if [ "$rc" -ne 0 ]; then
+              if printf '%s' "$output" | grep -q "403"; then
+                return 10
+              fi
+              return 11
             fi
             observed="$(git -C _hollywood2_em rev-parse HEAD)"
-            test "$observed" = "$expected"
-            test -z "$(git -C _hollywood2_em status --porcelain --untracked-files=no)"
+            if [ "$observed" != "$expected" ]; then
+              echo "GIN source was reachable but HEAD drifted: ${observed}" >&2
+              return 12
+            fi
+            if [ -n "$(git -C _hollywood2_em status --porcelain --untracked-files=no)" ]; then
+              echo "GIN source checkout contains tracked modifications." >&2
+              return 13
+            fi
             return 0
           }
 
+          set -e
           for endpoint in "$canonical" "$canonical" "$canonical" "$legacy" "$legacy"; do
-            if clone_once "$endpoint"; then
+            set +e
+            clone_once "$endpoint"
+            rc=$?
+            set -e
+            if [ "$rc" -eq 0 ]; then
+              echo "Pinned Hollywood2EM source acquired through Git transport."
               exit 0
+            fi
+            if [ "$rc" -ne 10 ]; then
+              all_403=false
             fi
             sleep 10
           done
-          echo "Could not acquire the pinned Hollywood2EM source through bounded public routes." >&2
-          exit 1
+
+          if [ "$all_403" != true ]; then
+            echo "GIN acquisition failed outside the reviewed HTTP-403 host condition." >&2
+            exit 1
+          fi
+
+          echo "Git transport returned only HTTP 403; using pinned GIN API header transport."
+          python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+          from typing import Any
+
+          API = "https://gin.g-node.org/api/v1/repos/ioannis.agtzidis/hollywood2_em"
+          PAGE = "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em"
+          SHA = "870fa6d6209c9085260918d61433a0a2c70fd497"
+          EXPECTED_FILES = 697
+          HEADER_LIMIT = 262_144
+          USER_AGENT = "GazeForge/hollywood2-coordinate-header-probe"
+
+          def request(url: str, *, accept: str) -> urllib.request.Request:
+              return urllib.request.Request(
+                  url,
+                  headers={"User-Agent": USER_AGENT, "Accept": accept},
+              )
+
+          def fetch_json(url: str) -> dict[str, Any]:
+              last: Exception | None = None
+              for attempt in range(1, 4):
+                  try:
+                      with urllib.request.urlopen(  # noqa: S310
+                          request(url, accept="application/json"), timeout=90
+                      ) as response:
+                          if response.status != 200:
+                              raise RuntimeError(f"Unexpected HTTP {response.status} for {url}")
+                          payload = json.loads(response.read().decode("utf-8"))
+                          if not isinstance(payload, dict):
+                              raise RuntimeError(f"GIN API did not return an object for {url}")
+                          return payload
+                  except (OSError, UnicodeError, json.JSONDecodeError, RuntimeError) as exc:
+                      last = exc
+                      if attempt < 3:
+                          time.sleep(attempt * 5)
+              raise RuntimeError(f"GIN API request failed for {url}: {last}")
+
+          repo = fetch_json(API)
+          if repo.get("full_name") != "ioannis.agtzidis/hollywood2_em":
+              raise RuntimeError("GIN API repository identity drifted.")
+
+          tree_url = f"{API}/git/trees/{SHA}?recursive=true"
+          tree = fetch_json(tree_url)
+          if tree.get("truncated") is True:
+              raise RuntimeError("GIN API recursive tree was truncated.")
+          entries = tree.get("tree")
+          if not isinstance(entries, list):
+              raise RuntimeError("GIN API tree payload is missing the tree list.")
+          paths = sorted(
+              str(item["path"])
+              for item in entries
+              if isinstance(item, dict)
+              and item.get("type") == "blob"
+              and isinstance(item.get("path"), str)
+              and str(item["path"]).startswith("ground_truth/")
+              and str(item["path"]).lower().endswith(".arff")
+          )
+          if len(paths) != EXPECTED_FILES:
+              raise RuntimeError(
+                  f"Expected {EXPECTED_FILES} pinned ARFF paths from GIN API, found {len(paths)}."
+              )
+
+          def read_header(path: str) -> bytes:
+              quoted = urllib.parse.quote(path, safe="/")
+              urls = (
+                  f"{API}/raw/{SHA}/{quoted}",
+                  f"{API}/raw/{quoted}?ref={SHA}",
+                  f"{PAGE}/raw/commit/{SHA}/{quoted}",
+              )
+              failures: list[str] = []
+              for url in urls:
+                  for attempt in range(1, 4):
+                      try:
+                          with urllib.request.urlopen(  # noqa: S310
+                              request(url, accept="application/octet-stream,*/*"), timeout=90
+                          ) as response:
+                              if response.status != 200:
+                                  raise RuntimeError(
+                                      f"Unexpected HTTP {response.status} for {url}"
+                                  )
+                              pieces: list[bytes] = []
+                              total = 0
+                              while True:
+                                  line = response.readline()
+                                  if not line:
+                                      break
+                                  total += len(line)
+                                  if total > HEADER_LIMIT:
+                                      raise RuntimeError(
+                                          f"ARFF header exceeded {HEADER_LIMIT} bytes for {path}"
+                                      )
+                                  pieces.append(line)
+                                  if line.lstrip().lower().startswith(b"@data"):
+                                      header = b"".join(pieces)
+                                      if b"@attribute" not in header.lower():
+                                          raise RuntimeError(
+                                              f"ARFF schema marker missing for {path}"
+                                          )
+                                      return header
+                              raise RuntimeError(f"ARFF @data marker missing for {path}")
+                      except urllib.error.HTTPError as exc:
+                          failures.append(f"{url}: HTTP {exc.code}")
+                          if exc.code not in {403, 429, 500, 502, 503, 504}:
+                              break
+                      except (OSError, RuntimeError) as exc:
+                          failures.append(f"{url}: {exc}")
+                      if attempt < 3:
+                          time.sleep(attempt * 2)
+              raise RuntimeError(
+                  "Could not retrieve pinned ARFF header for "
+                  f"{path}; failures: {'; '.join(failures[-6:])}"
+              )
+
+          root = Path("_hollywood2_em")
+          if root.exists():
+              import shutil
+
+              shutil.rmtree(root)
+          for index, path in enumerate(paths, start=1):
+              header = read_header(path)
+              target = root / path
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(header)
+              if index % 100 == 0 or index == len(paths):
+                  print(f"materialized pinned headers: {index}/{len(paths)}")
+
+          print("Pinned GIN API header transport complete; no ARFF data rows materialized.")
+          PY
       - name: Run header-only coordinate metadata probe
         run: |
           python scripts/hollywood2_coordinate_metadata_probe.py \
