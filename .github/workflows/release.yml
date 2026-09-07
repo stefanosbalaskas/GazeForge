@@ -79,7 +79,7 @@ jobs:
           print(f"Verified release metadata for GazeForge {version}")
           PY
 
-      - name: Require successful exact-main validation
+      - name: Require successful exact-main package validation
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -91,7 +91,13 @@ jobs:
             echo "Release tag must point at exact current main: tag=$TARGET_SHA main=$MAIN_SHA" >&2
             exit 1
           }
-          for workflow in ci.yml docs.yml pages.yml; do
+          # CI is the package release gate (full OS/Python matrix, tests,
+          # package smoke, and source-resolution governance). Docs is also
+          # required because release metadata/citation changes are public docs.
+          # Pages is deliberately not required here: pages.yml is path-filtered
+          # and does not run for release-only changes, so requiring it would make
+          # a valid exact-main release impossible without an unrelated mutation.
+          for workflow in ci.yml docs.yml; do
             echo "Checking $workflow for exact main $TARGET_SHA..."
             ok="$(gh run list --workflow "$workflow" --commit "$TARGET_SHA" --branch main --limit 30 \
               --json conclusion \
