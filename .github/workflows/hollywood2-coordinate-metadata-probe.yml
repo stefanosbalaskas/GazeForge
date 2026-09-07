@@ -82,6 +82,7 @@ jobs:
         shell: bash
         run: |
           set -u -o pipefail
+          set +e
           expected="870fa6d6209c9085260918d61433a0a2c70fd497"
           canonical="https://gin.g-node.org/ioannis.agtzidis/hollywood2_em"
           legacy="https://web.gin.g-node.org/ioannis.agtzidis/hollywood2_em"
@@ -90,10 +91,8 @@ jobs:
           clone_once() {
             local endpoint="$1"
             rm -rf _hollywood2_em
-            set +e
             output="$(git clone --depth 1 "$endpoint" _hollywood2_em 2>&1)"
             rc=$?
-            set -e
             printf '%s\n' "$output"
             if [ "$rc" -ne 0 ]; then
               if printf '%s' "$output" | grep -q "403"; then
@@ -113,12 +112,9 @@ jobs:
             return 0
           }
 
-          set -e
           for endpoint in "$canonical" "$canonical" "$canonical" "$legacy" "$legacy"; do
-            set +e
             clone_once "$endpoint"
             rc=$?
-            set -e
             if [ "$rc" -eq 0 ]; then
               echo "Pinned Hollywood2EM source acquired through Git transport."
               exit 0
@@ -134,6 +130,7 @@ jobs:
             exit 1
           fi
 
+          set -e
           echo "Git transport returned only HTTP 403; using pinned GIN API header transport."
           python - <<'PY'
           from __future__ import annotations
