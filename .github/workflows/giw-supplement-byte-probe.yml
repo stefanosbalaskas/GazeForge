@@ -1,0 +1,118 @@
+name: GIW supplementary byte probe
+
+on:
+  push:
+    branches:
+      - research/giw-supplement-byte-probe
+    paths:
+      - .github/workflows/giw-supplement-byte-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PDF probe dependency
+        run: python -m pip install pypdf
+      - name: Acquire reviewed public documents
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent --location \
+            --retry 3 --retry-all-errors \
+            'https://arxiv.org/pdf/1905.13146v1' \
+            -o giw-arxiv-v1.pdf
+
+          springer_url='https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs41598-020-59251-5/MediaObjects/41598_2020_59251_MOESM1_ESM.pdf'
+          if curl --fail --show-error --silent --location \
+            --retry 3 --retry-all-errors \
+            "$springer_url" \
+            -o giw-springer-supplement.pdf; then
+            echo 'SPRINGER_FETCHED=1' >> "$GITHUB_ENV"
+          else
+            rm -f giw-springer-supplement.pdf
+            echo 'SPRINGER_FETCHED=0' >> "$GITHUB_ENV"
+          fi
+      - name: Build metadata-only probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          from pypdf import PdfReader
+
+          def sha256(path: Path) -> str:
+              h = hashlib.sha256()
+              with path.open('rb') as stream:
+                  for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+                      h.update(chunk)
+              return h.hexdigest()
+
+          def inspect_pdf(path: Path) -> dict[str, object]:
+              raw = path.read_bytes()
+              if not raw.startswith(b'%PDF'):
+                  raise SystemExit(f'{path} is not a PDF')
+              reader = PdfReader(str(path))
+              text = '\n'.join((page.extract_text() or '') for page in reader.pages)
+              canonical = re.sub(r'\s+', ' ', text).strip()
+              return {
+                  'byte_size': len(raw),
+                  'sha256': hashlib.sha256(raw).hexdigest(),
+                  'page_count': len(reader.pages),
+                  'text_sha256_whitespace_canonical': hashlib.sha256(
+                      canonical.encode('utf-8')
+                  ).hexdigest(),
+                  'markers': {
+                      'supplementary_information': 'Supplementary Information' in text,
+                      'dataset_status_and_error_measures': 'Dataset status and error measures' in text,
+                      'indoor_navigation': 'Indoor navigation' in text,
+                      'ball_catching': 'Ball catching' in text,
+                      'visual_search': 'Visual search' in text,
+                      'tea_making': 'Tea making' in text,
+                      'person_23_age_60': bool(re.search(r'23\s+60', text)),
+                      'data_discarded': 'Data discarded' in text,
+                  },
+              }
+
+          arxiv = Path('giw-arxiv-v1.pdf')
+          result: dict[str, object] = {
+              'record_type': 'giw-supplement-byte-probe-v1',
+              'arxiv_identifier': '1905.13146v1',
+              'arxiv': inspect_pdf(arxiv),
+              'springer_official_supplement_url': (
+                  'https://media.springernature.com/original/springer-static/esm/'
+                  'art%3A10.1038%2Fs41598-020-59251-5/MediaObjects/'
+                  '41598_2020_59251_MOESM1_ESM.pdf'
+              ),
+              'springer_fetch_succeeded': os.environ.get('SPRINGER_FETCHED') == '1',
+          }
+          springer = Path('giw-springer-supplement.pdf')
+          if springer.exists():
+              result['springer'] = inspect_pdf(springer)
+
+          Path('giw-supplement-byte-probe.json').write_text(
+              json.dumps(result, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(result, indent=2, sort_keys=True))
+          PY
+      - name: Upload metadata-only probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: giw-supplement-byte-probe
+          path: giw-supplement-byte-probe.json
+          if-no-files-found: error
+          retention-days: 30
