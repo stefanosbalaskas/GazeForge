@@ -1,0 +1,72 @@
+{
+  "evidence_fingerprint_sha256": "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00",
+  "excluded_distribution": {
+    "doi": "10.6084/m9.figshare.11673717.v1",
+    "downloaded": false,
+    "figshare_id": 11673717,
+    "label": "ProcessData_cleaned",
+    "reason": "Not original-publication data; excluded by scientific source contract."
+  },
+  "record_type": "gaze-in-wild-figshare-exact-bytes-evidence-v1",
+  "reviewed_on": "2026-09-08",
+  "scientific_boundary": {
+    "complete_file_to_task_mapping_verified": false,
+    "cross_dataset_validation_created": false,
+    "exact_original_distribution_bytes_verified": true,
+    "gp3_validity_claim_created": false,
+    "human_human_agreement_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "quarantine_exit_authorized": false,
+    "universal_tridx_to_task_mapping_verified": false
+  },
+  "source_binding": {
+    "artifact_id": 10033806821,
+    "artifact_zip_sha256": "123f705f79aa5de261d73a8b1347646a681c3a45dca509933c9aa72d2bc96798",
+    "exact_byte_probe_fingerprint_sha256": "96645a517bb5aec84aec1920683625c9a5ca47f609afd8fd9725fb9b77f8bb3d",
+    "figshare_project_id": 74580,
+    "fresh_live_metadata_stable_fingerprint_sha256": "2fc9b441f90dae01e1ef41918d61924458f7cd0e0556021db3daa3a6732251f4",
+    "frozen_public_metadata_probe_fingerprint_sha256": "5df3f539b1d28adfcd4b4e26392622654612e5acdb3415ffe911d3acedda50b5",
+    "reviewed_distribution_rights_evidence_fingerprint_sha256": "25d4b56e1dc4888b034b5de91cb14f712aaa0e3470cde7a1246f30c3880e63c7",
+    "workflow_head_sha": "39ec2546065250c1aee29631a0ad5abe0366541e",
+    "workflow_job_id": 101872991996,
+    "workflow_run_id": 34164582679
+  },
+  "status": "exact_original_publication_processdata_and_labeldata_bytes_verified",
+  "verified_distribution": {
+    "LabelData": {
+      "all_files_have_labeldata_struct_1x1": true,
+      "distinct_container_schema_count": 1,
+      "doi": "10.6084/m9.figshare.11673696.v1",
+      "figshare_id": 11673696,
+      "file_count": 50,
+      "frozen_manifest_sha256": "65d934d3d3e2ebb04e639fc16435bf3383882340996a211159c5ccb67c71b35d",
+      "matlab_format": "matlab-level-5-compatible",
+      "stable_file_identity_manifest_sha256": "9ffbbab106bbd6f5a6ac8d7dd1e666ab70f3df486a1057b4ff690c82fae2a1ec",
+      "total_size_bytes": 28725824,
+      "verified_file_identity_manifest_sha256": "72fb67dab5085043c4dab079327354f5ddf9c8a4ec490d546688a8d7b9a3f2d2"
+    },
+    "ProcessData": {
+      "all_files_have_processdata_struct_1x1": true,
+      "distinct_container_schema_count": 13,
+      "doi": "10.6084/m9.figshare.11673645.v1",
+      "figshare_id": 11673645,
+      "file_count": 68,
+      "frozen_manifest_sha256": "cc82a05fa64d35f76f955ebe231c27ff858d9d53de714ffa92d9d9c21828aaa8",
+      "matlab_format": "matlab-level-5-compatible",
+      "stable_file_identity_manifest_sha256": "7e48396fcfe30e2170708c9d5910caea785ceff1dd06b0455e5715a01e52d3ea",
+      "total_size_bytes": 2384573418,
+      "verified_file_identity_manifest_sha256": "b1a252480e75ff322e40fc8182af2a2b845e267d0c5bf99fd4801fbbc73b7004"
+    },
+    "all_downloads_succeeded_on_first_attempt": true,
+    "all_files_matched_frozen_size_and_md5": true,
+    "article_labels": [
+      "ProcessData",
+      "LabelData"
+    ],
+    "file_count": 118,
+    "raw_dataset_bytes_retained": false,
+    "stable_exact_byte_identity_fingerprint_sha256": "8d36884daf76e26ded3d31c32bd334bf8f358b49efdb7accbb20c6c569abdda0",
+    "total_size_bytes": 2413299242
+  }
+}

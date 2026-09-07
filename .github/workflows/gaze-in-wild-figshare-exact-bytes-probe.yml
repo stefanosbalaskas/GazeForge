@@ -1,0 +1,98 @@
+name: Gaze-in-the-Wild exact Figshare bytes
+
+# Full transport verification is intentionally isolated to this dedicated workflow.
+on:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-exact-figshare-bytes
+    paths:
+      - ".github/workflows/gaze-in-wild-figshare-exact-bytes-probe.yml"
+      - "scripts/probe_gaze_in_wild_figshare_exact_bytes.py"
+      - "src/gazeforge/gaze_in_wild_figshare_exact_bytes_evidence.py"
+      - "tests/test_gaze_in_wild_figshare_exact_bytes_evidence.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-exact-bytes-evidence-v1.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  exact-bytes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install probe dependencies
+        run: python -m pip install --disable-pip-version-check --quiet . h5py ruff pytest
+      - name: Ruff exact-byte tranche
+        run: |
+          ruff check \
+            scripts/probe_gaze_in_wild_figshare_exact_bytes.py \
+            src/gazeforge/gaze_in_wild_figshare_exact_bytes_evidence.py \
+            tests/test_gaze_in_wild_figshare_exact_bytes_evidence.py
+      - name: Validate committed reviewed exact-byte evidence
+        run: pytest -q tests/test_gaze_in_wild_figshare_exact_bytes_evidence.py
+      - name: Require fresh Figshare metadata identity before byte acquisition
+        run: |
+          python scripts/gaze_in_wild_figshare_live_probe.py \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --output gaze-in-wild-figshare-live-binding-before-bytes.json
+      - name: Stream, verify, inspect, and discard original publication bytes
+        run: |
+          python scripts/probe_gaze_in_wild_figshare_exact_bytes.py \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --output gaze-in-wild-figshare-exact-bytes-probe-v1.json \
+            --retries 3
+      - name: Validate fresh byte identity against reviewed evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_figshare_exact_bytes_evidence import (
+              validate_fresh_gaze_in_wild_exact_byte_probe,
+              validate_gaze_in_wild_figshare_exact_bytes_evidence,
+          )
+
+          base = Path("validation/evidence/gaze-in-wild")
+          reviewed = validate_gaze_in_wild_figshare_exact_bytes_evidence(
+              base / "gaze-in-wild-figshare-exact-bytes-evidence-v1.json",
+              base / "gaze-in-wild-figshare-public-metadata-raw-v1.json",
+              base / "gaze-in-wild-figshare-distribution-rights-evidence-v1.json",
+              base / "gaze-in-wild-figshare-public-metadata-summary-v1.json",
+          )
+          fresh = validate_fresh_gaze_in_wild_exact_byte_probe(
+              "gaze-in-wild-figshare-exact-bytes-probe-v1.json",
+              base / "gaze-in-wild-figshare-public-metadata-raw-v1.json",
+          )
+          assert reviewed.exact_original_distribution_bytes_verified is True
+          assert reviewed.quarantine_exit_authorized is False
+          print("reviewed_evidence_fingerprint_sha256", reviewed.fingerprint_sha256)
+          print("stable_exact_byte_identity_fingerprint_sha256", fresh.stable_identity_fingerprint_sha256)
+          print("processdata_stable_manifest_sha256", fresh.processdata_manifest_sha256)
+          print("labeldata_stable_manifest_sha256", fresh.labeldata_manifest_sha256)
+          PY
+      - name: Confirm raw dataset was not retained in workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f \( -name 'PrIdx_*_TrIdx_*.mat' -o -name 'PrIdx_*_TrIdx_*_Lbr_*.mat' \) -print -quit | grep -q .; then
+            echo "Raw GIW MAT file unexpectedly retained in workspace." >&2
+            exit 1
+          fi
+      - name: Upload fingerprinted summaries only
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-figshare-exact-bytes-probe
+          path: |
+            gaze-in-wild-figshare-live-binding-before-bytes.json
+            gaze-in-wild-figshare-exact-bytes-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
