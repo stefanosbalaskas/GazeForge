@@ -96,7 +96,7 @@ jobs:
             mapfile -t post_tag_paths < <(git diff --name-only "$TARGET_SHA..$MAIN_SHA")
             for path in "${post_tag_paths[@]}"; do
               case "$path" in
-                .github/workflows/bootstrap-first-release.yml|.github/workflows/release.yml|tests/test_release_packaging.py)
+                .github/workflows/release.yml|tests/test_release_packaging.py)
                   ;;
                 *)
                   echo "Post-tag main contains non-orchestration change: $path" >&2
