@@ -50,7 +50,26 @@ DISCOVERY_PROBE_FINGERPRINT_SHA256 = (
     "bbd7b0498f4d3b48e435bb0a79efd72d794e59e38fa31ccc73c2577bb95dd66b"
 )
 EXPECTED_PROCESS_PARTICIPANTS = [
-    1, 2, 3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23
+    1,
+    2,
+    3,
+    4,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    22,
+    23,
 ]
 EXPECTED_LABEL_PARTICIPANTS = [1, 2, 3, 4, 6, 8, 9, 10, 12, 15, 16, 17, 18, 19, 20, 22]
 EXPECTED_LABELLERS = [1, 2, 3, 5, 6]
@@ -237,7 +256,9 @@ def _validate_rate_ledger(
         if not isinstance(trial, int) or trial <= 0:
             raise BenchmarkIntegrityError("GIW ProcessData rate trial token is invalid.")
         if float(stored) != 300.0:
-            raise BenchmarkIntegrityError("GIW ProcessData stored processed rate drifted from 300 Hz.")
+            raise BenchmarkIntegrityError(
+                "GIW ProcessData stored processed rate drifted from 300 Hz."
+            )
         if not math.isfinite(float(inferred)) or not 299.98 < float(inferred) < 300.01:
             raise BenchmarkIntegrityError("GIW ProcessData inferred processed rate is invalid.")
         if not isinstance(count, int) or count < 2:
@@ -314,19 +335,31 @@ def validate_gaze_in_wild_exact_processdata_structure_evidence(
         "processdata_doi": "10.6084/m9.figshare.11673645.v1",
         "labeldata_article_id": 11673696,
         "labeldata_doi": "10.6084/m9.figshare.11673696.v1",
-        "reviewed_exact_byte_evidence_fingerprint_sha256": EXACT_BYTE_EVIDENCE_FINGERPRINT_SHA256,
-        "reviewed_por_coordinate_semantics_evidence_fingerprint_sha256": POR_EVIDENCE_FINGERPRINT_SHA256,
-        "processdata_sha256_ledger_evidence_fingerprint_sha256": IDENTITY_EVIDENCE_FINGERPRINT_SHA256,
+        "reviewed_exact_byte_evidence_fingerprint_sha256": (
+            EXACT_BYTE_EVIDENCE_FINGERPRINT_SHA256
+        ),
+        "reviewed_por_coordinate_semantics_evidence_fingerprint_sha256": (
+            POR_EVIDENCE_FINGERPRINT_SHA256
+        ),
+        "processdata_sha256_ledger_evidence_fingerprint_sha256": (
+            IDENTITY_EVIDENCE_FINGERPRINT_SHA256
+        ),
         "processdata_sha256_manifest_sha256": IDENTITY_MANIFEST_SHA256,
-        "processed_rate_ledger_evidence_fingerprint_sha256": RATE_EVIDENCE_FINGERPRINT_SHA256,
+        "processed_rate_ledger_evidence_fingerprint_sha256": (
+            RATE_EVIDENCE_FINGERPRINT_SHA256
+        ),
         "stable_file_structure_manifest_sha256": STABLE_FILE_STRUCTURE_MANIFEST_SHA256,
-        "stable_corpus_structure_fingerprint_sha256": STABLE_CORPUS_STRUCTURE_FINGERPRINT_SHA256,
+        "stable_corpus_structure_fingerprint_sha256": (
+            STABLE_CORPUS_STRUCTURE_FINGERPRINT_SHA256
+        ),
         "discovery_probe_fingerprint_sha256": DISCOVERY_PROBE_FINGERPRINT_SHA256,
         "discovery_workflow_run_id": 34199996646,
         "discovery_workflow_job_id": 101976365230,
         "discovery_workflow_head_sha": "a9fa2e91ffdb1eb9eb6603d393060dc71eced9ee",
         "discovery_artifact_id": 10045524274,
-        "discovery_artifact_zip_sha256": "e51138b34c6e7c4ddcc8fa3ffd825884485019bf05270072d6abee97990f638e",
+        "discovery_artifact_zip_sha256": (
+            "e51138b34c6e7c4ddcc8fa3ffd825884485019bf05270072d6abee97990f638e"
+        ),
     }
     for key, expected in expected_binding.items():
         _equal(binding.get(key), expected, f"source binding {key}")
@@ -336,7 +369,11 @@ def validate_gaze_in_wild_exact_processdata_structure_evidence(
     _equal(verified.get("total_size_bytes"), 2_384_573_418, "ProcessData total bytes")
     _equal(verified.get("recording_token_count"), 68, "ProcessData recording count")
     _equal(verified.get("participant_count"), 20, "ProcessData participant count")
-    _equal(verified.get("participant_indices"), EXPECTED_PROCESS_PARTICIPANTS, "ProcessData participants")
+    _equal(
+        verified.get("participant_indices"),
+        EXPECTED_PROCESS_PARTICIPANTS,
+        "ProcessData participants",
+    )
     for key in (
         "all_files_matched_frozen_size_md5_and_reviewed_sha256",
         "all_filename_internal_pridx_tridx_agree",
@@ -370,7 +407,11 @@ def validate_gaze_in_wild_exact_processdata_structure_evidence(
     _equal(pairing.get("labeldata_file_count"), 50, "LabelData file count")
     _equal(pairing.get("recording_token_count"), 37, "labelled recording count")
     _equal(pairing.get("participant_count"), 16, "labelled participant count")
-    _equal(pairing.get("participant_indices"), EXPECTED_LABEL_PARTICIPANTS, "labelled participants")
+    _equal(
+        pairing.get("participant_indices"),
+        EXPECTED_LABEL_PARTICIPANTS,
+        "labelled participants",
+    )
     _equal(pairing.get("labeller_indices"), EXPECTED_LABELLERS, "labeller identities")
     _equal(
         pairing.get("processdata_tokens_without_distributed_labeldata_count"),
