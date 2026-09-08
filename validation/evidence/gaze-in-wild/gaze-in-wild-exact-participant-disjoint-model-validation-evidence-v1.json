@@ -17,7 +17,7 @@
     "v2_contextmlp_convergence_warning_count": 0,
     "v2_convergence_requirement_satisfied": true
   },
-  "evidence_fingerprint_sha256": "fa45366ea855a0bad662514c42187ffe3d24e5ce8e191a351c8c9b478325df6f",
+  "evidence_fingerprint_sha256": "b2fe85ec7e5d5cd425c0cd2593742bab835686c3f560d8a6c06e9c6d67dc547a",
   "metrics": {
     "full_benchmark_report_fingerprint_sha256": "170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f",
     "pursuit_failure_case": {
@@ -103,6 +103,34 @@
     ]
   },
   "record_type": "gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1",
+  "reproducibility": {
+    "benchmark_envelope_fingerprint_sha256": "8f1f4e37848d966957ea8ffb771fa418d43ee6254f9762590e02a1840285dc36",
+    "cross_run_reproducibility_signature_sha256": "f8c8d27ddbb1fe065a15df18d53c9fa84544315ef57cf2783554b236839ff286",
+    "float_decimal_places": 8,
+    "metric_section_fingerprints_sha256": {
+      "analysis_label_counts": "e159cc1962a14693bfbfffcc723df60254cfab1e34866ec59c4c1946b0b942d1",
+      "event_class_performance": "755a09be6e5cc5e3e2962de0b3bbb193d79a01e09a50bb5cbc2f3df39e94caaf",
+      "fold_metrics": "c1cf30a41cfa8c1981de5927f58d46a02e49da261041b2aa0624ba7f67231a47",
+      "paired_model_difference_summary": "a1f00d1c934fa46879f8097de0c3ba93f5ae78edc3ca6baaad17aa03d890aafd",
+      "paired_model_fold_deltas": "9956990388304906121205b355cda3354a07fefeb2dfcc1bfcd1cb0f02450097",
+      "sample_event_class_performance": "f5d7aeb4c0173daec12288d28f5b5bade1d711e0ccc5617ee82027d4c2682a43",
+      "summary": "9cfca876e1fe733f8bcc3648e3b6bb060a197cbaefe16c85a1c0c712404042ca",
+      "task_fold_metrics": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "task_summary": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "metric_section_row_counts": {
+      "analysis_label_counts": 5,
+      "event_class_performance": 16,
+      "fold_metrics": 15,
+      "paired_model_difference_summary": 36,
+      "paired_model_fold_deltas": 160,
+      "sample_event_class_performance": 15,
+      "summary": 3,
+      "task_fold_metrics": 0,
+      "task_summary": 0
+    },
+    "policy": "Cross-run certification preserves exact source, split, count, class, convergence, and scientific-boundary identities while comparing floating benchmark outputs after canonical rounding to 8 decimal places. Original whole-report/discovery hashes remain immutable provenance for the reviewed source run and are not required to repeat across different hosted-runner numerical backends."
+  },
   "reviewed_on": "2026-09-08",
   "scientific_boundary": {
     "acquisition_hardware_cadence_verified_by_this_validation": false,
