@@ -12,12 +12,15 @@ on:
       - "scripts/run_gaze_in_wild_exact_participant_disjoint_validation_v2.py"
       - "src/gazeforge/gaze_in_wild_exact_validation.py"
       - "src/gazeforge/gaze_in_wild_exact_validation_v2.py"
+      - "src/gazeforge/gaze_in_wild_exact_validation_evidence.py"
       - "tests/test_gaze_in_wild_exact_validation.py"
       - "tests/test_gaze_in_wild_exact_validation_v2.py"
+      - "tests/test_gaze_in_wild_exact_validation_evidence.py"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-reference-preflight-evidence-v1.json"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-reference-manifest-v1.json"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-execution-protocol-evidence-v1.json"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-execution-protocol-evidence-v2.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1.json"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-processdata-exact-file-identities-v1.json"
       - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-processdata-structure-evidence-v1.json"
@@ -45,16 +48,19 @@ jobs:
           ruff check \
             src/gazeforge/gaze_in_wild_exact_validation.py \
             src/gazeforge/gaze_in_wild_exact_validation_v2.py \
+            src/gazeforge/gaze_in_wild_exact_validation_evidence.py \
             scripts/run_gaze_in_wild_exact_participant_disjoint_validation.py \
             scripts/run_gaze_in_wild_exact_participant_disjoint_validation_v2.py \
             tests/test_gaze_in_wild_exact_validation.py \
-            tests/test_gaze_in_wild_exact_validation_v2.py
+            tests/test_gaze_in_wild_exact_validation_v2.py \
+            tests/test_gaze_in_wild_exact_validation_evidence.py
 
       - name: Test exact validation evidence and leakage boundaries
         run: |
           pytest -q \
             tests/test_gaze_in_wild_exact_validation.py \
-            tests/test_gaze_in_wild_exact_validation_v2.py
+            tests/test_gaze_in_wild_exact_validation_v2.py \
+            tests/test_gaze_in_wild_exact_validation_evidence.py
 
       - name: Run convergence-qualified exact validation discovery
         run: |
@@ -114,6 +120,33 @@ jobs:
           ):
               assert boundary[key] is False, key
           assert record["raw_dataset_bytes_retained"] is False
+          PY
+
+      - name: Require exact reproduction of reviewed performance evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_exact_validation_evidence import (
+              load_reviewed_gaze_in_wild_validation_evidence,
+              validate_fresh_gaze_in_wild_validation_discovery,
+          )
+
+          discovery = json.loads(
+              Path(
+                  "gaze-in-wild-exact-participant-disjoint-validation-discovery-v2.json"
+              ).read_text(encoding="utf-8")
+          )
+          reviewed = load_reviewed_gaze_in_wild_validation_evidence(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1.json"
+          )
+          identity = validate_fresh_gaze_in_wild_validation_discovery(
+              discovery,
+              reviewed,
+          )
+          print(f"Reviewed GIW scientific identity reproduced: {identity}")
           PY
 
       - name: Confirm raw GIW MAT files were not retained
