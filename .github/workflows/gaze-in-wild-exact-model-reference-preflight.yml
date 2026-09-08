@@ -1,0 +1,135 @@
+name: Gaze-in-the-Wild exact model reference preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-exact-participant-disjoint-model-validation
+    paths:
+      - ".github/workflows/gaze-in-wild-exact-model-reference-preflight.yml"
+      - "scripts/probe_gaze_in_wild_labeldata_hha_feasibility.py"
+      - "src/gazeforge/gaze_in_wild_model_reference_preflight.py"
+      - "tests/test_gaze_in_wild_model_reference_preflight.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-exact-bytes-evidence-v1.json"
+
+permissions:
+  contents: read
+
+jobs:
+  exact-model-reference-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and preflight dependencies
+        run: python -m pip install --disable-pip-version-check --quiet . pytest ruff
+
+      - name: Ruff source probe and preflight policy
+        run: |
+          ruff check \
+            scripts/probe_gaze_in_wild_labeldata_hha_feasibility.py \
+            src/gazeforge/gaze_in_wild_model_reference_preflight.py \
+            tests/test_gaze_in_wild_model_reference_preflight.py
+
+      - name: Test source-only reference selection policy
+        run: pytest -q tests/test_gaze_in_wild_model_reference_preflight.py
+
+      - name: Reverify and inspect all exact original LabelData files
+        run: |
+          python scripts/probe_gaze_in_wild_labeldata_hha_feasibility.py \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --output gaze-in-wild-labeldata-hha-feasibility-probe-v1.json \
+            --retries 3
+
+      - name: Pre-register reference labeller and model protocol
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_model_reference_preflight import (
+              build_gaze_in_wild_model_reference_preflight,
+          )
+
+          source = json.loads(
+              Path("gaze-in-wild-labeldata-hha-feasibility-probe-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          record, result = build_gaze_in_wild_model_reference_preflight(source)
+          Path("gaze-in-wild-exact-model-reference-preflight-v1.json").write_text(
+              json.dumps(record, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          print("selected_labeller_id", result.selected_labeller_id)
+          print("selected_participant_count", result.selected_participant_count)
+          print("selected_recording_count", result.selected_recording_count)
+          print("selected_file_count", result.selected_file_count)
+          print("selected_observed_label_codes", result.selected_observed_label_codes)
+          print("stable_source_manifest_sha256", result.stable_source_manifest_sha256)
+          print("preflight_fingerprint_sha256", result.preflight_fingerprint_sha256)
+          PY
+
+      - name: Require pre-performance scientific boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(
+              Path("gaze-in-wild-exact-model-reference-preflight-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          policy = record["selection_policy"]
+          protocol = record["model_protocol_preregistration"]
+          boundary = record["scientific_boundary"]
+          assert policy["uses_label_frequencies_for_selection"] is False
+          assert policy["uses_model_performance_for_selection"] is False
+          assert policy["policy_locked_before_model_execution"] is True
+          assert protocol["task_mapping_used"] is False
+          assert protocol["task_stratified_validation_authorized"] is False
+          assert protocol["analysis_sampling_rate_hz"] == 60.0
+          assert protocol["sampling_origin"] == (
+              "derived_downsampled_from_exact_processed_timestamp_grids"
+          )
+          assert boundary["reference_labeller_preregistered"] is True
+          assert boundary["exact_distribution_model_execution_authorized"] is True
+          for key in (
+              "participant_disjoint_model_validation_created",
+              "task_stratified_model_validation_created",
+              "complete_file_to_publication_task_mapping_verified",
+              "cross_dataset_validation_created",
+              "gp3_validity_claim_created",
+              "quarantine_exit_authorized",
+              "new_empirical_performance_claim_created",
+          ):
+              assert boundary[key] is False, key
+          assert record["raw_dataset_bytes_retained"] is False
+          PY
+
+      - name: Confirm raw LabelData was not retained
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f -name 'PrIdx_*_TrIdx_*_Lbr_*.mat' -print -quit | grep -q .; then
+            echo "Raw GIW LabelData MAT file unexpectedly retained in workspace." >&2
+            exit 1
+          fi
+
+      - name: Upload source-only preflight summaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-exact-model-reference-preflight
+          path: |
+            gaze-in-wild-labeldata-hha-feasibility-probe-v1.json
+            gaze-in-wild-exact-model-reference-preflight-v1.json
+          if-no-files-found: error
+          retention-days: 30
