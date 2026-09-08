@@ -26,7 +26,6 @@ SELECTION_POLICY = (
 _FILENAME_RE = re.compile(
     r"^PrIdx_(?P<participant>\d+)_TrIdx_(?P<trial>\d+)_Lbr_(?P<labeller>\d+)\.mat$"
 )
-_TOKEN_RE = re.compile(r"^PrIdx_(\d+)_TrIdx_(\d+)$")
 _ALLOWED_LABEL_CODES = frozenset(range(6))
 
 
@@ -134,7 +133,9 @@ def _validated_rows(feasibility: Mapping[str, Any]) -> list[dict[str, Any]]:
             raise BenchmarkIntegrityError("GIW model-reference file name is missing.")
         match = _FILENAME_RE.fullmatch(name)
         if match is None or name in names:
-            raise BenchmarkIntegrityError("GIW model-reference filename grammar/uniqueness drifted.")
+            raise BenchmarkIntegrityError(
+                "GIW model-reference filename grammar/uniqueness drifted."
+            )
         participant = int(match.group("participant"))
         trial = int(match.group("trial"))
         labeller = int(match.group("labeller"))
@@ -151,7 +152,11 @@ def _validated_rows(feasibility: Mapping[str, Any]) -> list[dict[str, Any]]:
             f"{name} recording",
         )
         _require(row.get("labeller_id"), labeller, f"{name} labeller")
-        _require(row.get("process_filename"), f"PrIdx_{participant}_TrIdx_{trial}.mat", f"{name} process")
+        _require(
+            row.get("process_filename"),
+            f"PrIdx_{participant}_TrIdx_{trial}.mat",
+            f"{name} process",
+        )
         _require(row.get("filename_struct_labeller_agree"), True, f"{name} LbrIdx agreement")
         _require(row.get("raw_bytes_retained"), False, f"{name} raw-byte retention")
         sample_count = row.get("n_samples")
@@ -323,7 +328,9 @@ def build_gaze_in_wild_model_reference_preflight(
         selected_participant_count=int(selected["participant_count"]),
         selected_recording_count=int(selected["recording_count"]),
         selected_file_count=int(selected["file_count"]),
-        selected_observed_label_codes=tuple(int(value) for value in selected["observed_label_codes"]),
+        selected_observed_label_codes=tuple(
+            int(value) for value in selected["observed_label_codes"]
+        ),
         stable_source_manifest_sha256=stable_manifest,
         preflight_fingerprint_sha256=record["preflight_fingerprint_sha256"],
     )
