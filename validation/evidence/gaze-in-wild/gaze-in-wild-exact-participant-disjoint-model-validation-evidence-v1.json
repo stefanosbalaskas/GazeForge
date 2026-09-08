@@ -1,1 +1,184 @@
-{"claim_limits":["This evidence validates the evaluated GazeForge event models only on the exact original GIW distribution subset selected by the preregistered labeller-coverage policy.","The analysis is task-agnostic because no authoritative universal TrIdx-to-publication-task mapping has been recovered.","The 60 Hz analysis stream is derived by downsampling exact processed GIW timestamp grids; it is not native 60 Hz acquisition evidence and does not validate Gazepoint GP3 hardware.","Labeller 5 is a preregistered single-human reference stream selected by participant/recording coverage, not by model performance.","The result does not create cross-dataset validation, task-stratified validation, GP3 validity, or quarantine exit."],"convergence_review":{"amendment_reason":"all five ContextMLP folds emitted ConvergenceWarning at max_iter=200","from":200,"initial_200_iteration_discovery_rejected_for_review":true,"initial_discovery_artifact_id":10051567756,"initial_discovery_artifact_zip_sha256":"22292e9f011d2546fc89349f0ea5bcb40dfa6d6550d7e2d008d10b18d5a683ef","initial_discovery_run_id":34214673871,"only_parameter_changed":"temporal_max_iter","performance_metrics_used_to_choose_amendment":false,"to":1000,"v2_contextmlp_convergence_warning_count":0,"v2_convergence_requirement_satisfied":true},"evidence_fingerprint_sha256":"7f802bfe02a47262700cfa8a0537974da796d8f3f4e9cd6463d838686224e3ff","metrics":{"event_class_performance":[{"event_label":"blink","f1":0.37142232903648675,"mean_matched_iou":0.8014506753491211,"model":"ContextMLP","n_predicted_events":3491,"n_reference_events":1086,"precision":0.24348324262389,"recall":0.7826887661141805},{"event_label":"fixation","f1":0.14823914823914824,"mean_matched_iou":0.757102221886512,"model":"ContextMLP","n_predicted_events":3341,"n_reference_events":1543,"precision":0.1083507931756959,"recall":0.23460790667530784},{"event_label":"pursuit","f1":0.0030864197530864196,"mean_matched_iou":0.5000000000002183,"model":"ContextMLP","n_predicted_events":321,"n_reference_events":327,"precision":0.003115264797507788,"recall":0.0030581039755351682},{"event_label":"saccade","f1":0.5499373722723977,"mean_matched_iou":0.8368413992305187,"model":"ContextMLP","n_predicted_events":7924,"n_reference_events":7245,"precision":0.5263755678950025,"recall":0.5757073844030366},{"event_label":"vor","f1":0.4563959955506118,"mean_matched_iou":0.8520485371066396,"model":"ContextMLP","n_predicted_events":12090,"n_reference_events":5890,"precision":0.33937138130686517,"recall":0.6966044142614601},{"event_label":"blink","f1":0.0,"mean_matched_iou":0.0,"model":"I-VT","n_predicted_events":0,"n_reference_events":1086,"precision":1.0,"recall":0.0},{"event_label":"fixation","f1":0.10275284864374305,"mean_matched_iou":0.8734399970618674,"model":"I-VT","n_predicted_events":18291,"n_reference_events":1543,"precision":0.05571045869553332,"recall":0.6604018146467919},{"event_label":"noise","f1":0.0,"mean_matched_iou":0.0,"model":"I-VT","n_predicted_events":5846,"n_reference_events":0,"precision":0.0,"recall":1.0},{"event_label":"pursuit","f1":0.0,"mean_matched_iou":0.0,"model":"I-VT","n_predicted_events":0,"n_reference_events":327,"precision":1.0,"recall":0.0},{"event_label":"saccade","f1":0.29020814634354836,"mean_matched_iou":0.7638222111712666,"model":"I-VT","n_predicted_events":16152,"n_reference_events":7245,"precision":0.21019068845963348,"recall":0.46859903381642515},{"event_label":"vor","f1":0.0,"mean_matched_iou":0.0,"model":"I-VT","n_predicted_events":0,"n_reference_events":5890,"precision":1.0,"recall":0.0},{"event_label":"blink","f1":0.25089863407620416,"mean_matched_iou":0.7021506562613687,"model":"RandomForest","n_predicted_events":4478,"n_reference_events":1086,"precision":0.1558731576596695,"recall":0.6427255985267035},{"event_label":"fixation","f1":0.11246458923512748,"mean_matched_iou":0.7866832911498289,"model":"RandomForest","n_predicted_events":5517,"n_reference_events":1543,"precision":0.07195939822367228,"recall":0.2572909915748542},{"event_label":"pursuit","f1":0.008583690987124463,"mean_matched_iou":0.5620731120731085,"model":"RandomForest","n_predicted_events":1071,"n_reference_events":327,"precision":0.0056022408963585435,"recall":0.01834862385321101},{"event_label":"saccade","f1":0.39580144325388145,"mean_matched_iou":0.7952616635973078,"model":"RandomForest","n_predicted_events":11047,"n_reference_events":7245,"precision":0.32769077577622885,"recall":0.4996549344375431},{"event_label":"vor","f1":0.33429997623009267,"mean_matched_iou":0.8078276548384834,"model":"RandomForest","n_predicted_events":15145,"n_reference_events":5890,"precision":0.2321558270056124,"recall":0.5969439728353141}],"fold_core_metrics":[{"balanced_accuracy":0.25340853085490866,"event_f1":0.11867874890382926,"fold":1,"macro_f1":0.11720283434253033,"model":"I-VT"},{"balanced_accuracy":0.457936860977997,"event_f1":0.27086614173228346,"fold":1,"macro_f1":0.4364942181939657,"model":"RandomForest"},{"balanced_accuracy":0.4882222861565221,"event_f1":0.3858453473132372,"fold":1,"macro_f1":0.4630662631371506,"model":"ContextMLP"},{"balanced_accuracy":0.2992678126226286,"event_f1":0.18402961396086728,"fold":2,"macro_f1":0.11906313377983431,"model":"I-VT"},{"balanced_accuracy":0.49154619208049005,"event_f1":0.31456953642384106,"fold":2,"macro_f1":0.4942629180158555,"model":"RandomForest"},{"balanced_accuracy":0.5257936369316925,"event_f1":0.4191205598837977,"fold":2,"macro_f1":0.5327632195107641,"model":"ContextMLP"},{"balanced_accuracy":0.27763345067811473,"event_f1":0.1423636217562465,"fold":3,"macro_f1":0.08912495099566824,"model":"I-VT"},{"balanced_accuracy":0.4775697464351317,"event_f1":0.33792921752876093,"fold":3,"macro_f1":0.4537149547589497,"model":"RandomForest"},{"balanced_accuracy":0.49731495177320423,"event_f1":0.4884586746090842,"fold":3,"macro_f1":0.49169540347045837,"model":"ContextMLP"},{"balanced_accuracy":0.30027120996466483,"event_f1":0.18671574368412247,"fold":4,"macro_f1":0.15749195347914016,"model":"I-VT"},{"balanced_accuracy":0.5123001474884536,"event_f1":0.26671040761092424,"fold":4,"macro_f1":0.5061420766317121,"model":"RandomForest"},{"balanced_accuracy":0.5380425086759809,"event_f1":0.4118881891503702,"fold":4,"macro_f1":0.5399341797302176,"model":"ContextMLP"},{"balanced_accuracy":0.2847069743680148,"event_f1":0.1521898703205285,"fold":5,"macro_f1":0.09972432613216049,"model":"I-VT"},{"balanced_accuracy":0.5473083382266128,"event_f1":0.35264663805436336,"fold":5,"macro_f1":0.4856088854591235,"model":"RandomForest"},{"balanced_accuracy":0.5722803649697645,"event_f1":0.4723523898781631,"fold":5,"macro_f1":0.5304499330192839,"model":"ContextMLP"}],"full_benchmark_report_fingerprint_sha256":"a317075bcb2f9f2bb9d1475f136c2d6d0922373707d7dab50e3ce2378541e745","paired_model_difference_summary_core":[{"mean_delta_a_minus_b":-0.21427466134407075,"metric":"balanced_accuracy","model_a":"I-VT","model_b":"RandomForest","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5},{"mean_delta_a_minus_b":-0.3587231708660546,"metric":"macro_f1","model_a":"I-VT","model_b":"RandomForest","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5},{"mean_delta_a_minus_b":-0.15174886854491582,"metric":"event_f1","model_a":"I-VT","model_b":"RandomForest","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5},{"mean_delta_a_minus_b":-0.24127315400376653,"metric":"balanced_accuracy","model_a":"I-VT","model_b":"ContextMLP","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5},{"mean_delta_a_minus_b":-0.3950603600277082,"metric":"macro_f1","model_a":"I-VT","model_b":"ContextMLP","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5},{"mean_delta_a_minus_b":-0.27873751244181166,"metric":"event_f1","model_a":"I-VT","model_b":"ContextMLP","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5},{"mean_delta_a_minus_b":-0.026998492659695783,"metric":"balanced_accuracy","model_a":"RandomForest","model_b":"ContextMLP","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5},{"mean_delta_a_minus_b":-0.03633718916165363,"metric":"macro_f1","model_a":"RandomForest","model_b":"ContextMLP","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5},{"mean_delta_a_minus_b":-0.12698864389689588,"metric":"event_f1","model_a":"RandomForest","model_b":"ContextMLP","n_paired_folds":5,"ties":0,"wins_model_a":0,"wins_model_b":5}],"sample_event_class_performance":[{"event_label":"blink","f1":0.6902047881895679,"model":"ContextMLP","precision":0.6316355810616929,"recall":0.7607459140326878,"support":13889},{"event_label":"fixation","f1":0.42651270419501913,"model":"ContextMLP","precision":0.5378481451519704,"recall":0.3533654758741126,"support":26341},{"event_label":"pursuit","f1":0.04565182446552001,"model":"ContextMLP","precision":0.2704761904761905,"recall":0.024929775280898875,"support":5696},{"event_label":"saccade","f1":0.6566417374178266,"model":"ContextMLP","precision":0.704431247144815,"recall":0.6149244803349783,"support":20061},{"event_label":"vor","f1":0.7974620778984224,"model":"ContextMLP","precision":0.7450060976186199,"recall":0.8578644285512121,"support":91863},{"event_label":"blink","f1":0.0,"model":"I-VT","precision":0.0,"recall":0.0,"support":13889},{"event_label":"fixation","f1":0.36704757539045874,"model":"I-VT","precision":0.233973054485875,"recall":0.8511446034698759,"support":26341},{"event_label":"pursuit","f1":0.0,"model":"I-VT","precision":0.0,"recall":0.0,"support":5696},{"event_label":"saccade","f1":0.35999684517706443,"model":"I-VT","precision":0.2633267180504915,"recall":0.5688151139025971,"support":20061},{"event_label":"vor","f1":0.0,"model":"I-VT","precision":0.0,"recall":0.0,"support":91863},{"event_label":"blink","f1":0.5717764675724173,"model":"RandomForest","precision":0.5151567642473583,"recall":0.6423788609691122,"support":13889},{"event_label":"fixation","f1":0.47697826545684746,"model":"RandomForest","precision":0.5369376217397501,"recall":0.4290649557723701,"support":26341},{"event_label":"pursuit","f1":0.07687120701281187,"model":"RandomForest","precision":0.16579406631762653,"recall":0.05003511235955056,"support":5696},{"event_label":"saccade","f1":0.5444801714898178,"model":"RandomForest","precision":0.5324186556143109,"recall":0.5571008424305867,"support":20061},{"event_label":"vor","f1":0.7696768892305246,"model":"RandomForest","precision":0.750155003513413,"recall":0.7902419907906338,"support":91863}],"summary":[{"accuracy_mean":0.21058075749931282,"balanced_accuracy_mean":0.2830575956976663,"event_f1_mean":0.1567955197251188,"event_mean_abs_duration_error_ms_mean":18.58849748282196,"event_mean_abs_offset_error_ms_mean":7.659249138890592,"event_mean_abs_onset_error_ms_mean":12.819609350374005,"event_mean_matched_iou_mean":0.787427134069847,"event_precision_mean":0.10994042531679478,"event_recall_mean":0.2743816056121594,"expected_calibration_error_mean":null,"macro_f1_mean":0.1165214397458667,"model":"I-VT","multiclass_brier_score_mean":null,"n_folds":5},{"accuracy_mean":0.661543198662787,"balanced_accuracy_mean":0.497332257041737,"event_f1_mean":0.3085443882700346,"event_mean_abs_duration_error_ms_mean":34.617687472914966,"event_mean_abs_offset_error_ms_mean":16.76290752984101,"event_mean_abs_onset_error_ms_mean":21.401195840498453,"event_mean_matched_iou_mean":0.7903325159100156,"event_precision_mean":0.22203589678673877,"event_recall_mean":0.5094944869056979,"expected_calibration_error_mean":0.06863781781516455,"macro_f1_mean":0.4752446106119213,"model":"RandomForest","multiclass_brier_score_mean":0.4883256399155681,"n_folds":5},{"accuracy_mean":0.7056019328805043,"balanced_accuracy_mean":0.5243307497014328,"event_f1_mean":0.4355330321669305,"event_mean_abs_duration_error_ms_mean":30.381230401295653,"event_mean_abs_offset_error_ms_mean":15.473279492170409,"event_mean_abs_onset_error_ms_mean":17.592130847600604,"event_mean_matched_iou_mean":0.8354491132643448,"event_precision_mean":0.3471680119412025,"event_recall_mean":0.585635011713016,"expected_calibration_error_mean":0.06885519367137441,"macro_f1_mean":0.5115817997735749,"model":"ContextMLP","multiclass_brier_score_mean":0.430119449288865,"n_folds":5}]},"record_type":"gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1","reviewed_on":"2026-09-08","scientific_boundary":{"acquisition_hardware_cadence_verified_by_this_validation":false,"complete_file_to_publication_task_mapping_verified":false,"cross_dataset_validation_created":false,"gp3_validity_claim_created":false,"native_gp3_or_native_60hz_validity_created":false,"new_empirical_performance_claim_created":true,"participant_disjoint_model_validation_created":true,"performance_evidence_reviewed":true,"quarantine_exit_authorized":false,"raw_dataset_bytes_retained":false,"task_stratified_model_validation_created":false},"source_binding":{"benchmark_report_fingerprint_sha256":"a317075bcb2f9f2bb9d1475f136c2d6d0922373707d7dab50e3ce2378541e745","certified_main_parent_sha":"25de300462c123bbc9563fc8107d08d55857a154","discovery_artifact_id":10052349927,"discovery_artifact_zip_sha256":"c136407a2db519508503c0fb736fd051aff67ef1ee1cc3f392195a4f4503450a","discovery_fingerprint_sha256":"5d28bd2917fedf6071552d84d04f0eb3de08266d6c88e6c07144f2bd9351dee0","discovery_workflow_head_sha":"3f47e1914f1db895c1cfa51676e8bd89cbf94991","discovery_workflow_job_id":102029002501,"discovery_workflow_run_id":34216383450,"execution_protocol_v2_fingerprint_sha256":"a81df34f66f9fd35a28195f768a959d55d57a8f449a916e671355c07de910e66","preparation_protocol_v1_fingerprint_sha256":"e07ad1c15b8964e6e012e05d37b6eb989f36380ffdf307590b36273b5f8485e5","reference_manifest_fingerprint_sha256":"5688c283d5f1a199ef760994b4df655e42e4f27c4dd767cfb54760a4aa6816f9","reviewed_exact_byte_evidence_fingerprint_sha256":"dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00","reviewed_por_semantics_evidence_fingerprint_sha256":"5eb245979385283571d6d9a5dda9a5d74dea6c00165bbe3a2587fcfa80e9adfb","reviewed_processdata_structure_evidence_fingerprint_sha256":"cffcc8a10d176cc5eb8c15c080cf450e3e1b1404ced00ea8907cdd4ee3c3517f","reviewed_reference_preflight_evidence_fingerprint_sha256":"aff7b7b1576b9a1eee6a774183ba4f8404052226cdcb984a4112120bbc5bea67","stable_scientific_identity_sha256":"580b147f889ad7e4116ef2393444016829794ced0c387a48f0372768cc8d8ed8","stable_verified_pair_manifest_sha256":"1c129f4c2c18f78dbc41892eff476374f5ccdaaf6ee90d22d1a5808d6fdc2407"},"split_integrity":{"all_models_share_identical_oof_rows":true,"fold_count":5,"fold_participant_assignments":[{"participant_id":"PrIdx_2","validation_fold":1},{"participant_id":"PrIdx_22","validation_fold":1},{"participant_id":"PrIdx_1","validation_fold":2},{"participant_id":"PrIdx_4","validation_fold":2},{"participant_id":"PrIdx_12","validation_fold":3},{"participant_id":"PrIdx_18","validation_fold":3},{"participant_id":"PrIdx_3","validation_fold":3},{"participant_id":"PrIdx_19","validation_fold":4},{"participant_id":"PrIdx_20","validation_fold":4},{"participant_id":"PrIdx_8","validation_fold":4},{"participant_id":"PrIdx_17","validation_fold":5},{"participant_id":"PrIdx_6","validation_fold":5}],"group_col":"participant_id","oof_row_count_per_model":157850,"participant_count":12,"participant_disjoint":true},"status":"reviewed-exact-original-giw-task-agnostic-participant-disjoint-derived-60hz-model-validation","validation_scope":{"analysis_row_count":157850,"analysis_sampling_rate_hz":60.0,"dataset":"Gaze-in-the-Wild original publication Figshare distribution","derived_60hz_rows_before_exclusions":318145,"excluded_rows":160295,"fold_count":5,"label_counts_analysis":{"blink":13889,"fixation":26341,"pursuit":5696,"saccade":20061,"vor":91863},"participant_count":12,"participant_group_key":"PrIdx distribution-native participant token","recording_count":18,"reference_labeller_id":5,"reference_strength":"derived-human-reference","sampling_origin":"derived_downsampled_from_exact_processed_timestamp_grids","source_confidence_threshold":0.3,"source_sample_count":1590659,"task_mapping_used":false,"task_stratified_validation_created":false,"trial_key":"TrIdx distribution-native opaque trial token"}}
+{
+  "claim_limits": [
+    "Labeller 5 is a preregistered human reference stream, not error-free ground truth.",
+    "The benchmark uses exact original ProcessData and LabelData but a derived 60-Hz analysis grid; it is not native 60-Hz or GP3 validation.",
+    "Participant-held-out performance is task-agnostic because no authoritative TrIdx-to-task mapping was used or inferred.",
+    "No cross-dataset generalization result or quarantine-exit authorization is created by this evidence.",
+    "Aggregate learned-model performance must not be interpreted as uniformly strong event recognition; pursuit detection is specifically weak.",
+    "Cross-validation fold differences are descriptive and are not treated as independent replicates for naive inferential p-values."
+  ],
+  "convergence_review": {
+    "accept_metrics_regardless_of_direction": true,
+    "from": 200,
+    "initial_200_iteration_discovery_rejected_for_review": true,
+    "only_parameter_changed": "temporal_max_iter",
+    "performance_metrics_used_to_choose_amendment": false,
+    "to": 1000,
+    "v2_contextmlp_convergence_warning_count": 0,
+    "v2_convergence_requirement_satisfied": true
+  },
+  "evidence_fingerprint_sha256": "fa45366ea855a0bad662514c42187ffe3d24e5ce8e191a351c8c9b478325df6f",
+  "metrics": {
+    "full_benchmark_report_fingerprint_sha256": "170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f",
+    "pursuit_failure_case": {
+      "analysis_support": 5696,
+      "models": {
+        "ContextMLP": {
+          "event_f1": 0.0029585798816568047,
+          "event_precision": 0.0028653295128939827,
+          "event_recall": 0.0030581039755351682,
+          "matched_reference_events": 1,
+          "predicted_events": 349,
+          "sample_f1": 0.0547112462006079,
+          "sample_precision": 0.3081081081081081,
+          "sample_recall": 0.030021067415730338
+        },
+        "I-VT": {
+          "event_f1": 0.0,
+          "event_precision": 1.0,
+          "event_recall": 0.0,
+          "matched_reference_events": 0,
+          "predicted_events": 0,
+          "sample_f1": 0.0,
+          "sample_precision": 0.0,
+          "sample_recall": 0.0
+        },
+        "RandomForest": {
+          "event_f1": 0.008583690987124463,
+          "event_precision": 0.0056022408963585435,
+          "event_recall": 0.01834862385321101,
+          "matched_reference_events": 6,
+          "predicted_events": 1071,
+          "sample_f1": 0.07687120701281187,
+          "sample_precision": 0.16579406631762653,
+          "sample_recall": 0.05003511235955056
+        }
+      },
+      "reference_event_count": 327
+    },
+    "section_fingerprints_sha256": {
+      "analysis_label_counts": "e159cc1962a14693bfbfffcc723df60254cfab1e34866ec59c4c1946b0b942d1",
+      "event_class_performance": "47f323d75affba71190bebc2193468f59e7ed957fd664e4b152f19137e57ef57",
+      "fold_metrics": "0e1350e49240c76ffd9e5381fed3c689f48cd6dc3052b4df59a0d54aa935401d",
+      "paired_model_difference_summary": "ba632f6acb79104a97b5310038f3912cf44c2b5806759d099f18da0d1c6bb1ee",
+      "paired_model_fold_deltas": "ff8935ee8b06a3dca1a71f2b1c9540229a4d4594e7617ffc1e81d2ecc98da25c",
+      "sample_event_class_performance": "dee5f5a08f351e364c2224d43c761a7c537ca9a1800b44c5048b5cda7a8e33e0",
+      "summary": "651958828cd8eef539e30abe990c32c490f8c933916e689ab08bca469add5662",
+      "task_fold_metrics": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "task_summary": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "section_row_counts": {
+      "analysis_label_counts": 5,
+      "event_class_performance": 16,
+      "fold_metrics": 15,
+      "paired_model_difference_summary": 36,
+      "paired_model_fold_deltas": 160,
+      "sample_event_class_performance": 15,
+      "summary": 3,
+      "task_fold_metrics": 0,
+      "task_summary": 0
+    },
+    "summary_core": [
+      {
+        "balanced_accuracy_mean": 0.2830575956976663,
+        "event_f1_mean": 0.1567955197251188,
+        "macro_f1_mean": 0.1165214397458667,
+        "model": "I-VT",
+        "n_folds": 5
+      },
+      {
+        "balanced_accuracy_mean": 0.497332257041737,
+        "event_f1_mean": 0.3085443882700346,
+        "macro_f1_mean": 0.4752446106119213,
+        "model": "RandomForest",
+        "n_folds": 5
+      },
+      {
+        "balanced_accuracy_mean": 0.5285607220412606,
+        "event_f1_mean": 0.4395648140542133,
+        "macro_f1_mean": 0.5192210487515447,
+        "model": "ContextMLP",
+        "n_folds": 5
+      }
+    ]
+  },
+  "record_type": "gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1",
+  "reviewed_on": "2026-09-08",
+  "scientific_boundary": {
+    "acquisition_hardware_cadence_verified_by_this_validation": false,
+    "complete_file_to_publication_task_mapping_verified": false,
+    "cross_dataset_validation_created": false,
+    "event_class_sensitivity_created": true,
+    "gp3_validity_claim_created": false,
+    "native_gp3_or_native_60hz_validity_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": true,
+    "performance_evidence_reviewed": true,
+    "quarantine_exit_authorized": false,
+    "raw_dataset_bytes_retained": false,
+    "task_stratified_model_validation_created": false
+  },
+  "source_binding": {
+    "benchmark_report_fingerprint_sha256": "170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f",
+    "discovery_artifact_id": 10075402142,
+    "discovery_artifact_zip_sha256": "3406abd4eddc080b9b72687e3b164d863fe0d925782c746d4b369c48dfcbdf87",
+    "discovery_fingerprint_sha256": "0623353dda03ab6f5988c671cbc6dd5e82af8fb30b84a18bd9364c3aae5e4513",
+    "discovery_workflow_head_sha": "9d2c5cd9c274527615e4e30b2feb53da2e20e523",
+    "discovery_workflow_job_id": 102221217862,
+    "discovery_workflow_run_id": 34273647914,
+    "execution_protocol_v2_fingerprint_sha256": "a81df34f66f9fd35a28195f768a959d55d57a8f449a916e671355c07de910e66",
+    "preparation_protocol_v1_fingerprint_sha256": "e07ad1c15b8964e6e012e05d37b6eb989f36380ffdf307590b36273b5f8485e5",
+    "reference_manifest_fingerprint_sha256": "5688c283d5f1a199ef760994b4df655e42e4f27c4dd767cfb54760a4aa6816f9",
+    "reviewed_exact_byte_evidence_fingerprint_sha256": "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00",
+    "reviewed_por_semantics_evidence_fingerprint_sha256": "5eb245979385283571d6d9a5dda9a5d74dea6c00165bbe3a2587fcfa80e9adfb",
+    "reviewed_processdata_structure_evidence_fingerprint_sha256": "cffcc8a10d176cc5eb8c15c080cf450e3e1b1404ced00ea8907cdd4ee3c3517f",
+    "reviewed_reference_preflight_evidence_fingerprint_sha256": "aff7b7b1576b9a1eee6a774183ba4f8404052226cdcb984a4112120bbc5bea67",
+    "stable_scientific_identity_sha256": "772d632d8671e058407d0fe9fdfcd291c0371a45682ec9dfd145861a924eaf46",
+    "stable_verified_pair_manifest_sha256": "1c129f4c2c18f78dbc41892eff476374f5ccdaaf6ee90d22d1a5808d6fdc2407"
+  },
+  "split_integrity": {
+    "all_models_share_identical_oof_rows": true,
+    "fold_count": 5,
+    "fold_participant_assignments": [
+      {"participant_id": "PrIdx_2", "validation_fold": 1},
+      {"participant_id": "PrIdx_22", "validation_fold": 1},
+      {"participant_id": "PrIdx_1", "validation_fold": 2},
+      {"participant_id": "PrIdx_4", "validation_fold": 2},
+      {"participant_id": "PrIdx_12", "validation_fold": 3},
+      {"participant_id": "PrIdx_18", "validation_fold": 3},
+      {"participant_id": "PrIdx_3", "validation_fold": 3},
+      {"participant_id": "PrIdx_19", "validation_fold": 4},
+      {"participant_id": "PrIdx_20", "validation_fold": 4},
+      {"participant_id": "PrIdx_8", "validation_fold": 4},
+      {"participant_id": "PrIdx_17", "validation_fold": 5},
+      {"participant_id": "PrIdx_6", "validation_fold": 5}
+    ],
+    "group_col": "participant_id",
+    "oof_row_count_per_model": 157850,
+    "participant_count": 12,
+    "participant_disjoint": true
+  },
+  "status": "reviewed-convergence-qualified-participant-disjoint-evidence",
+  "validation_scope": {
+    "analysis_row_count": 157850,
+    "analysis_sampling_rate_hz": 60.0,
+    "dataset": "Gaze-in-the-Wild",
+    "derived_60hz_rows_before_exclusions": 318145,
+    "distribution": "official original Figshare ProcessData + LabelData",
+    "excluded_rows": 160295,
+    "label_counts_analysis": {
+      "blink": 13889,
+      "fixation": 26341,
+      "pursuit": 5696,
+      "saccade": 20061,
+      "vor": 91863
+    },
+    "participant_count": 12,
+    "recording_count": 18,
+    "reference_labeller_id": 5,
+    "source_confidence_threshold": 0.3,
+    "source_sample_count": 1590659,
+    "task_mapping_used": false,
+    "task_stratified_validation_created": false
+  }
+}
