@@ -31,6 +31,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   exact-participant-disjoint-validation:
     runs-on: ubuntu-24.04
@@ -124,7 +128,7 @@ jobs:
           assert record["raw_dataset_bytes_retained"] is False
           PY
 
-      - name: Require exact reproduction of reviewed performance evidence
+      - name: Require cross-run reproduction of reviewed performance evidence
         run: |
           python - <<'PY'
           import json
@@ -144,14 +148,15 @@ jobs:
               "validation/evidence/gaze-in-wild/"
               "gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1.json"
           )
-          identity = validate_fresh_gaze_in_wild_validation_discovery(
+          signature = validate_fresh_gaze_in_wild_validation_discovery(
               discovery,
               reviewed,
           )
-          print(f"Reviewed GIW scientific identity reproduced: {identity}")
+          print(f"Reviewed GIW cross-run signature reproduced: {signature}")
           PY
 
       - name: Confirm raw GIW MAT files were not retained
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
@@ -160,7 +165,8 @@ jobs:
             exit 1
           fi
 
-      - name: Upload convergence-qualified discovery summary only
+      - name: Upload convergence-qualified discovery summary
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gaze-in-wild-exact-participant-disjoint-validation-discovery-v2
