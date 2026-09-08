@@ -85,11 +85,11 @@ The reviewed evidence intentionally preserves the weakest class rather than hidi
 
 ContextMLP therefore has the strongest aggregate balanced accuracy, macro-F1, and event-F1 in this exact benchmark while still detecting pursuit events very poorly. Aggregate superiority must not be restated as uniformly strong event recognition.
 
-## Cryptographic evidence binding
+## Evidence binding and cross-run reproducibility
 
 The reviewed compact evidence record binds the complete metric sections without copying the full discovery report into the repository. It binds all 15 fold-metric rows, all 160 paired-fold deltas, 36 paired-model summary rows, 15 sample-class rows, 16 event-class rows, the three model summaries, class counts, and the deliberately empty task-specific sections.
 
-Key identifiers for the reviewed source run are:
+Key identifiers for the **reviewed source run** are:
 
 - exact discovery workflow run: `34273647914`;
 - job: `102221217862`;
@@ -99,10 +99,19 @@ Key identifiers for the reviewed source run are:
 - discovery fingerprint: `0623353dda03ab6f5988c671cbc6dd5e82af8fb30b84a18bd9364c3aae5e4513`;
 - benchmark-report fingerprint: `170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f`;
 - stable verified-pair manifest: `1c129f4c2c18f78dbc41892eff476374f5ccdaaf6ee90d22d1a5808d6fdc2407`;
-- stable scientific identity: `772d632d8671e058407d0fe9fdfcd291c0371a45682ec9dfd145861a924eaf46`;
-- reviewed compact evidence fingerprint: `fa45366ea855a0bad662514c42187ffe3d24e5ce8e191a351c8c9b478325df6f`.
+- historical source-run scientific identity: `772d632d8671e058407d0fe9fdfcd291c0371a45682ec9dfd145861a924eaf46`;
+- reviewed compact evidence fingerprint: `b2fe85ec7e5d5cd425c0cd2593742bab835686c3f560d8a6c06e9c6d67dc547a`.
 
-The dedicated GitHub Actions workflow reruns the exact v2 discovery and fail-closes unless the source-pair manifest, convergence status, split, complete metric-section fingerprints, pursuit failure case, benchmark fingerprint, and stable scientific identity all reproduce exactly.
+Whole-discovery and whole-report hashes above are immutable provenance for that reviewed run. They are **not** used as a cross-run equality requirement because floating outputs from the same deterministic scientific protocol can differ below meaningful precision across hosted numerical backends.
+
+Cross-run certification instead preserves exact source bytes and identities, participant assignments, row/class counts, exclusions, convergence state, protocol identities, and scientific-boundary flags. Floating benchmark outputs are canonicalized to **8 decimal places** before section signatures are compared. This is substantially tighter than the precision used for scientific reporting while avoiding false failures caused solely by sub-precision numerical backend differences.
+
+The frozen cross-run identifiers are:
+
+- 8-decimal benchmark-envelope fingerprint: `8f1f4e37848d966957ea8ffb771fa418d43ee6254f9762590e02a1840285dc36`;
+- cross-run reproducibility signature: `f8c8d27ddbb1fe065a15df18d53c9fa84544315ef57cf2783554b236839ff286`.
+
+The dedicated GitHub Actions workflow re-downloads and re-verifies all selected exact source pairs, reruns the convergence-qualified v2 benchmark, verifies each fresh discovery/report fingerprint against its **own** body, and then fail-closes unless the exact non-floating identities and 8-decimal scientific signatures reproduce. The diagnostic discovery artifact and raw-byte cleanup check run even when certification fails.
 
 ## Optional task sensitivity infrastructure
 
@@ -133,4 +142,4 @@ The following remain false/closed:
 - quarantine exit;
 - raw dataset retention.
 
-This distinction is intentional. The repository now contains reviewed **Gaze-in-the-Wild participant-disjoint evidence under one frozen exact protocol**, while broader performance/generalization/device claims remain outside the evidence actually created by this tranche.
+This distinction is intentional. The repository contains reviewed **Gaze-in-the-Wild participant-disjoint evidence under one frozen exact protocol**, while broader performance/generalization/device claims remain outside the evidence actually created by this tranche.
