@@ -8,6 +8,8 @@ on:
       - research/gaze-in-wild-exact-participant-disjoint-model-validation
     paths:
       - ".github/workflows/gaze-in-wild-exact-participant-disjoint-validation.yml"
+      - "docs/gaze-in-wild-model-validation.md"
+      - "docs/validation-status.md"
       - "scripts/run_gaze_in_wild_exact_participant_disjoint_validation.py"
       - "scripts/run_gaze_in_wild_exact_participant_disjoint_validation_v2.py"
       - "src/gazeforge/gaze_in_wild_exact_validation.py"
