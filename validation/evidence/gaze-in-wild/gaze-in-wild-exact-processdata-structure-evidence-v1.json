@@ -1,0 +1,93 @@
+{
+  "claim_limits": [
+    "The frozen rate ledger describes ProcessData.T processed grids; it is not acquisition-hardware cadence.",
+    "PrIdx and TrIdx remain distribution-native identity tokens; no file-to-publication-task mapping is inferred.",
+    "ETG.Labels presence is structural only and is not treated as separately distributed or independent human LabelData.",
+    "The normalized POR semantic binding comes from reviewed first-party processing code plus exact-file structural agreement; corpus-wide POR value ranges were not empirically audited here.",
+    "Participant-disjoint split keys make task-agnostic partitioning structurally available, but no GazeForge model validation is created by this evidence.",
+    "ProcessData_cleaned remains excluded and no raw MAT data are retained or redistributed."
+  ],
+  "coordinate_semantics_binding": {
+    "all_exact_processdata_files_structurally_match_semantic_fields": true,
+    "canonical_pixel_conversion": {"x_px": "por_x * scene_width_px", "y_px": "por_y * scene_height_px"},
+    "corpus_wide_por_value_ranges_empirically_verified": false,
+    "first_party_semantics_evidence_fingerprint_sha256": "5eb245979385283571d6d9a5dda9a5d74dea6c00165bbe3a2587fcfa80e9adfb",
+    "normalized_por_to_canonical_pixels_supported": true,
+    "processdata_por_coordinate_space": "normalized_scene_image",
+    "scene_resolution_metadata_unit": "pixels",
+    "scene_resolution_px": [1920, 1080]
+  },
+  "distributed_labeldata_pairing": {
+    "all_labeldata_recording_tokens_have_processdata_match": true,
+    "labeldata_file_count": 50,
+    "labeller_indices": [1, 2, 3, 5, 6],
+    "participant_count": 16,
+    "participant_disjoint_split_keys_available": true,
+    "participant_indices": [1, 2, 3, 4, 6, 8, 9, 10, 12, 15, 16, 17, 18, 19, 20, 22],
+    "processdata_tokens_without_distributed_labeldata_count": 31,
+    "recording_token_count": 37
+  },
+  "evidence_fingerprint_sha256": "cffcc8a10d176cc5eb8c15c080cf450e3e1b1404ced00ea8907cdd4ee3c3517f",
+  "raw_dataset_bytes_retained": false,
+  "record_type": "gaze-in-wild-exact-processdata-structure-evidence-v1",
+  "reviewed_on": "2026-09-08",
+  "scientific_boundary": {
+    "acquisition_hardware_cadence_verified": false,
+    "complete_file_to_publication_task_mapping_verified": false,
+    "corpus_wide_por_value_ranges_empirically_verified": false,
+    "cross_dataset_validation_created": false,
+    "exact_original_processdata_structure_verified": true,
+    "gp3_validity_claim_created": false,
+    "labeldata_processdata_recording_token_pairing_complete": true,
+    "new_model_performance_claim_created": false,
+    "normalized_por_semantics_bound_to_exact_distribution": true,
+    "participant_disjoint_model_validation_created": false,
+    "per_file_processed_timestamp_grid_rate_distribution_frozen": true,
+    "quarantine_exit_authorized": false,
+    "task_agnostic_participant_disjoint_input_partitioning_available": true,
+    "task_stratified_model_validation_feasible": false
+  },
+  "source_binding": {
+    "discovery_artifact_id": 10045524274,
+    "discovery_artifact_zip_sha256": "e51138b34c6e7c4ddcc8fa3ffd825884485019bf05270072d6abee97990f638e",
+    "discovery_probe_fingerprint_sha256": "bbd7b0498f4d3b48e435bb0a79efd72d794e59e38fa31ccc73c2577bb95dd66b",
+    "discovery_workflow_head_sha": "a9fa2e91ffdb1eb9eb6603d393060dc71eced9ee",
+    "discovery_workflow_job_id": 101976365230,
+    "discovery_workflow_run_id": 34199996646,
+    "figshare_project_id": 74580,
+    "labeldata_article_id": 11673696,
+    "labeldata_doi": "10.6084/m9.figshare.11673696.v1",
+    "processdata_article_id": 11673645,
+    "processdata_doi": "10.6084/m9.figshare.11673645.v1",
+    "processdata_sha256_ledger_evidence_fingerprint_sha256": "85f131389315a1185e3a8973629c8e5ee3417bb73704de8054366e508af0a2e2",
+    "processdata_sha256_manifest_sha256": "162bf688fbd0bfdaf79a11d423f3689abd31bea9a4e8423bc03020ebd598354d",
+    "processed_rate_ledger_evidence_fingerprint_sha256": "1bd6643bd0c75faec9d070f74fb719f9178caa2da7e90bcbe356a0dbc5f38905",
+    "reviewed_exact_byte_evidence_fingerprint_sha256": "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00",
+    "reviewed_por_coordinate_semantics_evidence_fingerprint_sha256": "5eb245979385283571d6d9a5dda9a5d74dea6c00165bbe3a2587fcfa80e9adfb",
+    "stable_corpus_structure_fingerprint_sha256": "86c4c94742ada7eceee3d44ef9c1c11a81621acd533bbb4e28aef3f6e3976443",
+    "stable_file_structure_manifest_sha256": "d82c3db448d71676240dabc66452fa7ef3c030f8390e3b0bb0fa56b30392e7fb"
+  },
+  "status": "verified-exact-original-processdata-structure-rate-pairing-and-normalized-por-binding",
+  "verified_processdata": {
+    "all_adapter_coordinate_fields_compatible": true,
+    "all_etg_labels_present": true,
+    "all_filename_internal_pridx_tridx_agree": true,
+    "all_files_matched_frozen_size_md5_and_reviewed_sha256": true,
+    "all_scene_resolutions_1920x1080": true,
+    "all_timestamp_grids_valid": true,
+    "file_count": 68,
+    "inferred_processed_timestamp_grid_rate_summary": {
+      "count": 68,
+      "distinct_rounded_6dp_hz": [299.988598, 299.990148, 299.990745, 299.991112, 299.9914, 299.991707, 299.991926, 299.991982, 299.992357, 299.992435, 299.992765, 299.992973, 299.993027, 299.993094, 299.993436, 299.993447, 299.993779, 299.993844, 299.993874, 299.993916, 299.994136, 299.994215, 299.994244, 299.994263, 299.99431, 299.994448, 299.994483, 299.994496, 299.994569, 299.994649, 299.994655, 299.994672, 299.994723, 299.994752, 299.994936, 299.994943, 299.995146, 299.995181, 299.995224, 299.995291, 299.99535, 299.995372, 299.995474, 299.995528, 299.995552, 299.995593, 299.995594, 299.995614, 299.995622, 299.99565, 299.99566, 299.995684, 299.995713, 299.995821, 299.995889, 299.995907, 299.996002, 299.996101, 299.99617, 299.996204, 299.996209, 299.996496, 299.996511, 299.996711, 299.997141, 299.997292, 299.997564, 299.997656],
+      "max_hz": 299.9976557817862,
+      "median_hz": 299.9948438624359,
+      "min_hz": 299.98859845584474
+    },
+    "participant_count": 20,
+    "participant_indices": [1, 2, 3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23],
+    "recording_token_count": 68,
+    "stored_rate_summary": {"count": 68, "distinct_rounded_6dp_hz": [300.0], "max_hz": 300.0, "median_hz": 300.0, "min_hz": 300.0},
+    "top_level_labeldata_present_in_any_processdata_file": false,
+    "total_size_bytes": 2384573418
+  }
+}
