@@ -9,6 +9,15 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+from run_gaze_in_wild_exact_participant_disjoint_validation import (
+    EXPECTED_PROCESS_LEDGER_FINGERPRINT,
+    _download_verified,
+    _files_by_name,
+    _item_by_label,
+    _load_json,
+    _process_sha_map,
+)
+
 from gazeforge.benchmarks import benchmark_fingerprint
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.gaze_in_wild_exact_validation import (
@@ -23,15 +32,6 @@ from gazeforge.gaze_in_wild_exact_validation_v2 import (
     EXECUTION_PROTOCOL_V2_FINGERPRINT,
     run_exact_gaze_in_wild_model_validation_v2,
     validate_exact_execution_protocol_v2,
-)
-
-from run_gaze_in_wild_exact_participant_disjoint_validation import (
-    EXPECTED_PROCESS_LEDGER_FINGERPRINT,
-    _download_verified,
-    _files_by_name,
-    _item_by_label,
-    _load_json,
-    _process_sha_map,
 )
 
 
