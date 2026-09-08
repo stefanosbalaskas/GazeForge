@@ -18,7 +18,7 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 | **Lund2013** | paired expert manual labels | 500 Hz | **Frozen external evidence available**: native and derived-60-Hz MN/RA agreement; derived-60-Hz participant-held-out I-VT/RF/ContextMLP comparison; MN annotator sensitivity; stimulus-family summaries; 120/90/60/30-Hz × .60/.75/.90 purity sensitivity | native 60-Hz/GP3-class expert-labelled events still required for device-specific validity |
 | **Native 60 Hz / GP3-class event corpus** | intended expert manual labels | 60 Hz | **Infrastructure validated, empirical execution pending**: strict native-rate intake, source/spec fingerprints, complete multi-annotator sample/gaze-identity verification, all-label and analysis-label human agreement, bidirectional event-boundary agreement, participant-held-out I-VT/RF/ContextMLP comparison, event metrics, three-report suite orchestration/verification, and non-executable protocol template | collect or independently obtain a real authoritative native corpus; document expert annotation protocol; freeze and review the complete native suite |
 | **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit student/expert streams; exact-source audit contract; common-label harmonisation; leave-one-dataset-out infrastructure with source-audit requirement | obtain and audit an authoritative local copy; verify real identity/coordinate/reuse evidence; freeze annotator sensitivity and cross-dataset reports |
-| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **Frozen exact-distribution participant-disjoint evidence available**: all selected LabelData/ProcessData pairs reverified; exact timestamp-vector equality; preregistered labeller-5 reference; derived 60-Hz 5-fold participant-held-out I-VT/RF/ContextMLP comparison; complete sample/event class sensitivity; convergence-qualified ContextMLP; cryptographically bound metric sections and live exact-reproduction gate | authoritative `TrIdx`→task mapping and task-stratified validation; cross-dataset validation; native-60-Hz/GP3 evidence; acquisition-hardware cadence verification; quarantine exit remain open |
+| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **Frozen exact-distribution participant-disjoint evidence available**: all selected LabelData/ProcessData pairs reverified; exact timestamp-vector equality; preregistered labeller-5 reference; derived 60-Hz 5-fold participant-held-out I-VT/RF/ContextMLP comparison; complete sample/event class sensitivity; convergence-qualified ContextMLP; immutable source-run provenance plus 8-decimal cross-run scientific-signature certification | authoritative `TrIdx`→task mapping and task-stratified validation; cross-dataset validation; native-60-Hz/GP3 evidence; acquisition-hardware cadence verification; quarantine exit remain open |
 | **VISUS** | one published curated AOI annotation process involving two human contributors | 60 Hz | **Infrastructure validated, empirical execution pending**: exact-source audit; reviewed human-reference canonical intake; audited model-prediction intake; explicit external-grid model-human validation; guarded bidirectional human-human agreement only when independent streams are verified | obtain and audit an authoritative current copy/reuse terms; extract/review canonical reference AOIs; determine whether independent streams exist; run at least one documented detector/tracker and freeze model-human evidence; freeze human-human evidence only if independence is verified |
 
 ## Frozen Lund2013 checkpoint
@@ -97,10 +97,16 @@ The aggregate result is not uniform across event classes. Pursuit remains a mate
 The reviewed compact evidence fingerprint is:
 
 ```text
-fa45366ea855a0bad662514c42187ffe3d24e5ce8e191a351c8c9b478325df6f
+b2fe85ec7e5d5cd425c0cd2593742bab835686c3f560d8a6c06e9c6d67dc547a
 ```
 
-The source discovery fingerprint is `0623353dda03ab6f5988c671cbc6dd5e82af8fb30b84a18bd9364c3aae5e4513`, the benchmark-report fingerprint is `170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f`, and the stable scientific identity is `772d632d8671e058407d0fe9fdfcd291c0371a45682ec9dfd145861a924eaf46`.
+The reviewed source-run discovery fingerprint is `0623353dda03ab6f5988c671cbc6dd5e82af8fb30b84a18bd9364c3aae5e4513`, its benchmark-report fingerprint is `170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f`, and its historical source-run scientific identity is `772d632d8671e058407d0fe9fdfcd291c0371a45682ec9dfd145861a924eaf46`.
+
+Those whole-object hashes remain immutable provenance for the reviewed source execution. They are not required to repeat bit-for-bit across different hosted numerical backends. Cross-run certification instead requires exact source identities, split assignments, row/class counts, convergence state, protocol and scientific-boundary identities, while floating benchmark outputs are canonicalized to 8 decimal places. The frozen cross-run reproducibility signature is:
+
+```text
+f8c8d27ddbb1fe065a15df18d53c9fa84544315ef57cf2783554b236839ff286
+```
 
 This promotes only `performance_evidence_reviewed`, `participant_disjoint_model_validation_created`, and `event_class_sensitivity_created`. The broader `new_empirical_performance_claim_created` gate remains false. Task-stratified validation, authoritative file-to-task mapping, cross-dataset validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain closed.
 
@@ -146,9 +152,9 @@ See [VISUS source audit](visus-source-audit.md), [VISUS canonical AOI intake](vi
 
 ## Automated empirical execution
 
-Dedicated GitHub Actions workflows use the existing GazeForge validation code to reproduce frozen evidence from pinned sources, revalidate report fingerprints, reject raw benchmark retention, and expose summary-only artifacts for scientific review.
+Dedicated GitHub Actions workflows use the existing GazeForge validation code to reproduce frozen evidence from pinned sources, reject raw benchmark retention, and expose summary-only artifacts for scientific review.
 
-The Lund tranche was merged through PR #20. The exact Gaze-in-the-Wild workflow additionally re-downloads and re-verifies all 18 selected LabelData/ProcessData pairs, requires zero ContextMLP convergence warnings, preserves the discovery-only boundary during computation, and then fail-closes unless the fresh discovery reproduces every reviewed metric-section fingerprint and the stable scientific identity.
+The Lund tranche was merged through PR #20. The exact Gaze-in-the-Wild workflow additionally re-downloads and re-verifies all 18 selected LabelData/ProcessData pairs, requires zero ContextMLP convergence warnings, preserves the discovery-only boundary during computation, verifies each fresh whole-object fingerprint against its own body, and fail-closes unless exact non-floating identities plus 8-decimal benchmark-section signatures reproduce. Diagnostic discovery output and the raw-byte cleanup check run even when certification fails.
 
 See [Empirical benchmark execution](empirical-execution.md).
 
