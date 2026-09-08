@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# Mutations below are expected to fail closed at the immutable fingerprint gate first.
 import copy
 import json
 from pathlib import Path
