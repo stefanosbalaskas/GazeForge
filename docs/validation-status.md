@@ -18,7 +18,7 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 | **Lund2013** | paired expert manual labels | 500 Hz | **Frozen external evidence available**: native and derived-60-Hz MN/RA agreement; derived-60-Hz participant-held-out I-VT/RF/ContextMLP comparison; MN annotator sensitivity; stimulus-family summaries; 120/90/60/30-Hz × .60/.75/.90 purity sensitivity | native 60-Hz/GP3-class expert-labelled events still required for device-specific validity |
 | **Native 60 Hz / GP3-class event corpus** | intended expert manual labels | 60 Hz | **Infrastructure validated, empirical execution pending**: strict native-rate intake, source/spec fingerprints, complete multi-annotator sample/gaze-identity verification, all-label and analysis-label human agreement, bidirectional event-boundary agreement, participant-held-out I-VT/RF/ContextMLP comparison, event metrics, three-report suite orchestration/verification, and non-executable protocol template | collect or independently obtain a real authoritative native corpus; document expert annotation protocol; freeze and review the complete native suite |
 | **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit student/expert streams; exact-source audit contract; common-label harmonisation; leave-one-dataset-out infrastructure with source-audit requirement | obtain and audit an authoritative local copy; verify real identity/coordinate/reuse evidence; freeze annotator sensitivity and cross-dataset reports |
-| **Gaze-in-the-Wild** | five trained annotators | published 120 Hz hardware acquisition | MATLAB adapter; exact-source audit contract; per-file timestamp-rate ledger; audited labeller-agreement runner; participant-held-out I-VT/RF/ContextMLP validation runner with event/task sensitivity and no-upsampling guardrail | obtain and audit the authoritative copy; verify real participant/task/POR evidence; freeze sampling-rate, labeller-agreement, and model-validation reports |
+| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **Frozen exact-distribution participant-disjoint evidence available**: all selected LabelData/ProcessData pairs reverified; exact timestamp-vector equality; preregistered labeller-5 reference; derived 60-Hz 5-fold participant-held-out I-VT/RF/ContextMLP comparison; complete sample/event class sensitivity; convergence-qualified ContextMLP; cryptographically bound metric sections and live exact-reproduction gate | authoritative `TrIdx`→task mapping and task-stratified validation; cross-dataset validation; native-60-Hz/GP3 evidence; acquisition-hardware cadence verification; quarantine exit remain open |
 | **VISUS** | one published curated AOI annotation process involving two human contributors | 60 Hz | **Infrastructure validated, empirical execution pending**: exact-source audit; reviewed human-reference canonical intake; audited model-prediction intake; explicit external-grid model-human validation; guarded bidirectional human-human agreement only when independent streams are verified | obtain and audit an authoritative current copy/reuse terms; extract/review canonical reference AOIs; determine whether independent streams exist; run at least one documented detector/tracker and freeze model-human evidence; freeze human-human evidence only if independence is verified |
 
 ## Frozen Lund2013 checkpoint
@@ -78,6 +78,34 @@ This prevents apparent score changes from being interpreted without accounting f
 
 [Inspect the generated frozen-evidence tables →](frozen-evidence.md)
 
+## Gaze-in-the-Wild exact participant-disjoint checkpoint
+
+The Gaze-in-the-Wild tranche is bound to the original Figshare `ProcessData` and `LabelData` distributions. The selected human reference is labeller 5 under a deterministic pre-performance rule: maximum participant coverage, then maximum recording coverage, then lowest labeller ID. Labeller 5 and labeller 6 both cover 12 participants, while labeller 5 covers 18 recordings versus 16 for labeller 6.
+
+The convergence-qualified benchmark uses 1,590,659 exact source samples, 318,145 derived 60-Hz rows, and 157,850 retained analysis rows across 12 participants, 18 recordings, and five participant-disjoint folds. No task mapping is inferred. `ProcessData_cleaned` is excluded and raw MATLAB files are not retained.
+
+Five-fold means are:
+
+| Model | Balanced accuracy | Macro-F1 | Event-F1 |
+| --- | ---: | ---: | ---: |
+| **I-VT** | 0.2831 | 0.1165 | 0.1568 |
+| **RandomForest** | 0.4973 | 0.4752 | 0.3085 |
+| **ContextMLP** | **0.5286** | **0.5192** | **0.4396** |
+
+The aggregate result is not uniform across event classes. Pursuit remains a material failure case: RandomForest pursuit sample-F1 is 0.0769 and event-F1 is 0.0086 with 6/327 reference pursuit events matched; ContextMLP pursuit sample-F1 is 0.0547 and event-F1 is 0.0030 with 1/327 matched. These failures are retained explicitly in the reviewed evidence rather than hidden behind aggregate scores.
+
+The reviewed compact evidence fingerprint is:
+
+```text
+fa45366ea855a0bad662514c42187ffe3d24e5ce8e191a351c8c9b478325df6f
+```
+
+The source discovery fingerprint is `0623353dda03ab6f5988c671cbc6dd5e82af8fb30b84a18bd9364c3aae5e4513`, the benchmark-report fingerprint is `170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f`, and the stable scientific identity is `772d632d8671e058407d0fe9fdfcd291c0371a45682ec9dfd145861a924eaf46`.
+
+This promotes only `performance_evidence_reviewed`, `participant_disjoint_model_validation_created`, and `event_class_sensitivity_created`. The broader `new_empirical_performance_claim_created` gate remains false. Task-stratified validation, authoritative file-to-task mapping, cross-dataset validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain closed.
+
+See [Gaze-in-the-Wild model validation](gaze-in-wild-model-validation.md).
+
 ## Native 60 Hz / GP3-class intake status
 
 GazeForge now provides the native event specification/intake, individual model-human benchmark, paired human-human agreement, and three-report validation-suite APIs. CLI commands cover `native-event-benchmark`, `native-event-agreement`, `native-event-suite`, and `native-event-suite-validate`. These components prepare the software for a real native expert-labelled 60 Hz corpus; they are not themselves empirical GP3 evidence.
@@ -118,15 +146,9 @@ See [VISUS source audit](visus-source-audit.md), [VISUS canonical AOI intake](vi
 
 ## Automated empirical execution
 
-The dedicated GitHub Actions workflow uses the existing GazeForge CLI to:
+Dedicated GitHub Actions workflows use the existing GazeForge validation code to reproduce frozen evidence from pinned sources, revalidate report fingerprints, reject raw benchmark retention, and expose summary-only artifacts for scientific review.
 
-1. fetch and verify the pinned Lund2013 corpus;
-2. execute the complete five-report suite;
-3. revalidate every report fingerprint;
-4. reject non-JSON/raw benchmark output from the evidence tree;
-5. publish only the evidence branch for ordinary scientific review.
-
-The first complete run passed this gate and was merged through PR #20. Future reruns use the same review boundary rather than silently changing the evidence on `main`.
+The Lund tranche was merged through PR #20. The exact Gaze-in-the-Wild workflow additionally re-downloads and re-verifies all 18 selected LabelData/ProcessData pairs, requires zero ContextMLP convergence warnings, preserves the discovery-only boundary during computation, and then fail-closes unless the fresh discovery reproduces every reviewed metric-section fingerprint and the stable scientific identity.
 
 See [Empirical benchmark execution](empirical-execution.md).
 
@@ -156,7 +178,7 @@ Accordingly:
 
 - Lund2013-derived 60 Hz evidence cannot establish GP3-specific validity;
 - the native-event intake, agreement runner, and validation suite can verify and freeze a future GP3-class corpus but do not manufacture that corpus;
-- Gaze-in-the-Wild can contribute native lower-rate human-reference evidence but differs in hardware and naturalistic head-mounted task domain;
+- the reviewed Gaze-in-the-Wild result uses a derived 60-Hz analysis grid from exact processed timestamp grids and does not establish native-60-Hz or GP3 validity;
 - VISUS can contribute native 60 Hz human dynamic-AOI evidence, not manually labelled fixation/saccade ground truth, and its published two-contributor annotation process is not assumed to provide two independent human-reference streams;
 - a native 60 Hz/GP3-class manually event-labelled empirical corpus remains open.
 
@@ -166,13 +188,16 @@ GazeForge does not currently claim:
 
 - universal superiority of learned event models over established detectors;
 - GP3-specific event-classification validity;
+- task-stratified Gaze-in-the-Wild validity without an authoritative complete task mapping;
+- cross-dataset generalization from the Gaze-in-the-Wild exact result;
+- uniformly strong recognition of all Gaze-in-the-Wild event classes, especially pursuit;
 - generalizable dynamic semantic-AOI performance;
 - VISUS human-human reliability unless independent annotation streams are verified from the source;
 - equivalence between algorithmic/vendor event labels and human annotation;
 - mature stable-release scientific performance.
 
-The current external Lund result instead demonstrates that performance depends on the estimand: sample-level class discrimination and event-boundary fidelity favour different methods.
+The current external evidence instead demonstrates that performance depends on the estimand, dataset, class, and validation boundary. Aggregate sample-level or event-level performance must not erase class-specific failures or provenance limits.
 
 ## Roadmap evidence gates
 
-The primary empirical work remains tracked in [GitHub Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1). The Lund tranche is frozen and the native-rate intake, human-agreement workflow, and suite-completion infrastructure are implemented; the highest-priority remaining event-model gate is independent **native 60 Hz/GP3-class human event evidence**. Dynamic AOI validation remains tracked separately in the project roadmap.
+The primary empirical work remains tracked in [GitHub Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1). The Lund tranche is frozen, the exact Gaze-in-the-Wild participant-disjoint tranche now has reviewed evidence, and the native-rate intake, human-agreement workflow, and suite-completion infrastructure are implemented. The highest-priority remaining event-model gate is independent **native 60 Hz/GP3-class human event evidence**. Gaze-in-the-Wild task mapping/task-stratified validation and cross-dataset validation remain separate open gates. Dynamic AOI validation remains tracked separately in the project roadmap.
