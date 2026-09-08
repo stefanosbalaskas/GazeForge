@@ -1,0 +1,144 @@
+name: Gaze-in-the-Wild exact ProcessData structure probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-exact-processdata-structure
+    paths:
+      - ".github/workflows/gaze-in-wild-exact-processdata-structure-probe.yml"
+      - "scripts/probe_gaze_in_wild_figshare_processdata_structure.py"
+      - "src/gazeforge/gaze_in_wild_processdata_preflight.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-processdata-exact-file-identities-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-exact-bytes-evidence-v1.json"
+
+permissions:
+  contents: read
+
+jobs:
+  exact-processdata-structure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and probe dependencies
+        run: python -m pip install --disable-pip-version-check --quiet . pytest ruff
+
+      - name: Ruff structural probe
+        run: |
+          ruff check \
+            scripts/probe_gaze_in_wild_figshare_processdata_structure.py \
+            src/gazeforge/gaze_in_wild_processdata_preflight.py
+
+      - name: Validate parent exact-byte evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_figshare_exact_bytes_evidence import (
+              validate_gaze_in_wild_figshare_exact_bytes_evidence,
+          )
+
+          base = Path("validation/evidence/gaze-in-wild")
+          result = validate_gaze_in_wild_figshare_exact_bytes_evidence(
+              base / "gaze-in-wild-figshare-exact-bytes-evidence-v1.json",
+              base / "gaze-in-wild-figshare-public-metadata-raw-v1.json",
+              base / "gaze-in-wild-figshare-distribution-rights-evidence-v1.json",
+              base / "gaze-in-wild-figshare-public-metadata-summary-v1.json",
+          )
+          assert result.exact_original_distribution_bytes_verified is True
+          assert result.raw_dataset_bytes_retained is False
+          assert result.quarantine_exit_authorized is False
+          PY
+
+      - name: Run exact original ProcessData structural probe
+        run: |
+          python scripts/probe_gaze_in_wild_figshare_processdata_structure.py \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --identities validation/evidence/gaze-in-wild/gaze-in-wild-processdata-exact-file-identities-v1.json \
+            --output gaze-in-wild-exact-processdata-structure-probe-v1.json \
+            --retries 3
+
+      - name: Require fail-closed structural scientific boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(
+              Path("gaze-in-wild-exact-processdata-structure-probe-v1.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          verified = record["verified_processdata"]
+          pairing = record["distributed_labeldata_pairing"]
+          boundary = record["scientific_boundary"]
+
+          assert verified["file_count"] == 68
+          assert verified["total_size_bytes"] == 2_384_573_418
+          assert verified["recording_token_count"] == 68
+          assert verified["participant_count"] == 20
+          assert verified["all_files_matched_frozen_size_md5_and_reviewed_sha256"] is True
+          assert verified["all_filename_internal_pridx_tridx_agree"] is True
+          assert verified["all_adapter_coordinate_fields_compatible"] is True
+          assert verified["all_timestamp_grids_valid"] is True
+          assert verified["all_raw_mat_bytes_deleted_after_inspection"] is True
+          assert verified["top_level_labeldata_present_in_any_processdata_file"] is False
+
+          assert pairing["file_count"] == 50
+          assert pairing["recording_token_count"] == 37
+          assert pairing["participant_count"] == 16
+          assert pairing["all_labeldata_recording_tokens_have_processdata_match"] is True
+          assert pairing["matched_recording_token_count"] == 37
+          assert pairing["processdata_tokens_without_distributed_labeldata_count"] == 31
+          assert pairing["participant_disjoint_split_keys_available"] is True
+
+          for key in (
+              "exact_original_processdata_structure_verified",
+              "processdata_timestamp_grid_rate_distribution_verified",
+              "filename_internal_pridx_tridx_alignment_complete",
+              "labeldata_processdata_recording_token_pairing_complete",
+              "participant_disjoint_split_keys_available",
+              "coordinate_adapter_fields_available_for_all_processdata",
+          ):
+              assert boundary[key] is True, key
+
+          for key in (
+              "coordinate_semantics_verified_for_exact_distribution",
+              "acquisition_hardware_cadence_verified",
+              "complete_file_to_publication_task_mapping_verified",
+              "task_stratified_model_validation_feasible",
+              "participant_disjoint_model_validation_created",
+              "cross_dataset_validation_created",
+              "gp3_validity_claim_created",
+              "quarantine_exit_authorized",
+              "new_model_performance_claim_created",
+          ):
+              assert boundary[key] is False, key
+
+          assert record["raw_dataset_bytes_retained"] is False
+          PY
+
+      - name: Confirm raw ProcessData was not retained in workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f -name 'PrIdx_*_TrIdx_*.mat' -print -quit | grep -q .; then
+            echo "Raw GIW ProcessData MAT file unexpectedly retained in workspace." >&2
+            exit 1
+          fi
+
+      - name: Upload structural summary only
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-exact-processdata-structure-probe
+          path: gaze-in-wild-exact-processdata-structure-probe-v1.json
+          if-no-files-found: error
+          retention-days: 30
