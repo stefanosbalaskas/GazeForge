@@ -1,19 +1,22 @@
 # Gaze-in-the-Wild first-party readiness handoff
 
-This layer connects two already reviewed, conservative Gaze-in-the-Wild inputs:
+!!! note "Not required for the official Figshare copy/rights roadmap item"
+    This handoff remains a valid correspondence/candidate-quarantine protocol, but later reviewed evidence directly verified the official Rakshit Kothari-authored Figshare `ProcessData` + `LabelData` original-publication bytes and their CC BY 4.0 dataset-record terms. The narrower roadmap item for the official public Figshare copy/current deposit rights is therefore satisfied independently of this handoff. Nothing here or in that later synchronization establishes historical RIT archive byte equivalence, quarantine exit, numeric task mapping, native-60-Hz/GP3 validity, or raw-data retention.
+
+This layer connects two conservative inputs when the **correspondence/candidate route** is actually needed:
 
 1. a privacy-safe first-party response record bound to the exact clarification request and a local correspondence SHA-256; and
 2. a live-reverified quarantined candidate ProcessData screen.
 
 Its output is a **readiness and blocker report**. It is not a quarantine-exit authorization and does not create empirical evidence.
 
-## Why this layer exists
+## Why this layer still exists
 
-A first-party response may legitimately establish facts such as respondent authority, an authoritative archive location, and explicit dataset-file analysis or redistribution terms. Separately, the candidate ProcessData screen can establish that one exact quarantined file is structurally compatible with GazeForge's ProcessData adapter.
+A first-party response may establish facts not resolved by the public Figshare deposits, such as explicit historical-archive identity, a canonical replacement statement, or an authoritative numeric task mapping. Separately, a candidate ProcessData screen can establish that one exact quarantined file is structurally compatible with GazeForge's ProcessData adapter.
 
-Those facts still do not establish that the candidate is byte-identical to the authoritative archive or canonical replacement. Exact-copy identity therefore remains an independent review step.
+Those facts do not automatically establish candidate identity or authorize quarantine exit. The verified current Figshare distribution is also not silently declared byte-identical to the historical RIT-hosted archive.
 
-## Strongest possible state
+## Strongest possible correspondence/candidate state
 
 The v1 handoff can reach:
 
@@ -36,13 +39,15 @@ Even in that strongest state:
 - `quarantine_exit_authorized = false`; and
 - `source_audit_ready = false`.
 
-The remaining blocker is independent exact-copy identity verification against the reviewed first-party authoritative source.
+The remaining blocker is independent exact-copy identity verification for the candidate against the reviewed source relevant to that candidate.
 
 ## Redistribution semantics are not silently rewritten
 
 The first-party response vocabulary can record `redistribution_status = "prohibited"`, while the quarantine-exit authorization vocabulary uses `permitted`, `restricted`, or `unknown`.
 
 The readiness bridge does **not** silently translate `prohibited` to `restricted`. Instead, it adds the blocker `redistribution_status_mapping_review_required`. Any later vocabulary reconciliation must be explicit and human-reviewed.
+
+This correspondence vocabulary is separate from the later direct Figshare finding that the named dataset records state **CC BY 4.0**.
 
 ## Privacy boundary
 
@@ -55,24 +60,22 @@ The handoff serializes:
 - the exact recovery/tree/screen/file identities; and
 - deterministic readiness/blocker fields.
 
-It does **not** serialize the raw correspondence body or the archive location itself. Live verification still requires the local correspondence file so its digest can be checked against the reviewed response.
+It does **not** serialize the raw correspondence body or archive location. Live verification still requires the local correspondence file so its digest can be checked against the reviewed response.
 
 ## Scientific boundary
 
 The handoff does not establish or create:
 
-- exact-copy identity;
+- historical RIT archive equivalence;
 - quarantine-exit authorization;
 - source-audit execution/readiness;
 - participant/trial/task mapping;
 - coordinate semantics;
 - acquisition or corpus sampling cadence;
-- separate `LabelData` recovery or independent labeller streams;
 - empirical evidence eligibility;
-- human-human agreement;
-- participant-disjoint model validation;
+- task-stratified model validation;
 - cross-dataset performance;
-- GP3 validity; or
+- native 60 Hz or GP3 validity; or
 - Frozen Evidence performance claims.
 
-The next scientific-governance action after a fully satisfied preliminary handoff is to independently verify the quarantined candidate against the authoritative first-party archive/canonical source. Only after that separate identity review may the existing quarantine-exit authorization machinery be considered.
+For the current roadmap state, see [Gaze-in-the-Wild roadmap evidence synchronization](gaze-in-wild-roadmap-sync.md). The official Figshare copy/current-rights item is narrow and satisfied; the authoritative numeric task-mapping gate remains open.
