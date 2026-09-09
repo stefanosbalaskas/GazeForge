@@ -1,0 +1,67 @@
+{
+  "claim_limit": "This roadmap synchronization splits the already-reviewed task-agnostic participant-disjoint derived-60-Hz model validation and event-class sensitivity from the still-blocked naturalistic-task sensitivity item. It does not create new empirical performance, infer or authorize numeric task mapping, create task-stratified validation, hide the pursuit failure, or establish native 60-Hz, GP3, acquisition-cadence, cross-dataset, quarantine-exit, raw-data-retention, or historical-RIT-equivalence claims.",
+  "evidence_fingerprint_sha256": "426ad10551a52a4b1cae9df9ae422336b591188466051235b5b38c8e808f7aa2",
+  "issue_wording": {
+    "completed_participant_validation": "Run participant-disjoint Gaze-in-the-Wild task-agnostic derived-60-Hz model validation and report event-class sensitivity.",
+    "open_task_sensitivity": "Report Gaze-in-the-Wild naturalistic-task sensitivity only after authoritative distributed ProcessData-file → publication-task mapping is verified."
+  },
+  "record_type": "gaze-in-wild-roadmap-evidence-sync-v3",
+  "reviewed_on": "2026-09-09",
+  "roadmap_completion": {
+    "authoritative_numeric_task_mapping_item_satisfied": false,
+    "event_class_sensitivity_item_satisfied": true,
+    "historical_rit_archive_byte_equivalence_verified": false,
+    "naturalistic_task_sensitivity_item_satisfied": false,
+    "official_figshare_original_publication_copy_and_current_reuse_terms_scoped_item_satisfied": true,
+    "overlap_hha_item_satisfied": true,
+    "processed_timestamp_grid_rate_item_satisfied": true,
+    "task_agnostic_participant_disjoint_model_validation_item_satisfied": true,
+    "task_stratified_validation_item_satisfied": false
+  },
+  "scientific_boundary": {
+    "acquisition_hardware_cadence_verified": false,
+    "analysis_grid_is_derived_60hz": true,
+    "cross_dataset_validation_created": false,
+    "event_class_sensitivity_created": true,
+    "gp3_validity_claim_created": false,
+    "historical_rit_archive_byte_equivalence_verified": false,
+    "native_60hz_validity_claim_created": false,
+    "naturalistic_task_sensitivity_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": true,
+    "pursuit_failure_case_must_remain_visible": true,
+    "quarantine_exit_authorized": false,
+    "raw_dataset_bytes_retained": false,
+    "task_mapping_used": false,
+    "task_stratified_model_validation_created": false
+  },
+  "source_main_sha": "05f9f023ce4a89973ecef669ac857b6f22a2bea2",
+  "status": "verified-task-agnostic-participant-validation-roadmap-split",
+  "supersedes_for_roadmap_sync": {
+    "evidence_fingerprint_sha256": "8baf35fc97e59fa691a32e3e3d190e431bd1214a851d38f1877dce6d448fa215",
+    "record_type": "gaze-in-wild-roadmap-evidence-sync-v2",
+    "scope": "adds completion of task-agnostic participant-disjoint derived-60-Hz validation and event-class sensitivity while preserving naturalistic-task sensitivity as unresolved"
+  },
+  "upstream_evidence": {
+    "participant_disjoint_validation": {
+      "analysis_sampling_rate_hz": 60.0,
+      "cross_run_reproducibility_signature_sha256": "f8c8d27ddbb1fe065a15df18d53c9fa84544315ef57cf2783554b236839ff286",
+      "event_class_sensitivity_created": true,
+      "evidence_fingerprint_sha256": "b2fe85ec7e5d5cd425c0cd2593742bab835686c3f560d8a6c06e9c6d67dc547a",
+      "oof_row_count_per_model": 157850,
+      "participant_count": 12,
+      "path": "validation/evidence/gaze-in-wild/gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1.json",
+      "pursuit_analysis_support": 5696,
+      "pursuit_reference_event_count": 327,
+      "recording_count": 18,
+      "task_fold_metrics_row_count": 0,
+      "task_mapping_used": false,
+      "task_stratified_validation_created": false,
+      "task_summary_row_count": 0
+    },
+    "roadmap_sync_v2": {
+      "evidence_fingerprint_sha256": "8baf35fc97e59fa691a32e3e3d190e431bd1214a851d38f1877dce6d448fa215",
+      "path": "validation/evidence/gaze-in-wild/gaze-in-wild-roadmap-evidence-sync-v2.json"
+    }
+  }
+}
