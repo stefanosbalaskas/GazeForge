@@ -1,0 +1,123 @@
+{
+  "cardinality_assessment": {
+    "automatic_cardinality_reconciliation_permitted": false,
+    "current_16_subject_distribution_may_be_equated_to_all_final_19_subjects": false,
+    "dataset_or_task_scope_expansion_is_plausible": true,
+    "earlier_author_surface_subject_count": 16,
+    "exact_added_or_removed_subject_identities_resolved": false,
+    "exact_version_relationship_resolved": false,
+    "final_article_surface_subject_count": 19,
+    "observed_subject_count_delta": 3,
+    "publication_lineage_cardinality_drift_observed": true
+  },
+  "checked_on": "2026-09-10",
+  "claim_limits": [
+    "This evidence establishes an unresolved 16-to-19 publication-lineage cardinality drift, not a participant crosswalk.",
+    "The equality between the 16 GIN token count and a 16-subject source surface is non-identifying.",
+    "The three missing integers inside the 001-to-019 token range must not be interpreted as the three-subject publication delta.",
+    "No participant-held-out or participant-generalization claim is promoted."
+  ],
+  "evidence_fingerprint_sha256": "c27b11f9d38d29aa09f0971a1a8189d5e82e444bde4f10dd585ce153c683ca10",
+  "forbidden_inferences": {
+    "infer_16_subject_gin_subset_membership_within_final_19": false,
+    "infer_absent_007_009_016_are_the_three_additional_final_article_subjects": false,
+    "infer_absent_007_009_016_define_a_task_group": false,
+    "infer_gin_tokens_are_original_subject_ids_from_count_match": false,
+    "infer_gin_tokens_are_original_subject_ids_from_numeric_shape": false,
+    "infer_participant_disjointness_from_token_disjointness": false,
+    "infer_task_group_from_token_number": false
+  },
+  "gin_token_context": {
+    "absent_numbers_within_001_to_019": [
+      "007",
+      "009",
+      "016"
+    ],
+    "numeric_hole_count_is_mapping_or_group_evidence": false,
+    "stable_three_digit_tokens": [
+      "001",
+      "002",
+      "003",
+      "004",
+      "005",
+      "006",
+      "008",
+      "010",
+      "011",
+      "012",
+      "013",
+      "014",
+      "015",
+      "017",
+      "018",
+      "019"
+    ],
+    "three_missing_numbers_match_observed_16_to_19_delta": true,
+    "token_count": 16,
+    "token_count_match_is_mapping_evidence": false,
+    "token_count_matches_16_subject_surface": true,
+    "tokens_are_verified_original_subject_ids": false
+  },
+  "mapping_boundary": {
+    "gin_token_to_original_subject_id_verified": false,
+    "gin_token_to_task_group_verified": false,
+    "original_subject_group_id_ledger_recovered": false,
+    "original_subject_ids_recovered": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_identity_mapping_verified": false
+  },
+  "next_required_evidence": [
+    "Authoritative original archive README or participant ledger obtained under valid access terms.",
+    "Explicit authoritative source linking Hollywood2EM GIN filename tokens to original subject identifiers and task groups.",
+    "Version-aware reconciliation of the 16-subject and 19-subject publication/data surfaces before participant-generalization claims."
+  ],
+  "record_type": "hollywood2-participant-cardinality-evidence-v1",
+  "reviewed_cardinality_surfaces": {
+    "author_arxiv_v1": {
+      "active_action_recognition_subject_count": 12,
+      "free_viewing_subject_count": 4,
+      "human_subjects_total": 16,
+      "reported_frames": 497107,
+      "reported_subject_count": 16,
+      "scene_context_recognition_present_in_reviewed_v1": false
+    },
+    "final_pami_article_abstract": {
+      "free_viewing_present": true,
+      "participant_identity_ledger_exposed_in_abstract": false,
+      "reported_frames": 497107,
+      "reported_subject_count": 19,
+      "scene_context_recognition_present": true,
+      "visual_action_recognition_present": true
+    },
+    "frozen_original_distribution": {
+      "active_action_recognition_subject_count": 12,
+      "free_viewing_subject_count": 4,
+      "scene_context_subject_count_recovered_from_this_surface": null,
+      "subject_count": 16,
+      "subject_id_ledger_recovered": false
+    }
+  },
+  "rights_boundary": {
+    "analysis_use_authorized_by_this_evidence": false,
+    "login_gate_bypassed": false,
+    "new_archive_access_performed": false,
+    "raw_data_redistribution_authorized_by_this_evidence": false
+  },
+  "scientific_boundary": {
+    "cross_dataset_validation_created": false,
+    "native_60hz_or_gp3_validity_created": false,
+    "new_empirical_performance_claim_created": false,
+    "new_frozen_evidence_performance_claim_created": false
+  },
+  "source_binding": {
+    "arxiv_id": "1312.7570v1",
+    "arxiv_submitted_on": "2013-12-29",
+    "arxiv_url": "https://arxiv.org/abs/1312.7570v1",
+    "authoritative_ground_truth_evidence_fingerprint_sha256": "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea",
+    "final_article_doi": "10.1109/TPAMI.2014.2366154",
+    "final_article_pubmed_id": "26352449",
+    "final_article_pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/26352449/",
+    "original_subject_metadata_evidence_fingerprint_sha256": "ba7813dd4f87c4a20ee75f3a9e537e329bca74c519b7bc65a5ba5e5095dd8a5c"
+  },
+  "status": "reviewed-publication-lineage-cardinality-drift-unresolved-no-participant-crosswalk"
+}
