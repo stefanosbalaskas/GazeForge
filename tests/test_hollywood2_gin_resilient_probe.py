@@ -74,9 +74,21 @@ def test_resilient_probe_builds_fingerprinted_403_record() -> None:
 @pytest.mark.parametrize(
     ("diagnostic", "expected_class", "expected_status"),
     [
-        ("fatal: unable to access url: The requested URL returned error: 404", "http_not_found", 404),
-        ("fatal: unable to access url: Could not resolve host: gin.g-node.org", "dns_resolution_failure", None),
-        ("fatal: unable to access url: Connection refused", "connection_failure", None),
+        (
+            "fatal: unable to access url: The requested URL returned error: 404",
+            "http_not_found",
+            404,
+        ),
+        (
+            "fatal: unable to access url: Could not resolve host: gin.g-node.org",
+            "dns_resolution_failure",
+            None,
+        ),
+        (
+            "fatal: unable to access url: Connection refused",
+            "connection_failure",
+            None,
+        ),
         ("fatal: remote operation timed out", "network_timeout", None),
         ("fatal: unexpected transport error", "git_remote_failure", None),
     ],
@@ -126,11 +138,13 @@ def test_committed_host_availability_change_evidence_is_frozen() -> None:
     )
     assert record["live_probe_observations"]["workflow_run_id"] == 34401272377
     attempts = record["live_probe_observations"]["workflow_attempts"]
-    assert [(item["run_attempt"], item["terminal_http_status"]) for item in attempts] == [
-        (1, 403),
-        (2, 403),
+    observed_attempts = [
+        (item["run_attempt"], item["terminal_http_status"]) for item in attempts
     ]
-    assert all(item["all_bounded_git_attempts_returned_same_http_status"] for item in attempts)
+    assert observed_attempts == [(1, 403), (2, 403)]
+    assert all(
+        item["all_bounded_git_attempts_returned_same_http_status"] for item in attempts
+    )
     assert all(item["structured_probe_artifact_uploaded"] is False for item in attempts)
     context = record["same_sha_reproduction_context"]
     assert context["source_token_validation_run_id"] == 34401272530
