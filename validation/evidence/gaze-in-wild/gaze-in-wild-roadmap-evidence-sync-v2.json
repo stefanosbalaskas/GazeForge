@@ -1,0 +1,61 @@
+{
+  "claim_limit": "This roadmap synchronization closes only the official author-bound Figshare ProcessData + LabelData original-publication copy/current deposit-rights item. It does not establish byte-for-byte equivalence to the historical RIT-hosted archive, does not promote ProcessData_cleaned, does not retain raw MAT files, does not authorize quarantine exit, and does not resolve numeric task mapping or task-stratified validation.",
+  "evidence_fingerprint_sha256": "8baf35fc97e59fa691a32e3e3d190e431bd1214a851d38f1877dce6d448fa215",
+  "issue_wording": {
+    "official_copy_and_rights": "Obtain/audit the official Gaze-in-the-Wild Figshare ProcessData + LabelData original-publication bytes and current deposit reuse terms (CC BY 4.0); raw MAT not retained."
+  },
+  "record_type": "gaze-in-wild-roadmap-evidence-sync-v2",
+  "reviewed_on": "2026-09-09",
+  "roadmap_completion": {
+    "authoritative_numeric_task_mapping_item_satisfied": false,
+    "historical_rit_archive_byte_equivalence_verified": false,
+    "official_figshare_original_publication_copy_and_current_reuse_terms_scoped_item_satisfied": true,
+    "task_stratified_validation_item_satisfied": false
+  },
+  "scientific_boundary": {
+    "acquisition_hardware_cadence_verified": false,
+    "cross_dataset_validation_created": false,
+    "deposit_reuse_terms_verified": true,
+    "gp3_validity_claim_created": false,
+    "historical_rit_archive_byte_equivalence_verified": false,
+    "native_60hz_validity_claim_created": false,
+    "new_empirical_performance_claim_created": false,
+    "official_figshare_processdata_labeldata_exact_bytes_audited": true,
+    "processdata_cleaned_promoted_to_original": false,
+    "quarantine_exit_authorized": false,
+    "raw_dataset_bytes_retained": false,
+    "task_mapping_verified": false,
+    "task_stratified_model_validation_created": false
+  },
+  "source_main_sha": "d9715f3fe8ead1a90d41ea686f85078ccb950cda",
+  "status": "verified-scoped-authoritative-public-copy-and-rights-roadmap-synchronization",
+  "supersedes_for_roadmap_sync": {
+    "evidence_fingerprint_sha256": "c0dc3182f7fa89d325e0be2406d6d1aaf6541ebb2e90c21f49ade23398909571",
+    "record_type": "gaze-in-wild-roadmap-evidence-sync-v1",
+    "scope": "adds official Figshare original-publication copy and current deposit-rights completion while preserving v1 rate/HHA completions"
+  },
+  "upstream_evidence": {
+    "figshare_distribution_rights": {
+      "deposit_author_name": "Rakshit Kothari",
+      "evidence_fingerprint_sha256": "25d4b56e1dc4888b034b5de91cb14f712aaa0e3470cde7a1246f30c3880e63c7",
+      "figshare_project_id": 74580,
+      "labeldata_doi": "10.6084/m9.figshare.11673696.v1",
+      "path": "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-distribution-rights-evidence-v1.json",
+      "processdata_doi": "10.6084/m9.figshare.11673645.v1",
+      "verified_license_name": "CC BY 4.0"
+    },
+    "figshare_exact_bytes": {
+      "evidence_fingerprint_sha256": "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00",
+      "path": "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-exact-bytes-evidence-v1.json",
+      "processdata_cleaned_downloaded": false,
+      "raw_dataset_bytes_retained": false,
+      "stable_exact_byte_identity_fingerprint_sha256": "8d36884daf76e26ded3d31c32bd334bf8f358b49efdb7accbb20c6c569abdda0",
+      "verified_article_labels": [
+        "ProcessData",
+        "LabelData"
+      ],
+      "verified_file_count": 118,
+      "verified_total_size_bytes": 2413299242
+    }
+  }
+}
