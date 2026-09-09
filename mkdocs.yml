@@ -92,6 +92,7 @@ nav:
       - Gaze-in-the-Wild historical-tree recovery: gaze-in-wild-historical-tree-recovery.md
       - Gaze-in-the-Wild task-identity source recovery: gaze-in-wild-task-identity-source-recovery.md
       - Gaze-in-the-Wild task-mapping corroboration: gaze-in-wild-task-mapping-corroboration.md
+      - Gaze-in-the-Wild roadmap evidence sync: gaze-in-wild-roadmap-sync.md
       - Gaze-in-the-Wild ProcessData preflight: gaze-in-wild-processdata-preflight.md
       - Gaze-in-the-Wild exact ProcessData structure: gaze-in-wild-exact-processdata-structure.md
       - Gaze-in-the-Wild candidate ProcessData preflight: gaze-in-wild-candidate-preflight.md
