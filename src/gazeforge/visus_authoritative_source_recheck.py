@@ -133,7 +133,9 @@ def _validate_authority_boundary(payload: Mapping[str, Any]) -> None:
 def _validate_modern_darus_examples(payload: Mapping[str, Any]) -> None:
     examples = payload.get("modern_darus_examples")
     if not isinstance(examples, list) or len(examples) != len(_EXPECTED_MODERN_DARUS):
-        raise BenchmarkIntegrityError("VISUS source recheck must retain two bounded DaRUS examples.")
+        raise BenchmarkIntegrityError(
+            "VISUS source recheck must retain two bounded DaRUS examples."
+        )
     observed: list[tuple[str, str, str]] = []
     for row in examples:
         if not isinstance(row, Mapping):
@@ -150,7 +152,9 @@ def _validate_modern_darus_examples(payload: Mapping[str, Any]) -> None:
             )
         )
     if tuple(observed) != _EXPECTED_MODERN_DARUS:
-        raise BenchmarkIntegrityError("VISUS modern DaRUS examples drifted from the frozen recheck.")
+        raise BenchmarkIntegrityError(
+            "VISUS modern DaRUS examples drifted from the frozen recheck."
+        )
 
 
 def _validate_derivative_bindings(
@@ -168,7 +172,9 @@ def _validate_derivative_bindings(
 
     bindings = payload.get("reviewed_derivative_evidence")
     if not isinstance(bindings, list) or len(bindings) != 2:
-        raise BenchmarkIntegrityError("VISUS source recheck must bind exactly two derivative records.")
+        raise BenchmarkIntegrityError(
+            "VISUS source recheck must bind exactly two derivative records."
+        )
 
     expected = {
         "visus-public-partial-evidence-v1": PUBLIC_PARTIAL_FINGERPRINT,
@@ -184,7 +190,9 @@ def _validate_derivative_bindings(
         _require_false(row.get("full_visus_recovered"), "full VISUS recovery from derivatives")
         _require_false(row.get("authoritative_replacement"), "derivative source authority")
     if observed != expected:
-        raise BenchmarkIntegrityError("VISUS derivative evidence bindings drifted from reviewed records.")
+        raise BenchmarkIntegrityError(
+            "VISUS derivative evidence bindings drifted from reviewed records."
+        )
 
 
 def _validate_promotion_boundary(payload: Mapping[str, Any]) -> None:
