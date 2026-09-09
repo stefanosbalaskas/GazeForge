@@ -102,7 +102,10 @@ def evidence_fingerprint(record: Mapping[str, Any]) -> str:
     return hashlib.sha256(_canonical_bytes(body)).hexdigest()
 
 
-def _load(value: Mapping[str, Any] | str | Path, label: str) -> tuple[dict[str, Any], Path | None]:
+def _load(
+    value: Mapping[str, Any] | str | Path,
+    label: str,
+) -> tuple[dict[str, Any], Path | None]:
     if isinstance(value, Mapping):
         return dict(value), None
     path = Path(value)
@@ -111,14 +114,22 @@ def _load(value: Mapping[str, Any] | str | Path, label: str) -> tuple[dict[str, 
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise BenchmarkIntegrityError(f"Could not load GIW {label}: {exc}") from exc
     if not isinstance(payload, dict):
-        raise BenchmarkIntegrityError(f"GIW {label} must contain one JSON object.")
+        raise BenchmarkIntegrityError(
+            f"GIW {label} must contain one JSON object."
+        )
     return payload, path
 
 
-def _mapping(record: Mapping[str, Any], key: str, label: str) -> Mapping[str, Any]:
+def _mapping(
+    record: Mapping[str, Any],
+    key: str,
+    label: str,
+) -> Mapping[str, Any]:
     value = record.get(key)
     if not isinstance(value, Mapping):
-        raise BenchmarkIntegrityError(f"GIW {label} field {key!r} is missing.")
+        raise BenchmarkIntegrityError(
+            f"GIW {label} field {key!r} is missing."
+        )
     return value
 
 
@@ -129,12 +140,16 @@ def _equal(actual: Any, expected: Any, label: str) -> None:
 
 def _true(value: Any, label: str) -> None:
     if value is not True:
-        raise BenchmarkIntegrityError(f"GIW roadmap evidence must preserve {label}.")
+        raise BenchmarkIntegrityError(
+            f"GIW roadmap evidence must preserve {label}."
+        )
 
 
 def _false(value: Any, label: str) -> None:
     if value is not False:
-        raise BenchmarkIntegrityError(f"GIW roadmap evidence must not promote {label}.")
+        raise BenchmarkIntegrityError(
+            f"GIW roadmap evidence must not promote {label}."
+        )
 
 
 def validate_gaze_in_wild_processed_rate_ledger(
@@ -143,7 +158,11 @@ def validate_gaze_in_wild_processed_rate_ledger(
     """Validate the immutable 68-file ProcessData processed timestamp-grid ledger."""
 
     record, path = _load(ledger_or_path, "processed-rate ledger")
-    _equal(record.get("record_type"), RATE_LEDGER_RECORD_TYPE, "rate-ledger record type")
+    _equal(
+        record.get("record_type"),
+        RATE_LEDGER_RECORD_TYPE,
+        "rate-ledger record type",
+    )
     _equal(record.get("reviewed_on"), "2026-09-08", "rate-ledger review date")
     _equal(record.get("columns"), EXPECTED_COLUMNS, "rate-ledger columns")
     _equal(record.get("file_count"), 68, "rate-ledger file count")
@@ -154,7 +173,10 @@ def validate_gaze_in_wild_processed_rate_ledger(
     )
     _equal(
         record.get("stored_rate_semantics"),
-        "ProcessData.SR stored processing-rate field; not promoted to acquisition-hardware cadence",
+        (
+            "ProcessData.SR stored processing-rate field; not promoted to "
+            "acquisition-hardware cadence"
+        ),
         "stored-rate semantics",
     )
     _equal(
@@ -188,33 +210,53 @@ def validate_gaze_in_wild_processed_rate_ledger(
 
     rows = record.get("rows")
     if not isinstance(rows, list) or len(rows) != 68:
-        raise BenchmarkIntegrityError("GIW processed-rate ledger must contain 68 rows.")
+        raise BenchmarkIntegrityError(
+            "GIW processed-rate ledger must contain 68 rows."
+        )
     names: set[str] = set()
     rates: list[float] = []
     for row in rows:
         if not isinstance(row, list) or len(row) != 7:
-            raise BenchmarkIntegrityError("GIW processed-rate ledger row shape drifted.")
+            raise BenchmarkIntegrityError(
+                "GIW processed-rate ledger row shape drifted."
+            )
         name, digest, participant, trial, stored_rate, inferred_rate, count = row
         if not isinstance(name, str) or name in names:
-            raise BenchmarkIntegrityError("GIW processed-rate ledger file names are invalid.")
+            raise BenchmarkIntegrityError(
+                "GIW processed-rate ledger file names are invalid."
+            )
         names.add(name)
         if not isinstance(digest, str) or SHA256_RE.fullmatch(digest) is None:
-            raise BenchmarkIntegrityError("GIW processed-rate ledger SHA-256 identity drifted.")
+            raise BenchmarkIntegrityError(
+                "GIW processed-rate ledger SHA-256 identity drifted."
+            )
         if not isinstance(participant, int) or participant <= 0:
-            raise BenchmarkIntegrityError("GIW processed-rate participant identity is invalid.")
+            raise BenchmarkIntegrityError(
+                "GIW processed-rate participant identity is invalid."
+            )
         if trial not in (1, 2, 3, 4):
-            raise BenchmarkIntegrityError("GIW processed-rate trial identity is invalid.")
+            raise BenchmarkIntegrityError(
+                "GIW processed-rate trial identity is invalid."
+            )
         if stored_rate != 300.0:
-            raise BenchmarkIntegrityError("GIW ProcessData stored processing rate drifted.")
+            raise BenchmarkIntegrityError(
+                "GIW ProcessData stored processing rate drifted."
+            )
         try:
             inferred = float(inferred_rate)
         except (TypeError, ValueError) as exc:
-            raise BenchmarkIntegrityError("GIW inferred processed rate must be numeric.") from exc
+            raise BenchmarkIntegrityError(
+                "GIW inferred processed rate must be numeric."
+            ) from exc
         if not math.isfinite(inferred) or not 299.98 < inferred < 300.01:
-            raise BenchmarkIntegrityError("GIW inferred processed timestamp-grid rate drifted.")
+            raise BenchmarkIntegrityError(
+                "GIW inferred processed timestamp-grid rate drifted."
+            )
         rates.append(inferred)
         if not isinstance(count, int) or count <= 1:
-            raise BenchmarkIntegrityError("GIW processed-rate timestamp count is invalid.")
+            raise BenchmarkIntegrityError(
+                "GIW processed-rate timestamp count is invalid."
+            )
 
     return GazeInWildProcessedRateLedger(
         path=path,
@@ -225,7 +267,10 @@ def validate_gaze_in_wild_processed_rate_ledger(
     )
 
 
-def _repository_root(path: Path | None, repository_root: str | Path | None) -> Path:
+def _repository_root(
+    path: Path | None,
+    repository_root: str | Path | None,
+) -> Path:
     if repository_root is not None:
         return Path(repository_root)
     if path is not None and len(path.parents) >= 4:
@@ -245,14 +290,34 @@ def validate_gaze_in_wild_roadmap_sync(
     _equal(record.get("status"), SYNC_STATUS, "sync status")
     _equal(record.get("reviewed_on"), "2026-09-09", "sync review date")
     _equal(record.get("source_main_sha"), SOURCE_MAIN_SHA, "source main SHA")
-    _equal(record.get("evidence_fingerprint_sha256"), SYNC_FINGERPRINT, "stored sync fingerprint")
-    _equal(evidence_fingerprint(record), SYNC_FINGERPRINT, "recomputed sync fingerprint")
+    _equal(
+        record.get("evidence_fingerprint_sha256"),
+        SYNC_FINGERPRINT,
+        "stored sync fingerprint",
+    )
+    _equal(
+        evidence_fingerprint(record),
+        SYNC_FINGERPRINT,
+        "recomputed sync fingerprint",
+    )
 
     upstream = _mapping(record, "upstream_evidence", "roadmap sync")
     rate_ref = _mapping(upstream, "processed_rate_ledger", "roadmap sync")
-    hha_ref = _mapping(upstream, "overlap_human_human_agreement", "roadmap sync")
-    _equal(rate_ref.get("path"), RATE_LEDGER_PATH.as_posix(), "processed-rate path")
-    _equal(rate_ref.get("evidence_fingerprint_sha256"), RATE_LEDGER_FINGERPRINT, "processed-rate fingerprint")
+    hha_ref = _mapping(
+        upstream,
+        "overlap_human_human_agreement",
+        "roadmap sync",
+    )
+    _equal(
+        rate_ref.get("path"),
+        RATE_LEDGER_PATH.as_posix(),
+        "processed-rate path",
+    )
+    _equal(
+        rate_ref.get("evidence_fingerprint_sha256"),
+        RATE_LEDGER_FINGERPRINT,
+        "processed-rate fingerprint",
+    )
     _equal(rate_ref.get("file_count"), 68, "processed-rate reference count")
     _equal(
         rate_ref.get("scope"),
@@ -260,18 +325,30 @@ def validate_gaze_in_wild_roadmap_sync(
         "processed-rate scope",
     )
     _equal(hha_ref.get("path"), HHA_PATH.as_posix(), "HHA path")
-    _equal(hha_ref.get("evidence_fingerprint_sha256"), EXPECTED_HHA_FINGERPRINT, "HHA fingerprint")
+    _equal(
+        hha_ref.get("evidence_fingerprint_sha256"),
+        EXPECTED_HHA_FINGERPRINT,
+        "HHA fingerprint",
+    )
     _equal(hha_ref.get("recording_count"), 5, "HHA recording count")
     _equal(hha_ref.get("labeller_pair_count"), 6, "HHA pair count")
-    _equal(hha_ref.get("scope"), "distributed multi-labeller overlap subset only", "HHA scope")
+    _equal(
+        hha_ref.get("scope"),
+        "distributed multi-labeller overlap subset only",
+        "HHA scope",
+    )
 
     completion = _mapping(record, "roadmap_completion", "roadmap sync")
     _true(
-        completion.get("processed_timestamp_grid_rate_distribution_scoped_item_satisfied"),
+        completion.get(
+            "processed_timestamp_grid_rate_distribution_scoped_item_satisfied"
+        ),
         "scoped processed-rate roadmap completion",
     )
     _true(
-        completion.get("distributed_overlap_human_human_agreement_scoped_item_satisfied"),
+        completion.get(
+            "distributed_overlap_human_human_agreement_scoped_item_satisfied"
+        ),
         "scoped overlap-HHA roadmap completion",
     )
     _false(
@@ -299,8 +376,16 @@ def validate_gaze_in_wild_roadmap_sync(
         _false(boundary.get(key), key)
 
     wording = _mapping(record, "issue_wording", "roadmap sync")
-    _equal(wording.get("processed_rate"), EXPECTED_RATE_WORDING, "processed-rate issue wording")
-    _equal(wording.get("human_human_agreement"), EXPECTED_HHA_WORDING, "HHA issue wording")
+    _equal(
+        wording.get("processed_rate"),
+        EXPECTED_RATE_WORDING,
+        "processed-rate issue wording",
+    )
+    _equal(
+        wording.get("human_human_agreement"),
+        EXPECTED_HHA_WORDING,
+        "HHA issue wording",
+    )
 
     root = _repository_root(path, repository_root)
     rate = validate_gaze_in_wild_processed_rate_ledger(root / RATE_LEDGER_PATH)
