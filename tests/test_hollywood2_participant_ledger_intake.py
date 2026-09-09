@@ -11,6 +11,7 @@ import pytest
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.hollywood2_participant_ledger_intake import (
     EXPECTED_ARCHIVE_BASENAME,
+    _safe_member_name,
     inspect_original_archive,
     record_fingerprint,
     validate_intake_record,
@@ -112,13 +113,17 @@ def test_invalid_zip_is_rejected(tmp_path: Path) -> None:
 
 @pytest.mark.parametrize(
     "unsafe_name",
-    ["../README.txt", "/README.txt", "C:/README.txt", "dir\\README.txt"],
+    ["../README.txt", "/README.txt", "C:/README.txt"],
 )
 def test_unsafe_member_paths_are_rejected(tmp_path: Path, unsafe_name: str) -> None:
     path = _archive_path(tmp_path)
     _write_zip(path, {unsafe_name: b"metadata"})
     with pytest.raises(BenchmarkIntegrityError, match="unsafe member path"):
         inspect_original_archive(path, authorized_local_copy=True)
+
+
+def test_raw_backslash_member_name_is_rejected_before_zip_normalization() -> None:
+    assert _safe_member_name("dir\\README.txt") is False
 
 
 def test_symbolic_link_member_is_rejected(tmp_path: Path) -> None:
