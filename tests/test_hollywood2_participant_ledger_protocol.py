@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 PROTOCOL = Path(
-    "validation/protocols/hollywood2-participant-ledger-intake-v1.json"
+    "validation/governance/hollywood2-participant-ledger-intake-v1.json"
 )
 EXPECTED_FINGERPRINT = (
     "b47cc0acea2ded577d140d38ca97ad71ce414d82a41b2675e5cac6fc2dc9135b"
