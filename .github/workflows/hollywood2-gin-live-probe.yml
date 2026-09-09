@@ -6,8 +6,10 @@ on:
       - main
       - research/hollywood2-gin-live-probe
       - research/hollywood2-coordinate-metadata
+      - validation/hollywood2-gin-host-availability
     paths:
       - "scripts/hollywood2_gin_live_probe.py"
+      - "scripts/hollywood2_gin_resilient_probe.py"
       - "scripts/hollywood2_coordinate_metadata_probe.py"
       - "src/gazeforge/hollywood2_evidence.py"
       - "src/gazeforge/hollywood2_coordinate_metadata.py"
@@ -15,6 +17,7 @@ on:
       - "src/gazeforge/source_resolution.py"
       - "src/gazeforge/source_resolution_dashboard.py"
       - "tests/test_hollywood2_evidence.py"
+      - "tests/test_hollywood2_gin_resilient_probe.py"
       - "tests/test_hollywood2_source_resolution.py"
       - "tests/test_hollywood2_coordinate_metadata.py"
       - "tests/test_hollywood2_coordinate_evidence.py"
@@ -58,24 +61,31 @@ jobs:
             url."https://gin.g-node.org/ioannis.agtzidis/hollywood2_em".insteadOf \
             "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
       - name: Probe canonical Hollywood2EM GIN repository
+        id: live_probe
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          probe_exit=1
+          attempts=0
           for attempt in 1 2 3 4 5; do
-            if python scripts/hollywood2_gin_live_probe.py; then
-              exit 0
+            attempts="$attempt"
+            if python scripts/hollywood2_gin_resilient_probe.py --attempt "$attempt"; then
+              probe_exit=0
+              break
             fi
-            if [ "$attempt" -eq 5 ]; then
-              echo "Canonical GIN probe failed after bounded retries." >&2
-              exit 1
+            if [ "$attempt" -lt 5 ]; then
+              delay=$((attempt * 20))
+              echo "GIN probe attempt ${attempt} failed; retrying after ${delay}s." >&2
+              sleep "$delay"
             fi
-            delay=$((attempt * 20))
-            echo "GIN probe attempt ${attempt} failed; retrying after ${delay}s." >&2
-            sleep "$delay"
           done
+          echo "exit_code=${probe_exit}" >> "$GITHUB_OUTPUT"
+          echo "attempts=${attempts}" >> "$GITHUB_OUTPUT"
       - name: Install package
+        if: steps.live_probe.outputs.exit_code == '0'
         run: python -m pip install .
       - name: Bind live source audit to frozen evidence
+        if: steps.live_probe.outputs.exit_code == '0'
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -90,6 +100,7 @@ jobs:
           print("Hollywood2 authoritative live probe is bound to frozen evidence.")
           PY
       - name: Summarize source-resolution result
+        if: steps.live_probe.outputs.exit_code == '0'
         run: |
           python - <<'PY'
           import json
@@ -120,13 +131,49 @@ jobs:
           print("license files:", [item["path"] for item in record["license_files"]])
           print("fingerprint:", record["probe_fingerprint_sha256"])
           PY
+      - name: Validate fail-closed availability record
+        if: steps.live_probe.outputs.exit_code != '0'
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          path = Path("hollywood2_gin_live_probe.json")
+          record = json.loads(path.read_text(encoding="utf-8"))
+          assert record["record_type"] == "hollywood2-gin-live-probe-unavailable-v1"
+          assert record["status"] == "canonical_repository_route_unavailable"
+          assert record["attempt"] == int("${{ steps.live_probe.outputs.attempts }}")
+          body = dict(record)
+          stored = body.pop("probe_fingerprint_sha256")
+          canonical = json.dumps(body, sort_keys=True, separators=(",", ":")).encode()
+          assert stored == hashlib.sha256(canonical).hexdigest()
+          boundary = record["scientific_boundary"]
+          assert boundary["authoritative_repository_revision_resolved_in_this_attempt"] is False
+          assert boundary["dataset_license_verified"] is False
+          assert boundary["participant_identity_mapping_verified"] is False
+          assert boundary["cross_dataset_validation_created"] is False
+          assert boundary["new_frozen_evidence_performance_claim_created"] is False
+          assert boundary["scientific_reproduction_failure_inferred"] is False
+          print("failure class:", record["child_probe"]["failure_class"])
+          print("HTTP status:", record["child_probe"]["http_status"])
+          print("attempt:", record["attempt"])
+          print("fingerprint:", stored)
+          PY
       - name: Upload deterministic probe record
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: hollywood2-gin-live-probe
           path: hollywood2_gin_live_probe.json
           if-no-files-found: error
           retention-days: 30
+      - name: Fail closed when canonical GIN route is unavailable
+        if: steps.live_probe.outputs.exit_code != '0'
+        shell: bash
+        run: |
+          echo "Canonical GIN probe remained unavailable after bounded retries." >&2
+          exit 1
 
   coordinate-metadata:
     if: github.ref == 'refs/heads/research/hollywood2-coordinate-metadata'
