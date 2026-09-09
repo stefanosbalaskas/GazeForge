@@ -12,3 +12,7 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+
+# Restricted/local benchmark intake artifacts: never commit raw source bytes.
+gaze_hollywood2.zip
+hollywood2-ledger-intake.json
