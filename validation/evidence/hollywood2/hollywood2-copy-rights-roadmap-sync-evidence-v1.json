@@ -1,0 +1,57 @@
+{
+  "canonical_copy_identity": {
+    "authoritative_ground_truth_copy_identity_audited": true,
+    "clip_count": 56,
+    "file_subject_token_count": 16,
+    "ground_truth_file_count": 697,
+    "ground_truth_total_bytes": 137328178,
+    "ground_truth_total_samples": 3871580,
+    "pinned_commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "source_bytes_redistributed_by_gazeforge": false,
+    "source_identity_ledger_fingerprint_sha256": "51dd0883cf5b7966a4caea94fb9ac97e43bee6cf716423f26f268810041d3030"
+  },
+  "checked_on": "2026-09-09",
+  "evidence_fingerprint_sha256": "948b4a3511217ea8a25be55c86495ee17af40ed5fa0598baf1cec283fab2e526",
+  "identity_boundary": {
+    "file_subject_token_count": 16,
+    "file_subject_tokens_recovered": true,
+    "participant_group_mapping_verified": false,
+    "participant_identity_mapping_verified": false
+  },
+  "interpretation": [
+    "The canonical Hollywood2EM GIN hand-labelled ground-truth source identity is already recovered and audited at the pinned 697-file revision.",
+    "Exact current reuse, analysis, and redistribution terms for the later GIN annotation repository remain unresolved.",
+    "Stable three-digit source tokens are not participant identities or task-group labels.",
+    "The roadmap split is administrative synchronization of reviewed evidence and creates no new empirical performance claim."
+  ],
+  "record_type": "hollywood2-copy-rights-roadmap-sync-evidence-v1",
+  "rights_boundary": {
+    "analysis_use_terms_resolved": false,
+    "article_cc_by_promoted_to_dataset_license": false,
+    "author_open_source_declaration_verified": true,
+    "exact_annotation_repository_license_identifier_verified": false,
+    "exact_annotation_repository_license_text_verified": false,
+    "original_hollywood2_terms_promoted_to_gin_terms": false,
+    "raw_annotation_redistribution_terms_resolved": false
+  },
+  "roadmap": {
+    "authoritative_copy_source_identity_component_satisfied": true,
+    "current_reuse_terms_component_satisfied": false,
+    "lund_hollywood2_cross_dataset_component_satisfied": false,
+    "participant_identity_mapping_component_satisfied": false
+  },
+  "scientific_boundary": {
+    "cross_dataset_validation_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_hollywood2_validation_created": false,
+    "redistribution_authorized": false
+  },
+  "status": "verified-roadmap-split-copy-identity-complete-rights-unresolved",
+  "upstream_evidence": {
+    "author_license_statement_evidence_fingerprint_sha256": "b01da719afe18f4eb0103a17d6e8c85f3750ba299050f8026063a9ebb55b1b2e",
+    "authoritative_ground_truth_evidence_fingerprint_sha256": "d5375b8768984ef76da02597c55b225aaff4088fd24698c0d53363e2df6b20ea",
+    "gin_history_evidence_fingerprint_sha256": "c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1",
+    "original_subject_metadata_evidence_fingerprint_sha256": "ba7813dd4f87c4a20ee75f3a9e537e329bca74c519b7bc65a5ba5e5095dd8a5c"
+  }
+}
