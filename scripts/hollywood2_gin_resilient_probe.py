@@ -95,9 +95,18 @@ def build_failure_record(
             "scientific_reproduction_failure_inferred": False,
         },
         "claim_limits": [
-            "This record proves only that the canonical public GIN route was unavailable to this probe attempt.",
-            "A route-level access failure does not invalidate the previously pinned source identity or reviewed aggregate evidence.",
-            "No dataset licence, participant mapping, cross-dataset, Frozen Evidence, or native-GP3 claim is created by an availability failure.",
+            (
+                "This record proves only that the canonical public GIN route was "
+                "unavailable to this probe attempt."
+            ),
+            (
+                "A route-level access failure does not invalidate the previously pinned "
+                "source identity or reviewed aggregate evidence."
+            ),
+            (
+                "No dataset licence, participant mapping, cross-dataset, Frozen Evidence, "
+                "or native-GP3 claim is created by an availability failure."
+            ),
         ],
     }
     record["probe_fingerprint_sha256"] = probe_fingerprint(record)
