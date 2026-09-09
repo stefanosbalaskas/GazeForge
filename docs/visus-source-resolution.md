@@ -2,7 +2,7 @@
 
 GazeForge treats locating the VISUS benchmark as a separate scientific-provenance task from validating a local copy. The repository therefore records what the public literature and current institutional indexes establish, while refusing to turn historical availability into a current source or licensing claim.
 
-The baseline machine-readable checkpoint is `validation/protocols/visus-source-resolution-2026-09-04.json`. A dated institutional recheck is frozen at `validation/protocols/visus-source-resolution-2026-09-09.json`. Both are **source-resolution status records, not source-audit specifications and not empirical evidence**.
+The baseline machine-readable checkpoint is `validation/protocols/visus-source-resolution-2026-09-04.json`. A dated institutional recheck is frozen separately at `validation/evidence/visus-source-recheck/visus-authoritative-source-recheck-2026-09-09.json` so it does not replace or duplicate the reviewed dashboard checkpoint. Both are **source-resolution status records, not source-audit specifications and not empirical evidence**.
 
 ## What is established
 
@@ -55,7 +55,7 @@ The 2026-09-09 recheck repeated the authoritative-source search instead of treat
 The recheck is frozen as:
 
 ```text
-validation/protocols/visus-source-resolution-2026-09-09.json
+validation/evidence/visus-source-recheck/visus-authoritative-source-recheck-2026-09-09.json
 ```
 
 with canonical fingerprint:
@@ -82,7 +82,7 @@ gazeforge-visus-source-resolution \
   validation/protocols/visus-source-resolution-2026-09-04.json
 ```
 
-The validator checks the record type, benchmark identity, ISO check date, current-source/audit/empirical flags, publication DOI, rights fields, annotation-independence gate, explicit claim limits, and a deterministic canonical SHA-256 fingerprint. The same generic validator also applies to the 2026-09-09 record, while `gazeforge.visus_authoritative_source_recheck.validate_visus_authoritative_source_recheck` adds the frozen current-search and derivative-binding contract.
+The validator checks the record type, benchmark identity, ISO check date, current-source/audit/empirical flags, publication DOI, rights fields, annotation-independence gate, explicit claim limits, and a deterministic canonical SHA-256 fingerprint. The same generic validator also applies to the 2026-09-09 recheck file, while `gazeforge.visus_authoritative_source_recheck.validate_visus_authoritative_source_recheck` adds the frozen current-search and derivative-binding contract.
 
 The current unresolved status is fail-closed: it cannot simultaneously claim that a current authoritative download was found, that the source is audit-ready, that empirical evidence was created, that analysis or redistribution rights are resolved, or that independent human annotation streams are verified.
 
