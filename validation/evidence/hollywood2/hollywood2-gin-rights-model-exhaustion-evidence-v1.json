@@ -1,0 +1,68 @@
+{
+  "record_type": "hollywood2-gin-rights-model-exhaustion-evidence-v1",
+  "checked_on": "2026-09-09",
+  "status": "verified-gin-access-model-is-not-dataset-license-exact-rights-unresolved",
+  "canonical_repository": {
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "pinned_commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "canonical_copy_identity_verified": true,
+    "public_host_accessibility_verified_elsewhere": true
+  },
+  "reviewed_upstream_evidence": {
+    "author_license_statement_evidence_fingerprint_sha256": "b01da719afe18f4eb0103a17d6e8c85f3750ba299050f8026063a9ebb55b1b2e",
+    "gin_accessible_host_evidence_fingerprint_sha256": "9e09bfe43a273fbcd8cfe258be547aee18e96b8f0928198d1fb5411555024ced",
+    "gin_history_evidence_fingerprint_sha256": "c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1",
+    "copy_rights_roadmap_sync_evidence_fingerprint_sha256": "948b4a3511217ea8a25be55c86495ee17af40ed5fa0598baf1cec283fab2e526"
+  },
+  "gin_first_party_infrastructure_evidence": {
+    "gogs": {
+      "repository": "https://github.com/G-Node/gogs",
+      "commit_sha1": "966e925cf320beff768b192276774d9265706df5",
+      "tree_sha1": "81f945c4e2278ec9d26fae1a48d32e5f9814badb",
+      "readme_blob_sha1": "72a83599065aff8bacf6a428bacbdc95e086dc8f",
+      "public_repository_access_statement_present": true,
+      "software_project_license": "MIT",
+      "software_license_applies_to_hollywood2em_data": false
+    },
+    "libgin": {
+      "repository": "https://github.com/G-Node/libgin",
+      "commit_sha1": "50fbb82301a29e62731ee1564bfe43642c936ae4",
+      "tree_sha1": "2341bc1edafc8c494bb2562e50bad2a08be19b69",
+      "doi_go_blob_sha1": "d2ac4b28cd29772e1f051c8690e510e1018a1168",
+      "repository_yaml_has_optional_license_field": true,
+      "license_is_repository_metadata_not_global_service_default": true
+    }
+  },
+  "rights_model_interpretation": {
+    "gin_public_access_is_dataset_license": false,
+    "gin_software_mit_license_is_dataset_license": false,
+    "gin_service_assigns_one_automatic_license_to_all_public_datasets": false,
+    "dataset_license_is_modeled_as_repository_specific_metadata": true,
+    "author_general_open_source_license_indication_verified": true,
+    "exact_hollywood2em_license_identifier_recovered": false,
+    "exact_hollywood2em_license_text_recovered": false,
+    "analysis_use_authorized": false,
+    "raw_data_redistribution_authorized": false,
+    "rights_roadmap_component_resolved": false
+  },
+  "scientific_boundary": {
+    "participant_identity_mapping_verified": false,
+    "source_audit_ready": false,
+    "participant_disjoint_model_validation_created": false,
+    "cross_dataset_validation_created": false,
+    "independent_human_human_agreement_created": false,
+    "frozen_evidence_performance_claim_created": false,
+    "new_empirical_performance_claim_created": false,
+    "native_60hz_or_gp3_validity_created": false
+  },
+  "claim_limits": [
+    "Public accessibility of the Hollywood2EM GIN repository is an access observation and is not treated as an exact dataset licence or redistribution grant.",
+    "The MIT licence of GIN server software is not inherited by datasets hosted on GIN.",
+    "GIN's DOI metadata model represents licence as repository-specific metadata; this does not prove which licence, if any, governs Hollywood2EM.",
+    "The author dissertation's general open-source-licence statement remains relevant provenance context but does not recover an exact Hollywood2EM licence identifier, licence text, analysis-use scope, or redistribution scope.",
+    "The complete reviewed Hollywood2EM GIN history still contains no recovered repository licence file or exact licence wording.",
+    "Participant mapping, participant-disjoint Hollywood2EM validation, Lund-to-Hollywood2 cross-dataset validation, and new Frozen Evidence remain blocked."
+  ],
+  "next_required_action": "Recover dataset-specific Hollywood2EM licence text/identifier or an authoritative author/institutional clarification that explicitly defines analysis and redistribution scope.",
+  "evidence_fingerprint_sha256": "df642aea3fc076caa42e4a6448694e2b14a58d16aa08d780ee968612ab9728d1"
+}
