@@ -1,0 +1,73 @@
+{
+  "availability_interpretation": {
+    "classification": "dated-route-level-host-availability-regression",
+    "dedicated_live_probe_certified_green": false,
+    "global_gin_outage_inferred": false,
+    "pinned_source_identity_invalidated": false,
+    "public_gin_route_from_github_runner_returned_repeated_403": true,
+    "scientific_reproduction_failure_inferred": false
+  },
+  "canonical_repository": {
+    "exact_main_sha": "54c190af288a7062db6c294a037dc1f4d4924abc",
+    "pinned_commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git"
+  },
+  "checked_on": "2026-09-09",
+  "claim_limits": [
+    "This record freezes two exact-main GitHub Actions observations of repeated HTTP 403 responses on the canonical public GIN route.",
+    "It does not establish that GIN was globally unavailable to every client or network route.",
+    "The same exact main SHA separately completed pinned-source acquisition and the reviewed source-token empirical reproduction, so the 403 observations are not promoted to a scientific reproduction failure.",
+    "The host-availability observation does not resolve Hollywood2EM dataset licence, redistribution, participant mapping, cross-dataset, Frozen Evidence, or native-GP3 claims."
+  ],
+  "evidence_fingerprint_sha256": "bea40ad7dd6b8b7fb056fc1fd4a221c00654c2405edae92c33a4059d6c1e1e8f",
+  "live_probe_observations": {
+    "bounded_attempts_per_workflow_attempt": 5,
+    "further_rerun_used_for_qualification": false,
+    "workflow_attempts": [
+      {
+        "all_bounded_git_attempts_returned_same_http_status": true,
+        "conclusion": "failure",
+        "job_id": 102633476693,
+        "run_attempt": 1,
+        "structured_probe_artifact_uploaded": false,
+        "terminal_http_status": 403
+      },
+      {
+        "all_bounded_git_attempts_returned_same_http_status": true,
+        "conclusion": "failure",
+        "job_id": 102635440688,
+        "run_attempt": 2,
+        "structured_probe_artifact_uploaded": false,
+        "terminal_http_status": 403
+      }
+    ],
+    "workflow_rerun_count": 1,
+    "workflow_run_id": 34401272377
+  },
+  "next_required_action": "Make future live-probe failures emit and upload a structured fingerprinted availability artifact before the workflow fails closed, then continue authoritative participant-ID ledger recovery.",
+  "record_type": "hollywood2-gin-host-availability-change-evidence-v1",
+  "same_sha_reproduction_context": {
+    "contract_job_id": 102633477225,
+    "contract_succeeded": true,
+    "empirical_derived_60hz_comparison_succeeded": true,
+    "empirical_job_id": 102633875404,
+    "empirical_pinned_source_acquisition_succeeded": true,
+    "live_aggregate_binding_succeeded": true,
+    "reviewed_artifact_replay_job_id": 102633700722,
+    "reviewed_artifact_replay_succeeded": true,
+    "source_token_validation_run_id": 34401272530
+  },
+  "scientific_boundary": {
+    "analysis_use_authorized": false,
+    "cross_dataset_validation_created": false,
+    "exact_dataset_license_identifier_recovered": false,
+    "exact_dataset_license_text_recovered": false,
+    "independent_human_human_agreement_created": false,
+    "native_60hz_or_gp3_validity_created": false,
+    "new_frozen_evidence_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "participant_identity_mapping_verified": false,
+    "raw_data_redistribution_authorized": false
+  },
+  "status": "verified-repeated-http-403-on-exact-main-public-gin-route"
+}
