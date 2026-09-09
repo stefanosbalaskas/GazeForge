@@ -1,0 +1,166 @@
+{
+  "record_type": "source-resolution-status-v1",
+  "dataset": "VISUS dynamic-video eye-tracking benchmark",
+  "checked_on": "2026-09-09",
+  "status": "current_authoritative_distribution_unresolved",
+  "empirical_evidence_created": false,
+  "source_audit_ready": false,
+  "current_authoritative_download_found": false,
+  "authoritative_publication": {
+    "title": "Benchmark Data for Evaluating Visualization and Analysis Techniques for Eye Tracking for Video Stimuli",
+    "authors": [
+      "Kuno Kurzhals",
+      "Cyrill Fabian Bopp",
+      "Jochen Bässler",
+      "Felix Ebinger",
+      "Daniel Weiskopf"
+    ],
+    "year": 2014,
+    "doi": "10.1145/2669557.2669558",
+    "published_dataset_description": {
+      "video_count": 11,
+      "participant_count": 25,
+      "eye_tracker": "Tobii T60 XL",
+      "eye_tracking_sampling_rate_hz": 60,
+      "video_resolution_px": [
+        1920,
+        1080
+      ],
+      "video_frame_rate_hz": 25,
+      "components": [
+        "video stimuli",
+        "eye-tracking data",
+        "dynamic AOI annotations"
+      ]
+    },
+    "original_distribution_url": "http://go.visus.uni-stuttgart.de/eyetrackingBenchmark",
+    "publication_describes_data_as_publicly_available": true,
+    "publication_states_dataset_license": false
+  },
+  "historical_distribution_evidence": [
+    {
+      "source": "Automatic Visual Attention Detection for Mobile Eye Tracking Using Pre-Trained Computer Vision Models and Human Gaze",
+      "year": 2021,
+      "doi": "10.3390/s21124143",
+      "reported_distribution_url": "https://www.visus.uni-stuttgart.de/publikationen/benchmark-eyetracking",
+      "reported_access_date": "2021-04-12",
+      "reported_as_downloadable": true,
+      "current_access_evidence": false
+    },
+    {
+      "source": "Gaze-based Multimodal Interaction",
+      "year": 2026,
+      "source_type": "doctoral_dissertation",
+      "reported_distribution_url": "https://www.visus.uni-stuttgart.de/publikationen/benchmark-eyetracking",
+      "reported_access_date": "2021-04-12",
+      "current_access_evidence": false,
+      "interpretation": "The 2026 dissertation reuses a footnote whose access date remains 12 April 2021; it does not establish current availability."
+    }
+  ],
+  "current_resolution_checks": [
+    {
+      "target": "Current Kuno Kurzhals VISUS institutional profile",
+      "url": "https://www.visus.uni-stuttgart.de/en/team/Kurzhals/",
+      "outcome": "The current profile lists the 2014 benchmark publication, but this recheck did not locate a current full-benchmark download, separate dataset DOI, or explicit dataset license attached to the listing."
+    },
+    {
+      "target": "Current University of Stuttgart VISUS DaRUS dataverse",
+      "url": "https://darus.uni-stuttgart.de/dataverse/visus",
+      "observed_result_count": 18,
+      "outcome": "The live VISUS dataverse reports 18 results. Exact-title, publication-DOI, and author-targeted searches performed for this recheck did not locate a DaRUS record matching the 2014 benchmark."
+    },
+    {
+      "target": "Current VISUS DaRUS license examples",
+      "outcome": "Modern VISUS datasets expose explicit dataset-level license fields, confirming that those license records can be resolved when present; their terms are not projected onto the 2014 benchmark."
+    },
+    {
+      "target": "Historical benchmark-eyetracking and eyetrackingBenchmark identifiers",
+      "outcome": "Current public searches continue to recover the identifiers in the 2014 benchmark paper and later literature, but did not establish a current authoritative full-corpus distribution."
+    },
+    {
+      "target": "Current public code and derivative-source search",
+      "outcome": "Searches recovered derivative/reference repositories, including the already-reviewed VISUS-supervised eye-slitscan subset and EVE stimulus references, but no authoritative replacement for the full 25-participant by 11-stimulus benchmark."
+    }
+  ],
+  "authoritative_source_recheck": {
+    "full_expected_participant_count": 25,
+    "full_expected_stimulus_count": 11,
+    "full_authoritative_corpus_recovered": false,
+    "current_institutional_publication_listing_found": true,
+    "current_authoritative_dataset_download_found": false,
+    "matching_darus_record_found": false,
+    "separate_dataset_doi_found": false,
+    "explicit_current_dataset_license_found": false,
+    "modern_darus_license_examples_not_transferable": true,
+    "partial_derivative_is_authoritative_replacement": false
+  },
+  "modern_darus_examples": [
+    {
+      "title": "Dataset for NMF-based Analysis of Mobile Eye-Tracking Data",
+      "doi": "10.18419/DARUS-4023",
+      "license": "CC BY 4.0",
+      "applies_to_2014_benchmark": false
+    },
+    {
+      "title": "Dataset for \"How Deep Is Your Gaze? Leveraging Distance in Image-Based Gaze Analysis\"",
+      "doi": "10.18419/DARUS-4141",
+      "license": "CC BY 4.0",
+      "applies_to_2014_benchmark": false
+    }
+  ],
+  "reviewed_derivative_evidence": [
+    {
+      "record_type": "visus-public-partial-evidence-v1",
+      "evidence_fingerprint_sha256": "80e008228e39c2b17bae99a526e2a0157c2c850ebe803c5a370abe9167efde14",
+      "participant_count": 3,
+      "stimulus_count": 1,
+      "full_visus_recovered": false,
+      "authoritative_replacement": false
+    },
+    {
+      "record_type": "visus-public-event-extension-evidence-v1",
+      "evidence_fingerprint_sha256": "2f12bd83d71786bfae7101dec6515c49c5ff4e696df8675b3955300e5e5e6dfd",
+      "complete_tobii_exports": 2,
+      "full_visus_recovered": false,
+      "authoritative_replacement": false
+    }
+  ],
+  "rights": {
+    "analysis_use_terms_status": "unresolved",
+    "raw_data_redistribution_terms_status": "unresolved",
+    "paper_copyright_notice_is_dataset_license": false,
+    "license_inference_permitted": false
+  },
+  "annotation_independence": {
+    "status": "not_established",
+    "published_contributor_count": 2,
+    "published_process_summary": "The first contributor performed the main annotation; the second added annotations and refined existing annotations.",
+    "independent_annotation_streams_verified": false,
+    "human_human_agreement_ready": false
+  },
+  "promotion_boundary": {
+    "source_audit_authorized": false,
+    "human_human_agreement_authorized": false,
+    "model_human_validation_authorized": false,
+    "frozen_evidence_authorized": false,
+    "raw_source_redistribution_authorized": false
+  },
+  "claim_limits": [
+    "This record is a dated authoritative-source recheck, not a source audit and not empirical validation.",
+    "Failure to recover a current authoritative full corpus is not evidence that no such copy exists.",
+    "The 2014 paper copyright notice is not treated as a license for the benchmark files.",
+    "Historical public availability does not establish current analysis-use or redistribution permission.",
+    "CC BY 4.0 licenses on modern VISUS DaRUS datasets are not transferred to the 2014 benchmark.",
+    "The reviewed public derivative material is partial and is not an authoritative replacement for the 25-participant by 11-stimulus benchmark.",
+    "Two contributors to one curation process do not establish two independent annotation streams.",
+    "No human-human agreement, model-human validation, Frozen Evidence eligibility, or raw-source redistribution is authorized by this record."
+  ],
+  "next_required_actions": [
+    "Obtain the full benchmark from a current VISUS/University of Stuttgart source or an author-verified copy.",
+    "Obtain explicit current analysis-use and raw-data redistribution terms for that exact copy.",
+    "Inventory and fingerprint every file in the exact obtained copy before changing source_audit_ready to true.",
+    "Inspect the obtained AOI materials for separately recoverable independent annotation streams.",
+    "Only after those gates pass, execute the reviewed human-AOI, model-prediction, external-grid, and Frozen Evidence workflow."
+  ],
+  "record_fingerprint_sha256": "97bd19b892032a663b7707235504a7ba886a86d6c3caab4966fa6c5ee96a2571"
+}

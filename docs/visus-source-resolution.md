@@ -2,7 +2,7 @@
 
 GazeForge treats locating the VISUS benchmark as a separate scientific-provenance task from validating a local copy. The repository therefore records what the public literature and current institutional indexes establish, while refusing to turn historical availability into a current source or licensing claim.
 
-The machine-readable checkpoint is `validation/protocols/visus-source-resolution-2026-09-04.json`. It is a **source-resolution status record, not a source-audit specification and not empirical evidence**.
+The baseline machine-readable checkpoint is `validation/protocols/visus-source-resolution-2026-09-04.json`. A dated institutional recheck is frozen separately at `validation/evidence/visus-source-recheck/visus-authoritative-source-recheck-2026-09-09.json` so it does not replace or duplicate the reviewed dashboard checkpoint. Both are **source-resolution status records, not source-audit specifications and not empirical evidence**.
 
 ## What is established
 
@@ -42,16 +42,47 @@ Accordingly, GazeForge records:
 
 Failure to locate a current distribution is not evidence that no authoritative copy exists. It means the public evidence available in this resolution pass is insufficient for GazeForge's empirical source gate.
 
+## 2026-09-09 institutional recheck
+
+The 2026-09-09 recheck repeated the authoritative-source search instead of treating the 2026-09-04 checkpoint as permanently current. It records the same unresolved scientific result with additional present-day evidence:
+
+- the live Kuno Kurzhals VISUS profile still lists the 2014 benchmark publication;
+- the live VISUS DaRUS dataverse reports 18 records, but exact-title, publication-DOI, and author-targeted searches in this recheck did not locate a record matching the 2014 25-participant × 11-stimulus benchmark;
+- modern VISUS DaRUS datasets such as `10.18419/DARUS-4023` and `10.18419/DARUS-4141` expose explicit `CC BY 4.0` dataset licenses, but those licenses apply to those deposits only and are **not transferred backward** to the 2014 benchmark;
+- a 2026 dissertation still cites the historical VISUS distribution page with an access date of 12 April 2021, so it corroborates historical access rather than current availability;
+- current public code/derivative searches still recover VISUS-derived material, not an authoritative replacement for the complete benchmark.
+
+The recheck is frozen as:
+
+```text
+validation/evidence/visus-source-recheck/visus-authoritative-source-recheck-2026-09-09.json
+```
+
+with canonical fingerprint:
+
+```text
+97bd19b892032a663b7707235504a7ba886a86d6c3caab4966fa6c5ee96a2571
+```
+
+Its strict validator additionally binds the two already-reviewed derivative evidence records to their real repository bodies:
+
+- public partial dynamic-AOI evidence: `80e008228e39c2b17bae99a526e2a0157c2c850ebe803c5a370abe9167efde14` (3 participants × 1 stimulus);
+- public event-extension evidence: `2f12bd83d71786bfae7101dec6515c49c5ff4e696df8675b3955300e5e5e6dfd` (2 additional complete Tobii exports, with stimulus identity still not file-bound).
+
+Neither derivative is promoted to the full VISUS source. The strict layer rejects even correctly refingerprinted attempts to claim full-corpus recovery, a matching DaRUS record, a separate dataset DOI, an explicit current benchmark license, transfer of modern DaRUS licenses, derivative source authority, independent annotation streams, source-audit authorization, human-human agreement, model-human validation, Frozen Evidence eligibility, or raw-source redistribution.
+
+The 2026-09-09 result therefore **does not satisfy** the roadmap item “Obtain/verify an authoritative current VISUS copy and reuse/distribution terms.” That item remains open.
+
 ## Validate the checkpoint
 
-The checkpoint has a dedicated JSON-only validator:
+The baseline checkpoint has a dedicated JSON-only validator:
 
 ```bash
 gazeforge-visus-source-resolution \
   validation/protocols/visus-source-resolution-2026-09-04.json
 ```
 
-The validator checks the record type, benchmark identity, ISO check date, current-source/audit/empirical flags, publication DOI, rights fields, annotation-independence gate, explicit claim limits, and a deterministic canonical SHA-256 fingerprint. If a future checkpoint stores `record_fingerprint_sha256`, the stored value must match the checkpoint content.
+The validator checks the record type, benchmark identity, ISO check date, current-source/audit/empirical flags, publication DOI, rights fields, annotation-independence gate, explicit claim limits, and a deterministic canonical SHA-256 fingerprint. The same generic validator also applies to the 2026-09-09 recheck file, while `gazeforge.visus_authoritative_source_recheck.validate_visus_authoritative_source_recheck` adds the frozen current-search and derivative-binding contract.
 
 The current unresolved status is fail-closed: it cannot simultaneously claim that a current authoritative download was found, that the source is audit-ready, that empirical evidence was created, that analysis or redistribution rights are resolved, or that independent human annotation streams are verified.
 
@@ -87,11 +118,12 @@ The next empirical step is not another model run. It is source acquisition and r
 
 Until those steps are complete, the existing VISUS software remains validated infrastructure with empirical execution pending.
 
-## Public sources used for this resolution checkpoint
+## Public sources used for the resolution checkpoints
 
 - Original BELIV publication: <https://doi.org/10.1145/2669557.2669558>
 - 2021 Sensors evaluation/data-availability statement: <https://doi.org/10.3390/s21124143>
 - Current Kuno Kurzhals VISUS profile: <https://www.visus.uni-stuttgart.de/en/team/Kurzhals/>
 - Current VISUS DaRUS dataverse: <https://darus.uni-stuttgart.de/dataverse/visus>
+- Modern DaRUS license examples used only to document non-transferability: `10.18419/DARUS-4023` and `10.18419/DARUS-4141`
 
 These references document the resolution decision. They do not replace the exact-file source audit required for empirical evidence.
