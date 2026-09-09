@@ -1,0 +1,44 @@
+{
+  "evidence_fingerprint_sha256": "c0dc3182f7fa89d325e0be2406d6d1aaf6541ebb2e90c21f49ade23398909571",
+  "issue_wording": {
+    "human_human_agreement": "Freeze Gaze-in-the-Wild labeller-to-labeller sample-level and event-level agreement on the distributed multi-labeller overlap subset (five recordings); no full-distribution HHA claim.",
+    "processed_rate": "Freeze the 68-file Gaze-in-the-Wild ProcessData processed timestamp-grid rate distribution; this is not acquisition-hardware cadence."
+  },
+  "record_type": "gaze-in-wild-roadmap-evidence-sync-v1",
+  "reviewed_on": "2026-09-09",
+  "roadmap_completion": {
+    "authoritative_numeric_task_mapping_item_satisfied": false,
+    "distributed_overlap_human_human_agreement_scoped_item_satisfied": true,
+    "processed_timestamp_grid_rate_distribution_scoped_item_satisfied": true,
+    "task_stratified_validation_item_satisfied": false
+  },
+  "scientific_boundary": {
+    "acquisition_hardware_cadence_verified": false,
+    "cross_dataset_validation_created": false,
+    "full_distributed_labeldata_hha_created": false,
+    "gp3_validity_claim_created": false,
+    "native_60hz_validity_claim_created": false,
+    "new_model_performance_claim_created": false,
+    "quarantine_exit_authorized": false,
+    "task_mapping_verified": false,
+    "task_stratified_hha_created": false,
+    "task_stratified_model_validation_created": false
+  },
+  "source_main_sha": "9b1ddbfe105a2edbe0ce3937ad818432a8d0cc8a",
+  "status": "verified-scoped-roadmap-evidence-synchronization",
+  "upstream_evidence": {
+    "overlap_human_human_agreement": {
+      "evidence_fingerprint_sha256": "7e6d6180b01417d7be2e07483cc0c7e0feb86a1d08be6b8aeba03f48fdb27f02",
+      "labeller_pair_count": 6,
+      "path": "validation/evidence/gaze-in-wild/gaze-in-wild-distributed-overlap-human-human-agreement-evidence-v1.json",
+      "recording_count": 5,
+      "scope": "distributed multi-labeller overlap subset only"
+    },
+    "processed_rate_ledger": {
+      "evidence_fingerprint_sha256": "1bd6643bd0c75faec9d070f74fb719f9178caa2da7e90bcbe356a0dbc5f38905",
+      "file_count": 68,
+      "path": "validation/evidence/gaze-in-wild/gaze-in-wild-processdata-processed-rate-ledger-v1.json",
+      "scope": "per-file ProcessData processed timestamp-grid rate distribution"
+    }
+  }
+}
