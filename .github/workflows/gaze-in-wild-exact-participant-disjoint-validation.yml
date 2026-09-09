@@ -1,0 +1,175 @@
+name: Gaze-in-the-Wild exact participant-disjoint validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - research/gaze-in-wild-exact-participant-disjoint-model-validation
+    paths:
+      - ".github/workflows/gaze-in-wild-exact-participant-disjoint-validation.yml"
+      - "docs/gaze-in-wild-model-validation.md"
+      - "docs/validation-status.md"
+      - "scripts/run_gaze_in_wild_exact_participant_disjoint_validation.py"
+      - "scripts/run_gaze_in_wild_exact_participant_disjoint_validation_v2.py"
+      - "src/gazeforge/gaze_in_wild_exact_validation.py"
+      - "src/gazeforge/gaze_in_wild_exact_validation_v2.py"
+      - "src/gazeforge/gaze_in_wild_exact_validation_evidence.py"
+      - "tests/test_gaze_in_wild_exact_validation.py"
+      - "tests/test_gaze_in_wild_exact_validation_v2.py"
+      - "tests/test_gaze_in_wild_exact_validation_evidence.py"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-reference-preflight-evidence-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-reference-manifest-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-execution-protocol-evidence-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-execution-protocol-evidence-v2.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-processdata-exact-file-identities-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-exact-processdata-structure-evidence-v1.json"
+      - "validation/evidence/gaze-in-wild/gaze-in-wild-por-coordinate-semantics-evidence-v1.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  exact-participant-disjoint-validation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and validation dependencies
+        run: python -m pip install --disable-pip-version-check --quiet . pytest ruff
+
+      - name: Ruff exact validation tranche
+        run: |
+          ruff check \
+            src/gazeforge/gaze_in_wild_exact_validation.py \
+            src/gazeforge/gaze_in_wild_exact_validation_v2.py \
+            src/gazeforge/gaze_in_wild_exact_validation_evidence.py \
+            scripts/run_gaze_in_wild_exact_participant_disjoint_validation.py \
+            scripts/run_gaze_in_wild_exact_participant_disjoint_validation_v2.py \
+            tests/test_gaze_in_wild_exact_validation.py \
+            tests/test_gaze_in_wild_exact_validation_v2.py \
+            tests/test_gaze_in_wild_exact_validation_evidence.py
+
+      - name: Test exact validation evidence and leakage boundaries
+        run: |
+          pytest -q \
+            tests/test_gaze_in_wild_exact_validation.py \
+            tests/test_gaze_in_wild_exact_validation_v2.py \
+            tests/test_gaze_in_wild_exact_validation_evidence.py
+
+      - name: Run convergence-qualified exact validation discovery
+        run: |
+          python scripts/run_gaze_in_wild_exact_participant_disjoint_validation_v2.py \
+            --frozen validation/evidence/gaze-in-wild/gaze-in-wild-figshare-public-metadata-raw-v1.json \
+            --reference-manifest validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-reference-manifest-v1.json \
+            --preparation-protocol validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-execution-protocol-evidence-v1.json \
+            --execution-protocol-v2 validation/evidence/gaze-in-wild/gaze-in-wild-exact-model-execution-protocol-evidence-v2.json \
+            --process-identities validation/evidence/gaze-in-wild/gaze-in-wild-processdata-exact-file-identities-v1.json \
+            --output gaze-in-wild-exact-participant-disjoint-validation-discovery-v2.json \
+            --retries 3
+
+      - name: Require convergence-qualified discovery-only boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("gaze-in-wild-exact-participant-disjoint-validation-discovery-v2.json")
+          record = json.loads(path.read_text(encoding="utf-8"))
+          execution = record["execution"]
+          split = record["split_integrity"]
+          report_protocol = record["benchmark_report"]["protocol"]
+          boundary = record["scientific_boundary"]
+
+          assert execution["selected_labeller_id"] == 5
+          assert execution["selected_participant_count"] == 12
+          assert execution["selected_recording_count"] == 18
+          assert execution["selected_source_sample_count"] == 1590659
+          assert execution["downloaded_pair_count"] == 18
+          assert execution["all_selected_label_and_process_bytes_reverified"] is True
+          assert execution["all_label_process_timestamp_vectors_exactly_equal"] is True
+          assert execution["all_raw_mat_bytes_deleted_after_preparation"] is True
+          assert execution["processdata_cleaned_downloaded"] is False
+          assert execution["contextmlp_convergence_warning_count"] == 0
+          assert execution["contextmlp_convergence_requirement_satisfied"] is True
+
+          assert split["participant_disjoint"] is True
+          assert split["all_models_share_identical_oof_rows"] is True
+          assert split["participant_count"] == 12
+          assert split["fold_count"] == 5
+          assert report_protocol["contextmlp_convergence_warning_count"] == 0
+          assert report_protocol["contextmlp_convergence_requirement_satisfied"] is True
+
+          assert boundary["empirical_metrics_computed"] is True
+          assert boundary["participant_disjoint_model_validation_executed"] is True
+          assert boundary["contextmlp_convergence_requirement_satisfied"] is True
+          assert boundary["performance_evidence_reviewed"] is False
+          for key in (
+              "participant_disjoint_model_validation_created",
+              "task_stratified_model_validation_created",
+              "complete_file_to_publication_task_mapping_verified",
+              "cross_dataset_validation_created",
+              "gp3_validity_claim_created",
+              "quarantine_exit_authorized",
+              "new_empirical_performance_claim_created",
+          ):
+              assert boundary[key] is False, key
+          assert record["raw_dataset_bytes_retained"] is False
+          PY
+
+      - name: Require cross-run reproduction of reviewed performance evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from gazeforge.gaze_in_wild_exact_validation_evidence import (
+              load_reviewed_gaze_in_wild_validation_evidence,
+              validate_fresh_gaze_in_wild_validation_discovery,
+          )
+
+          discovery = json.loads(
+              Path(
+                  "gaze-in-wild-exact-participant-disjoint-validation-discovery-v2.json"
+              ).read_text(encoding="utf-8")
+          )
+          reviewed = load_reviewed_gaze_in_wild_validation_evidence(
+              "validation/evidence/gaze-in-wild/"
+              "gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1.json"
+          )
+          signature = validate_fresh_gaze_in_wild_validation_discovery(
+              discovery,
+              reviewed,
+          )
+          print(f"Reviewed GIW cross-run signature reproduced: {signature}")
+          PY
+
+      - name: Confirm raw GIW MAT files were not retained
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f -name 'PrIdx_*_TrIdx_*.mat' -print -quit | grep -q .; then
+            echo "Raw GIW MAT file unexpectedly retained in workspace." >&2
+            exit 1
+          fi
+
+      - name: Upload convergence-qualified discovery summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaze-in-wild-exact-participant-disjoint-validation-discovery-v2
+          path: gaze-in-wild-exact-participant-disjoint-validation-discovery-v2.json
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,212 @@
+{
+  "claim_limits": [
+    "Labeller 5 is a preregistered human reference stream, not error-free ground truth.",
+    "The benchmark uses exact original ProcessData and LabelData but a derived 60-Hz analysis grid; it is not native 60-Hz or GP3 validation.",
+    "Participant-held-out performance is task-agnostic because no authoritative TrIdx-to-task mapping was used or inferred.",
+    "No cross-dataset generalization result or quarantine-exit authorization is created by this evidence.",
+    "Aggregate learned-model performance must not be interpreted as uniformly strong event recognition; pursuit detection is specifically weak.",
+    "Cross-validation fold differences are descriptive and are not treated as independent replicates for naive inferential p-values."
+  ],
+  "convergence_review": {
+    "accept_metrics_regardless_of_direction": true,
+    "from": 200,
+    "initial_200_iteration_discovery_rejected_for_review": true,
+    "only_parameter_changed": "temporal_max_iter",
+    "performance_metrics_used_to_choose_amendment": false,
+    "to": 1000,
+    "v2_contextmlp_convergence_warning_count": 0,
+    "v2_convergence_requirement_satisfied": true
+  },
+  "evidence_fingerprint_sha256": "b2fe85ec7e5d5cd425c0cd2593742bab835686c3f560d8a6c06e9c6d67dc547a",
+  "metrics": {
+    "full_benchmark_report_fingerprint_sha256": "170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f",
+    "pursuit_failure_case": {
+      "analysis_support": 5696,
+      "models": {
+        "ContextMLP": {
+          "event_f1": 0.0029585798816568047,
+          "event_precision": 0.0028653295128939827,
+          "event_recall": 0.0030581039755351682,
+          "matched_reference_events": 1,
+          "predicted_events": 349,
+          "sample_f1": 0.0547112462006079,
+          "sample_precision": 0.3081081081081081,
+          "sample_recall": 0.030021067415730338
+        },
+        "I-VT": {
+          "event_f1": 0.0,
+          "event_precision": 1.0,
+          "event_recall": 0.0,
+          "matched_reference_events": 0,
+          "predicted_events": 0,
+          "sample_f1": 0.0,
+          "sample_precision": 0.0,
+          "sample_recall": 0.0
+        },
+        "RandomForest": {
+          "event_f1": 0.008583690987124463,
+          "event_precision": 0.0056022408963585435,
+          "event_recall": 0.01834862385321101,
+          "matched_reference_events": 6,
+          "predicted_events": 1071,
+          "sample_f1": 0.07687120701281187,
+          "sample_precision": 0.16579406631762653,
+          "sample_recall": 0.05003511235955056
+        }
+      },
+      "reference_event_count": 327
+    },
+    "section_fingerprints_sha256": {
+      "analysis_label_counts": "e159cc1962a14693bfbfffcc723df60254cfab1e34866ec59c4c1946b0b942d1",
+      "event_class_performance": "47f323d75affba71190bebc2193468f59e7ed957fd664e4b152f19137e57ef57",
+      "fold_metrics": "0e1350e49240c76ffd9e5381fed3c689f48cd6dc3052b4df59a0d54aa935401d",
+      "paired_model_difference_summary": "ba632f6acb79104a97b5310038f3912cf44c2b5806759d099f18da0d1c6bb1ee",
+      "paired_model_fold_deltas": "ff8935ee8b06a3dca1a71f2b1c9540229a4d4594e7617ffc1e81d2ecc98da25c",
+      "sample_event_class_performance": "dee5f5a08f351e364c2224d43c761a7c537ca9a1800b44c5048b5cda7a8e33e0",
+      "summary": "651958828cd8eef539e30abe990c32c490f8c933916e689ab08bca469add5662",
+      "task_fold_metrics": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "task_summary": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "section_row_counts": {
+      "analysis_label_counts": 5,
+      "event_class_performance": 16,
+      "fold_metrics": 15,
+      "paired_model_difference_summary": 36,
+      "paired_model_fold_deltas": 160,
+      "sample_event_class_performance": 15,
+      "summary": 3,
+      "task_fold_metrics": 0,
+      "task_summary": 0
+    },
+    "summary_core": [
+      {
+        "balanced_accuracy_mean": 0.2830575956976663,
+        "event_f1_mean": 0.1567955197251188,
+        "macro_f1_mean": 0.1165214397458667,
+        "model": "I-VT",
+        "n_folds": 5
+      },
+      {
+        "balanced_accuracy_mean": 0.497332257041737,
+        "event_f1_mean": 0.3085443882700346,
+        "macro_f1_mean": 0.4752446106119213,
+        "model": "RandomForest",
+        "n_folds": 5
+      },
+      {
+        "balanced_accuracy_mean": 0.5285607220412606,
+        "event_f1_mean": 0.4395648140542133,
+        "macro_f1_mean": 0.5192210487515447,
+        "model": "ContextMLP",
+        "n_folds": 5
+      }
+    ]
+  },
+  "record_type": "gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1",
+  "reproducibility": {
+    "benchmark_envelope_fingerprint_sha256": "8f1f4e37848d966957ea8ffb771fa418d43ee6254f9762590e02a1840285dc36",
+    "cross_run_reproducibility_signature_sha256": "f8c8d27ddbb1fe065a15df18d53c9fa84544315ef57cf2783554b236839ff286",
+    "float_decimal_places": 8,
+    "metric_section_fingerprints_sha256": {
+      "analysis_label_counts": "e159cc1962a14693bfbfffcc723df60254cfab1e34866ec59c4c1946b0b942d1",
+      "event_class_performance": "755a09be6e5cc5e3e2962de0b3bbb193d79a01e09a50bb5cbc2f3df39e94caaf",
+      "fold_metrics": "c1cf30a41cfa8c1981de5927f58d46a02e49da261041b2aa0624ba7f67231a47",
+      "paired_model_difference_summary": "a1f00d1c934fa46879f8097de0c3ba93f5ae78edc3ca6baaad17aa03d890aafd",
+      "paired_model_fold_deltas": "9956990388304906121205b355cda3354a07fefeb2dfcc1bfcd1cb0f02450097",
+      "sample_event_class_performance": "f5d7aeb4c0173daec12288d28f5b5bade1d711e0ccc5617ee82027d4c2682a43",
+      "summary": "9cfca876e1fe733f8bcc3648e3b6bb060a197cbaefe16c85a1c0c712404042ca",
+      "task_fold_metrics": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "task_summary": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "metric_section_row_counts": {
+      "analysis_label_counts": 5,
+      "event_class_performance": 16,
+      "fold_metrics": 15,
+      "paired_model_difference_summary": 36,
+      "paired_model_fold_deltas": 160,
+      "sample_event_class_performance": 15,
+      "summary": 3,
+      "task_fold_metrics": 0,
+      "task_summary": 0
+    },
+    "policy": "Cross-run certification preserves exact source, split, count, class, convergence, and scientific-boundary identities while comparing floating benchmark outputs after canonical rounding to 8 decimal places. Original whole-report/discovery hashes remain immutable provenance for the reviewed source run and are not required to repeat across different hosted-runner numerical backends."
+  },
+  "reviewed_on": "2026-09-08",
+  "scientific_boundary": {
+    "acquisition_hardware_cadence_verified_by_this_validation": false,
+    "complete_file_to_publication_task_mapping_verified": false,
+    "cross_dataset_validation_created": false,
+    "event_class_sensitivity_created": true,
+    "gp3_validity_claim_created": false,
+    "native_gp3_or_native_60hz_validity_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": true,
+    "performance_evidence_reviewed": true,
+    "quarantine_exit_authorized": false,
+    "raw_dataset_bytes_retained": false,
+    "task_stratified_model_validation_created": false
+  },
+  "source_binding": {
+    "benchmark_report_fingerprint_sha256": "170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f",
+    "discovery_artifact_id": 10075402142,
+    "discovery_artifact_zip_sha256": "3406abd4eddc080b9b72687e3b164d863fe0d925782c746d4b369c48dfcbdf87",
+    "discovery_fingerprint_sha256": "0623353dda03ab6f5988c671cbc6dd5e82af8fb30b84a18bd9364c3aae5e4513",
+    "discovery_workflow_head_sha": "9d2c5cd9c274527615e4e30b2feb53da2e20e523",
+    "discovery_workflow_job_id": 102221217862,
+    "discovery_workflow_run_id": 34273647914,
+    "execution_protocol_v2_fingerprint_sha256": "a81df34f66f9fd35a28195f768a959d55d57a8f449a916e671355c07de910e66",
+    "preparation_protocol_v1_fingerprint_sha256": "e07ad1c15b8964e6e012e05d37b6eb989f36380ffdf307590b36273b5f8485e5",
+    "reference_manifest_fingerprint_sha256": "5688c283d5f1a199ef760994b4df655e42e4f27c4dd767cfb54760a4aa6816f9",
+    "reviewed_exact_byte_evidence_fingerprint_sha256": "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00",
+    "reviewed_por_semantics_evidence_fingerprint_sha256": "5eb245979385283571d6d9a5dda9a5d74dea6c00165bbe3a2587fcfa80e9adfb",
+    "reviewed_processdata_structure_evidence_fingerprint_sha256": "cffcc8a10d176cc5eb8c15c080cf450e3e1b1404ced00ea8907cdd4ee3c3517f",
+    "reviewed_reference_preflight_evidence_fingerprint_sha256": "aff7b7b1576b9a1eee6a774183ba4f8404052226cdcb984a4112120bbc5bea67",
+    "stable_scientific_identity_sha256": "772d632d8671e058407d0fe9fdfcd291c0371a45682ec9dfd145861a924eaf46",
+    "stable_verified_pair_manifest_sha256": "1c129f4c2c18f78dbc41892eff476374f5ccdaaf6ee90d22d1a5808d6fdc2407"
+  },
+  "split_integrity": {
+    "all_models_share_identical_oof_rows": true,
+    "fold_count": 5,
+    "fold_participant_assignments": [
+      {"participant_id": "PrIdx_2", "validation_fold": 1},
+      {"participant_id": "PrIdx_22", "validation_fold": 1},
+      {"participant_id": "PrIdx_1", "validation_fold": 2},
+      {"participant_id": "PrIdx_4", "validation_fold": 2},
+      {"participant_id": "PrIdx_12", "validation_fold": 3},
+      {"participant_id": "PrIdx_18", "validation_fold": 3},
+      {"participant_id": "PrIdx_3", "validation_fold": 3},
+      {"participant_id": "PrIdx_19", "validation_fold": 4},
+      {"participant_id": "PrIdx_20", "validation_fold": 4},
+      {"participant_id": "PrIdx_8", "validation_fold": 4},
+      {"participant_id": "PrIdx_17", "validation_fold": 5},
+      {"participant_id": "PrIdx_6", "validation_fold": 5}
+    ],
+    "group_col": "participant_id",
+    "oof_row_count_per_model": 157850,
+    "participant_count": 12,
+    "participant_disjoint": true
+  },
+  "status": "reviewed-convergence-qualified-participant-disjoint-evidence",
+  "validation_scope": {
+    "analysis_row_count": 157850,
+    "analysis_sampling_rate_hz": 60.0,
+    "dataset": "Gaze-in-the-Wild",
+    "derived_60hz_rows_before_exclusions": 318145,
+    "distribution": "official original Figshare ProcessData + LabelData",
+    "excluded_rows": 160295,
+    "label_counts_analysis": {
+      "blink": 13889,
+      "fixation": 26341,
+      "pursuit": 5696,
+      "saccade": 20061,
+      "vor": 91863
+    },
+    "participant_count": 12,
+    "recording_count": 18,
+    "reference_labeller_id": 5,
+    "source_confidence_threshold": 0.3,
+    "source_sample_count": 1590659,
+    "task_mapping_used": false,
+    "task_stratified_validation_created": false
+  }
+}

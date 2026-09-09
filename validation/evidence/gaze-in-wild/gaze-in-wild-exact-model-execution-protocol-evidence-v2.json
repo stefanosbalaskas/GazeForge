@@ -1,0 +1,91 @@
+{
+  "amendment": {
+    "acceptance_rule": "accept_rerun_metrics_irrespective_of_direction_only_if_zero_contextmlp_convergence_warnings",
+    "changed_fields": {
+      "temporal_max_iter": {
+        "from": 200,
+        "to": 1000
+      }
+    },
+    "performance_metrics_used_to_choose_amendment": false,
+    "reason": "all_five_contextmlp_folds_hit_the_preregistered_200_iteration_optimization_ceiling",
+    "unchanged_protocol_fields_required": true
+  },
+  "evidence_fingerprint_sha256": "a81df34f66f9fd35a28195f768a959d55d57a8f449a916e671355c07de910e66",
+  "execution_protocol": {
+    "analysis_sampling_rate_hz": 60.0,
+    "calibration_bins": 10,
+    "context_mlp_convergence_warning_policy": "error",
+    "context_radius_ms": 50.0,
+    "coordinate_conversion": "x_px=por_x*1920; y_px=por_y*1080",
+    "coordinate_source": "ProcessData.ETG.POR normalized_scene_image",
+    "event_class_sensitivity_source": "fixed_out_of_fold_predictions",
+    "event_min_iou": 0.5,
+    "excluded_event_labels": [
+      "ambiguous",
+      "unlabelled",
+      "undefined"
+    ],
+    "group_splitter": "GroupKFold",
+    "hidden_layer_sizes": [
+      64,
+      32
+    ],
+    "ivt_velocity_threshold_px_s": 1000.0,
+    "label_process_timestamp_vector_alignment_required": "exact_numeric_vector_equality",
+    "max_coordinate_gap_factor": 1.5,
+    "min_label_purity": 0.75,
+    "model_min_confidence": 0.0,
+    "models": [
+      "I-VT",
+      "RandomForest",
+      "ContextMLP"
+    ],
+    "models_refit_by_event_class": false,
+    "n_splits": 5,
+    "participant_group_key": "PrIdx distribution-native participant token",
+    "random_forest_n_estimators": 200,
+    "random_state": 42,
+    "raw_mat_retention_authorized": false,
+    "resampling": "label_majority_windows_with_min_purity_0.75_and_coordinate_linear_interpolation_only_between_immediate_finite_brackets",
+    "rolling_window_ms": 80.0,
+    "scene_resolution_px": [
+      1920,
+      1080
+    ],
+    "selected_labeller_id": 5,
+    "selected_participant_count": 12,
+    "selected_recording_count": 18,
+    "source_confidence_threshold": 0.3,
+    "task_mapping_used": false,
+    "task_stratified_validation_authorized": false,
+    "temporal_max_iter": 1000,
+    "temporal_solver": "adam",
+    "trial_key": "TrIdx distribution-native opaque trial token"
+  },
+  "parent_evidence": {
+    "discovery_artifact_id": 10051567756,
+    "discovery_artifact_zip_sha256": "22292e9f011d2546fc89349f0ea5bcb40dfa6d6550d7e2d008d10b18d5a683ef",
+    "discovery_benchmark_report_fingerprint_sha256": "b642ce8707b9ebb5ec453fc81e666160b31e7dc3d5f388cdcb3d5bf936d5ca2e",
+    "discovery_fingerprint_sha256": "75834affeee6ab18da640256bea7b010d6fe45cc71178bc8f12a61f65f42772c",
+    "discovery_workflow_head_sha": "b0b6feb3382290fb4f53a9d120f5555147ed8a14",
+    "discovery_workflow_job_id": 102023517588,
+    "discovery_workflow_run_id": 34214673871,
+    "model_execution_protocol_v1_fingerprint_sha256": "e07ad1c15b8964e6e012e05d37b6eb989f36380ffdf307590b36273b5f8485e5",
+    "model_reference_preflight_evidence_fingerprint_sha256": "aff7b7b1576b9a1eee6a774183ba4f8404052226cdcb984a4112120bbc5bea67",
+    "observed_contextmlp_convergence_warning_count": 5
+  },
+  "record_type": "gaze-in-wild-exact-model-execution-protocol-evidence-v2",
+  "reviewed_on": "2026-09-08",
+  "scientific_boundary": {
+    "complete_file_to_publication_task_mapping_verified": false,
+    "cross_dataset_validation_created": false,
+    "exact_distribution_model_execution_authorized": true,
+    "gp3_validity_claim_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "quarantine_exit_authorized": false,
+    "task_stratified_model_validation_created": false
+  },
+  "status": "convergence_only_protocol_amendment_locked_before_rerun"
+}

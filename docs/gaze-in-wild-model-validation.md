@@ -1,96 +1,145 @@
 # Gaze-in-the-Wild model validation
 
-GazeForge provides a participant-disjoint event-model validation path for **source-audited** Gaze-in-the-Wild data. The workflow is intentionally downstream of the authoritative-source audit and does not accept an unaudited MATLAB directory as model-validation evidence.
+GazeForge provides a participant-disjoint event-model validation path for **source-audited** Gaze-in-the-Wild data. The exact-distribution workflow is downstream of the authoritative-source audit and refuses to treat an unaudited MATLAB directory, an inferred task mapping, or a convenient local copy as reviewed model-validation evidence.
 
-## Scientific gate
+## Exact-distribution scientific gate
 
-`prepare_gaze_in_wild_benchmark()` requires a verified `GazeInWildSourceAuditRun` and revalidates the audit and specification fingerprints before preparing any modelling rows. Pixel-space kinematic models are enabled only when the source audit establishes all three of the following:
+The reviewed tranche is bound to the original Figshare `ProcessData` and `LabelData` distributions. Every selected file pair is reverified against frozen identities before analysis, and every selected `LabelData.T` vector must equal its paired `ProcessData.T` vector exactly. The workflow does not use `ProcessData_cleaned`, and raw MATLAB files are deleted after preparation rather than retained in the repository or workflow artifact.
 
-- the point-of-regard coordinate unit is verified;
-- that unit is explicitly `pixels`;
-- `pixel_kinematics_compatible=true` is recorded in the audited source specification.
+The exact processed source has a nominal `ProcessData.SR = 300 Hz`. Analysis is performed on a **derived 60-Hz grid**, not on a native 60-Hz acquisition. Normalized scene point-of-regard coordinates are converted using the verified 1920×1080 scene resolution. Invalid source samples are not silently bridged during interpolation.
 
-A verified non-pixel coordinate system can still be scientifically valid for other analyses, but it is not silently treated as pixels for I-VT, Random Forest, or ContextMLP kinematics.
+These distinctions are scientific boundaries: this evidence does not establish acquisition-hardware cadence, native-60-Hz validity, or Gazepoint GP3 validity.
 
-## Heterogeneous file cadence
+## Preregistered human reference
 
-The published 120 Hz hardware rate remains provenance only. Preparation uses each selected label file's **timestamp-inferred cadence** from `LabelData.T`.
+The human reference is selected before model fitting by a deterministic source-only rule:
 
-When a common lower analysis rate is requested, each file is downsampled independently from its own audited rate. GazeForge refuses any requested rate that would require upsampling even one selected file. This matters when a distributed benchmark snapshot contains files whose effective processed cadence is not identical.
+1. maximum distinct participant coverage;
+2. then maximum recording coverage;
+3. then lowest labeller ID.
 
-Label transfer uses the existing majority-window purity rule. Ambiguous target windows are recorded before exclusion. Coordinates are interpolated only between the immediate finite source samples surrounding a target timestamp, with a gap bound expressed relative to that file's source period. Missing/invalid gaze is therefore not bridged across an intervening invalid source sample.
+Label frequencies and model performance cannot influence that choice. Labeller **5** is selected because labellers 5 and 6 both cover 12 participants, while labeller 5 covers 18 recordings versus 16 for labeller 6.
 
-## Human reference stream
+Labeller 5 is treated as a **human reference stream, not error-free ground truth**. The selected exact stream contains 1,590,659 source samples across 12 participants and 18 recordings.
 
-A labeller must be selected explicitly. The selected human stream is treated as a **human reference**, not as error-free ground truth. Human-human agreement remains a separate evidence layer and should accompany model-human performance when the authoritative corpus is eventually frozen.
+## Preparation and protected split
 
-The prepared benchmark records:
+The exact benchmark contains:
 
-- source-audit, source-specification, label-manifest, and process-manifest fingerprints;
-- selected labeller identity;
-- per-file native cadence and declared common analysis cadence;
-- per-file resampling ledgers;
-- ambiguous and excluded sample counts;
-- retained event-class counts;
-- participant/trial counts and the protected split unit;
-- explicit claim limits.
+- **1,590,659** exact source samples;
+- **318,145** derived 60-Hz rows before analysis-label exclusions;
+- **157,850** retained analysis rows;
+- 12 participants and 18 recordings;
+- five participant-disjoint folds;
+- identical out-of-fold rows across I-VT, Random Forest, and ContextMLP.
 
-## Participant-held-out comparison
+Retained analysis support is:
 
-`run_gaze_in_wild_model_validation()` compares the same three model families used elsewhere in GazeForge on matched participant-held-out folds:
+| Event class | Rows |
+| --- | ---: |
+| Blink | 13,889 |
+| Fixation | 26,341 |
+| Pursuit | 5,696 |
+| Saccade | 20,061 |
+| VOR | 91,863 |
 
-1. transparent pixel-space I-VT with an explicit velocity threshold;
+Participant identity is the protected split unit. Learned models are refitted inside every training fold. No `TrIdx`→task mapping is inferred from filenames or publication prose, so this reviewed result is deliberately **task-agnostic**.
+
+## Model comparison
+
+The reviewed comparison uses the same three model families across the same five participant-held-out folds:
+
+1. transparent I-VT;
 2. Random Forest;
-3. temporal-context MLP.
+3. temporal-context MLP (`ContextMLP`).
 
-The two learned models are refitted inside every training fold. Participant identity is the protected grouping variable, and each test participant appears in only one fold per model.
+The report includes sample-level discrimination, probabilistic calibration where applicable, event-level temporal metrics, per-class sample and event sensitivity, and descriptive paired-fold differences. Cross-validation folds are not treated as independent replicates for naive inferential p-values.
 
-The report contains sample-level discrimination metrics, calibration for probabilistic models, event-level temporal metrics, descriptive matched-fold model differences, and event-class sensitivity computed from the fixed out-of-fold predictions. Cross-validation folds are not treated as independent replicates for naive inferential p-values.
+### Convergence-qualified protocol
 
-## Optional task sensitivity
+The first exact discovery used the preregistered `ContextMLP` ceiling of 200 iterations, but every fold emitted a `ConvergenceWarning`. Those metrics were not promoted to reviewed evidence.
 
-Task labels are never guessed from filenames. If task sensitivity is required, provide an explicit `pandas.DataFrame` with one row for every selected participant/trial and columns:
+A convergence-only amendment changed exactly one parameter: `temporal_max_iter` from **200 to 1000**. The amendment was frozen before rerunning, was not selected using performance direction, required acceptance of the resulting metrics regardless of direction, and required **zero** `ContextMLP` convergence warnings. The qualifying run satisfied that requirement with 0 warnings.
+
+## Reviewed participant-disjoint result
+
+The convergence-qualified five-fold means are:
+
+| Model | Balanced accuracy | Macro-F1 | Event-F1 |
+| --- | ---: | ---: | ---: |
+| I-VT | 0.2831 | 0.1165 | 0.1568 |
+| RandomForest | 0.4973 | 0.4752 | 0.3085 |
+| ContextMLP | **0.5286** | **0.5192** | **0.4396** |
+
+These numbers establish a narrow, dataset-specific participant-held-out comparison under the frozen exact-distribution protocol. They do **not** imply uniformly strong event recognition, cross-dataset generalization, task-specific validity, or GP3 validity.
+
+### Pursuit remains a material failure case
+
+The reviewed evidence intentionally preserves the weakest class rather than hiding it behind aggregate scores:
+
+| Model | Pursuit sample-F1 | Pursuit event-F1 | Matched reference pursuit events | Predicted pursuit events |
+| --- | ---: | ---: | ---: | ---: |
+| I-VT | 0.0000 | 0.0000 | 0 / 327 | 0 |
+| RandomForest | 0.0769 | 0.0086 | 6 / 327 | 1,071 |
+| ContextMLP | 0.0547 | 0.0030 | 1 / 327 | 349 |
+
+ContextMLP therefore has the strongest aggregate balanced accuracy, macro-F1, and event-F1 in this exact benchmark while still detecting pursuit events very poorly. Aggregate superiority must not be restated as uniformly strong event recognition.
+
+## Evidence binding and cross-run reproducibility
+
+The reviewed compact evidence record binds the complete metric sections without copying the full discovery report into the repository. It binds all 15 fold-metric rows, all 160 paired-fold deltas, 36 paired-model summary rows, 15 sample-class rows, 16 event-class rows, the three model summaries, class counts, and the deliberately empty task-specific sections.
+
+Key identifiers for the **reviewed source run** are:
+
+- exact discovery workflow run: `34273647914`;
+- job: `102221217862`;
+- discovery head: `9d2c5cd9c274527615e4e30b2feb53da2e20e523`;
+- artifact: `10075402142`;
+- artifact ZIP SHA-256: `3406abd4eddc080b9b72687e3b164d863fe0d925782c746d4b369c48dfcbdf87`;
+- discovery fingerprint: `0623353dda03ab6f5988c671cbc6dd5e82af8fb30b84a18bd9364c3aae5e4513`;
+- benchmark-report fingerprint: `170fab6ef5cf8bf109ad1f134b4d2b0a13f442e7d2b174f43e020441a3693c1f`;
+- stable verified-pair manifest: `1c129f4c2c18f78dbc41892eff476374f5ccdaaf6ee90d22d1a5808d6fdc2407`;
+- historical source-run scientific identity: `772d632d8671e058407d0fe9fdfcd291c0371a45682ec9dfd145861a924eaf46`;
+- reviewed compact evidence fingerprint: `b2fe85ec7e5d5cd425c0cd2593742bab835686c3f560d8a6c06e9c6d67dc547a`.
+
+Whole-discovery and whole-report hashes above are immutable provenance for that reviewed run. They are **not** used as a cross-run equality requirement because floating outputs from the same deterministic scientific protocol can differ below meaningful precision across hosted numerical backends.
+
+Cross-run certification instead preserves exact source bytes and identities, participant assignments, row/class counts, exclusions, convergence state, protocol identities, and scientific-boundary flags. Floating benchmark outputs are canonicalized to **8 decimal places** before section signatures are compared. This is substantially tighter than the precision used for scientific reporting while avoiding false failures caused solely by sub-precision numerical backend differences.
+
+The frozen cross-run identifiers are:
+
+- 8-decimal benchmark-envelope fingerprint: `8f1f4e37848d966957ea8ffb771fa418d43ee6254f9762590e02a1840285dc36`;
+- cross-run reproducibility signature: `f8c8d27ddbb1fe065a15df18d53c9fa84544315ef57cf2783554b236839ff286`.
+
+The dedicated GitHub Actions workflow re-downloads and re-verifies all selected exact source pairs, reruns the convergence-qualified v2 benchmark, verifies each fresh discovery/report fingerprint against its **own** body, and then fail-closes unless the exact non-floating identities and 8-decimal scientific signatures reproduce. The diagnostic discovery artifact and raw-byte cleanup check run even when certification fails.
+
+## Optional task sensitivity infrastructure
+
+Task labels are never guessed from filenames. The general validation API can accept an explicit mapping with one row for every selected participant/trial and columns:
 
 ```text
 participant_id, trial_id, task_label
 ```
 
-The mapping must exactly cover the selected audited trials. GazeForge fingerprints the sorted mapping and records that the task labels were not filename-inferred. Task-specific summaries are post-hoc summaries of fixed out-of-fold predictions; models are not refitted by task.
+That infrastructure is **not used by the reviewed exact-distribution result above**. An authoritative complete `TrIdx`→publication-task mapping has not been verified, so `task_stratified_model_validation_created` remains false.
 
-## Example
+## Scientific boundary after review
 
-```python
-import pandas as pd
+The reviewed evidence promotes only the narrow gates supported by the exact run:
 
-from gazeforge.gaze_in_wild_audit import audit_gaze_in_wild_source
-from gazeforge.gaze_in_wild_validation import run_gaze_in_wild_model_validation
+- `performance_evidence_reviewed = true`;
+- `participant_disjoint_model_validation_created = true`;
+- `event_class_sensitivity_created = true`.
 
-# `spec` must be an empirical GazeInWildSourceAuditSpec built from a real,
-# independently reviewed authoritative copy.
-audit = audit_gaze_in_wild_source(
-    "external/GazeInTheWild/LabelData",
-    "external/GazeInTheWild/ProcessData",
-    spec,
-)
+The following remain false/closed:
 
-tasks = pd.DataFrame(
-    {
-        "participant_id": ["P01", "P02"],
-        "trial_id": ["T01", "T02"],
-        "task_label": ["walking", "search"],
-    }
-)
+- `new_empirical_performance_claim_created`;
+- task-stratified validation;
+- authoritative file-to-publication task mapping;
+- cross-dataset validation;
+- native-60-Hz / GP3 validity;
+- acquisition-hardware cadence verification by this validation;
+- quarantine exit;
+- raw dataset retention.
 
-run = run_gaze_in_wild_model_validation(
-    audit,
-    labeller_id=1,
-    target_sampling_rate_hz=60.0,
-    task_mapping=tasks,
-)
-```
-
-## Evidence status
-
-This module is **validation infrastructure**, not a frozen empirical result. Until a real authoritative Gaze-in-the-Wild copy, current reuse terms, participant/task mapping, coordinate convention, and source manifests have been independently audited and the resulting report has passed scientific review, GazeForge makes no empirical Gaze-in-the-Wild model-performance claim from this code alone.
-
-Gaze-in-the-Wild evidence also remains distinct from Gazepoint GP3-specific validation.
+This distinction is intentional. The repository contains reviewed **Gaze-in-the-Wild participant-disjoint evidence under one frozen exact protocol**, while broader performance/generalization/device claims remain outside the evidence actually created by this tranche.

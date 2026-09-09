@@ -1,0 +1,72 @@
+{
+  "evidence_fingerprint_sha256": "e07ad1c15b8964e6e012e05d37b6eb989f36380ffdf307590b36273b5f8485e5",
+  "execution_protocol": {
+    "analysis_sampling_rate_hz": 60.0,
+    "calibration_bins": 10,
+    "context_radius_ms": 50.0,
+    "coordinate_conversion": "x_px=por_x*1920; y_px=por_y*1080",
+    "coordinate_source": "ProcessData.ETG.POR normalized_scene_image",
+    "event_class_sensitivity_source": "fixed_out_of_fold_predictions",
+    "event_min_iou": 0.5,
+    "excluded_event_labels": [
+      "ambiguous",
+      "unlabelled",
+      "undefined"
+    ],
+    "group_splitter": "GroupKFold",
+    "hidden_layer_sizes": [
+      64,
+      32
+    ],
+    "ivt_velocity_threshold_px_s": 1000.0,
+    "label_process_timestamp_vector_alignment_required": "exact_numeric_vector_equality",
+    "max_coordinate_gap_factor": 1.5,
+    "min_label_purity": 0.75,
+    "model_min_confidence": 0.0,
+    "models": [
+      "I-VT",
+      "RandomForest",
+      "ContextMLP"
+    ],
+    "models_refit_by_event_class": false,
+    "n_splits": 5,
+    "participant_group_key": "PrIdx distribution-native participant token",
+    "random_forest_n_estimators": 200,
+    "random_state": 42,
+    "raw_mat_retention_authorized": false,
+    "resampling": "label_majority_windows_with_min_purity_0.75_and_coordinate_linear_interpolation_only_between_immediate_finite_brackets",
+    "rolling_window_ms": 80.0,
+    "scene_resolution_px": [
+      1920,
+      1080
+    ],
+    "selected_labeller_id": 5,
+    "selected_participant_count": 12,
+    "selected_recording_count": 18,
+    "source_confidence_threshold": 0.3,
+    "task_mapping_used": false,
+    "task_stratified_validation_authorized": false,
+    "temporal_max_iter": 200,
+    "temporal_solver": "adam",
+    "trial_key": "TrIdx distribution-native opaque trial token"
+  },
+  "parent_evidence": {
+    "exact_byte_reviewed_evidence_fingerprint_sha256": "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00",
+    "exact_processdata_structure_evidence_fingerprint_sha256": "cffcc8a10d176cc5eb8c15c080cf450e3e1b1404ced00ea8907cdd4ee3c3517f",
+    "model_reference_preflight_evidence_fingerprint_sha256": "aff7b7b1576b9a1eee6a774183ba4f8404052226cdcb984a4112120bbc5bea67",
+    "por_coordinate_semantics_evidence_fingerprint_sha256": "5eb245979385283571d6d9a5dda9a5d74dea6c00165bbe3a2587fcfa80e9adfb"
+  },
+  "record_type": "gaze-in-wild-exact-model-execution-protocol-evidence-v1",
+  "reviewed_on": "2026-09-08",
+  "scientific_boundary": {
+    "complete_file_to_publication_task_mapping_verified": false,
+    "cross_dataset_validation_created": false,
+    "exact_distribution_model_execution_authorized": true,
+    "gp3_validity_claim_created": false,
+    "new_empirical_performance_claim_created": false,
+    "participant_disjoint_model_validation_created": false,
+    "quarantine_exit_authorized": false,
+    "task_stratified_model_validation_created": false
+  },
+  "status": "exact_distribution_participant_disjoint_execution_protocol_locked_before_model_fit"
+}
