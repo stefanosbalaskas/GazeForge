@@ -95,3 +95,48 @@ Evidence claim.
 A future GIN response that exposes a licence field, repository-page licence
 wording, or an exact DataCite repository match is deliberately treated as a
 review event rather than being auto-promoted to authorization.
+
+## 2026-09-09 GIN rights-model exhaustion
+
+A second first-party infrastructure review clarifies why public GIN access is
+not enough to resolve the Hollywood2EM rights gate.
+
+The pinned G-Node `gogs` documentation describes making a repository public as
+making its data accessible to the world. The same software project is licensed
+under MIT, but that software licence is not treated as a licence for datasets
+hosted by the service. The reviewed first-party identities are:
+
+- `G-Node/gogs` commit
+  `966e925cf320beff768b192276774d9265706df5`, tree
+  `81f945c4e2278ec9d26fae1a48d32e5f9814badb`, README blob
+  `72a83599065aff8bacf6a428bacbdc95e086dc8f`;
+- `G-Node/libgin` commit
+  `50fbb82301a29e62731ee1564bfe43642c936ae4`, tree
+  `2341bc1edafc8c494bb2562e50bad2a08be19b69`, `libgin/doi.go` blob
+  `d2ac4b28cd29772e1f051c8690e510e1018a1168`.
+
+The pinned `libgin` DOI metadata model includes an optional repository-level
+`license` field. This supports a narrow architectural conclusion: GIN models
+licensing as dataset/repository metadata rather than as one automatic licence
+assigned to every public repository. It does **not** identify which licence, if
+any, governs Hollywood2EM.
+
+The new frozen record is:
+
+`validation/evidence/hollywood2/hollywood2-gin-rights-model-exhaustion-evidence-v1.json`
+
+Fingerprint:
+
+`df642aea3fc076caa42e4a6448694e2b14a58d16aa08d780ee968612ab9728d1`
+
+Its validator revalidates the actual reviewed author-statement, accessible-host,
+complete-history, and copy/rights-roadmap evidence bodies. It fails closed if
+public availability is promoted to a licence, if GIN's MIT software licence is
+inherited by Hollywood2EM data, or if analysis, redistribution, participant
+mapping, model validation, cross-dataset validation, or Frozen Evidence is
+promoted.
+
+Accordingly, the roadmap rights item remains **unresolved**. The next acceptable
+promotion requires dataset-specific Hollywood2EM licence text/identifier or an
+authoritative author/institutional clarification that explicitly defines
+analysis and redistribution scope.
