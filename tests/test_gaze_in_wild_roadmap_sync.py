@@ -113,7 +113,7 @@ def test_rate_ledger_semantics_drift_fails_if_reviewed_hash_is_spoofed() -> None
     record = copy.deepcopy(_load(RATE_LEDGER))
     record["stored_rate_semantics"] = "acquisition hardware rate"
     record["evidence_fingerprint_sha256"] = RATE_LEDGER_FINGERPRINT
-    with pytest.raises(BenchmarkIntegrityError, match="recomputed rate-ledger fingerprint"):
+    with pytest.raises(BenchmarkIntegrityError, match="stored-rate semantics"):
         validate_gaze_in_wild_processed_rate_ledger(record)
 
 
