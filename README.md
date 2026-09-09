@@ -103,10 +103,12 @@ AI outputs remain ordinary data structures with confidence, source, model, sampl
 | --- | --- | ---: | --- |
 | **Lund2013** | paired expert manual event labels | 500 Hz | **first frozen external evidence complete**: native/derived human agreement, derived 60 Hz matched-fold modelling, MN sensitivity, stimulus-family results, sampling×purity sensitivity |
 | **Hollywood2EM** | expert-corrected manual event labels | 500 Hz | adapter and Lund↔Hollywood cross-dataset infrastructure implemented; authoritative identity/coordinate audit still required |
-| **Gaze-in-the-Wild** | five trained human annotators | published 120 Hz acquisition | native human-reference adapter and protocol implemented; authoritative data audit pending |
+| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **frozen exact-distribution participant-disjoint evidence available** on a derived 60-Hz task-agnostic grid; first-party RIT task-separated extraction structure is frozen and ACE-DNV secondarily corroborates `TrIdx` 1–3, while the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
 | **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **infrastructure validated, empirical execution pending**: source-resolution checkpoint/validator, exact-source audit, canonical AOI/model intake, external-grid validation, and Frozen Evidence gates; current authoritative distribution/reuse terms unresolved |
 
-GazeForge never upgrades derived evidence into a stronger evidence category. Resampled 60 Hz results remain labelled **derived human-reference evidence**, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, contributor count is not treated as evidence of independent annotation streams; the current source-resolution state is documented separately in [VISUS source resolution](docs/visus-source-resolution.md).
+GazeForge never upgrades derived evidence into a stronger evidence category. The reviewed Gaze-in-the-Wild participant-disjoint result remains explicitly **task-agnostic**: first-party structural provenance and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task lookup, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Resampled or derived 60 Hz results do not establish native GP3/60 Hz validity, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, contributor count is not treated as evidence of independent annotation streams.
+
+[Gaze-in-the-Wild task-mapping evidence →](docs/gaze-in-wild-task-mapping-corroboration.md) · [Full validation status →](docs/validation-status.md)
 
 ## Installation
 
@@ -230,7 +232,7 @@ Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event
 
 ## Project status
 
-GazeForge is under active public alpha development. Version `0.1.0a1` is published on PyPI through Trusted Publishing and archived on Zenodo, while the first external empirical benchmark tranche remains frozen and publicly rendered. This does not establish mature performance across trackers or tasks.
+GazeForge is under active public alpha development. Version `0.1.0a1` is published on PyPI through Trusted Publishing and archived on Zenodo, while reviewed external empirical benchmark evidence is frozen and publicly rendered. This does not establish mature performance across trackers or tasks.
 
 ### Implemented and frozen
 
@@ -248,12 +250,15 @@ GazeForge is under active public alpha development. Version `0.1.0a1` is publish
 - native/derived MN–RA human agreement
 - derived 60 Hz RA primary model comparison and MN annotator sensitivity
 - stimulus-family and sampling-rate × annotation-purity sensitivity analyses
+- **Gaze-in-the-Wild exact-distribution task-agnostic participant-disjoint model-validation evidence with event-class sensitivity**
+- **first-party RIT GIW task-separated extraction-structure corroboration with the complete numeric task mapping still fail-closed**
 - integrity-checked frozen-evidence website generation
 - CI across Python 3.10/3.12/3.14 on Linux, Windows, and macOS
 
 ### Still required before a stable scientific release
 
 - **native 60 Hz/GP3-class expert-labelled event validation**
+- complete authoritative Gaze-in-the-Wild `TrIdx`→task mapping before task-stratified claims
 - authoritative audits and frozen cross-dataset results for additional external benchmarks
 - validated dynamic object-detection/tracking backend results
 - broader cross-dataset validation after coordinate and identity audits

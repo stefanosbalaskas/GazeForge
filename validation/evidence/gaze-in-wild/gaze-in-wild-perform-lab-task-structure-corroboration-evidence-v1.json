@@ -1,0 +1,69 @@
+{
+  "claim_limit": "This frozen record documents first-party institutional code corroboration from the PerForm-Lab-RIT Pupil-Labs-Core-RITnet-Plugins repository. The reviewed GIW extraction script identifies four extracted task directories (Indoor_Walk, Ball_Catch, Visual_Search, Tea_Making), loads ProcessData files from each task directory, reads PrIdx and TrIdx from each ProcessData object, and uses PrIdx/TrIdx to address the raw Gaze-in-the-Wild recording tree. The script does not directly enumerate a numeric TrIdx-to-task lookup and does not explicitly bind TrIdx 4 to Tea_Making. Therefore authoritative complete file-level task mapping, task-stratified validation, cross-dataset claims, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, quarantine exit, and new empirical-performance claims remain unauthorized.",
+  "dataset": "Gaze-in-the-Wild",
+  "record_type": "gaze-in-wild-perform-lab-task-structure-corroboration-evidence-v1",
+  "review_status": "first_party_structural_corroboration_only",
+  "scientific_boundary": {
+    "acquisition_hardware_cadence_verified": false,
+    "authoritative_trial_task_mapping_verified": false,
+    "complete_trial_task_mapping_verified": false,
+    "cross_dataset_validation_created": false,
+    "gp3_validity_created": false,
+    "native_60hz_validity_created": false,
+    "new_empirical_performance_claim_created": false,
+    "quarantine_exit_authorized": false,
+    "task_stratified_validation_authorized": false,
+    "task_stratified_validation_created": false
+  },
+  "first_party_structural_corroboration": {
+    "task_directory_labels": [
+      "Indoor_Walk",
+      "Ball_Catch",
+      "Visual_Search",
+      "Tea_Making"
+    ],
+    "task_directory_processdata_linkage_observed": true,
+    "processdata_fields_read": [
+      "PrIdx",
+      "TrIdx"
+    ],
+    "raw_recording_address_uses_pridx_tridx": true,
+    "direct_numeric_trial_task_bindings": [],
+    "complete_numeric_mapping_recorded": false,
+    "trial_index_4": {
+      "status": "unresolved",
+      "explicit_first_party_numeric_binding_found": false,
+      "tea_making_inferred_by_elimination": false
+    },
+    "interpretation": "The source verifies first-party task-separated extraction structure and that each task directory's ProcessData records carry PrIdx/TrIdx identities. It does not itself publish the per-file numeric TrIdx-to-task lookup needed to authorize task labels."
+  },
+  "source": {
+    "classification": "first_party_institutional_code",
+    "institutional_owner": "PerForm-Lab-RIT",
+    "repository": "https://github.com/PerForm-Lab-RIT/Pupil-Labs-Core-RITnet-Plugins",
+    "pinned_commit_sha1": "ebec5d1db118e39de60a14160f09ee33cd7f3b5d",
+    "pinned_tree_sha1": "67af6104f7d52c969be7737b04fa349be6a2ec4f",
+    "file": {
+      "path": "ritnet/Ellseg_v2/dataset_generation/ExtractedGIW.py",
+      "git_blob_sha1": "ae51e50eb9f3d224417d1fd24253052196480870",
+      "in_file_author": "rakshit",
+      "in_file_created": "2021-02-05",
+      "observed_contract": {
+        "project_description_mentions_gaze_in_the_wild": true,
+        "task_list_exact": [
+          "Indoor_Walk",
+          "Ball_Catch",
+          "Visual_Search",
+          "Tea_Making"
+        ],
+        "processdata_directory_template": "extracted_data/<task>/ProcessData_cleaned",
+        "processdata_fields_read": [
+          "PrIdx",
+          "TrIdx"
+        ],
+        "raw_gaze_directory_template": "<path_data>/<PrIdx>/<TrIdx>/Gaze"
+      }
+    }
+  },
+  "evidence_fingerprint_sha256": "2352b5969285c4d3d182035570b3a3b76461fa683e50d69cf4ff0e2f6a827aec"
+}
