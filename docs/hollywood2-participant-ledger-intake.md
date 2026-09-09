@@ -8,6 +8,8 @@ The public original-distribution metadata states that Hollywood-2 eye movements 
 
 The canonical Hollywood2EM annotation repository independently exposes **16 stable three-digit filename tokens**. That numerical match is not participant mapping evidence. Until an authoritative crosswalk is recovered and reviewed, those values remain opaque source tokens.
 
+A separate publication-lineage audit also establishes that the author-posted 2013 arXiv v1 describes 16 subjects, whereas the final 2015 TPAMI article describes 19 subjects and a broader task scope including scene-context recognition. GazeForge treats this as unresolved version/cardinality drift rather than automatically reconciling the cohorts. See [Hollywood2 participant cardinality audit](hollywood2-participant-cardinality.md).
+
 ## Safety and rights contract
 
 The intake never downloads the archive. The caller must provide a local file named `gaze_hollywood2.zip` and explicitly affirm that the local copy was obtained under terms that authorize inspection.
@@ -61,4 +63,4 @@ The contract fixes the current state as **ready for authorized local archive met
 
 ## Success criterion
 
-This gate can advance only when a legitimately obtained original archive yields authoritative README/ledger metadata that explicitly resolves the original subject identifiers and task-group membership. Even then, a separate authoritative link is still required before any original subject ID can be equated with a Hollywood2EM GIN token.
+This gate can advance only when a legitimately obtained original archive yields authoritative README/ledger metadata that explicitly resolves the original subject identifiers and task-group membership. Even then, a separate authoritative link is still required before any original subject ID can be equated with a Hollywood2EM GIN token. The 16-versus-19 publication-lineage ambiguity must also be reconciled before participant-generalization claims are made.
