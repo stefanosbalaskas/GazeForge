@@ -16,7 +16,10 @@ from gazeforge.visus_authoritative_source_recheck import (
     validate_visus_authoritative_source_recheck,
 )
 
-_RECORD = Path("validation/protocols/visus-source-resolution-2026-09-09.json")
+_RECORD = Path(
+    "validation/evidence/visus-source-recheck/"
+    "visus-authoritative-source-recheck-2026-09-09.json"
+)
 _PARTIAL = Path(
     "validation/evidence/visus-public-partial/visus-public-partial-evidence-v1.json"
 )
