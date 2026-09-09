@@ -88,7 +88,10 @@ EXPECTED_EXACT_REF = {
     "processdata_cleaned_downloaded": False,
 }
 EXPECTED_COMPLETION = {
-    "official_figshare_original_publication_copy_and_current_reuse_terms_scoped_item_satisfied": True,
+    (
+        "official_figshare_original_publication_copy_and_current_reuse_terms_"
+        "scoped_item_satisfied"
+    ): True,
     "historical_rit_archive_byte_equivalence_verified": False,
     "authoritative_numeric_task_mapping_item_satisfied": False,
     "task_stratified_validation_item_satisfied": False,
@@ -262,10 +265,18 @@ def validate_gaze_in_wild_copy_rights_roadmap_sync(
     deposits = _mapping(rights_record, "deposits")
     _equal(_mapping(deposits, "ProcessData").get("doi"), PROCESSDATA_DOI, "ProcessData DOI")
     _equal(_mapping(deposits, "LabelData").get("doi"), LABELDATA_DOI, "LabelData DOI")
-    _equal(_mapping(deposits, "ProcessData").get("license_name"), LICENSE_NAME, "ProcessData licence")
+    _equal(
+        _mapping(deposits, "ProcessData").get("license_name"),
+        LICENSE_NAME,
+        "ProcessData licence",
+    )
     _equal(_mapping(deposits, "LabelData").get("license_name"), LICENSE_NAME, "LabelData licence")
     cleaned = _mapping(deposits, "ProcessData_cleaned")
-    _equal(cleaned.get("is_original_publication_processed_distribution"), False, "cleaned-data status")
+    _equal(
+        cleaned.get("is_original_publication_processed_distribution"),
+        False,
+        "cleaned-data status",
+    )
 
     exact_record, _ = _load(root / EXACT_BYTES_PATH, "exact-byte evidence")
     verified = _mapping(exact_record, "verified_distribution")
