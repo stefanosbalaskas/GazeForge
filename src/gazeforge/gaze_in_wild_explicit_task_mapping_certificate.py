@@ -96,6 +96,12 @@ def validate_certificate_record(
 ) -> dict[str, Any]:
     """Validate a reviewed certificate without reconstructing its raw mapping."""
     value = _load(record_or_path)
+    leaked = sorted(_FORBIDDEN_TOP_LEVEL_FIELDS.intersection(value))
+    if leaked:
+        raise BenchmarkIntegrityError(
+            "Gaze-in-the-Wild explicit task-mapping certificate contains forbidden "
+            f"raw mapping fields: {leaked}."
+        )
     observed_keys = set(value)
     if observed_keys != _CERTIFICATE_TOP_LEVEL_KEYS:
         missing = sorted(_CERTIFICATE_TOP_LEVEL_KEYS - observed_keys)
@@ -151,13 +157,6 @@ def validate_certificate_record(
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild explicit task-mapping scientific boundary drifted."
         )
-    leaked = sorted(_FORBIDDEN_TOP_LEVEL_FIELDS.intersection(value))
-    if leaked:
-        raise BenchmarkIntegrityError(
-            "Gaze-in-the-Wild explicit task-mapping certificate contains forbidden "
-            f"raw mapping fields: {leaked}."
-        )
-
     stored = value["certificate_fingerprint_sha256"]
     if stored != certificate_fingerprint(value):
         raise BenchmarkIntegrityError(

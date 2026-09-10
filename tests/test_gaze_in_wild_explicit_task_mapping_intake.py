@@ -526,3 +526,31 @@ def test_deepcopy_of_valid_candidate_remains_valid(tmp_path: Path) -> None:
     source, manifest = _write_source_and_manifest(tmp_path)
     candidate = inspect_explicit_task_mapping_candidate(source, manifest)
     assert validate_candidate_record(deepcopy(candidate)) == candidate
+
+
+def test_refingerprinted_candidate_extra_claim_is_rejected(tmp_path: Path) -> None:
+    source, manifest = _write_source_and_manifest(tmp_path)
+    candidate = inspect_explicit_task_mapping_candidate(source, manifest)
+    candidate["task_stratified_validation_authorized"] = True
+    _refingerprint_candidate(candidate)
+    with pytest.raises(BenchmarkIntegrityError, match="candidate top-level schema drifted"):
+        validate_candidate_record(candidate)
+
+
+def test_refingerprinted_review_extra_claim_is_rejected(tmp_path: Path) -> None:
+    source, manifest = _write_source_and_manifest(tmp_path)
+    candidate = inspect_explicit_task_mapping_candidate(source, manifest)
+    review = _review_dict(candidate)
+    review["tridx4_tea_making_inferred_by_elimination"] = True
+    _refingerprint_review(review)
+    review_path = _write_review(tmp_path, review)
+    with pytest.raises(BenchmarkIntegrityError, match="review schema drifted"):
+        require_reviewed_explicit_task_mapping(source, manifest, candidate, review_path)
+
+
+def test_refingerprinted_certificate_extra_claim_is_rejected(tmp_path: Path) -> None:
+    certificate, _ = _certificate(tmp_path)
+    certificate["cross_dataset_validation_created"] = True
+    _refingerprint_certificate(certificate)
+    with pytest.raises(BenchmarkIntegrityError, match="certificate schema drifted"):
+        validate_certificate_record(certificate)
