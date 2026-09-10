@@ -28,3 +28,10 @@ gaze-in-wild-task-mapping-candidate.json
 gaze-in-wild-task-mapping-review.json
 gaze-in-wild-task-mapping-review-sealed.json
 gaze-in-wild-task-mapping-certificate.json
+
+# Local VISUS authoritative-source/rights working records.
+visus-source-authority-manifest.json
+visus-source-authority-candidate.json
+visus-source-authority-review.json
+visus-source-authority-review-sealed.json
+visus-source-authority-certificate.json
