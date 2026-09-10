@@ -78,6 +78,7 @@ nav:
       - Hollywood2 participant-ledger intake: hollywood2-participant-ledger-intake.md
       - Hollywood2 participant cardinality audit: hollywood2-participant-cardinality.md
       - Hollywood2 participant-crosswalk exhaustion: hollywood2-participant-crosswalk-exhaustion.md
+      - Hollywood2 explicit crosswalk intake: hollywood2-explicit-crosswalk-intake.md
       - Hollywood2 underlying rights: hollywood2-underlying-rights.md
       - Hollywood2 author license statement: hollywood2-author-license-statement.md
       - Hollywood2 annotation provenance: hollywood2-annotation-provenance.md

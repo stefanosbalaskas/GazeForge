@@ -16,3 +16,9 @@ venv/
 # Restricted/local benchmark intake artifacts: never commit raw source bytes.
 gaze_hollywood2.zip
 hollywood2-ledger-intake.json
+
+# Local Hollywood2 crosswalk working records. Keep source/manifest/review material local.
+hollywood2-crosswalk-candidate.json
+hollywood2-crosswalk-review.json
+hollywood2-crosswalk-review-sealed.json
+hollywood2-crosswalk-certificate.json
