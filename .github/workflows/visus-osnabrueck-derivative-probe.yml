@@ -23,7 +23,7 @@ jobs:
       - name: Install MKV inspection tooling
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends mkvtoolnix
+          sudo apt-get install -y --no-install-recommends ffmpeg mkvtoolnix
 
       - name: Probe institutional VISUS derivative without redistributing source bytes
         run: python scripts/probe_visus_osnabrueck_derivative.py
