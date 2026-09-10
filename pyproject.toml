@@ -66,7 +66,7 @@ gazeforge = "gazeforge.cli:main"
 gazeforge-source-candidate = "gazeforge.source_candidate_cli:main"
 gazeforge-source-resolution = "gazeforge.source_resolution_cli:main"
 gazeforge-giw-first-party-resolution = "gazeforge.gaze_in_wild_first_party_resolution_cli:main"
-gazeforge-visus = "gazeforge.visus_cli:main"
+gazeforge-visus = "gazeforge.visus_authority_cli:main"
 gazeforge-visus-source-resolution = "gazeforge.visus_source_resolution_cli:main"
 
 [project.urls]
@@ -91,6 +91,12 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-local-folder = ["_visus_authority_fixture"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/gazeforge/visus_authority_execution.py" = ["I001"]
 
 [tool.coverage.run]
 branch = true
