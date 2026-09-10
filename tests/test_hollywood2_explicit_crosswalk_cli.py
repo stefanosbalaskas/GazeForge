@@ -6,14 +6,30 @@ import subprocess
 import sys
 from pathlib import Path
 
-import gazeforge.hollywood2_explicit_crosswalk_certificate as crosswalk_certificate
-import gazeforge.hollywood2_explicit_crosswalk_intake as crosswalk_intake
-
 
 SCRIPT = (
     Path(__file__).resolve().parents[1]
     / "scripts"
     / "inspect_hollywood2_explicit_crosswalk.py"
+)
+SOURCE_RECORD_TYPE = "hollywood2-explicit-crosswalk-source-v1"
+GIN_TOKENS = (
+    "001",
+    "002",
+    "003",
+    "004",
+    "005",
+    "006",
+    "008",
+    "010",
+    "011",
+    "012",
+    "013",
+    "014",
+    "015",
+    "017",
+    "018",
+    "019",
 )
 
 
@@ -37,13 +53,13 @@ def test_crosswalk_cli_candidate_review_and_certificate(tmp_path: Path) -> None:
             "original_subject_id": f"CLI-S{index + 1:02d}",
             "task_group": "active" if index < 12 else "free_viewing",
         }
-        for index, token in enumerate(crosswalk_intake.GIN_TOKENS)
+        for index, token in enumerate(GIN_TOKENS)
     ]
     manifest = tmp_path / "manifest.json"
     manifest.write_text(
         json.dumps(
             {
-                "record_type": crosswalk_intake.SOURCE_RECORD_TYPE,
+                "record_type": SOURCE_RECORD_TYPE,
                 "source_reference": "synthetic-cli-test://authoritative-ledger",
                 "source_authority_claim": "author_statement",
                 "source_file_sha256": hashlib.sha256(source_bytes).hexdigest(),
@@ -111,8 +127,12 @@ def test_crosswalk_cli_candidate_review_and_certificate(tmp_path: Path) -> None:
     assert "CLI-S01" not in result.stdout
     assert "free_viewing" not in result.stdout
 
-    validated = crosswalk_certificate.validate_certificate_record(certificate)
-    assert validated["token_count"] == len(crosswalk_intake.GIN_TOKENS)
+    validated = json.loads(certificate.read_text(encoding="utf-8"))
+    assert validated["record_type"] == "hollywood2-explicit-crosswalk-certificate-v1"
+    assert validated["token_count"] == len(GIN_TOKENS)
+    assert validated["mapping_boundary"]["participant_identity_mapping_verified"] is True
+    assert validated["scientific_boundary"]["cross_dataset_validation_created"] is False
+
     serialized = certificate.read_text(encoding="utf-8")
     assert "CLI-S01" not in serialized
     assert "CLI-S16" not in serialized
