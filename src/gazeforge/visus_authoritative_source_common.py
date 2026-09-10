@@ -9,12 +9,12 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from . import visus_authoritative_source_recheck as _source_recheck
 from .exceptions import BenchmarkIntegrityError
-from .visus_authoritative_source_recheck import (
-    EXPECTED_PARTICIPANT_COUNT,
-    EXPECTED_RECORD_FINGERPRINT_SHA256 as SOURCE_RECHECK_FINGERPRINT,
-    EXPECTED_STIMULUS_COUNT,
-)
+
+EXPECTED_PARTICIPANT_COUNT = _source_recheck.EXPECTED_PARTICIPANT_COUNT
+EXPECTED_STIMULUS_COUNT = _source_recheck.EXPECTED_STIMULUS_COUNT
+SOURCE_RECHECK_FINGERPRINT = _source_recheck.EXPECTED_RECORD_FINGERPRINT_SHA256
 
 SOURCE_RECORD_TYPE = "visus-authoritative-source-manifest-v1"
 CANDIDATE_RECORD_TYPE = "visus-authoritative-source-candidate-v1"
