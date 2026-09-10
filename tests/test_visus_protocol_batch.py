@@ -3,6 +3,7 @@ from dataclasses import replace
 from pathlib import Path
 
 import pytest
+from test_visus_preexecution_protocol import _FakeRuntime, _fixture, _freeze
 
 from gazeforge.benchmarks import benchmark_fingerprint
 from gazeforge.exceptions import BenchmarkIntegrityError, SchemaError
@@ -10,7 +11,6 @@ from gazeforge.visus_protocol_batch import (
     run_visus_grounded_sam2_protocol_batch,
     validate_visus_protocol_bound_batch_run,
 )
-from test_visus_preexecution_protocol import _FakeRuntime, _fixture, _freeze
 
 
 def _resign(record, field):
