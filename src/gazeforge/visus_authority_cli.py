@@ -43,6 +43,7 @@ def _extract_authority_option(
     command = values[0]
     if command not in _EMPIRICAL_COMMANDS:
         return None, values
+    help_requested = any(value in {"-h", "--help"} for value in values[1:])
 
     positions: list[tuple[int, str]] = []
     for index, value in enumerate(values[1:], start=1):
@@ -56,6 +57,8 @@ def _extract_authority_option(
             positions.append((index, value.split("=", 1)[1]))
 
     if not positions:
+        if help_requested:
+            return None, values
         raise SystemExit(
             "gazeforge-visus: error: empirical VISUS commands require "
             "--authority-certificate PATH"
