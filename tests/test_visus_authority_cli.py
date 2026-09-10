@@ -4,7 +4,7 @@ import pytest
 
 from gazeforge import visus_authority_cli
 from gazeforge import visus_cli as legacy
-from gazeforge.visus_authority_execution import (
+from gazeforge.visus_authority_execution_strict import (
     build_visus_authority_execution_provenance,
     validate_visus_authority_execution_provenance,
 )
