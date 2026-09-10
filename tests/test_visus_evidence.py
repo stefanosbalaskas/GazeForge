@@ -48,6 +48,7 @@ def _execution_summary():
         "suite_fingerprint_sha256": "a" * 64,
         "execution_fingerprint_sha256": "f" * 64,
         AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD: "e" * 64,
+        "authority_certificate_semantics_verified": True,
         "suite_verified": True,
     }
 
@@ -174,6 +175,26 @@ def test_frozen_evidence_bundle_rejects_authority_fingerprint_mismatch(monkeypat
     )
 
     with pytest.raises(BenchmarkIntegrityError, match="authority fingerprints disagree"):
+        visus_evidence.validate_visus_frozen_evidence_bundle(root)
+
+
+def test_frozen_evidence_bundle_rejects_unverified_certificate_semantics(monkeypatch, tmp_path):
+    root = tmp_path / "bundle"
+    _touch_manifests(root)
+    execution = _execution_summary()
+    execution["authority_certificate_semantics_verified"] = False
+    monkeypatch.setattr(
+        visus_evidence,
+        "validate_visus_dynamic_aoi_suite_manifest",
+        lambda path, verify_reports=True: _suite_summary(),
+    )
+    monkeypatch.setattr(
+        visus_evidence,
+        "validate_visus_authority_execution_provenance",
+        lambda path, verify_suite=True: execution,
+    )
+
+    with pytest.raises(BenchmarkIntegrityError, match="did not revalidate"):
         visus_evidence.validate_visus_frozen_evidence_bundle(root)
 
 
