@@ -12,12 +12,17 @@ import pandas as pd
 
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
-from .visus_intake import VisusCanonicalAOIIntakeRun
+from .provenance import fingerprint_frame
+from .visus_intake import (
+    VisusCanonicalAOIIntakeRun,
+    _to_keyframes as _reference_keyframes_from_canonical,
+)
+from .visus_prediction import _to_keyframes as _prediction_keyframes_from_canonical
+from .visus_preexecution_protocol import validation_settings_from_preexecution_protocol
 from .visus_protocol_batch import (
     VisusProtocolBoundGroundedSAM2BatchRun,
     validate_visus_protocol_bound_batch_run,
 )
-from .visus_preexecution_protocol import validation_settings_from_preexecution_protocol
 from .visus_suite import (
     VisusDynamicAOIValidationSuiteRun,
     run_visus_dynamic_aoi_validation_suite,
@@ -82,12 +87,25 @@ def _reference_summary(
         raise TypeError("reference_intake must be a VisusCanonicalAOIIntakeRun instance.")
     report = reference_intake.report
     if report.get("status") != "verified-canonical-intake":
-        raise BenchmarkIntegrityError("VISUS protocol-bound validation requires a verified reference intake.")
+        raise BenchmarkIntegrityError(
+            "VISUS protocol-bound validation requires a verified reference intake."
+        )
     report_fp = _revalidate_fingerprint(
         report,
         "report_fingerprint_sha256",
         label="VISUS human-reference intake",
     )
+    canonical_fp = fingerprint_frame(reference_intake.canonical)
+    if canonical_fp != report.get("canonical_table_fingerprint_sha256"):
+        raise BenchmarkIntegrityError(
+            "VISUS human-reference canonical table fingerprint does not revalidate."
+        )
+    reconstructed = _reference_keyframes_from_canonical(reference_intake.canonical)
+    if reconstructed != reference_intake.by_stream:
+        raise BenchmarkIntegrityError(
+            "VISUS human-reference keyframe mapping drifted from its canonical table."
+        )
+
     identity = _source_identity(batch)
     observed = {key: str(report.get(key, "")) for key in _SOURCE_KEYS}
     if observed != identity:
@@ -111,11 +129,62 @@ def _reference_summary(
     return {
         "report_fingerprint_sha256": report_fp,
         "input_table_fingerprint_sha256": report.get("input_table_fingerprint_sha256"),
-        "canonical_table_fingerprint_sha256": report.get(
-            "canonical_table_fingerprint_sha256"
-        ),
+        "canonical_table_fingerprint_sha256": canonical_fp,
         "reference_stream_id": stream,
         "annotation_stream_ids": sorted(reference_intake.by_stream),
+    }
+
+
+def _prediction_summary(
+    batch: VisusProtocolBoundGroundedSAM2BatchRun,
+) -> dict[str, Any]:
+    intake = batch.prediction_intake
+    report = intake.report
+    if report.get("status") != "verified-prediction-intake":
+        raise BenchmarkIntegrityError(
+            "VISUS protocol-bound validation requires a verified prediction intake."
+        )
+    report_fp = _revalidate_fingerprint(
+        report,
+        "report_fingerprint_sha256",
+        label="VISUS model-prediction intake",
+    )
+    identity = _source_identity(batch)
+    observed = {key: str(report.get(key, "")) for key in _SOURCE_KEYS}
+    if observed != identity:
+        raise BenchmarkIntegrityError(
+            "VISUS model-prediction intake does not share the protocol-bound batch source identity."
+        )
+
+    canonical_fp = fingerprint_frame(intake.canonical)
+    if canonical_fp != report.get("canonical_table_fingerprint_sha256"):
+        raise BenchmarkIntegrityError(
+            "VISUS model-prediction canonical table fingerprint does not revalidate."
+        )
+    if fingerprint_frame(batch.predictions) != report.get("input_table_fingerprint_sha256"):
+        raise BenchmarkIntegrityError(
+            "VISUS model-prediction intake is no longer bound to the batch prediction table."
+        )
+    model = report.get("model")
+    if not isinstance(model, Mapping):
+        raise BenchmarkIntegrityError("VISUS model-prediction intake model identity is missing.")
+    model_name = str(model.get("name", ""))
+    model_version = str(model.get("version", ""))
+    reconstructed = _prediction_keyframes_from_canonical(
+        intake.canonical,
+        model_name=model_name,
+        model_version=model_version,
+    )
+    if reconstructed != intake.by_stimulus:
+        raise BenchmarkIntegrityError(
+            "VISUS model-prediction keyframe mapping drifted from its canonical table."
+        )
+    return {
+        "report_fingerprint_sha256": report_fp,
+        "input_table_fingerprint_sha256": report.get("input_table_fingerprint_sha256"),
+        "canonical_table_fingerprint_sha256": canonical_fp,
+        "model_name": model_name,
+        "model_version": model_version,
     }
 
 
@@ -228,7 +297,9 @@ def _assert_suite_matches_frozen_protocol(
     source = verified.get("source")
     protocol = verified.get("protocol")
     if not isinstance(source, Mapping) or not isinstance(protocol, Mapping):
-        raise BenchmarkIntegrityError("VISUS validation suite source/protocol sections are missing.")
+        raise BenchmarkIntegrityError(
+            "VISUS validation suite source/protocol sections are missing."
+        )
     identity = _source_identity(batch)
     if {key: str(source.get(key, "")) for key in _SOURCE_KEYS} != identity:
         raise BenchmarkIntegrityError(
@@ -263,6 +334,7 @@ def _assert_suite_matches_frozen_protocol(
 def _binding_body(
     batch: VisusProtocolBoundGroundedSAM2BatchRun,
     reference_summary: Mapping[str, Any],
+    prediction_summary: Mapping[str, Any],
     suite: VisusDynamicAOIValidationSuiteRun,
     *,
     human_pair: tuple[str, str] | None,
@@ -294,9 +366,7 @@ def _binding_body(
         "protocol_batch_report_filename": batch.report_path.name,
         "prediction_csv_filename": batch.prediction_path.name,
         "prediction_csv_sha256": batch.report["prediction_output"]["sha256"],
-        "prediction_intake_report_fingerprint_sha256": batch.prediction_intake.report[
-            "report_fingerprint_sha256"
-        ],
+        "prediction_intake": dict(prediction_summary),
         "human_reference": dict(reference_summary),
         "frozen_evaluation": {
             "reference_stream_id": settings["reference_stream_id"],
@@ -353,7 +423,9 @@ def _write_binding(path: Path, binding: Mapping[str, Any]) -> None:
 
 def _load_binding(path: Path) -> dict[str, Any]:
     if path.is_symlink():
-        raise BenchmarkIntegrityError("VISUS protocol-bound validation binding must not be a symlink.")
+        raise BenchmarkIntegrityError(
+            "VISUS protocol-bound validation binding must not be a symlink."
+        )
     if not path.is_file():
         raise FileNotFoundError(path)
     try:
@@ -385,6 +457,7 @@ def run_visus_protocol_bound_validation_suite(
     is selected automatically only when exactly two independent streams are source-audit verified.
     """
     batch = validate_visus_protocol_bound_batch_run(batch)
+    prediction_summary = _prediction_summary(batch)
     reference_summary = _reference_summary(batch, reference_intake)
     settings = validation_settings_from_preexecution_protocol(batch.protocol_run)
     _validate_fixation_plan(settings, fixations_by_stimulus)
@@ -395,7 +468,9 @@ def run_visus_protocol_bound_validation_suite(
         raise NotADirectoryError(output)
     binding_path = output / _BINDING_FILENAME
     if binding_path.exists() and not overwrite:
-        raise FileExistsError(f"VISUS protocol-bound validation output already exists: {binding_path}")
+        raise FileExistsError(
+            f"VISUS protocol-bound validation output already exists: {binding_path}"
+        )
 
     suite = run_visus_dynamic_aoi_validation_suite(
         batch.audit,
@@ -425,6 +500,7 @@ def run_visus_protocol_bound_validation_suite(
     body = _binding_body(
         batch,
         reference_summary,
+        prediction_summary,
         suite,
         human_pair=human_pair,
     )
@@ -453,6 +529,7 @@ def validate_visus_protocol_bound_validation_run(
     if not isinstance(run, VisusProtocolBoundValidationRun):
         raise TypeError("run must be a VisusProtocolBoundValidationRun instance.")
     batch = validate_visus_protocol_bound_batch_run(run.batch)
+    prediction_summary = _prediction_summary(batch)
     reference_summary = _reference_summary(batch, run.reference_intake)
     settings = validation_settings_from_preexecution_protocol(batch.protocol_run)
     fixation_enabled = settings["fixation_assignment_planned"] is True
@@ -469,11 +546,15 @@ def validate_visus_protocol_bound_validation_run(
         label="VISUS protocol-bound validation binding",
     )
     if claimed != run.binding_fingerprint_sha256:
-        raise BenchmarkIntegrityError("VISUS protocol-bound validation fingerprint object drifted.")
+        raise BenchmarkIntegrityError(
+            "VISUS protocol-bound validation fingerprint object drifted."
+        )
     if _load_binding(run.binding_path) != binding:
         raise BenchmarkIntegrityError("VISUS protocol-bound validation binding file drifted.")
     if run.binding_path.name != _BINDING_FILENAME:
-        raise BenchmarkIntegrityError("VISUS protocol-bound validation binding filename drifted.")
+        raise BenchmarkIntegrityError(
+            "VISUS protocol-bound validation binding filename drifted."
+        )
 
     _assert_suite_matches_frozen_protocol(
         batch,
@@ -485,10 +566,13 @@ def validate_visus_protocol_bound_validation_run(
     expected = _binding_body(
         batch,
         reference_summary,
+        prediction_summary,
         run.suite,
         human_pair=human_pair,
     )
-    observed = {key: value for key, value in binding.items() if key != "binding_fingerprint_sha256"}
+    observed = {
+        key: value for key, value in binding.items() if key != "binding_fingerprint_sha256"
+    }
     if observed != expected:
         raise BenchmarkIntegrityError(
             "VISUS protocol-bound validation binding no longer matches current frozen lineage."
