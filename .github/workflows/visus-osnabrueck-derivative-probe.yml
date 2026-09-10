@@ -9,6 +9,7 @@ on:
       - scripts/probe_visus_osnabrueck_derivative.py
       - scripts/probe_visus_osnabrueck_zip_directory.py
       - scripts/probe_visus_osnabrueck_k1_member.py
+      - scripts/probe_visus_osnabrueck_all_usf.py
   workflow_dispatch:
 
 permissions:
@@ -36,6 +37,9 @@ jobs:
       - name: Recover and inspect exact K1 USF member only
         run: python scripts/probe_visus_osnabrueck_k1_member.py
 
+      - name: Recover and inspect all 11 standard USF scenarios
+        run: python scripts/probe_visus_osnabrueck_all_usf.py
+
       - name: Upload structural reports only
         uses: actions/upload-artifact@v4
         with:
@@ -44,5 +48,6 @@ jobs:
             visus_osnabrueck_derivative_probe.json
             visus_osnabrueck_zip_directory_probe.json
             visus_osnabrueck_k1_member_probe.json
+            visus_osnabrueck_all_usf_probe.json
           if-no-files-found: error
           retention-days: 14
