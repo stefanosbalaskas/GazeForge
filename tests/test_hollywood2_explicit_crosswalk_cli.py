@@ -6,16 +6,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-from gazeforge.hollywood2_explicit_crosswalk_certificate import (
-    validate_certificate_record,
-)
-from gazeforge.hollywood2_explicit_crosswalk_intake import (
-    GIN_TOKENS,
-    SOURCE_RECORD_TYPE,
-)
+from gazeforge.hollywood2_explicit_crosswalk_certificate import validate_certificate_record
+from gazeforge.hollywood2_explicit_crosswalk_intake import GIN_TOKENS, SOURCE_RECORD_TYPE
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "inspect_hollywood2_explicit_crosswalk.py"
+SCRIPT = (
+    Path(__file__).resolve().parents[1]
+    / "scripts"
+    / "inspect_hollywood2_explicit_crosswalk.py"
+)
 
 
 def _run(*args: str) -> subprocess.CompletedProcess[str]:
