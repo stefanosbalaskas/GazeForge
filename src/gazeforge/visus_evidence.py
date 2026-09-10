@@ -133,8 +133,9 @@ def validate_visus_frozen_evidence_bundle(path: str | Path) -> dict[str, Any]:
         "claim_limits": [
             "Bundle eligibility is an integrity gate, not independent empirical validation.",
             (
-                "The authority certificate establishes reviewed source identity and analysis-rights "
-                "scope; it does not establish participant/stimulus mapping or scientific validity."
+                "The authority certificate establishes reviewed source identity and "
+                "analysis-rights scope; it does not establish participant/stimulus mapping or "
+                "scientific validity."
             ),
             "A human reference stream is not ground truth.",
             (
