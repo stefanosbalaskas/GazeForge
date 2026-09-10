@@ -41,6 +41,21 @@ _EXPECTED_SCIENTIFIC_BOUNDARY = {
     "rights_scope_promoted": False,
     "raw_data_retention_claim_created": False,
 }
+_CERTIFICATE_TOP_LEVEL_KEYS = {
+    "record_type",
+    "status",
+    "authoritative_task_mapping_exhaustion_fingerprint_sha256",
+    "candidate_fingerprint_sha256",
+    "review_fingerprint_sha256",
+    "mapping_fingerprint_sha256",
+    "trial_index_count",
+    "trial_indices",
+    "publication_task_count",
+    "publication_tasks",
+    "mapping_boundary",
+    "scientific_boundary",
+    "certificate_fingerprint_sha256",
+}
 _FORBIDDEN_TOP_LEVEL_FIELDS = {
     "mapping",
     "mapping_entries",
@@ -81,6 +96,14 @@ def validate_certificate_record(
 ) -> dict[str, Any]:
     """Validate a reviewed certificate without reconstructing its raw mapping."""
     value = _load(record_or_path)
+    observed_keys = set(value)
+    if observed_keys != _CERTIFICATE_TOP_LEVEL_KEYS:
+        missing = sorted(_CERTIFICATE_TOP_LEVEL_KEYS - observed_keys)
+        extra = sorted(observed_keys - _CERTIFICATE_TOP_LEVEL_KEYS)
+        raise BenchmarkIntegrityError(
+            "Gaze-in-the-Wild explicit task-mapping certificate schema drifted; "
+            f"missing={missing}, extra={extra}."
+        )
     if value.get("record_type") != CERTIFICATE_RECORD_TYPE:
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild explicit task-mapping certificate type drifted."
