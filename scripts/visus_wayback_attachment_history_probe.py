@@ -37,6 +37,11 @@ def _canonical_bytes(value: Any) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
+def _is_supplement_candidate(url: str) -> bool:
+    lower = url.lower()
+    return any(token in lower for token in ("/s1", "supp", "-s001"))
+
+
 def _query(spec: dict[str, str]) -> dict[str, Any]:
     params = {
         "url": spec["url"],
@@ -100,11 +105,8 @@ def _query(spec: dict[str, str]) -> dict[str, Any]:
             if not isinstance(row, list) or len(row) != len(header):
                 raise RuntimeError(f"Malformed Wayback CDX row for {spec['name']}.")
             item = dict(zip(header, row))
-            original = str(item.get("original", ""))
-            lower = original.lower()
-            item["supplement_candidate"] = any(
-                token in lower
-                for token in ("/s1", "supp", "-s001", "attachment", "article_deploy")
+            item["supplement_candidate"] = _is_supplement_candidate(
+                str(item.get("original", ""))
             )
             captures.append(item)
 
