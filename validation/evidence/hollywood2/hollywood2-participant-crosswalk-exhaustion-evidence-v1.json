@@ -1,0 +1,148 @@
+{
+  "checked_on": "2026-09-10",
+  "record_type": "hollywood2-participant-crosswalk-exhaustion-evidence-v1",
+  "status": "reviewed-public-authoritative-surfaces-exhausted-no-gin-participant-crosswalk",
+  "source_binding": {
+    "gin_repository": "https://gin.g-node.org/ioannis.agtzidis/hollywood2_em.git",
+    "gin_pinned_commit_sha1": "870fa6d6209c9085260918d61433a0a2c70fd497",
+    "gin_history_evidence_fingerprint_sha256": "c7d2f477a66feca3676482ffdabff2b0778196db99e48b86104fe86d0f5bfae1",
+    "original_subject_metadata_evidence_fingerprint_sha256": "ba7813dd4f87c4a20ee75f3a9e537e329bca74c519b7bc65a5ba5e5095dd8a5c",
+    "participant_cardinality_evidence_fingerprint_sha256": "c27b11f9d38d29aa09f0971a1a8189d5e82e444bde4f10dd585ce153c683ca10",
+    "participant_ledger_intake_governance_fingerprint_sha256": "b47cc0acea2ded577d140d38ca97ad71ce414d82a41b2675e5cac6fc2dc9135b",
+    "original_description_url": "https://vision.imar.ro/eyetracking/description.php",
+    "original_license_url": "https://vision.imar.ro/eyetracking/license.php",
+    "original_archive_filename": "gaze_hollywood2.zip",
+    "arxiv_identifier": "arXiv:1312.7570v1",
+    "arxiv_url": "https://arxiv.org/abs/1312.7570",
+    "final_article_doi": "10.1109/TPAMI.2014.2366154",
+    "final_article_pmid": "26352449",
+    "hollywood2em_article_doi": "10.16910/jemr.13.4.5",
+    "hollywood2em_article_url": "https://bop.unibe.ch/JEMR/article/view/JEMR.13.4.5",
+    "secondary_parser_repository": "https://github.com/r-zemblys/EM-event-detection-evaluation",
+    "secondary_parser_commit_sha1": "7a968b34485ee83b3afee050a5d9b3c1e6d48d88",
+    "secondary_parser_path": "misc/data_parsers/tum.py"
+  },
+  "gin_filename_token_context": {
+    "stable_three_digit_tokens": [
+      "001",
+      "002",
+      "003",
+      "004",
+      "005",
+      "006",
+      "008",
+      "010",
+      "011",
+      "012",
+      "013",
+      "014",
+      "015",
+      "017",
+      "018",
+      "019"
+    ],
+    "absent_numbers_within_001_to_019": [
+      "007",
+      "009",
+      "016"
+    ],
+    "token_count": 16,
+    "token_count_matches_earlier_public_subject_count": true,
+    "numeric_hole_count_matches_16_to_19_publication_delta": true,
+    "token_count_match_is_crosswalk_evidence": false,
+    "numeric_hole_match_is_crosswalk_evidence": false
+  },
+  "reviewed_surface_findings": {
+    "original_public_distribution": {
+      "subject_count": 16,
+      "active_subject_count": 12,
+      "free_viewing_subject_count": 4,
+      "included_readme_referenced": true,
+      "public_subject_ledger_exposed_on_description_page": false,
+      "gin_filename_token_mapping_exposed": false,
+      "task_group_membership_by_gin_token_exposed": false
+    },
+    "original_access_and_rights": {
+      "academic_use_license_page_public": true,
+      "archive_access_requires_normal_institutional_access": true,
+      "login_or_license_gate_bypassed": false,
+      "archive_download_performed_by_this_audit": false,
+      "raw_gaze_inspected_by_this_audit": false
+    },
+    "publication_lineage": {
+      "arxiv_v1_reports_subject_count": 16,
+      "final_article_reports_subject_count": 19,
+      "cardinality_drift_already_frozen_elsewhere": true,
+      "publication_cardinality_resolves_token_identity": false,
+      "free_viewing_ordinal_labels_resolve_gin_tokens": false
+    },
+    "hollywood2em_article": {
+      "annotated_clip_count": 56,
+      "observer_count": 16,
+      "links_canonical_gin_dataset": true,
+      "explicit_filename_token_to_original_subject_id_crosswalk_recovered": false,
+      "explicit_filename_token_to_task_group_crosswalk_recovered": false
+    },
+    "canonical_gin_history": {
+      "reachable_commit_count": 7,
+      "readme_unique_version_count": 3,
+      "participant_or_identity_keyword_ever_present_in_readme_history": false,
+      "token_set_stable_from_ground_truth_move_commit": true,
+      "history_links_tokens_to_original_subject_ids": false
+    },
+    "secondary_public_implementation": {
+      "parser_reviewed": true,
+      "preserves_hollywood2em_paths": true,
+      "interprets_filename_prefix_as_participant_id": false,
+      "interprets_filename_prefix_as_task_group": false,
+      "authoritative_for_original_participant_identity": false
+    }
+  },
+  "crosswalk_boundary": {
+    "gin_tokens_are_original_participant_ids": false,
+    "gin_token_to_original_subject_id_verified": false,
+    "gin_token_to_task_group_verified": false,
+    "participant_identity_mapping_verified": false,
+    "missing_numeric_tokens_identify_additional_subjects": false,
+    "missing_numeric_tokens_define_task_group": false,
+    "ordinal_free_view_labels_map_to_gin_tokens": false,
+    "earlier_16_subject_count_defines_gin_token_identity": false,
+    "final_19_subject_count_defines_gin_token_identity": false,
+    "secondary_parser_is_authoritative_identity_evidence": false
+  },
+  "scientific_boundary": {
+    "participant_disjoint_model_validation_created": false,
+    "cross_dataset_validation_created": false,
+    "frozen_evidence_performance_claim_created": false,
+    "native_60hz_gp3_validity_created": false,
+    "new_empirical_performance_claim_created": false,
+    "rights_scope_promoted_by_crosswalk_audit": false,
+    "raw_gaze_redistributed": false
+  },
+  "remaining_authoritative_resolution_routes": [
+    {
+      "route": "authorized-original-archive-metadata",
+      "requirement": "Legitimately obtain the original gaze_hollywood2.zip under its normal institutional terms and inspect only its README/metadata with the existing metadata-only intake.",
+      "promotion_condition": "The archive must expose an authoritative subject-ID/task-group ledger, and a separate authoritative statement must explicitly bind those identifiers to Hollywood2EM GIN filename tokens."
+    },
+    {
+      "route": "author-or-institution-explicit-crosswalk",
+      "requirement": "Recover a public author/institutional source that explicitly maps each Hollywood2EM GIN filename token to an original subject identifier and task group.",
+      "promotion_condition": "The mapping must be explicit, complete for the relevant token set, source-authenticated, and independently reviewed."
+    },
+    {
+      "route": "author-supplied-reviewed-ledger",
+      "requirement": "Obtain an explicit token ledger from the dataset/annotation authors through a normal authorized channel.",
+      "promotion_condition": "The ledger must state token semantics and task-group membership directly; count or numeric-shape inference remains insufficient."
+    }
+  ],
+  "claim_limits": [
+    "This record establishes exhaustion of the reviewed public crosswalk surfaces, not participant identity.",
+    "The 16-token/16-subject count match is corroborative context only and cannot establish a one-to-one mapping.",
+    "The three missing token integers 007, 009, and 016 matching the 16-to-19 publication delta is a numerical coincidence and cannot identify additional participants or a task group.",
+    "Ordinal free-viewing labels in publication tables are not equated with Hollywood2EM filename tokens.",
+    "A third-party parser that preserves Hollywood2EM file paths does not confer authoritative participant semantics.",
+    "Participant-disjoint Hollywood2 validation and Lund-to-Hollywood2 cross-dataset validation remain blocked until an explicit authoritative crosswalk is recovered and reviewed."
+  ],
+  "evidence_fingerprint_sha256": "5900a3515243f92ea374a0dc5d1d80e6c95d64b1dc6fa7b4f698df85488eaafa"
+}

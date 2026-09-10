@@ -48,3 +48,5 @@ Participant-level Hollywood2 claims remain blocked until all relevant identity l
 - version-aware reconciliation of the 16-subject and 19-subject publication/data surfaces.
 
 Until then, Hollywood2EM evaluation remains **source-token-held-out**, not participant-held-out or participant-generalization evidence.
+
+The reviewed search for an explicit public mapping is frozen separately in [Hollywood2 participant-crosswalk exhaustion](hollywood2-participant-crosswalk-exhaustion.md).
