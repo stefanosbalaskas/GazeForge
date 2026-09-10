@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import json
 from pathlib import Path
 
@@ -43,9 +42,10 @@ def test_fingerprint_is_stable() -> None:
 
 def test_count_match_remains_non_mapping_evidence() -> None:
     record = _record()
-    assert record["gin_filename_token_context"]["token_count"] == 16
-    assert record["gin_filename_token_context"]["token_count_matches_earlier_public_subject_count"] is True
-    assert record["gin_filename_token_context"]["token_count_match_is_crosswalk_evidence"] is False
+    token_context = record["gin_filename_token_context"]
+    assert token_context["token_count"] == 16
+    assert token_context["token_count_matches_earlier_public_subject_count"] is True
+    assert token_context["token_count_match_is_crosswalk_evidence"] is False
     assert record["crosswalk_boundary"]["gin_tokens_are_original_participant_ids"] is False
 
 
@@ -80,15 +80,14 @@ def test_refingerprinted_claim_promotions_are_rejected(section: str, key: str) -
 
 def test_numeric_holes_cannot_become_crosswalk_evidence() -> None:
     record = _record()
-    assert record["gin_filename_token_context"]["absent_numbers_within_001_to_019"] == [
+    token_context = record["gin_filename_token_context"]
+    assert token_context["absent_numbers_within_001_to_019"] == [
         "007",
         "009",
         "016",
     ]
-    assert record["gin_filename_token_context"][
-        "numeric_hole_count_matches_16_to_19_publication_delta"
-    ] is True
-    record["gin_filename_token_context"]["numeric_hole_match_is_crosswalk_evidence"] = True
+    assert token_context["numeric_hole_count_matches_16_to_19_publication_delta"] is True
+    token_context["numeric_hole_match_is_crosswalk_evidence"] = True
     _refingerprint(record)
     with pytest.raises(BenchmarkIntegrityError):
         validate_hollywood2_participant_crosswalk_exhaustion(record)
