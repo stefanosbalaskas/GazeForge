@@ -13,7 +13,7 @@ A candidate binds:
 3. the exact rights-evidence file by SHA-256;
 4. a closed-schema source manifest naming the source reference, source revision, authority class, rights-evidence reference, and authorized-channel affirmation.
 
-The source artifact, rights evidence, manifest, and generated review records must remain outside the inventoried source tree. The source artifact, rights evidence, and manifest must also be distinct files.
+The source artifact, rights evidence, manifest, and generated review records must remain outside the inventoried source tree. The source artifact, rights evidence, and manifest must also be distinct files. The repository `.gitignore` protects the standard `visus-source-authority-*.json` working-record names; source and rights evidence should remain local and should not be committed.
 
 Allowed authority classes are deliberately narrow:
 
@@ -32,7 +32,7 @@ python scripts/inspect_visus_authoritative_source.py candidate \
   /path/to/extracted-visus \
   /path/to/original-source-artifact \
   /path/to/rights-evidence \
-  /path/to/source-manifest.json \
+  visus-source-authority-manifest.json \
   --output visus-source-authority-candidate.json
 ```
 
@@ -78,7 +78,7 @@ python scripts/inspect_visus_authoritative_source.py certificate \
   /path/to/extracted-visus \
   /path/to/original-source-artifact \
   /path/to/rights-evidence \
-  /path/to/source-manifest.json \
+  visus-source-authority-manifest.json \
   visus-source-authority-candidate.json \
   visus-source-authority-review-sealed.json \
   --output visus-source-authority-certificate.json
