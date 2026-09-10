@@ -73,6 +73,41 @@ Neither derivative is promoted to the full VISUS source. The strict layer reject
 
 The 2026-09-09 result therefore **does not satisfy** the roadmap item “Obtain/verify an authoritative current VISUS copy and reuse/distribution terms.” That item remains open.
 
+## 2026-09-10 Osnabrück derivative recovery
+
+A new authenticated lead was pursued after the 2021 supplementary-material recovery search was frozen. The University of Osnabrück Institute of Cognitive Science multimedia-container page explicitly lists the **Kurzhals et al. [K] dataset — 11 videos** among converted datasets provided for research purposes, with ASS and USF variants and a citation requirement for both the converter work and the original dataset.
+
+The page's current individual-file links no longer resolve to the historical MKVs, but its legacy institutional bundle endpoint still serves a real ZIP object. The host's TLS certificate chain is currently invalid, so recovery was deliberately treated as a historical derivative-source operation rather than current source authority.
+
+A bounded GitHub Actions reconnaissance recovered the ZIP central directory without downloading the full 2.6 GB archive and then reconstructed each of the **11 standard USF members** independently by exact byte range. Every reconstructed member passed its ZIP CRC, decompressed-size check, Matroska/EBML check, and structural inspection before the source bytes were deleted from the ephemeral runner.
+
+Across K1–K11 the recovered USF derivative contains:
+
+- exactly 25 participant tracks per scenario with participant numbers `1..25`;
+- the same `A=13`, `B=12` participant-suffix distribution on every scenario;
+- gaze, fixation, timestamp, and point metadata in every participant payload;
+- `1920×1080` video at `25/1` fps on every scenario;
+- one to six semantically named rectangular AOI tracks per scenario.
+
+Schöning et al. (`10.16910/jemr.10.5.4`) describe their USF representation as preserving complete gaze metadata without loss, whereas ASS retains selected metadata only. That statement supports selecting USF for recovery, but GazeForge does **not** infer that this specific conversion is field-identical to the unavailable original VISUS files.
+
+The reviewed derivative-recovery record is:
+
+```text
+validation/evidence/visus-source-recheck/
+visus-osnabrueck-derivative-recovery-evidence-v1.json
+```
+
+with canonical fingerprint:
+
+```text
+78b538ad35e411fe9e7020d47c759d2d6d246c96887bf76da979e23f35335d32
+```
+
+See [VISUS Osnabrück derivative recovery](visus-osnabrueck-derivative-recovery.md) for the exact run/artifact binding, per-scenario fingerprints, AOI inventory, and claim boundaries.
+
+This substantially improves derivative recovery: the repository now has evidence of a historically institutional **11-scenario × 25-participant** converted corpus, not merely small public fragments. It still does **not** satisfy the authoritative-current-copy roadmap item. The research-purpose statement is not treated as a formal dataset license; the converter article's `CC BY 4.0` license is not projected onto dataset files; exact original-file identity, formal analysis rights, redistribution rights, AOI identity to original ViPER XML, and annotation independence remain unresolved.
+
 ## Validate the checkpoint
 
 The baseline checkpoint has a dedicated JSON-only validator:
@@ -84,13 +119,17 @@ gazeforge-visus-source-resolution \
 
 The validator checks the record type, benchmark identity, ISO check date, current-source/audit/empirical flags, publication DOI, rights fields, annotation-independence gate, explicit claim limits, and a deterministic canonical SHA-256 fingerprint. The same generic validator also applies to the 2026-09-09 recheck file, while `gazeforge.visus_authoritative_source_recheck.validate_visus_authoritative_source_recheck` adds the frozen current-search and derivative-binding contract.
 
-The current unresolved status is fail-closed: it cannot simultaneously claim that a current authoritative download was found, that the source is audit-ready, that empirical evidence was created, that analysis or redistribution rights are resolved, or that independent human annotation streams are verified.
+The Osnabrück derivative checkpoint has its own strict validator, `gazeforge.visus_osnabrueck_derivative_recovery.validate_visus_osnabrueck_derivative_recovery`. It revalidates the existing authoritative-source and supplement-recovery checkpoints, binds the exact successful reconnaissance artifact and four probe hashes, recomputes every scenario structural fingerprint, and keeps authority/rights/empirical promotion fail-closed.
 
-This validation is still **not** a source audit. It verifies the internal integrity and conservative semantics of the source-resolution record only.
+The current unresolved status remains fail-closed: structural recovery of a historical derivative cannot simultaneously claim that a current authoritative original download was found, that the source is audit-ready, that empirical evidence was created, that analysis or redistribution rights are resolved, or that independent human annotation streams are verified.
+
+This validation is still **not** a source audit. It verifies the internal integrity and conservative semantics of the source-resolution and derivative-recovery records only.
 
 ## Copyright is not treated as a dataset license
 
 The ACM paper contains its publication copyright/permissions notice. GazeForge does **not** reinterpret that notice as a license covering the benchmark's raw video, gaze, or AOI files. Similarly, the paper's description of the dataset as publicly available establishes historical availability, not unrestricted redistribution.
+
+The Osnabrück page's research-purpose statement likewise documents distribution intent rather than a complete modern license grant. The JEMR converter article is `CC BY 4.0`, but that article license is not treated as licensing the converted VISUS files.
 
 Analysis-use permission and raw-file redistribution remain separate evidence fields and must be established explicitly for the exact copy used in an empirical run.
 
@@ -103,20 +142,22 @@ That workflow is not evidence of two independently produced annotation streams. 
 - `independent_annotation_streams_verified=false`;
 - `human_human_agreement_ready=false`.
 
+The recovered USF derivative contains a single semantic AOI-track set per standard scenario. That does not create a second independent human annotation stream. Some derivative track titles also differ textually from labels shown in the original paper, so derivative AOI identity to the original ViPER XML remains unproven.
+
 Only an authoritative obtained copy that contains separately recoverable streams, together with evidence that they were produced independently, can open the human-human agreement gate.
 
 ## What must happen next
 
-The next empirical step is not another model run. It is source acquisition and rights verification:
+The next empirical step is not another model run. The Osnabrück recovery makes the remaining source task more precise:
 
-1. obtain the benchmark from a current VISUS/author-verified institutional source, or receive an author-verified copy;
-2. document current analysis-use and raw-data redistribution terms separately;
-3. inventory and hash every file in the exact obtained copy;
-4. review stimulus/participant/AOI-stream identities from those files;
+1. obtain the benchmark from a current VISUS/author-verified institutional source, receive an author-verified original copy, or recover an authoritative redeposit tied to the 2014 benchmark;
+2. document current analysis-use and raw-data redistribution terms separately for that exact copy;
+3. inventory and hash every file in the authoritative copy;
+4. compare its stimuli, gaze exports, participant identities, and AOI annotations with the recovered Osnabrück USF derivative;
 5. determine whether independent annotation streams actually exist;
 6. only then execute the canonical human-AOI intake, documented model prediction intake, externally supplied evaluation grid, and Frozen Evidence workflow.
 
-Until those steps are complete, the existing VISUS software remains validated infrastructure with empirical execution pending.
+Until those steps are complete, the recovered Osnabrück corpus is strong derivative evidence and the existing VISUS software remains validated infrastructure with empirical execution pending.
 
 ## Public sources used for the resolution checkpoints
 
@@ -124,6 +165,8 @@ Until those steps are complete, the existing VISUS software remains validated in
 - 2021 Sensors evaluation/data-availability statement: <https://doi.org/10.3390/s21124143>
 - Current Kuno Kurzhals VISUS profile: <https://www.visus.uni-stuttgart.de/en/team/Kurzhals/>
 - Current VISUS DaRUS dataverse: <https://darus.uni-stuttgart.de/dataverse/visus>
+- Osnabrück converted-data page: <https://www.ikw.uni-osnabrueck.de/en/research_groups/computer_vision/research/interactive_3d_modelling/multimedia_container/wacv17.html>
+- USF/ASS conversion-method paper: <https://doi.org/10.16910/jemr.10.5.4>
 - Modern DaRUS license examples used only to document non-transferability: `10.18419/DARUS-4023` and `10.18419/DARUS-4141`
 
 These references document the resolution decision. They do not replace the exact-file source audit required for empirical evidence.
