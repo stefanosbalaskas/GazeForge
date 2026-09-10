@@ -29,6 +29,7 @@ from .visus_preexecution_protocol import (
     VisusGroundedSAM2StimulusPlan,
     VisusProtocolBoundGroundedSAM2Run,
     load_visus_grounded_sam2_preexecution_protocol,
+    replay_visus_grounded_sam2_preexecution_protocol,
     run_grounded_sam2_from_preexecution_protocol,
 )
 
@@ -41,6 +42,9 @@ _REPORT_FILENAME = "visus-grounded-sam2-protocol-batch.json"
 class VisusProtocolBoundGroundedSAM2BatchRun:
     """Complete VISUS model predictions assembled from protocol-bound executions."""
 
+    protocol_run: VisusGroundedSAM2PreexecutionProtocolRun
+    audit: VisusSourceAuditRun
+    plans_by_stimulus: dict[str, VisusGroundedSAM2StimulusPlan]
     output_dir: Path
     prediction_path: Path
     report_path: Path
@@ -110,6 +114,29 @@ def _stimulus_ids(protocol: Mapping[str, Any]) -> list[str]:
     return values
 
 
+def _timestamps_from_protocol(protocol: Mapping[str, Any]) -> dict[str, list[float]]:
+    evaluation = protocol.get("evaluation")
+    if not isinstance(evaluation, Mapping):
+        raise BenchmarkIntegrityError("Frozen VISUS protocol evaluation section is missing.")
+    records = evaluation.get("timestamp_grids")
+    if not isinstance(records, list) or not records:
+        raise BenchmarkIntegrityError("Frozen VISUS protocol timestamp grids are missing.")
+    result: dict[str, list[float]] = {}
+    for record in records:
+        if not isinstance(record, Mapping):
+            raise BenchmarkIntegrityError("Frozen VISUS timestamp-grid record is malformed.")
+        stimulus_id = str(record.get("stimulus_id", "")).strip()
+        values = record.get("timestamps_ms")
+        if not stimulus_id or not isinstance(values, list):
+            raise BenchmarkIntegrityError("Frozen VISUS timestamp-grid record is incomplete.")
+        result[stimulus_id] = [float(value) for value in values]
+    if list(result) != _stimulus_ids(protocol):
+        raise BenchmarkIntegrityError(
+            "Frozen VISUS timestamp-grid order does not match the stimulus plan."
+        )
+    return result
+
+
 def _require_exact_plans(
     plans_by_stimulus: Mapping[str, VisusGroundedSAM2StimulusPlan],
     stimulus_ids: list[str],
@@ -125,16 +152,16 @@ def _require_exact_plans(
             "Protocol-bound VISUS batch requires exactly one plan for every frozen stimulus: "
             f"missing={missing}, extra={extra}."
         )
-    for stimulus in stimulus_ids:
-        plan = plans_by_stimulus[stimulus]
+    for stimulus_id in stimulus_ids:
+        plan = plans_by_stimulus[stimulus_id]
         if not isinstance(plan, VisusGroundedSAM2StimulusPlan):
             raise TypeError(
-                f"Plan for {stimulus!r} must be a VisusGroundedSAM2StimulusPlan."
+                f"Plan for {stimulus_id!r} must be a VisusGroundedSAM2StimulusPlan."
             )
-        if str(plan.stimulus_id).strip() != stimulus:
+        if str(plan.stimulus_id).strip() != stimulus_id:
             raise SchemaError(
                 "VISUS batch plan mapping key must equal the plan stimulus_id: "
-                f"key={stimulus!r}, plan={plan.stimulus_id!r}."
+                f"key={stimulus_id!r}, plan={plan.stimulus_id!r}."
             )
 
 
@@ -161,10 +188,25 @@ def _write_prediction_csv(table: pd.DataFrame, path: Path) -> tuple[int, str]:
     return _file_sha256(path, label="VISUS protocol-bound prediction CSV")
 
 
+def _load_report_file(path: Path) -> dict[str, Any]:
+    if path.is_symlink():
+        raise BenchmarkIntegrityError("VISUS protocol batch report must not be a symbolic link.")
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise BenchmarkIntegrityError("VISUS protocol batch report is not valid JSON.") from exc
+    if not isinstance(payload, dict):
+        raise BenchmarkIntegrityError("VISUS protocol batch report must be a JSON object.")
+    return payload
+
+
 def _binding_record(
     stimulus_id: str,
     run: VisusProtocolBoundGroundedSAM2Run,
     *,
+    expected_protocol_fingerprint: str,
     row_count: int,
     track_count: int,
 ) -> dict[str, Any]:
@@ -177,6 +219,7 @@ def _binding_record(
             f"Protocol-bound execution identity mismatch for {stimulus_id!r}."
         )
     validate_grounded_sam2_run(run.backend_run)
+    backend_fp = str(run.backend_run.report.get("report_fingerprint_sha256", ""))
     protocol_binding = dict(run.protocol_binding)
     frame_binding = dict(run.frame_derivation_binding)
     protocol_fp = _revalidate_fingerprint(
@@ -189,6 +232,25 @@ def _binding_record(
         "binding_fingerprint_sha256",
         label=f"VISUS frame-derivation binding for {stimulus_id}",
     )
+    if protocol_binding.get("protocol_fingerprint_sha256") != expected_protocol_fingerprint:
+        raise BenchmarkIntegrityError(
+            f"VISUS protocol binding references a different protocol for {stimulus_id!r}."
+        )
+    if protocol_binding.get("grounded_sam2_report_fingerprint_sha256") != backend_fp:
+        raise BenchmarkIntegrityError(
+            f"VISUS protocol binding references a different backend run for {stimulus_id!r}."
+        )
+    if frame_binding.get("grounded_sam2_report_fingerprint_sha256") != backend_fp:
+        raise BenchmarkIntegrityError(
+            f"VISUS frame binding references a different backend run for {stimulus_id!r}."
+        )
+    if (
+        frame_binding.get("frame_derivation_report_fingerprint_sha256")
+        != protocol_binding.get("frame_derivation_report_fingerprint_sha256")
+    ):
+        raise BenchmarkIntegrityError(
+            f"VISUS protocol/frame bindings disagree on derivation identity for {stimulus_id!r}."
+        )
     if protocol_binding.get("protocol_validated_before_backend_call") is not True:
         raise BenchmarkIntegrityError(
             f"VISUS batch execution lacks pre-inference protocol validation for {stimulus_id!r}."
@@ -211,13 +273,28 @@ def _binding_record(
             raise BenchmarkIntegrityError(
                 f"VISUS protocol binding improperly promotes {field} for {stimulus_id!r}."
             )
+    for field in (
+        "empirical_performance_claim_created",
+        "dataset_source_authority_implied",
+        "dataset_rights_implied",
+        "grounded_sam2_backend_alone_claims_derivation_verification",
+    ):
+        if frame_binding.get(field) is not False:
+            raise BenchmarkIntegrityError(
+                f"VISUS frame binding improperly promotes {field} for {stimulus_id!r}."
+            )
     return {
         "stimulus_id": stimulus_id,
         "row_count": int(row_count),
         "track_count": int(track_count),
-        "grounded_sam2_report_fingerprint_sha256": run.backend_run.report[
-            "report_fingerprint_sha256"
+        "grounded_sam2_report_fingerprint_sha256": backend_fp,
+        "frame_derivation_report_fingerprint_sha256": frame_binding[
+            "frame_derivation_report_fingerprint_sha256"
         ],
+        "frame_manifest_fingerprint_sha256": frame_binding[
+            "frame_manifest_fingerprint_sha256"
+        ],
+        "source_video_sha256": frame_binding["source_video_sha256"],
         "frame_derivation_binding_fingerprint_sha256": frame_fp,
         "protocol_binding_fingerprint_sha256": protocol_fp,
     }
@@ -228,6 +305,86 @@ def _prediction_basis(protocol_fingerprint: str) -> str:
         "GazeForge complete protocol-bound Grounding DINO + SAM 2 batch from "
         f"pre-execution protocol {protocol_fingerprint}"
     )
+
+
+def _source_summary(protocol: Mapping[str, Any]) -> dict[str, Any]:
+    source = protocol["source"]
+    return {
+        "source_audit_report_fingerprint_sha256": source[
+            "source_audit_report_fingerprint_sha256"
+        ],
+        "source_audit_spec_fingerprint_sha256": source[
+            "source_audit_spec_fingerprint_sha256"
+        ],
+        "source_manifest_fingerprint_sha256": source[
+            "source_manifest_fingerprint_sha256"
+        ],
+    }
+
+
+def _model_summary(protocol: Mapping[str, Any]) -> dict[str, Any]:
+    policy = protocol["global_model_policy"]
+    return {
+        "name": policy["model_name"],
+        "version": policy["model_version"],
+        "grounding_model_id": policy["grounding_model_id"],
+        "grounding_model_revision": policy["grounding_model_revision"],
+        "sam2_code_revision": policy["sam2_code_revision"],
+        "sam2_model_cfg": policy["sam2_model_cfg"],
+        "sam2_checkpoint_sha256": policy["sam2_checkpoint_sha256"],
+        "box_threshold": policy["box_threshold"],
+        "text_threshold": policy["text_threshold"],
+    }
+
+
+def _evaluation_handoff(protocol: Mapping[str, Any]) -> dict[str, Any]:
+    evaluation = protocol["evaluation"]
+    return {
+        "reference_stream_id": evaluation["reference_stream_id"],
+        "timestamp_grid_basis": evaluation["timestamp_grid_basis"],
+        "timestamp_grid_fingerprints": [
+            {
+                "stimulus_id": record["stimulus_id"],
+                "timestamp_grid_fingerprint_sha256": record[
+                    "timestamp_grid_fingerprint_sha256"
+                ],
+            }
+            for record in evaluation["timestamp_grids"]
+        ],
+        "max_interpolation_gap_ms": evaluation["max_interpolation_gap_ms"],
+        "min_iou": evaluation["min_iou"],
+        "require_label_match": evaluation["require_label_match"],
+        "fixation_assignment_planned": evaluation["fixation_assignment_planned"],
+        "overlap_rule": evaluation["overlap_rule"],
+        "prediction_emission_grid_used": False,
+    }
+
+
+def _intake_summary(
+    prediction_intake: VisusDynamicAOIPredictionIntakeRun,
+) -> dict[str, Any]:
+    intake_report = prediction_intake.report
+    intake_fp = _revalidate_fingerprint(
+        intake_report,
+        "report_fingerprint_sha256",
+        label="VISUS prediction-intake report",
+    )
+    return {
+        "status": intake_report.get("status"),
+        "report_fingerprint_sha256": intake_fp,
+        "input_table_fingerprint_sha256": intake_report.get(
+            "input_table_fingerprint_sha256"
+        ),
+        "canonical_table_fingerprint_sha256": intake_report.get(
+            "canonical_table_fingerprint_sha256"
+        ),
+        "complete_audited_stimulus_coverage_required": intake_report.get(
+            "complete_audited_stimulus_coverage_required"
+        ),
+        "evaluation_timestamp_grid_generated": intake_report.get(
+            "evaluation_timestamp_grid_generated"
+        ),
+    }
 
 
 def _report_body(
@@ -241,20 +398,6 @@ def _report_body(
     prediction_intake: VisusDynamicAOIPredictionIntakeRun,
     execution_records: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    source = protocol["source"]
-    policy = protocol["global_model_policy"]
-    evaluation = protocol["evaluation"]
-    intake_report = prediction_intake.report
-    intake_fp = str(intake_report.get("report_fingerprint_sha256", ""))
-    intake_body = {
-        key: value
-        for key, value in intake_report.items()
-        if key != "report_fingerprint_sha256"
-    }
-    if not _valid_sha256(intake_fp) or benchmark_fingerprint(intake_body) != intake_fp:
-        raise BenchmarkIntegrityError(
-            "VISUS prediction-intake report fingerprint does not revalidate."
-        )
     return {
         "schema": _BATCH_SCHEMA,
         "status": "verified-protocol-bound-batch-output",
@@ -262,28 +405,8 @@ def _report_body(
             "complete-frozen-visus-stimulus-set-to-canonical-model-prediction-table"
         ),
         "protocol_fingerprint_sha256": protocol_fingerprint,
-        "source": {
-            "source_audit_report_fingerprint_sha256": source[
-                "source_audit_report_fingerprint_sha256"
-            ],
-            "source_audit_spec_fingerprint_sha256": source[
-                "source_audit_spec_fingerprint_sha256"
-            ],
-            "source_manifest_fingerprint_sha256": source[
-                "source_manifest_fingerprint_sha256"
-            ],
-        },
-        "model": {
-            "name": policy["model_name"],
-            "version": policy["model_version"],
-            "grounding_model_id": policy["grounding_model_id"],
-            "grounding_model_revision": policy["grounding_model_revision"],
-            "sam2_code_revision": policy["sam2_code_revision"],
-            "sam2_model_cfg": policy["sam2_model_cfg"],
-            "sam2_checkpoint_sha256": policy["sam2_checkpoint_sha256"],
-            "box_threshold": policy["box_threshold"],
-            "text_threshold": policy["text_threshold"],
-        },
+        "source": _source_summary(protocol),
+        "model": _model_summary(protocol),
         "execution": {
             "stimulus_count": len(execution_records),
             "stimulus_ids": [record["stimulus_id"] for record in execution_records],
@@ -301,41 +424,8 @@ def _report_body(
             ),
             "table_fingerprint_sha256": fingerprint_frame(predictions),
         },
-        "prediction_intake": {
-            "status": intake_report.get("status"),
-            "report_fingerprint_sha256": intake_fp,
-            "input_table_fingerprint_sha256": intake_report.get(
-                "input_table_fingerprint_sha256"
-            ),
-            "canonical_table_fingerprint_sha256": intake_report.get(
-                "canonical_table_fingerprint_sha256"
-            ),
-            "complete_audited_stimulus_coverage_required": intake_report.get(
-                "complete_audited_stimulus_coverage_required"
-            ),
-            "evaluation_timestamp_grid_generated": intake_report.get(
-                "evaluation_timestamp_grid_generated"
-            ),
-        },
-        "frozen_evaluation_handoff": {
-            "reference_stream_id": evaluation["reference_stream_id"],
-            "timestamp_grid_basis": evaluation["timestamp_grid_basis"],
-            "timestamp_grid_fingerprints": [
-                {
-                    "stimulus_id": record["stimulus_id"],
-                    "timestamp_grid_fingerprint_sha256": record[
-                        "timestamp_grid_fingerprint_sha256"
-                    ],
-                }
-                for record in evaluation["timestamp_grids"]
-            ],
-            "max_interpolation_gap_ms": evaluation["max_interpolation_gap_ms"],
-            "min_iou": evaluation["min_iou"],
-            "require_label_match": evaluation["require_label_match"],
-            "fixation_assignment_planned": evaluation["fixation_assignment_planned"],
-            "overlap_rule": evaluation["overlap_rule"],
-            "prediction_emission_grid_used": False,
-        },
+        "prediction_intake": _intake_summary(prediction_intake),
+        "frozen_evaluation_handoff": _evaluation_handoff(protocol),
         "formal_preregistration_verified": False,
         "empirical_performance_claim_created": False,
         "model_human_validation_executed": False,
@@ -373,6 +463,12 @@ def run_visus_grounded_sam2_protocol_batch(
     protocol = _load_exact_protocol(protocol_run)
     stimulus_ids = _stimulus_ids(protocol)
     _require_exact_plans(plans_by_stimulus, stimulus_ids)
+    replay_visus_grounded_sam2_preexecution_protocol(
+        protocol_run,
+        audit,
+        plans_by_stimulus,
+        _timestamps_from_protocol(protocol),
+    )
     prediction_path, report_path = _preflight_output_dir(
         Path(output_dir),
         overwrite=bool(overwrite),
@@ -410,6 +506,7 @@ def run_visus_grounded_sam2_protocol_batch(
             _binding_record(
                 stimulus_id,
                 bound,
+                expected_protocol_fingerprint=protocol_run.protocol_fingerprint_sha256,
                 row_count=len(table),
                 track_count=int(table["aoi_id"].nunique()),
             )
@@ -470,6 +567,9 @@ def run_visus_grounded_sam2_protocol_batch(
     temporary.replace(report_path)
 
     run = VisusProtocolBoundGroundedSAM2BatchRun(
+        protocol_run=protocol_run,
+        audit=audit,
+        plans_by_stimulus={key: plans_by_stimulus[key] for key in stimulus_ids},
         output_dir=Path(output_dir),
         prediction_path=prediction_path,
         report_path=report_path,
@@ -485,9 +585,20 @@ def run_visus_grounded_sam2_protocol_batch(
 def validate_visus_protocol_bound_batch_run(
     run: VisusProtocolBoundGroundedSAM2BatchRun,
 ) -> VisusProtocolBoundGroundedSAM2BatchRun:
-    """Revalidate a complete batch, prediction file, intake, and per-stimulus lineage."""
+    """Revalidate the batch artifact and all frozen protocol/source/model lineage."""
     if not isinstance(run, VisusProtocolBoundGroundedSAM2BatchRun):
         raise TypeError("run must be a VisusProtocolBoundGroundedSAM2BatchRun instance.")
+
+    protocol = _load_exact_protocol(run.protocol_run)
+    stimulus_ids = _stimulus_ids(protocol)
+    _require_exact_plans(run.plans_by_stimulus, stimulus_ids)
+    replay_visus_grounded_sam2_preexecution_protocol(
+        run.protocol_run,
+        run.audit,
+        run.plans_by_stimulus,
+        _timestamps_from_protocol(protocol),
+    )
+
     report = run.report
     if report.get("schema") != _BATCH_SCHEMA:
         raise BenchmarkIntegrityError("VISUS protocol batch schema drifted.")
@@ -500,6 +611,21 @@ def validate_visus_protocol_bound_batch_run(
     )
     if claimed != run.batch_fingerprint_sha256:
         raise BenchmarkIntegrityError("VISUS protocol batch fingerprint object drifted.")
+    if _load_report_file(run.report_path) != report:
+        raise BenchmarkIntegrityError("VISUS protocol batch report file drifted.")
+    if run.report_path.name != _REPORT_FILENAME:
+        raise BenchmarkIntegrityError("VISUS protocol batch report filename drifted.")
+    if run.prediction_path.name != _PREDICTION_FILENAME:
+        raise BenchmarkIntegrityError("VISUS protocol batch prediction filename drifted.")
+
+    if report.get("protocol_fingerprint_sha256") != run.protocol_run.protocol_fingerprint_sha256:
+        raise BenchmarkIntegrityError("VISUS protocol batch protocol identity drifted.")
+    if report.get("source") != _source_summary(protocol):
+        raise BenchmarkIntegrityError("VISUS protocol batch source lineage drifted.")
+    if report.get("model") != _model_summary(protocol):
+        raise BenchmarkIntegrityError("VISUS protocol batch model policy drifted.")
+    if report.get("frozen_evaluation_handoff") != _evaluation_handoff(protocol):
+        raise BenchmarkIntegrityError("VISUS protocol batch evaluation handoff drifted.")
 
     for field in (
         "formal_preregistration_verified",
@@ -511,9 +637,7 @@ def validate_visus_protocol_bound_batch_run(
         "frozen_evidence_created",
     ):
         if report.get(field) is not False:
-            raise BenchmarkIntegrityError(
-                f"VISUS protocol batch cannot promote {field}."
-            )
+            raise BenchmarkIntegrityError(f"VISUS protocol batch cannot promote {field}.")
 
     output = report.get("prediction_output")
     execution = report.get("execution")
@@ -523,6 +647,17 @@ def validate_visus_protocol_bound_batch_run(
     assert isinstance(output, Mapping)
     assert isinstance(execution, Mapping)
     assert isinstance(intake_summary, Mapping)
+
+    if execution.get("stimulus_count") != len(stimulus_ids):
+        raise BenchmarkIntegrityError("VISUS protocol batch stimulus count drifted.")
+    if list(execution.get("stimulus_ids", [])) != stimulus_ids:
+        raise BenchmarkIntegrityError("VISUS protocol batch stimulus order drifted.")
+    if execution.get("all_protocol_bindings_verified") is not True:
+        raise BenchmarkIntegrityError("VISUS protocol batch lost protocol-binding verification.")
+    if execution.get("all_frame_derivations_mechanically_verified") is not True:
+        raise BenchmarkIntegrityError("VISUS protocol batch lost frame-derivation verification.")
+    if list(run.per_stimulus) != stimulus_ids:
+        raise BenchmarkIntegrityError("VISUS protocol batch per-stimulus order drifted.")
 
     size, digest = _file_sha256(
         run.prediction_path,
@@ -534,41 +669,62 @@ def validate_visus_protocol_bound_batch_run(
         raise BenchmarkIntegrityError("VISUS protocol batch prediction table drifted.")
     if len(run.predictions) != output.get("row_count"):
         raise BenchmarkIntegrityError("VISUS protocol batch prediction row count drifted.")
+    observed_tracks = int(
+        run.predictions[["stimulus_id", "aoi_id"]].drop_duplicates().shape[0]
+    )
+    if observed_tracks != output.get("track_count"):
+        raise BenchmarkIntegrityError("VISUS protocol batch prediction track count drifted.")
+    if run.predictions["stimulus_id"].drop_duplicates().tolist() != stimulus_ids:
+        raise BenchmarkIntegrityError("VISUS protocol batch prediction coverage/order drifted.")
 
-    stimulus_ids = list(execution.get("stimulus_ids", []))
-    if stimulus_ids != list(run.per_stimulus):
-        raise BenchmarkIntegrityError("VISUS protocol batch per-stimulus order drifted.")
     records = execution.get("records")
     if not isinstance(records, list) or len(records) != len(stimulus_ids):
         raise BenchmarkIntegrityError("VISUS protocol batch execution ledger drifted.")
-    by_record = {record.get("stimulus_id"): record for record in records}
-    if set(by_record) != set(stimulus_ids):
+    record_ids = [str(record.get("stimulus_id", "")) for record in records]
+    if record_ids != stimulus_ids:
         raise BenchmarkIntegrityError("VISUS protocol batch execution identities drifted.")
-    for stimulus_id in stimulus_ids:
+    for stimulus_id, stored in zip(stimulus_ids, records, strict=True):
         subset = run.predictions.loc[run.predictions["stimulus_id"] == stimulus_id]
         observed = _binding_record(
             stimulus_id,
             run.per_stimulus[stimulus_id],
+            expected_protocol_fingerprint=run.protocol_run.protocol_fingerprint_sha256,
             row_count=len(subset),
             track_count=int(subset["aoi_id"].nunique()),
         )
-        if observed != by_record[stimulus_id]:
+        if observed != stored:
             raise BenchmarkIntegrityError(
                 f"VISUS protocol batch lineage drifted for {stimulus_id!r}."
             )
 
     intake = run.prediction_intake.report
-    intake_fp = _revalidate_fingerprint(
-        intake,
-        "report_fingerprint_sha256",
-        label="VISUS protocol batch prediction intake",
-    )
-    if intake_fp != intake_summary.get("report_fingerprint_sha256"):
-        raise BenchmarkIntegrityError("VISUS protocol batch prediction-intake identity drifted.")
+    if _intake_summary(run.prediction_intake) != dict(intake_summary):
+        raise BenchmarkIntegrityError("VISUS protocol batch prediction-intake summary drifted.")
     if intake.get("input_table_fingerprint_sha256") != fingerprint_frame(run.predictions):
         raise BenchmarkIntegrityError(
             "VISUS protocol batch prediction intake is not bound to the batch table."
         )
+    if intake.get("source_audit_report_fingerprint_sha256") != _source_summary(protocol)[
+        "source_audit_report_fingerprint_sha256"
+    ]:
+        raise BenchmarkIntegrityError("VISUS protocol batch intake source audit drifted.")
+    if intake.get("source_audit_spec_fingerprint_sha256") != _source_summary(protocol)[
+        "source_audit_spec_fingerprint_sha256"
+    ]:
+        raise BenchmarkIntegrityError("VISUS protocol batch intake source specification drifted.")
+    if intake.get("source_manifest_fingerprint_sha256") != _source_summary(protocol)[
+        "source_manifest_fingerprint_sha256"
+    ]:
+        raise BenchmarkIntegrityError("VISUS protocol batch intake source manifest drifted.")
+    policy = protocol["global_model_policy"]
+    if intake.get("model", {}).get("name") != policy["model_name"]:
+        raise BenchmarkIntegrityError("VISUS protocol batch intake model name drifted.")
+    if intake.get("model", {}).get("version") != policy["model_version"]:
+        raise BenchmarkIntegrityError("VISUS protocol batch intake model version drifted.")
+    if intake.get("stimulus_ids") != stimulus_ids:
+        raise BenchmarkIntegrityError("VISUS protocol batch intake stimulus coverage drifted.")
+    if intake.get("row_count") != len(run.prediction_intake.canonical):
+        raise BenchmarkIntegrityError("VISUS protocol batch intake row count drifted.")
     if intake.get("complete_audited_stimulus_coverage_required") is not True:
         raise BenchmarkIntegrityError(
             "VISUS protocol batch prediction intake lost complete-coverage enforcement."
