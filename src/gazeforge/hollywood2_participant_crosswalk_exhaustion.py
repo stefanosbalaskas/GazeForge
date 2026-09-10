@@ -152,13 +152,22 @@ def validate_hollywood2_participant_crosswalk_exhaustion(
         "missing numeric tokens",
     )
     _equal(tokens.get("token_count"), 16, "token count")
-    _true(tokens.get("token_count_matches_earlier_public_subject_count"), "16-to-16 count match")
+    _true(
+        tokens.get("token_count_matches_earlier_public_subject_count"),
+        "16-to-16 count match",
+    )
     _true(
         tokens.get("numeric_hole_count_matches_16_to_19_publication_delta"),
         "three-hole cardinality coincidence",
     )
-    _false(tokens.get("token_count_match_is_crosswalk_evidence"), "count-only crosswalk evidence")
-    _false(tokens.get("numeric_hole_match_is_crosswalk_evidence"), "numeric-hole crosswalk evidence")
+    _false(
+        tokens.get("token_count_match_is_crosswalk_evidence"),
+        "count-only crosswalk evidence",
+    )
+    _false(
+        tokens.get("numeric_hole_match_is_crosswalk_evidence"),
+        "numeric-hole crosswalk evidence",
+    )
 
     findings = _mapping(record, "reviewed_surface_findings")
     original = _mapping(findings, "original_public_distribution")
@@ -174,8 +183,14 @@ def validate_hollywood2_participant_crosswalk_exhaustion(
         _false(original.get(key), key)
 
     access = _mapping(findings, "original_access_and_rights")
-    _true(access.get("academic_use_license_page_public"), "public academic-use license page")
-    _true(access.get("archive_access_requires_normal_institutional_access"), "normal institutional access requirement")
+    _true(
+        access.get("academic_use_license_page_public"),
+        "public academic-use license page",
+    )
+    _true(
+        access.get("archive_access_requires_normal_institutional_access"),
+        "normal institutional access requirement",
+    )
     for key in (
         "login_or_license_gate_bypassed",
         "archive_download_performed_by_this_audit",
@@ -184,11 +199,28 @@ def validate_hollywood2_participant_crosswalk_exhaustion(
         _false(access.get(key), key)
 
     lineage = _mapping(findings, "publication_lineage")
-    _equal(lineage.get("arxiv_v1_reports_subject_count"), 16, "arXiv-v1 subject count")
-    _equal(lineage.get("final_article_reports_subject_count"), 19, "final-article subject count")
-    _true(lineage.get("cardinality_drift_already_frozen_elsewhere"), "separate cardinality evidence")
-    _false(lineage.get("publication_cardinality_resolves_token_identity"), "cardinality-based identity")
-    _false(lineage.get("free_viewing_ordinal_labels_resolve_gin_tokens"), "ordinal-label identity")
+    _equal(
+        lineage.get("arxiv_v1_reports_subject_count"),
+        16,
+        "arXiv-v1 subject count",
+    )
+    _equal(
+        lineage.get("final_article_reports_subject_count"),
+        19,
+        "final-article subject count",
+    )
+    _true(
+        lineage.get("cardinality_drift_already_frozen_elsewhere"),
+        "separate cardinality evidence",
+    )
+    _false(
+        lineage.get("publication_cardinality_resolves_token_identity"),
+        "cardinality-based identity",
+    )
+    _false(
+        lineage.get("free_viewing_ordinal_labels_resolve_gin_tokens"),
+        "ordinal-label identity",
+    )
 
     article = _mapping(findings, "hollywood2em_article")
     _equal(article.get("annotated_clip_count"), 56, "Hollywood2EM annotated clip count")
@@ -210,8 +242,14 @@ def validate_hollywood2_participant_crosswalk_exhaustion(
         history.get("participant_or_identity_keyword_ever_present_in_readme_history"),
         "historical README participant mapping",
     )
-    _true(history.get("token_set_stable_from_ground_truth_move_commit"), "stable GIN token syntax")
-    _false(history.get("history_links_tokens_to_original_subject_ids"), "historical token crosswalk")
+    _true(
+        history.get("token_set_stable_from_ground_truth_move_commit"),
+        "stable GIN token syntax",
+    )
+    _false(
+        history.get("history_links_tokens_to_original_subject_ids"),
+        "historical token crosswalk",
+    )
 
     secondary = _mapping(findings, "secondary_public_implementation")
     _true(secondary.get("parser_reviewed"), "secondary parser review")
@@ -251,11 +289,15 @@ def validate_hollywood2_participant_crosswalk_exhaustion(
         _false(scientific.get(key), key)
 
     routes = record.get("remaining_authoritative_resolution_routes")
-    if not isinstance(routes, list) or [item.get("route") for item in routes if isinstance(item, Mapping)] != [
+    observed_routes = [
+        item.get("route") for item in routes if isinstance(item, Mapping)
+    ] if isinstance(routes, list) else []
+    expected_routes = [
         "authorized-original-archive-metadata",
         "author-or-institution-explicit-crosswalk",
         "author-supplied-reviewed-ledger",
-    ]:
+    ]
+    if observed_routes != expected_routes:
         raise BenchmarkIntegrityError(
             "Hollywood2 crosswalk-exhaustion resolution routes drifted."
         )
