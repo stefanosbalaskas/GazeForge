@@ -1,0 +1,37 @@
+name: VISUS Osnabrueck derivative recovery probe
+
+on:
+  push:
+    branches:
+      - research/visus-osnabrueck-derivative-probe
+    paths:
+      - .github/workflows/visus-osnabrueck-derivative-probe.yml
+      - scripts/probe_visus_osnabrueck_derivative.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+
+      - name: Install MKV inspection tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends mkvtoolnix
+
+      - name: Probe institutional VISUS derivative without redistributing source bytes
+        run: python scripts/probe_visus_osnabrueck_derivative.py
+
+      - name: Upload structural report only
+        uses: actions/upload-artifact@v4
+        with:
+          name: visus-osnabrueck-derivative-probe
+          path: visus_osnabrueck_derivative_probe.json
+          if-no-files-found: error
+          retention-days: 14
