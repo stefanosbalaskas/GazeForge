@@ -92,6 +92,12 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 
+[tool.ruff.lint.isort]
+known-local-folder = ["_visus_authority_fixture"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/gazeforge/visus_authority_execution.py" = ["I001"]
+
 [tool.coverage.run]
 branch = true
 source = ["gazeforge"]
