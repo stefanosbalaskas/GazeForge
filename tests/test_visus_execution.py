@@ -240,13 +240,8 @@ def test_execution_provenance_binds_raw_inputs_to_verified_suite(tmp_path):
         manifest["raw_inputs"][0]["semantic_fingerprint_sha256"]
     )
 
-    dashboard = build_benchmark_dashboard(tmp_path)
-    assert len(dashboard.suites) == 1
-    assert dashboard.suite_table.iloc[0]["suite"] == "visus-dynamic-aoi-validation-v1"
-    assert dashboard.suite_table.iloc[0]["model"] == "fixture-detector 1.0.0"
-    assert dashboard.suite_table.iloc[0]["reference_stream_id"] == "annotator_a"
-    assert dashboard.suite_source_files == (str(suite.manifest_path),)
-    assert len(dashboard.reports) == 1
+    with pytest.raises(BenchmarkIntegrityError, match="reviewed certificate record"):
+        build_benchmark_dashboard(tmp_path)
 
 
 def test_execution_provenance_refuses_raw_input_mutation(tmp_path):
