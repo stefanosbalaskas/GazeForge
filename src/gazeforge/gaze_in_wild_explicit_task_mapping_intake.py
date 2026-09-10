@@ -392,6 +392,10 @@ def validate_candidate_record(record: Mapping[str, Any]) -> dict[str, Any]:
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild task-mapping candidate task count is invalid."
         )
+    if task_count != entry_count:
+        raise BenchmarkIntegrityError(
+            "Gaze-in-the-Wild task-mapping candidate task count drifted from entries."
+        )
     complete_indices = tuple(indices) == TRIAL_INDICES
     if summary.get("complete_trial_index_coverage") is not complete_indices:
         raise BenchmarkIntegrityError(
