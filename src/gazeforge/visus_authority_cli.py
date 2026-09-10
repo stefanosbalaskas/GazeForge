@@ -16,10 +16,12 @@ from .visus_authority_binding import (
 )
 from .visus_authority_execution import (
     bind_visus_suite_to_source_authority,
-    build_visus_authority_execution_provenance,
     snapshot_visus_authority_execution_inputs,
-    validate_visus_authority_execution_provenance,
     verify_visus_authority_execution_inputs_unchanged,
+)
+from .visus_authority_execution_strict import (
+    build_visus_authority_execution_provenance,
+    validate_visus_authority_execution_provenance,
     write_visus_authority_execution_provenance,
 )
 
