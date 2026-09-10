@@ -8,7 +8,7 @@ from typing import Any
 
 from .exceptions import BenchmarkIntegrityError
 from .visus_authority_binding import AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD
-from .visus_authority_execution import validate_visus_authority_execution_provenance
+from .visus_authority_execution_strict import validate_visus_authority_execution_provenance
 from .visus_suite import validate_visus_dynamic_aoi_suite_manifest
 
 _SUITE_MANIFEST_NAME = "visus-dynamic-aoi-suite-manifest.json"
@@ -110,6 +110,10 @@ def validate_visus_frozen_evidence_bundle(path: str | Path) -> dict[str, Any]:
     if execution.get(AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD) != authority_fingerprint:
         raise BenchmarkIntegrityError(
             "VISUS Frozen Evidence execution/suite authority fingerprints disagree."
+        )
+    if execution.get("authority_certificate_semantics_verified") is not True:
+        raise BenchmarkIntegrityError(
+            "VISUS Frozen Evidence execution did not revalidate authority-certificate semantics."
         )
 
     return {
