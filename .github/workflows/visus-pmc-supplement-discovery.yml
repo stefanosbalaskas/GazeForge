@@ -7,6 +7,7 @@ on:
       - feat/visus-pmc-supplement-probe
     paths:
       - "scripts/visus_pmc_supplement_discovery_probe.py"
+      - "scripts/visus_pmc_xml_supplement_link_probe.py"
       - ".github/workflows/visus-pmc-supplement-discovery.yml"
   workflow_dispatch:
 
@@ -23,10 +24,14 @@ jobs:
           python-version: "3.12"
       - name: Discover exact PMC article and supplementary objects
         run: python scripts/visus_pmc_supplement_discovery_probe.py
-      - name: Upload deterministic discovery record
+      - name: Inspect exact PMC XML for publisher supplement links
+        run: python scripts/visus_pmc_xml_supplement_link_probe.py
+      - name: Upload deterministic discovery records
         uses: actions/upload-artifact@v4
         with:
           name: visus-pmc-supplement-discovery
-          path: visus_pmc_supplement_discovery_probe.json
+          path: |
+            visus_pmc_supplement_discovery_probe.json
+            visus_pmc_xml_supplement_link_probe.json
           if-no-files-found: error
           retention-days: 30
