@@ -110,6 +110,7 @@ nav:
       - VISUS public 60 Hz event extension: visus-public-event-extension-evidence.md
       - VISUS source resolution: visus-source-resolution.md
       - VISUS source scaffold: visus-source-scaffold.md
+      - VISUS authoritative source intake: visus-authoritative-source-intake.md
       - VISUS source audit: visus-source-audit.md
       - VISUS canonical AOI intake: visus-canonical-intake.md
       - VISUS model prediction intake: visus-prediction-intake.md
