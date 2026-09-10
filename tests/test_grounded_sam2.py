@@ -1,6 +1,6 @@
 import hashlib
-from pathlib import Path
 from dataclasses import replace
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -16,7 +16,6 @@ from gazeforge.grounded_sam2 import (
     run_grounded_sam2_dynamic_aoi,
     validate_grounded_sam2_run,
 )
-
 
 GROUNDING_REVISION = "1" * 40
 SAM2_REVISION = "2" * 40
