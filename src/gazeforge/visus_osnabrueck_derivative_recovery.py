@@ -77,17 +77,83 @@ _EXPECTED_PROBE_BINDINGS = (
 )
 
 _EXPECTED_SCENARIOS = (
-    ("K1", "01-car pursuit_usf.mkv", 2, ("Red Car", "White Car"), "4176b6afa4ec9c8709aa2fc8fa798a7d87863dd51f386fd45b614b4d9c339b25"),
-    ("K2", "02-turning car_usf.mkv", 1, ("Red Car",), "5660eb03f0782e621579e91b0aff5fcfbb09aed5786b6e06da65ba1bda54f619"),
-    ("K3", "03-dialog_usf.mkv", 3, ("Left Face", "Right Face", "Shirt"), "9af0cc8d1885de1aa0c45d6687779fa0892286fb7871ce6c99141e891bd0668f"),
-    ("K4", "04-thimblerig_usf.mkv", 3, ("Cup2", "Cup1", "Cup3"), "91ae5edc1213c1192630d24c9924277157ac488ccb4b84e92c8845f88db7c241"),
-    ("K5", "05-memory_usf.mkv", 1, ("Cards",), "51e0d7d82bce5909ed7a6909b583c6c7447da939ac890995a53f049153853094"),
-    ("K6", "06-UNO_usf.mkv", 4, ("Left Hand", "Right Hand", "Stack Covered", "Stack Uncovered"), "7dfbe52693acfe46f76f360a19e67d232f86e17c6e1ea4cfd695354224070736"),
-    ("K7", "07-kite_usf.mkv", 2, ("Person", "Kite"), "48600d3f2aecf880a6b33807ead29b7cbf0304a7ae09b2d5c9a4851082f95d10"),
-    ("K8", "08-case exchange_usf.mkv", 4, ("Persons", "Textbox", "Case", "Suspects"), "a1cb41da48d001dbfb904bc7d4565d67a3e1691b78280d1a80f029b144359a14"),
-    ("K9", "09-ball game_usf.mkv", 5, ("Ball", "Player White", "Player Red1", "Player Red2", "Player Red3"), "943069068c93c18f3f36f546b5af40daa55a08861426e5bfb19837bbac7a2b1b"),
-    ("K10", "10-bag search_usf.mkv", 6, ("Red Bag", "Yellow Bag", "Blue Bag", "Red-White Bag", "Personen", "Brown Bag"), "2d90ab718ba919e9cc1dba666bb6280666fe8cc4576bbcdadefd58899408fc56"),
-    ("K11", "11-person search_usf.mkv", 3, ("Hooded", "Red Shirt and Hat", "Persons"), "0f72d1bd4df8b826a0edd9084ceaf8f37f1aac4fc91a9bd6ae2ccd75fc75bc76"),
+    (
+        "K1",
+        "01-car pursuit_usf.mkv",
+        2,
+        ("Red Car", "White Car"),
+        "4176b6afa4ec9c8709aa2fc8fa798a7d87863dd51f386fd45b614b4d9c339b25",
+    ),
+    (
+        "K2",
+        "02-turning car_usf.mkv",
+        1,
+        ("Red Car",),
+        "5660eb03f0782e621579e91b0aff5fcfbb09aed5786b6e06da65ba1bda54f619",
+    ),
+    (
+        "K3",
+        "03-dialog_usf.mkv",
+        3,
+        ("Left Face", "Right Face", "Shirt"),
+        "9af0cc8d1885de1aa0c45d6687779fa0892286fb7871ce6c99141e891bd0668f",
+    ),
+    (
+        "K4",
+        "04-thimblerig_usf.mkv",
+        3,
+        ("Cup2", "Cup1", "Cup3"),
+        "91ae5edc1213c1192630d24c9924277157ac488ccb4b84e92c8845f88db7c241",
+    ),
+    (
+        "K5",
+        "05-memory_usf.mkv",
+        1,
+        ("Cards",),
+        "51e0d7d82bce5909ed7a6909b583c6c7447da939ac890995a53f049153853094",
+    ),
+    (
+        "K6",
+        "06-UNO_usf.mkv",
+        4,
+        ("Left Hand", "Right Hand", "Stack Covered", "Stack Uncovered"),
+        "7dfbe52693acfe46f76f360a19e67d232f86e17c6e1ea4cfd695354224070736",
+    ),
+    (
+        "K7",
+        "07-kite_usf.mkv",
+        2,
+        ("Person", "Kite"),
+        "48600d3f2aecf880a6b33807ead29b7cbf0304a7ae09b2d5c9a4851082f95d10",
+    ),
+    (
+        "K8",
+        "08-case exchange_usf.mkv",
+        4,
+        ("Persons", "Textbox", "Case", "Suspects"),
+        "a1cb41da48d001dbfb904bc7d4565d67a3e1691b78280d1a80f029b144359a14",
+    ),
+    (
+        "K9",
+        "09-ball game_usf.mkv",
+        5,
+        ("Ball", "Player White", "Player Red1", "Player Red2", "Player Red3"),
+        "943069068c93c18f3f36f546b5af40daa55a08861426e5bfb19837bbac7a2b1b",
+    ),
+    (
+        "K10",
+        "10-bag search_usf.mkv",
+        6,
+        ("Red Bag", "Yellow Bag", "Blue Bag", "Red-White Bag", "Personen", "Brown Bag"),
+        "2d90ab718ba919e9cc1dba666bb6280666fe8cc4576bbcdadefd58899408fc56",
+    ),
+    (
+        "K11",
+        "11-person search_usf.mkv",
+        3,
+        ("Hooded", "Red Shirt and Hat", "Persons"),
+        "0f72d1bd4df8b826a0edd9084ceaf8f37f1aac4fc91a9bd6ae2ccd75fc75bc76",
+    ),
 )
 
 _FALSE_AUTHORITY_FIELDS = (
@@ -231,7 +297,10 @@ def _validate_institutional_source(record: Mapping[str, Any]) -> None:
     source = _mapping(record, "institutional_derivative_source")
     _equal(
         source.get("source_page_url"),
-        "https://www.ikw.uni-osnabrueck.de/en/research_groups/computer_vision/research/interactive_3d_modelling/multimedia_container/wacv17.html",
+        (
+            "https://www.ikw.uni-osnabrueck.de/en/research_groups/computer_vision/"
+            "research/interactive_3d_modelling/multimedia_container/wacv17.html"
+        ),
         "source-page URL",
     )
     _equal(
@@ -259,10 +328,18 @@ def _validate_institutional_source(record: Mapping[str, Any]) -> None:
     )
     _true(source.get("legacy_host_insecure_tls_retrieval_used"), "recording insecure TLS retrieval")
     _true(source.get("archive_zip_magic_verified"), "ZIP magic verification")
-    _equal(source.get("archive_last_modified_http"), "Wed, 03 Jan 2018 11:40:54 GMT", "archive Last-Modified header")
+    _equal(
+        source.get("archive_last_modified_http"),
+        "Wed, 03 Jan 2018 11:40:54 GMT",
+        "archive Last-Modified header",
+    )
     _equal(source.get("archive_remote_size_bytes"), 2598730485, "archive byte size")
     _equal(source.get("archive_entry_count"), 26, "archive entry count")
-    _equal(dict(source.get("archive_compression_method_counts", {})), {"8": 26}, "archive compression methods")
+    _equal(
+        dict(source.get("archive_compression_method_counts", {})),
+        {"8": 26},
+        "archive compression methods",
+    )
     _equal(source.get("usf_mkv_count"), 13, "USF MKV count")
     _equal(source.get("ass_mkv_count"), 13, "ASS MKV count")
     _equal(source.get("standard_usf_member_count"), 11, "standard USF count")
@@ -277,7 +354,11 @@ def _validate_institutional_source(record: Mapping[str, Any]) -> None:
         "polygon ASS members",
     )
     _equal(source.get("standard_usf_compressed_bytes"), 1288160237, "standard USF compressed bytes")
-    _equal(source.get("standard_usf_uncompressed_bytes"), 1305649112, "standard USF uncompressed bytes")
+    _equal(
+        source.get("standard_usf_uncompressed_bytes"),
+        1305649112,
+        "standard USF uncompressed bytes",
+    )
 
 
 def _validate_conversion_method(record: Mapping[str, Any]) -> None:
@@ -288,20 +369,43 @@ def _validate_conversion_method(record: Mapping[str, Any]) -> None:
         "Visual Analytics of Gaze Data with Standard Multimedia Players",
         "JEMR title",
     )
-    _true(method.get("jemr_article_states_usf_encapsulates_complete_gaze_metadata_without_loss"), "the JEMR USF lossless statement")
-    _true(method.get("jemr_article_states_ass_carries_selected_metadata_only"), "the JEMR ASS limitation statement")
-    _true(method.get("jemr_article_states_converted_gaze_datasets_exist"), "the JEMR converted-dataset statement")
+    _true(
+        method.get("jemr_article_states_usf_encapsulates_complete_gaze_metadata_without_loss"),
+        "the JEMR USF lossless statement",
+    )
+    _true(
+        method.get("jemr_article_states_ass_carries_selected_metadata_only"),
+        "the JEMR ASS limitation statement",
+    )
+    _true(
+        method.get("jemr_article_states_converted_gaze_datasets_exist"),
+        "the JEMR converted-dataset statement",
+    )
     _equal(method.get("jemr_article_license"), "CC BY 4.0", "JEMR article license")
-    _false(method.get("jemr_article_license_is_visus_derivative_dataset_license"), "the JEMR article license as a VISUS derivative license")
-    _false(method.get("converter_transform_fidelity_independently_proven_for_this_archive"), "independent transform-fidelity proof")
+    _false(
+        method.get("jemr_article_license_is_visus_derivative_dataset_license"),
+        "the JEMR article license as a VISUS derivative license",
+    )
+    _false(
+        method.get("converter_transform_fidelity_independently_proven_for_this_archive"),
+        "independent transform-fidelity proof",
+    )
 
 
 def _validate_structural_recovery(record: Mapping[str, Any]) -> None:
     recovery = _mapping(record, "structural_recovery")
     _equal(recovery.get("scenario_count"), 11, "scenario count")
     _equal(recovery.get("participant_count_per_scenario"), 25, "participant count")
-    _equal(tuple(recovery.get("expected_participant_numbers", ())), tuple(range(1, 26)), "participant-number roster")
-    _equal(dict(recovery.get("expected_task_group_counts", {})), {"A": 13, "B": 12}, "A/B group counts")
+    _equal(
+        tuple(recovery.get("expected_participant_numbers", ())),
+        tuple(range(1, 26)),
+        "participant-number roster",
+    )
+    _equal(
+        dict(recovery.get("expected_task_group_counts", {})),
+        {"A": 13, "B": 12},
+        "A/B group counts",
+    )
     for key in (
         "all_crc_valid",
         "all_ebml_valid",
@@ -314,7 +418,9 @@ def _validate_structural_recovery(record: Mapping[str, Any]) -> None:
 
     rows = recovery.get("scenario_structures")
     if not isinstance(rows, list) or len(rows) != 11:
-        raise BenchmarkIntegrityError("VISUS Osnabrueck evidence must preserve eleven scenario structures.")
+        raise BenchmarkIntegrityError(
+            "VISUS Osnabrueck evidence must preserve eleven scenario structures."
+        )
     compressed_total = 0
     uncompressed_total = 0
     for row, expected in zip(rows, _EXPECTED_SCENARIOS, strict=True):
@@ -326,9 +432,20 @@ def _validate_structural_recovery(record: Mapping[str, Any]) -> None:
         _true(row.get("crc_match"), f"{scenario_id} CRC match")
         _true(row.get("ebml_magic"), f"{scenario_id} EBML identity")
         _equal(row.get("participant_track_count"), 25, f"{scenario_id} participant count")
-        _equal(tuple(row.get("participant_numbers", ())), tuple(range(1, 26)), f"{scenario_id} participant roster")
-        _equal(dict(row.get("task_group_counts", {})), {"A": 13, "B": 12}, f"{scenario_id} A/B group counts")
-        _true(row.get("participant_payload_required_terms_all_present"), f"{scenario_id} gaze/fixation/timestamp/point terms")
+        _equal(
+            tuple(row.get("participant_numbers", ())),
+            tuple(range(1, 26)),
+            f"{scenario_id} participant roster",
+        )
+        _equal(
+            dict(row.get("task_group_counts", {})),
+            {"A": 13, "B": 12},
+            f"{scenario_id} A/B group counts",
+        )
+        _true(
+            row.get("participant_payload_required_terms_all_present"),
+            f"{scenario_id} gaze/fixation/timestamp/point terms",
+        )
         _equal(row.get("aoi_track_count"), aoi_count, f"{scenario_id} AOI count")
         _equal(tuple(row.get("aoi_titles", ())), aoi_titles, f"{scenario_id} AOI titles")
         video = _mapping(row, "video")
@@ -337,7 +454,11 @@ def _validate_structural_recovery(record: Mapping[str, Any]) -> None:
         _equal(video.get("avg_frame_rate"), "25/1", f"{scenario_id} frame rate")
         claimed = str(row.get("scenario_structural_fingerprint_sha256", ""))
         _equal(claimed, expected_fp, f"{scenario_id} structural fingerprint")
-        _equal(scenario_structural_fingerprint(row), expected_fp, f"{scenario_id} canonical structure")
+        _equal(
+            scenario_structural_fingerprint(row),
+            expected_fp,
+            f"{scenario_id} canonical structure",
+        )
         compressed_total += int(row.get("compressed_size", -1))
         uncompressed_total += int(row.get("uncompressed_size", -1))
     _equal(compressed_total, 1288160237, "scenario compressed-byte sum")
