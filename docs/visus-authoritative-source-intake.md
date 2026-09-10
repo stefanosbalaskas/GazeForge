@@ -88,6 +88,52 @@ A valid certificate may establish only that the exact candidate has passed **sou
 
 The certificate does not copy raw rights text. It stores the rights-evidence hash/reference and reviewed licence-or-terms identifier.
 
+## Binding the certificate to a detailed source audit
+
+A reviewed certificate is now replayed against the detailed `VisusSourceAuditSpec` before the installed empirical VISUS CLI may proceed. The binding requires exact agreement on:
+
+- source reference and source revision;
+- licence/terms identifier and rights-evidence reference;
+- analysis-use permission and redistribution classification;
+- published 25-participant and 11-stimulus boundaries;
+- file count;
+- the exact neutral source-tree fingerprint originally produced by the scaffold.
+
+The neutral inventory comparison deliberately discards the later scientific role assignments and reconstructs the original `role="other"` scaffold fingerprint. That means later video/gaze/AOI classification cannot silently create a new source identity.
+
+The bound audit adds the reviewed `source_authority_certificate_fingerprint_sha256` to its report and recomputes the source-audit report fingerprint. Because all downstream VISUS intake and validation reports already bind the source-audit report fingerprint, they transitively inherit the reviewed authority identity without treating the certificate as scientific validation.
+
+## Empirical CLI and Frozen Evidence
+
+The installed `gazeforge-visus` command requires the reviewed certificate for every empirical creation command:
+
+```bash
+gazeforge-visus suite \
+  /path/to/extracted-visus \
+  visus-source-audit.json \
+  human-aoi.csv \
+  model-predictions.csv \
+  timestamp-grids.json \
+  /path/to/output \
+  --authority-certificate visus-source-authority-certificate.json \
+  --extraction-basis "reviewed extraction from audited AOI XML" \
+  --human-frame-index-base 1 \
+  --model-name detector \
+  --model-version 1.0 \
+  --prediction-basis "reviewed detector output" \
+  --prediction-coordinate-unit pixels \
+  --prediction-frame-index-base 1 \
+  --reference-stream-id annotator_a \
+  --timestamp-grid-basis "reviewed external video-frame grid" \
+  --max-interpolation-gap-ms 100
+```
+
+The same certificate option is required for `audit`, `human-intake`, and `prediction-intake`.
+
+A completed suite is sealed with the exact certificate fingerprint. Current execution provenance uses `gazeforge-visus-execution-provenance-v2` and freezes five governed input files: source-audit JSON, authority-certificate JSON, human AOI table, model prediction table, and external timestamp-grid JSON. The authority certificate is bound by both its raw-file SHA-256 and its validated semantic certificate fingerprint.
+
+Current VISUS Frozen Evidence rejects legacy four-input execution provenance. Publication eligibility requires one identical authority-certificate fingerprint across the bound source audit, suite source/protocol identity, and v2 execution provenance.
+
 ## What remains required after a certificate
 
 A source-authority certificate is not a `dataset_status="empirical"` source audit. The existing VISUS audit must still independently resolve and verify:
@@ -106,4 +152,4 @@ Only after those gates pass can downstream human-human or model-human validation
 
 The intake is bound to the frozen VISUS authoritative-source recheck. That recheck found the current institutional publication listing but did not find a current authoritative download, a matching 2014 benchmark DaRUS deposit, a separate benchmark dataset DOI, or explicit current benchmark dataset licence. Modern DaRUS CC BY 4.0 examples and the reviewed public derivative evidence remain non-transferable to the missing full 2014 benchmark copy.
 
-Accordingly, adding this intake mechanism does not complete the Issue #1 checkbox to obtain/verify an authoritative current VISUS copy and reuse/distribution terms. It makes that future verification reproducible and fail-closed once legitimate evidence is available.
+Accordingly, adding this intake and binding mechanism does not complete the Issue #1 checkbox to obtain/verify an authoritative current VISUS copy and reuse/distribution terms. It makes that future verification reproducible and fail-closed once legitimate evidence is available.
