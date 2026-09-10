@@ -13,10 +13,8 @@ import pandas as pd
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
 from .provenance import fingerprint_frame
-from .visus_intake import (
-    VisusCanonicalAOIIntakeRun,
-    _to_keyframes as _reference_keyframes_from_canonical,
-)
+from .visus_intake import VisusCanonicalAOIIntakeRun
+from .visus_intake import _to_keyframes as _reference_keyframes_from_canonical
 from .visus_prediction import _to_keyframes as _prediction_keyframes_from_canonical
 from .visus_preexecution_protocol import validation_settings_from_preexecution_protocol
 from .visus_protocol_batch import (
