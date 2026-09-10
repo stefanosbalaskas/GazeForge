@@ -1,0 +1,32 @@
+name: VISUS PMC supplement discovery
+
+on:
+  push:
+    branches:
+      - main
+      - feat/visus-pmc-supplement-probe
+    paths:
+      - "scripts/visus_pmc_supplement_discovery_probe.py"
+      - ".github/workflows/visus-pmc-supplement-discovery.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Discover exact PMC article and supplementary objects
+        run: python scripts/visus_pmc_supplement_discovery_probe.py
+      - name: Upload deterministic discovery record
+        uses: actions/upload-artifact@v4
+        with:
+          name: visus-pmc-supplement-discovery
+          path: visus_pmc_supplement_discovery_probe.json
+          if-no-files-found: error
+          retention-days: 30
