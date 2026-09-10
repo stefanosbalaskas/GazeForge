@@ -4,6 +4,8 @@
 
 The scaffold is deliberately non-empirical. It inventories exact files and produces a JSON object that can later be manually reviewed into a `VisusSourceAuditSpec`, but it does not verify that the copy is authoritative, licensed for analysis, correctly mapped, or suitable for benchmark claims.
 
+For a legitimately obtained candidate copy, use the [VISUS authoritative source and rights intake](visus-authoritative-source-intake.md) before treating the tree as eligible to enter the detailed source-audit stage. That intake binds the exact source artifact, extracted-tree inventory, rights evidence, and manual authority/rights review without creating empirical validity claims.
+
 ## Command-line use
 
 Keep the generated audit template outside the candidate source tree:
@@ -70,6 +72,8 @@ Before changing `dataset_status` to `empirical`, review and document at least:
 11. whether any separately recoverable AOI streams are genuinely independent.
 
 The historical VISUS paper reports two contributors to one AOI annotation process. That alone does not justify `independent_annotation_streams_verified=true`.
+
+The authoritative-source intake only resolves the upstream authority/rights boundary. Its certificate does not resolve items 4–11 and cannot replace the detailed `VisusSourceAuditSpec` review.
 
 ## Snapshot-safety rules
 
