@@ -10,6 +10,7 @@ on:
       - "scripts/visus_pmc_xml_supplement_link_probe.py"
       - "scripts/visus_mdpi_supplement_link_probe.py"
       - "scripts/visus_mdpi_static_attachment_probe.py"
+      - "scripts/visus_wayback_attachment_history_probe.py"
       - ".github/workflows/visus-pmc-supplement-discovery.yml"
   workflow_dispatch:
 
@@ -32,6 +33,8 @@ jobs:
         run: python scripts/visus_mdpi_supplement_link_probe.py
       - name: Probe historical MDPI static attachment convention
         run: python scripts/visus_mdpi_static_attachment_probe.py
+      - name: Probe Wayback history for publisher attachment links
+        run: python scripts/visus_wayback_attachment_history_probe.py
       - name: Upload deterministic discovery records
         uses: actions/upload-artifact@v4
         with:
@@ -41,5 +44,6 @@ jobs:
             visus_pmc_xml_supplement_link_probe.json
             visus_mdpi_supplement_link_probe.json
             visus_mdpi_static_attachment_probe.json
+            visus_wayback_attachment_history_probe.json
           if-no-files-found: error
           retention-days: 30
