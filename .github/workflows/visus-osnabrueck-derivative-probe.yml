@@ -8,6 +8,7 @@ on:
       - .github/workflows/visus-osnabrueck-derivative-probe.yml
       - scripts/probe_visus_osnabrueck_derivative.py
       - scripts/probe_visus_osnabrueck_zip_directory.py
+      - scripts/probe_visus_osnabrueck_k1_member.py
   workflow_dispatch:
 
 permissions:
@@ -32,6 +33,9 @@ jobs:
       - name: Recover legacy bundle central directory by byte range
         run: python scripts/probe_visus_osnabrueck_zip_directory.py
 
+      - name: Recover and inspect exact K1 USF member only
+        run: python scripts/probe_visus_osnabrueck_k1_member.py
+
       - name: Upload structural reports only
         uses: actions/upload-artifact@v4
         with:
@@ -39,5 +43,6 @@ jobs:
           path: |
             visus_osnabrueck_derivative_probe.json
             visus_osnabrueck_zip_directory_probe.json
+            visus_osnabrueck_k1_member_probe.json
           if-no-files-found: error
           retention-days: 14
