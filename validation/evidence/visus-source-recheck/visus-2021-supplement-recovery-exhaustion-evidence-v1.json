@@ -1,0 +1,185 @@
+{
+  "checked_on": "2026-09-10",
+  "record_type": "visus-2021-supplement-recovery-exhaustion-evidence-v1",
+  "status": "reviewed-current-and-archived-public-surfaces-no-supplement-object-recovered",
+  "source_binding": {
+    "authoritative_source_recheck_record_fingerprint_sha256": "97bd19b892032a663b7707235504a7ba886a86d6c3caab4966fa6c5ee96a2571",
+    "sensors_article_doi": "10.3390/s21124143",
+    "sensors_article_pmcid": "PMC8235043",
+    "sensors_article_pmid": "34208736",
+    "reconnaissance_branch": "feat/visus-pmc-supplement-probe",
+    "reconnaissance_head_sha1": "347ba06dd802f9bd8b38aa2a6c770949702bc3ea",
+    "workflow_name": "VISUS PMC supplement discovery",
+    "workflow_run_id": 34497168884,
+    "workflow_run_number": 7,
+    "workflow_conclusion": "success",
+    "artifact_id": 10160434617,
+    "artifact_name": "visus-pmc-supplement-discovery",
+    "artifact_digest_sha256": "4545afdc8a37aee06b8415b68a7bc23614943fa6ac9dcbba774034fed3f7479d",
+    "artifact_created_at_utc": "2026-09-10T15:44:20Z"
+  },
+  "probe_bindings": [
+    {
+      "filename": "visus_mdpi_static_attachment_probe.json",
+      "raw_file_sha256": "78a8820f51e1efa711198cce5c60691973ab070e6bf6e1170baee69f111b5b14",
+      "probe_fingerprint_sha256": "123b41809167d93a1e389e12a7ea947a5d290e0f79b6132f010b97accd77bc60"
+    },
+    {
+      "filename": "visus_mdpi_supplement_link_probe.json",
+      "raw_file_sha256": "d4184c7ea7ee684e95094378319cf8baea2a0a35a15d5962206055921d013bad",
+      "probe_fingerprint_sha256": "1e0422a792a03fdfe473c43961fdc5057387d5506f8be44b40d5f4a5cc127962"
+    },
+    {
+      "filename": "visus_pmc_supplement_discovery_probe.json",
+      "raw_file_sha256": "e980119334a58ce924e65e4ae86a39c85fb9083f2a10950b60df912d6da7c4e6",
+      "probe_fingerprint_sha256": "680a619da4d552ff42b60abe9f13e395d41bccd9fde2abd0678e1310f3dd940b"
+    },
+    {
+      "filename": "visus_pmc_xml_supplement_link_probe.json",
+      "raw_file_sha256": "9dd3e755f60d31b27905211bd224f9a8fd1ec8ad88991272b11d03eaf4796f30",
+      "probe_fingerprint_sha256": "1756e1c119e2c105600a3e0b4b7d30dfd1da8577e69bf300edc566f3144473d4"
+    },
+    {
+      "filename": "visus_wayback_archived_article_link_probe.json",
+      "raw_file_sha256": "bc9490dd8356318e16e8fd130cb9a215df991fe5a920552191d716d2402c431a",
+      "probe_fingerprint_sha256": "7d8702186c88e459ca65ea70ab1d62aad4a914956f927ba9d2d8059259b437c8"
+    },
+    {
+      "filename": "visus_wayback_attachment_history_probe.json",
+      "raw_file_sha256": "f6cb8609436c592de5b70ecff63396fdd7a0772a31de08f3415fe38ad0fbd50d",
+      "probe_fingerprint_sha256": "7dd03428e157dfdbbf54f113048c6c157eb8f88abafc3570d7948c3516dd442e"
+    }
+  ],
+  "paper_statement": {
+    "supplementary_material_explicitly_stated": true,
+    "extracted_ground_truth_events_stated": true,
+    "predicted_events_stated": true,
+    "coverage_each_scenario_and_participant_stated": true,
+    "visus_participant_count": 25,
+    "visus_scenario_count": 11,
+    "paper_article_license": "CC BY 4.0",
+    "paper_article_license_is_visus_dataset_license": false,
+    "supplement_reuse_terms_resolved": false
+  },
+  "reviewed_surface_findings": {
+    "pmc_oa_package": {
+      "selected_version": 1,
+      "metadata_license_code": "CC BY",
+      "supplement_candidate_article_object_count": 0,
+      "supplement_candidate_media_url_count": 0,
+      "exact_xml_bytes": 243122,
+      "exact_xml_sha256": "2aa36a03effd0ffca21a72cd610a0efe9825d35709c88c20f62db14933b96bc5",
+      "exact_xml_custom_meta_has_supplement_value": "no",
+      "pmc_package_absence_proves_supplement_never_existed": false
+    },
+    "current_mdpi_routes": {
+      "article_http_status": 403,
+      "doi_s1_http_status": 403,
+      "article_s1_http_status": 403,
+      "candidate_link_count": 0,
+      "resolved_binary_target_count": 0,
+      "access_denial_is_absence_evidence": false
+    },
+    "mdpi_static_attachment_candidates": {
+      "candidate_naming_authoritative": false,
+      "candidate_base": "sensors-21-04143-s001",
+      "extensions_probed": [
+        ".zip",
+        ".xlsx",
+        ".xls",
+        ".csv",
+        ".tsv",
+        ".txt",
+        ".json",
+        ".xml",
+        ".mat",
+        ".7z",
+        ".rar",
+        ".pdf"
+      ],
+      "probe_count": 12,
+      "all_head_status_404": true,
+      "resolved_candidate_count": 0,
+      "candidate_404s_prove_original_filename": false
+    },
+    "wayback_article_namespace": {
+      "query_count": 2,
+      "successful_query_count": 2,
+      "captures_per_query": 5,
+      "historical_supplement_candidate_count": 0,
+      "ordinary_article_captures_are_supplement_evidence": false
+    },
+    "wayback_static_attachment_namespace": {
+      "query_count": 2,
+      "timeout_count": 2,
+      "successful_query_count": 0,
+      "complete_negative_search_established": false
+    },
+    "wayback_archived_article": {
+      "html_2021_timestamp": "20210618035557",
+      "html_2021_network_error": "TimeoutError",
+      "xml_2022_timestamp": "20220620093900",
+      "xml_2022_http_status": 200,
+      "xml_2022_body_bytes": 324681,
+      "xml_2022_body_sha256": "aa4fe316fadcc08c7b1369f475c1462af8f96fc53c477ff63434b236e571215d",
+      "xml_2022_doi_marker_present": true,
+      "xml_2022_supplement_text_marker_present": true,
+      "xml_2022_candidate_link_count": 0,
+      "historical_supplement_link_count": 0,
+      "both_archived_article_captures_successfully_inspected": false
+    }
+  },
+  "recovery_boundary": {
+    "supplement_object_recovered": false,
+    "supplement_url_resolved": false,
+    "supplement_bytes_downloaded": false,
+    "supplement_contents_inspected": false,
+    "supplement_never_existed_conclusion": false,
+    "all_possible_public_surfaces_exhaustively_proven_negative": false,
+    "blind_url_guessing_authorized": false
+  },
+  "scientific_boundary": {
+    "full_visus_authoritative_source_recovered": false,
+    "visus_dataset_license_resolved": false,
+    "analysis_use_rights_resolved": false,
+    "raw_source_redistribution_rights_resolved": false,
+    "source_audit_stage_authorized": false,
+    "participant_stimulus_mapping_verified": false,
+    "annotation_independence_verified": false,
+    "human_human_validation_created": false,
+    "model_human_validation_created": false,
+    "cross_dataset_validation_created": false,
+    "native_60hz_gp3_validity_created": false,
+    "frozen_evidence_created": false,
+    "raw_source_redistributed": false,
+    "new_empirical_performance_claim_created": false
+  },
+  "remaining_authoritative_resolution_routes": [
+    {
+      "route": "publisher-or-archive-exact-object",
+      "requirement": "Recover an exact supplement object or explicit attachment URL from an authenticated MDPI, PMC, DOI-linked, or archival publisher surface.",
+      "promotion_condition": "The object must be source-authenticated, byte-fingerprinted, and reviewed before any content or rights claim."
+    },
+    {
+      "route": "author-or-institutional-recovery",
+      "requirement": "Request the 2021 supplementary archive or equivalent exact event exports from the paper authors, DFKI, or the current VISUS custodians through a normal authorized channel.",
+      "promotion_condition": "The supplied object must be explicitly tied to DOI 10.3390/s21124143 and independently reviewed."
+    },
+    {
+      "route": "authoritative-redeposit",
+      "requirement": "Use a current author/institutional redeposit that explicitly identifies the 2021 supplementary event exports and their reuse terms.",
+      "promotion_condition": "Exact object identity and analysis/redistribution rights must be resolved separately; article licensing alone is insufficient."
+    }
+  ],
+  "claim_limits": [
+    "The 2021 paper explicitly states that extracted ground-truth events and predicted events for each VISUS scenario and participant were supplied as supplementary material; this record does not reinterpret a failed recovery as evidence that the supplement never existed.",
+    "The reviewed current and historical public surfaces did not yield an exact supplementary object or an authoritative attachment URL.",
+    "HTTP 403 responses on current MDPI routes are access outcomes, not evidence of non-existence.",
+    "The mdpi-res s001 filename pattern was candidate-only; twelve 404 responses do not prove that the original supplement had that filename or extension.",
+    "The final Wayback static-attachment namespace queries timed out, so this record does not claim an exhaustive negative search of every historical mdpi-res object.",
+    "The recovered 2022 archived article XML contains the article DOI and supplement-related text but exposes no candidate supplement link.",
+    "No VISUS source-authority, rights, annotation-independence, human-human, model-human, cross-dataset, native-60-Hz/GP3, Frozen Evidence, empirical-performance, or redistribution gate is promoted by this recovery checkpoint.",
+    "Future work should use an authenticated publisher/archive object or direct author/institutional recovery rather than blind URL enumeration."
+  ],
+  "evidence_fingerprint_sha256": "6e263fe3c8ec202e06cd6c819be622bbe1831202b94393e2bea205df25278761"
+}
