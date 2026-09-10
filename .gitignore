@@ -22,3 +22,9 @@ hollywood2-crosswalk-candidate.json
 hollywood2-crosswalk-review.json
 hollywood2-crosswalk-review-sealed.json
 hollywood2-crosswalk-certificate.json
+
+# Local Gaze-in-the-Wild task-mapping working records.
+gaze-in-wild-task-mapping-candidate.json
+gaze-in-wild-task-mapping-review.json
+gaze-in-wild-task-mapping-review-sealed.json
+gaze-in-wild-task-mapping-certificate.json
