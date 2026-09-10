@@ -219,7 +219,10 @@ def _timestamp_grid_record(
         raise SchemaError(
             f"Timestamp grid for {stimulus_id!r} must contain only finite values."
         )
-    if any(right <= left for left, right in zip(timestamps, timestamps[1:])):
+    if any(
+        right <= left
+        for left, right in zip(timestamps, timestamps[1:], strict=False)
+    ):
         raise SchemaError(
             f"Timestamp grid for {stimulus_id!r} must be strictly increasing."
         )
