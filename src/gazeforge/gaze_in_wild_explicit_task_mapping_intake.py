@@ -34,6 +34,86 @@ _ALLOWED_AUTHORITY_CLAIMS = {
     "publication_supplement",
 }
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+_CANDIDATE_TOP_LEVEL_KEYS = {
+    "record_type",
+    "status",
+    "authoritative_task_mapping_exhaustion_fingerprint_sha256",
+    "source",
+    "manifest",
+    "mapping_summary",
+    "review_boundary",
+    "scientific_boundary",
+    "candidate_fingerprint_sha256",
+}
+_SOURCE_KEYS = {
+    "basename",
+    "size_bytes",
+    "sha256",
+    "source_reference",
+    "source_authority_claim",
+    "authorized_channel_affirmed",
+}
+_MANIFEST_KEYS = {"basename", "size_bytes", "sha256"}
+_MAPPING_SUMMARY_KEYS = {
+    "entry_count",
+    "trial_indices_present",
+    "publication_task_count",
+    "complete_trial_index_coverage",
+    "complete_publication_task_coverage",
+    "complete_one_to_one_mapping",
+    "mapping_fingerprint_sha256",
+    "tridx4_present_in_transcription",
+    "raw_task_mapping_copied_to_candidate_record",
+}
+_REVIEW_BOUNDARY_KEYS = {
+    "source_authority_verified",
+    "mapping_explicit_in_source_verified",
+    "mapping_transcription_verified",
+    "publication_task_semantics_verified",
+    "source_version_scope_verified",
+    "tridx4_explicit_in_source_verified",
+    "no_elimination_or_order_inference_used_verified",
+    "authoritative_trial_task_mapping_verified",
+    "complete_trial_task_mapping_verified",
+    "manual_review_required",
+}
+_SCIENTIFIC_BOUNDARY_KEYS = {
+    "task_stratified_validation_created",
+    "participant_disjoint_validation_created",
+    "cross_dataset_validation_created",
+    "new_empirical_performance_claim_created",
+    "native_60hz_validity_created",
+    "gp3_validity_created",
+    "acquisition_hardware_cadence_verified",
+    "quarantine_exit_authorized",
+    "rights_scope_promoted",
+    "raw_data_retention_claim_created",
+}
+_REVIEW_RECORD_KEYS = {
+    "record_type",
+    "decision",
+    "candidate_fingerprint_sha256",
+    "reviewer",
+    "reviewed_at",
+    "source_authority_verified",
+    "source_authority_evidence",
+    "mapping_explicit_in_source_verified",
+    "mapping_explicitness_evidence",
+    "mapping_transcription_verified",
+    "mapping_transcription_evidence",
+    "publication_task_semantics_verified",
+    "publication_task_semantics_evidence",
+    "source_version_scope_verified",
+    "source_version_scope_evidence",
+    "tridx4_explicit_in_source_verified",
+    "tridx4_explicitness_evidence",
+    "no_elimination_or_order_inference_used_verified",
+    "no_elimination_or_order_inference_evidence",
+    "rights_scope_promoted",
+    "empirical_validation_created",
+    "quarantine_exit_authorized",
+    "review_fingerprint_sha256",
+}
 _UNRESOLVED = {
     "",
     "review_required",
@@ -82,6 +162,22 @@ def review_fingerprint(record: Mapping[str, Any]) -> str:
 def certificate_fingerprint(record: Mapping[str, Any]) -> str:
     """Fingerprint a certificate excluding its self-fingerprint."""
     return _fingerprint(record, field="certificate_fingerprint_sha256")
+
+
+def _require_exact_keys(
+    value: Mapping[str, Any],
+    expected: set[str],
+    *,
+    label: str,
+) -> None:
+    observed = set(value)
+    if observed != expected:
+        missing = sorted(expected - observed)
+        extra = sorted(observed - expected)
+        raise BenchmarkIntegrityError(
+            f"Gaze-in-the-Wild task-mapping {label} schema drifted; "
+            f"missing={missing}, extra={extra}."
+        )
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -339,6 +435,11 @@ def validate_candidate_record(record: Mapping[str, Any]) -> dict[str, Any]:
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild task-mapping candidate fingerprint drifted."
         )
+    _require_exact_keys(
+        value,
+        _CANDIDATE_TOP_LEVEL_KEYS,
+        label="candidate top-level",
+    )
 
     source = value.get("source")
     manifest = value.get("manifest")
@@ -357,6 +458,16 @@ def validate_candidate_record(record: Mapping[str, Any]) -> dict[str, Any]:
     assert isinstance(summary, Mapping)
     assert isinstance(review, Mapping)
     assert isinstance(scientific, Mapping)
+
+    _require_exact_keys(source, _SOURCE_KEYS, label="candidate source")
+    _require_exact_keys(manifest, _MANIFEST_KEYS, label="candidate manifest")
+    _require_exact_keys(summary, _MAPPING_SUMMARY_KEYS, label="candidate mapping summary")
+    _require_exact_keys(review, _REVIEW_BOUNDARY_KEYS, label="candidate review boundary")
+    _require_exact_keys(
+        scientific,
+        _SCIENTIFIC_BOUNDARY_KEYS,
+        label="candidate scientific boundary",
+    )
 
     if source.get("source_authority_claim") not in _ALLOWED_AUTHORITY_CLAIMS:
         raise BenchmarkIntegrityError(
@@ -520,6 +631,7 @@ def require_reviewed_explicit_task_mapping(
         )
 
     review = _load_review(Path(review_path))
+    _require_exact_keys(review, _REVIEW_RECORD_KEYS, label="review")
     if review.get("record_type") != REVIEW_RECORD_TYPE:
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild task-mapping review record type drifted."
