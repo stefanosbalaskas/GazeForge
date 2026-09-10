@@ -1,5 +1,6 @@
 import inspect
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
@@ -93,8 +94,11 @@ def test_protocol_bound_validation_binds_exact_batch_prediction_intake(tmp_path)
     )
     assert run.binding["protocol_batch_fingerprint_sha256"] == batch.batch_fingerprint_sha256
     assert run.binding["prediction_csv_sha256"] == batch.report["prediction_output"]["sha256"]
-    assert run.binding["prediction_intake_report_fingerprint_sha256"] == (
+    assert run.binding["prediction_intake"]["report_fingerprint_sha256"] == (
         batch.prediction_intake.report["report_fingerprint_sha256"]
+    )
+    assert run.binding["prediction_intake"]["canonical_table_fingerprint_sha256"] == (
+        batch.prediction_intake.report["canonical_table_fingerprint_sha256"]
     )
     assert run.suite.manifest["source"]["model_prediction_intake_fingerprint_sha256"] == (
         batch.prediction_intake.report["report_fingerprint_sha256"]
@@ -251,7 +255,69 @@ def test_reference_intake_must_contain_frozen_reference_stream(tmp_path):
     reference = _reference(batch)
     reference.by_stream = {"different_stream": reference.by_stream["published_curated"]}
 
-    with pytest.raises(BenchmarkIntegrityError, match="reference stream is absent"):
+    with pytest.raises(BenchmarkIntegrityError, match="keyframe mapping drifted"):
+        run_visus_protocol_bound_validation_suite(
+            batch,
+            reference,
+            tmp_path / "validation",
+        )
+
+
+def test_reference_canonical_table_mutation_is_rejected(tmp_path):
+    root = tmp_path / "case"
+    root.mkdir()
+    batch, _, _, _, _ = _run_batch(root)
+    reference = _reference(batch)
+    reference.canonical.loc[0, "xmin"] += 0.25
+
+    with pytest.raises(BenchmarkIntegrityError, match="canonical table fingerprint"):
+        run_visus_protocol_bound_validation_suite(
+            batch,
+            reference,
+            tmp_path / "validation",
+        )
+
+
+def test_reference_keyframe_mapping_mutation_is_rejected(tmp_path):
+    root = tmp_path / "case"
+    root.mkdir()
+    batch, _, _, _, _ = _run_batch(root)
+    reference = _reference(batch)
+    first = reference.by_stream["published_curated"]["S01"][0]
+    reference.by_stream["published_curated"]["S01"][0] = replace(first, xmin=1.25)
+
+    with pytest.raises(BenchmarkIntegrityError, match="keyframe mapping drifted"):
+        run_visus_protocol_bound_validation_suite(
+            batch,
+            reference,
+            tmp_path / "validation",
+        )
+
+
+def test_prediction_canonical_table_mutation_is_rejected(tmp_path):
+    root = tmp_path / "case"
+    root.mkdir()
+    batch, _, _, _, _ = _run_batch(root)
+    batch.prediction_intake.canonical.loc[0, "xmin"] += 0.25
+    reference = _reference(batch)
+
+    with pytest.raises(BenchmarkIntegrityError, match="canonical table fingerprint"):
+        run_visus_protocol_bound_validation_suite(
+            batch,
+            reference,
+            tmp_path / "validation",
+        )
+
+
+def test_prediction_keyframe_mapping_mutation_is_rejected(tmp_path):
+    root = tmp_path / "case"
+    root.mkdir()
+    batch, _, _, _, _ = _run_batch(root)
+    first = batch.prediction_intake.by_stimulus["S01"][0]
+    batch.prediction_intake.by_stimulus["S01"][0] = replace(first, xmin=first.xmin + 0.25)
+    reference = _reference(batch)
+
+    with pytest.raises(BenchmarkIntegrityError, match="keyframe mapping drifted"):
         run_visus_protocol_bound_validation_suite(
             batch,
             reference,
