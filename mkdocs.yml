@@ -55,6 +55,7 @@ nav:
       - Event-level evaluation: event-level-evaluation.md
       - Stratified performance: stratified-event-performance.md
       - Dynamic AOIs: dynamic-aois.md
+      - Grounding DINO + SAM 2 backend: grounded-sam2-backend.md
       - Dynamic AOI evaluation: dynamic-aoi-evaluation.md
       - Calibration & dataset holdouts: calibration.md
   - Validation:
