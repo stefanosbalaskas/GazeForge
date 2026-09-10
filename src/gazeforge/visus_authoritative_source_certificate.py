@@ -10,13 +10,6 @@ from typing import Any
 
 from .exceptions import BenchmarkIntegrityError
 from .visus_authoritative_source_common import (
-    CERTIFICATE_RECORD_TYPE,
-    CERTIFICATE_STATUS,
-    EXPECTED_PARTICIPANT_COUNT,
-    EXPECTED_STIMULUS_COUNT,
-    MAX_MANIFEST_BYTES,
-    REVIEW_RECORD_TYPE,
-    SOURCE_RECHECK_FINGERPRINT,
     _ALLOWED_AUTHORITY_CLAIMS,
     _ALLOWED_REDISTRIBUTION_STATUS,
     _CERTIFICATE_AUTHORITY_KEYS,
@@ -26,6 +19,13 @@ from .visus_authoritative_source_common import (
     _CERTIFICATE_SOURCE_KEYS,
     _REVIEW_KEYS,
     _SCIENTIFIC_KEYS,
+    CERTIFICATE_RECORD_TYPE,
+    CERTIFICATE_STATUS,
+    EXPECTED_PARTICIPANT_COUNT,
+    EXPECTED_STIMULUS_COUNT,
+    MAX_MANIFEST_BYTES,
+    REVIEW_RECORD_TYPE,
+    SOURCE_RECHECK_FINGERPRINT,
     _read_json,
     _require_exact_keys,
     _resolved_text,
