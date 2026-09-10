@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/visus-osnabrueck-derivative-probe.yml
       - scripts/probe_visus_osnabrueck_derivative.py
+      - scripts/probe_visus_osnabrueck_zip_directory.py
   workflow_dispatch:
 
 permissions:
@@ -28,10 +29,15 @@ jobs:
       - name: Probe institutional VISUS derivative without redistributing source bytes
         run: python scripts/probe_visus_osnabrueck_derivative.py
 
-      - name: Upload structural report only
+      - name: Recover legacy bundle central directory by byte range
+        run: python scripts/probe_visus_osnabrueck_zip_directory.py
+
+      - name: Upload structural reports only
         uses: actions/upload-artifact@v4
         with:
           name: visus-osnabrueck-derivative-probe
-          path: visus_osnabrueck_derivative_probe.json
+          path: |
+            visus_osnabrueck_derivative_probe.json
+            visus_osnabrueck_zip_directory_probe.json
           if-no-files-found: error
           retention-days: 14
