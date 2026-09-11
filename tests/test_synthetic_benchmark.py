@@ -91,6 +91,37 @@ def test_perfect_recovery_scores_zero_error_and_perfect_events():
     assert metrics["event_macro_f1"] == pytest.approx(1.0)
 
 
+def test_recovery_allows_estimate_columns_that_match_truth_names():
+    run = simulate_known_truth_gaze(small_spec())
+    estimates = run.truth[
+        [
+            "participant_id",
+            "trial_id",
+            "sample_index",
+            "x_true_px",
+            "y_true_px",
+            "event_label",
+        ]
+    ].copy()
+    metrics = score_synthetic_gaze_recovery(
+        run,
+        estimates,
+        x_col="x_true_px",
+        y_col="y_true_px",
+        event_col="event_label",
+    )
+    assert metrics["coordinate_rmse_px"] == pytest.approx(0.0)
+    assert metrics["event_accuracy"] == pytest.approx(1.0)
+    assert metrics["event_macro_f1"] == pytest.approx(1.0)
+
+
+def test_recovery_rejects_reused_estimate_column_selector():
+    run = simulate_known_truth_gaze(small_spec())
+    estimates = perfect_estimates(run)
+    with pytest.raises(ValueError, match="column selectors must be distinct"):
+        score_synthetic_gaze_recovery(run, estimates, x_col="x_px", y_col="x_px")
+
+
 def test_observed_signal_has_nonzero_recovery_error_and_reports_dropout_coverage():
     run = simulate_known_truth_gaze(small_spec())
     metrics = score_synthetic_gaze_recovery(run, run.observed_signal)
@@ -196,6 +227,24 @@ def test_certificate_validation_rejects_resigned_claim_promotion_and_run_drift()
     other_run = simulate_known_truth_gaze(small_spec(random_state=8))
     with pytest.raises(ValueError, match="does not match run field"):
         validate_synthetic_recovery_certificate(certificate, run=other_run)
+
+
+def test_freeze_rejects_resigned_claim_promotion_before_writing(tmp_path: Path):
+    run = simulate_known_truth_gaze(small_spec())
+    certificate = build_synthetic_recovery_certificate(
+        run,
+        perfect_estimates(run),
+        estimator_name="perfect-test-estimator",
+    )
+    promoted = dict(certificate)
+    promoted["claim_boundary"] = dict(certificate["claim_boundary"])
+    promoted["claim_boundary"]["empirical_device_validity"] = True
+    body = {k: v for k, v in promoted.items() if k != "certificate_fingerprint_sha256"}
+    promoted["certificate_fingerprint_sha256"] = benchmark_fingerprint(body)
+    target = tmp_path / "promoted-certificate.json"
+    with pytest.raises(ValueError, match="claim boundary"):
+        freeze_synthetic_recovery_certificate(promoted, target)
+    assert not target.exists()
 
 
 def test_all_missing_estimates_return_json_safe_null_errors_and_fail_thresholds():
