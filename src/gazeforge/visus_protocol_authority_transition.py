@@ -91,11 +91,13 @@ def _assert_original_suite_unbound(validation: VisusProtocolBoundValidationRun) 
         )
     if AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD in source:
         raise BenchmarkIntegrityError(
-            "VISUS protocol-authority transition requires the original #130 suite to remain unbound."
+            "VISUS protocol-authority transition requires the original #130 suite "
+            "to remain unbound."
         )
     if _AUTHORITY_PROTOCOL_FLAG in protocol or AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD in protocol:
         raise BenchmarkIntegrityError(
-            "VISUS protocol-authority transition refuses an already authority-mutated original suite."
+            "VISUS protocol-authority transition refuses an already authority-mutated "
+            "original suite."
         )
 
 
