@@ -121,6 +121,7 @@ nav:
       - VISUS pre-execution protocol: visus-preexecution-protocol.md
       - VISUS protocol-bound model batch: visus-protocol-bound-batch.md
       - VISUS protocol-bound validation: visus-protocol-bound-validation.md
+      - VISUS protocol authority transition: visus-protocol-authority-transition.md
       - VISUS model validation: visus-model-validation.md
       - VISUS human agreement: visus-human-agreement.md
       - VISUS validation suite: visus-validation-suite.md
