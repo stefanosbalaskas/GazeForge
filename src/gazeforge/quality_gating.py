@@ -129,9 +129,10 @@ def derive_accelerometer_motion_index(
 
     The instantaneous index is the Euclidean norm of the vector acceleration
     derivative (vector jerk). The reported ``motion_index`` is a trailing RMS of
-    jerk over ``smoothing_window_ms``. The first valid sample in every group has
-    zero jerk. Rows whose motion transition cannot be evaluated remain missing;
-    missing accelerometer evidence is never interpreted as a clean segment.
+    jerk over ``smoothing_window_ms``. The first sample in every group remains
+    unknown because no within-group transition precedes it. Rows whose motion
+    transition cannot be evaluated remain missing; missing accelerometer evidence
+    is never interpreted as a clean segment.
 
     Input order and source columns are preserved. ``overwrite=True`` may refresh
     prior motion-output columns, but output names can never alias timestamp,
@@ -178,8 +179,6 @@ def derive_accelerometer_motion_index(
         accel = part.loc[:, list(accel_cols)].apply(pd.to_numeric, errors="coerce").to_numpy(float)
         valid_accel = np.isfinite(accel).all(axis=1)
         jerk = np.full(len(part), np.nan, dtype=float)
-        if len(part) and valid_accel[0]:
-            jerk[0] = 0.0
         if len(part) > 1:
             dt_seconds = np.diff(timestamps) / 1000.0
             transitions_valid = valid_accel[1:] & valid_accel[:-1]
