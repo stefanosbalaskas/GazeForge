@@ -175,6 +175,8 @@ def _canonical_predictor_names(
     result = tuple(value.strip() for value in result)
     if len(set(result)) != len(result):
         raise ValueError(f"{name} must not contain duplicate columns.")
+    if "Intercept" in result:
+        raise ValueError(f"{name} cannot use the reserved term name 'Intercept'.")
     return result
 
 
