@@ -323,11 +323,15 @@ def validate_visus_scientific_review_approval(
         )
     size = int(review_path.stat().st_size)
     if size <= 0 or size > _MAX_REVIEW_BYTES:
-        raise BenchmarkIntegrityError("VISUS scientific review file size is outside the allowed bound.")
+        raise BenchmarkIntegrityError(
+            "VISUS scientific review file size is outside the allowed bound."
+        )
     try:
         payload = json.loads(review_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise BenchmarkIntegrityError("VISUS scientific review file is not valid UTF-8 JSON.") from exc
+        raise BenchmarkIntegrityError(
+            "VISUS scientific review file is not valid UTF-8 JSON."
+        ) from exc
     if not isinstance(payload, dict):
         raise BenchmarkIntegrityError("VISUS scientific review file must contain a JSON object.")
     return validate_visus_scientific_review_record(payload, bundle=bundle)
