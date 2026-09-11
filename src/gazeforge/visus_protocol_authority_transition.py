@@ -254,8 +254,17 @@ def _verified_authority_suite(
         raise BenchmarkIntegrityError(
             "Authority-bound VISUS suite object does not match its verified manifest."
         )
-    source = verified.get("source")
-    protocol = verified.get("protocol")
+
+    manifest = _read_json_object(
+        authority_suite.manifest_path,
+        label="Authority-bound VISUS suite manifest",
+    )
+    if manifest.get(_SUITE_FINGERPRINT_FIELD) != authority_suite.suite_fingerprint_sha256:
+        raise BenchmarkIntegrityError(
+            "Authority-bound VISUS suite file does not match its suite object."
+        )
+    source = manifest.get("source")
+    protocol = manifest.get("protocol")
     if not isinstance(source, Mapping) or not isinstance(protocol, Mapping):
         raise BenchmarkIntegrityError(
             "Authority-bound VISUS suite source/protocol sections are missing."
@@ -274,7 +283,7 @@ def _verified_authority_suite(
         )
 
     pre_fingerprint = validation.suite.suite_fingerprint_sha256
-    projection_fingerprint = _pre_authority_projection_fingerprint(verified)
+    projection_fingerprint = _pre_authority_projection_fingerprint(manifest)
     if projection_fingerprint != pre_fingerprint:
         raise BenchmarkIntegrityError(
             "Authority-bound VISUS suite cannot reconstruct the exact pre-authority suite "
@@ -284,7 +293,7 @@ def _verified_authority_suite(
         raise BenchmarkIntegrityError(
             "VISUS authority transition did not create a distinct post-authority suite identity."
         )
-    return verified, certificate_fingerprint, projection_fingerprint
+    return manifest, certificate_fingerprint, projection_fingerprint
 
 
 def _transition_body(
@@ -295,9 +304,11 @@ def _transition_body(
     validation = validate_visus_protocol_bound_validation_run(validation)
     _assert_original_suite_unbound(validation)
     _assert_separate_output(validation, output)
-    verified, certificate_fingerprint, projection_fingerprint = _verified_authority_suite(
-        validation,
-        authority_suite,
+    authority_manifest, certificate_fingerprint, projection_fingerprint = (
+        _verified_authority_suite(
+            validation,
+            authority_suite,
+        )
     )
     if _resolved(authority_suite.output_dir) != _resolved(output):
         raise BenchmarkIntegrityError(
@@ -359,7 +370,7 @@ def _transition_body(
                 label="Authority-bound VISUS suite manifest",
             ),
             "suite_fingerprint_sha256": authority_suite.suite_fingerprint_sha256,
-            "report_count": int(verified["report_count"]),
+            "report_count": len(authority_manifest["reports"]),
         },
         "pre_authority_projection_fingerprint_sha256": projection_fingerprint,
         "child_reports": child_reports,
