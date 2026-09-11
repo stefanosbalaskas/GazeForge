@@ -1,4 +1,5 @@
 from copy import deepcopy
+from dataclasses import FrozenInstanceError
 import json
 
 import numpy as np
@@ -144,6 +145,23 @@ def test_certificate_rejects_resigned_model_promotion(fitted_model):
         validate_hierarchical_location_scale_certificate(tampered)
 
 
+def test_certificate_accepts_reordered_fixed_effect_keys(fitted_model):
+    _, fitted = fitted_model
+    certificate = build_hierarchical_location_scale_certificate(fitted)
+    reordered = deepcopy(certificate)
+    location = reordered["model"]["location_fixed_effects"]
+    scale = reordered["model"]["scale_fixed_effects"]
+    reordered["model"]["location_fixed_effects"] = {
+        "x": location["x"],
+        "Intercept": location["Intercept"],
+    }
+    reordered["model"]["scale_fixed_effects"] = {
+        "x": scale["x"],
+        "Intercept": scale["Intercept"],
+    }
+    validate_hierarchical_location_scale_certificate(reordered)
+
+
 def test_result_mutation_is_detected_before_reporting_or_prediction(
     fitted_model,
 ):
@@ -159,6 +177,14 @@ def test_result_mutation_is_detected_before_reporting_or_prediction(
             )
     finally:
         fitted.location_coef[0] -= 0.5
+
+
+def test_result_metadata_are_structurally_frozen(fitted_model):
+    _, fitted = fitted_model
+    with pytest.raises(FrozenInstanceError):
+        fitted.converged = False
+    with pytest.raises(FrozenInstanceError):
+        fitted.optimizer_status = 999
 
 
 def test_certificate_freeze_is_json_roundtrip_safe_and_protected(
@@ -178,6 +204,8 @@ def test_certificate_freeze_is_json_roundtrip_safe_and_protected(
 def test_invalid_spec_and_missing_group_identity_fail_closed():
     with pytest.raises(ValueError, match="odd integer"):
         HierarchicalLocationScaleSpec("y", "g", quadrature_points=4)
+    with pytest.raises(ValueError, match="must be distinct"):
+        HierarchicalLocationScaleSpec("y", "y")
 
     data = _synthetic_location_scale(groups=3, n_per_group=4)
     data.loc[0, "participant_id"] = None
