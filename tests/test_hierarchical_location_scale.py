@@ -1,6 +1,6 @@
+import json
 from copy import deepcopy
 from dataclasses import FrozenInstanceError
-import json
 
 import numpy as np
 import pandas as pd
