@@ -89,6 +89,12 @@ class BenchmarkDatasetCard:
             "unknown",
         }:
             raise ValueError("Synthetic sampling cannot support an empirical reference claim.")
+        if self.reference_strength == "synthetic-known-truth" and (
+            self.annotation_origin != "synthetic" or self.sampling_origin != "synthetic"
+        ):
+            raise ValueError(
+                "Synthetic known truth requires synthetic annotation and sampling origins."
+            )
 
     @property
     def is_human_reference(self) -> bool:
