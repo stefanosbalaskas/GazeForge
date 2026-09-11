@@ -13,6 +13,8 @@ import pandas as pd
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
 from .lund_suite import validate_lund2013_suite_manifest
+from .native_scientific_review import validate_native_scientific_review_approval
+from .native_suite import validate_native_event_suite_manifest
 from .visus_scientific_review import validate_visus_scientific_review_approval
 from .visus_suite import validate_visus_dynamic_aoi_suite_manifest
 
@@ -27,7 +29,13 @@ _REQUIRED_BENCHMARK_FIELDS = (
     "reference_strength",
 )
 _LUND_SUITE_MANIFEST_NAME = "lund2013-suite-manifest.json"
+_NATIVE_SUITE_MANIFEST_NAME = "native-event-suite-manifest.json"
 _VISUS_SUITE_MANIFEST_NAME = "visus-dynamic-aoi-suite-manifest.json"
+_NATIVE_MODEL_SCOPE = "native-device-empirical-benchmark"
+_NATIVE_AGREEMENT_SCOPE = "native-device-empirical-human-agreement"
+_NATIVE_MODEL_CHILDREN = frozenset(
+    {"primary_annotator_model", "annotator_sensitivity_model"}
+)
 _VISUS_REPORT_SCHEMAS = {
     "visus-audited-model-human-dynamic-aoi": (
         "audited-source-model-human-dynamic-aoi",
@@ -170,6 +178,19 @@ def discover_lund2013_suite_manifests(
     )
 
 
+def discover_native_event_suite_manifests(
+    root: str | Path,
+    *,
+    recursive: bool = True,
+) -> tuple[Path, ...]:
+    """Discover native-event completion manifests for review-gated publication."""
+    return _discover_named_suite_manifests(
+        root,
+        _NATIVE_SUITE_MANIFEST_NAME,
+        recursive=recursive,
+    )
+
+
 def discover_visus_dynamic_aoi_suite_manifests(
     root: str | Path,
     *,
@@ -284,6 +305,128 @@ def _validated_suite_records(
     validator: Callable[[str | Path], dict[str, Any]],
 ) -> list[tuple[Path, dict[str, Any]]]:
     return [(path, validator(path)) for path in paths]
+
+
+def _validate_native_suite_for_dashboard(path: str | Path) -> dict[str, Any]:
+    """Require explicit scientific review before surfacing a native suite publicly."""
+    suite_path = Path(path)
+    approval = validate_native_scientific_review_approval(suite_path.parent)
+    summary = validate_native_event_suite_manifest(path, verify_reports=True)
+    lineage = approval.get("lineage")
+    if not isinstance(lineage, dict):
+        raise BenchmarkIntegrityError("Native scientific-review approval lineage is invalid.")
+    comparisons = {
+        "suite_fingerprint_sha256": summary["suite_fingerprint_sha256"],
+        "report_count": summary["report_count"],
+    }
+    source = summary.get("source")
+    if not isinstance(source, dict):
+        raise BenchmarkIntegrityError("Native dashboard suite source identity is invalid.")
+    comparisons.update(
+        {
+            "data_file_name": source["data_file_name"],
+            "data_file_sha256": source["data_file_sha256"],
+            "spec_file_name": source["spec_file_name"],
+            "spec_fingerprint_sha256": source["spec_fingerprint_sha256"],
+        }
+    )
+    for field, expected in comparisons.items():
+        observed = lineage.get(field)
+        if str(observed) != str(expected):
+            raise BenchmarkIntegrityError(
+                f"Native scientific-review approval and dashboard suite {field} disagree."
+            )
+
+    boundary = approval.get("scientific_boundary")
+    if not isinstance(boundary, dict):
+        raise BenchmarkIntegrityError("Native scientific-review approval boundary is invalid.")
+    if boundary.get("scientific_review_completed") is not True:
+        raise BenchmarkIntegrityError(
+            "Native dashboard publication requires completed scientific review."
+        )
+    if boundary.get("approved_for_public_frozen_evidence") is not True:
+        raise BenchmarkIntegrityError(
+            "Native dashboard publication requires explicit Frozen Evidence approval."
+        )
+
+    enriched = dict(summary)
+    enriched["scientific_review"] = {
+        "reviewer": str(approval["reviewer"]),
+        "reviewed_at": str(approval["reviewed_at"]),
+        "review_scope": str(approval["review_scope"]),
+        "review_fingerprint_sha256": str(approval["review_fingerprint_sha256"]),
+    }
+    return enriched
+
+
+def _native_dashboard_child_names(report: dict[str, Any]) -> frozenset[str] | None:
+    """Classify native result rows and reject inconsistent native provenance signals."""
+    benchmark = report["benchmark"]
+    protocol = report.get("protocol")
+    protocol = protocol if isinstance(protocol, dict) else {}
+    validation_scope = str(benchmark.get("validation_scope", ""))
+    native_intake = protocol.get("native_intake")
+    has_native_intake = isinstance(native_intake, dict)
+
+    if validation_scope == _NATIVE_MODEL_SCOPE:
+        if not has_native_intake:
+            raise BenchmarkIntegrityError(
+                "Native model dashboard report is missing native_intake provenance."
+            )
+        return _NATIVE_MODEL_CHILDREN
+    if validation_scope == _NATIVE_AGREEMENT_SCOPE:
+        if has_native_intake:
+            raise BenchmarkIntegrityError(
+                "Native human-agreement dashboard report has model-only native_intake provenance."
+            )
+        return frozenset({"human_agreement"})
+    if has_native_intake:
+        raise BenchmarkIntegrityError(
+            "Native dashboard report native_intake provenance disagrees with validation scope."
+        )
+    return None
+
+
+def _validate_native_report_for_dashboard(
+    path: str | Path,
+    report: dict[str, Any],
+) -> None:
+    """Require exact reviewed-suite membership before surfacing a native child report."""
+    child_names = _native_dashboard_child_names(report)
+    if child_names is None:
+        return
+
+    report_path = Path(path)
+    suite_path = report_path.parent / _NATIVE_SUITE_MANIFEST_NAME
+    if not suite_path.is_file():
+        raise BenchmarkIntegrityError(
+            "Native benchmark result rows require exact membership in a scientifically reviewed "
+            "suite; the sibling native suite manifest is missing."
+        )
+
+    summary = _validate_native_suite_for_dashboard(suite_path)
+    inventory = summary.get("reports")
+    if not isinstance(inventory, list):
+        raise BenchmarkIntegrityError("Native dashboard suite report inventory is invalid.")
+
+    fingerprint = str(report["report_fingerprint_sha256"])
+    members: list[dict[str, Any]] = []
+    for item in inventory:
+        if not isinstance(item, dict) or str(item.get("name", "")) not in child_names:
+            continue
+        if str(item.get("report_fingerprint_sha256", "")) != fingerprint:
+            continue
+        relative_path = str(item.get("path", "")).strip()
+        if not relative_path:
+            continue
+        approved_path = (suite_path.parent / relative_path).resolve()
+        if report_path.resolve() == approved_path:
+            members.append(item)
+    if len(members) != 1:
+        raise BenchmarkIntegrityError(
+            "Native dashboard report must match exactly one scientifically reviewed suite child "
+            "by allowed child role, fingerprint, and manifest-relative path."
+        )
 
 
 def _validate_visus_suite_for_dashboard(path: str | Path) -> dict[str, Any]:
@@ -413,9 +556,10 @@ def build_benchmark_dashboard(
 
     Duplicate report and suite fingerprints are rejected so copied artifacts cannot inflate the
     apparent number of independent validation results or completed tranches on a public dashboard.
-    Provenance-only JSON children are never promoted to performance-report rows. VISUS suites and
-    their benchmark-shaped child result rows are surfaced only after the v3 lineage gate, separate
-    scientific-review approval, and exact suite-child fingerprint/path membership all verify.
+    Provenance-only JSON children are never promoted to performance-report rows. Native and VISUS
+    suites and their benchmark-shaped child rows are surfaced only after a separate scientific
+    review approval and exact reviewed-suite child fingerprint/path membership verify. VISUS also
+    requires its complete v3 protocol/authority lineage gate.
     """
     paths = discover_frozen_benchmark_reports(root, recursive=recursive)
     reports: list[dict[str, Any]] = []
@@ -424,6 +568,7 @@ def build_benchmark_dashboard(
 
     for path in paths:
         report = load_frozen_benchmark_report(path)
+        _validate_native_report_for_dashboard(path, report)
         _validate_visus_report_for_dashboard(path, report)
         fingerprint = str(report["report_fingerprint_sha256"])
         if fingerprint in fingerprints:
@@ -442,12 +587,14 @@ def build_benchmark_dashboard(
         ).reset_index(drop=True)
 
     lund_paths = discover_lund2013_suite_manifests(root, recursive=recursive)
+    native_paths = discover_native_event_suite_manifests(root, recursive=recursive)
     visus_paths = discover_visus_dynamic_aoi_suite_manifests(
         root,
         recursive=recursive,
     )
     suite_records = [
         *_validated_suite_records(lund_paths, validate_lund2013_suite_manifest),
+        *_validated_suite_records(native_paths, _validate_native_suite_for_dashboard),
         *_validated_suite_records(
             visus_paths,
             _validate_visus_suite_for_dashboard,
@@ -561,12 +708,12 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
                 "## Verified report suites\n\n",
                 (
                     "A suite appears here only when its completion manifest and every "
-                    "referenced child report verify successfully. VISUS suites additionally "
-                    "require complete v3 protocol/authority lineage and an explicit, separately "
-                    "fingerprinted scientific-review approval for public Frozen Evidence. When "
-                    "present, the validated reviewer, UTC review time, review scope, and approval "
-                    "fingerprint are surfaced with the suite so the exact publication decision "
-                    "is publicly traceable.\n\n"
+                    "referenced child report verify successfully. Native and VISUS suites "
+                    "additionally require an explicit, separately fingerprinted scientific-review "
+                    "approval for public Frozen Evidence; VISUS also requires complete v3 "
+                    "protocol/authority lineage. When present, the validated reviewer, UTC review "
+                    "time, review scope, and approval fingerprint are surfaced with the suite so "
+                    "the exact publication decision is publicly traceable.\n\n"
                 ),
                 _markdown_table(public_suites),
                 "\n\n",
@@ -593,9 +740,9 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
                 "## Frozen reports\n\n",
                 (
                     "Only reports whose deterministic fingerprint recomputes successfully are "
-                    "listed. VISUS model-human and independent-human result rows additionally "
-                    "must be the exact named, fingerprinted, path-bound children of the same "
-                    "scientifically reviewed suite approved for public Frozen Evidence.\n\n"
+                    "listed. Native model/human-agreement and VISUS model-human/independent-human "
+                    "result rows additionally must be exact fingerprinted, path-bound children of "
+                    "the same scientifically reviewed suite approved for public Frozen Evidence.\n\n"
                 ),
                 _markdown_table(public),
                 "\n",
