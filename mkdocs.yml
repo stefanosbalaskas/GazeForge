@@ -69,6 +69,7 @@ nav:
       - Empirical execution: empirical-execution.md
       - Frozen empirical evidence: frozen-evidence.md
       - Benchmarking: benchmarking.md
+      - Known-truth synthetic benchmarks: synthetic-known-truth-benchmarks.md
       - Benchmark evidence: benchmark-evidence.md
       - Sampling sensitivity: sampling-sensitivity.md
       - Cross-dataset events: cross-dataset-events.md

@@ -176,6 +176,20 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Known-truth synthetic benchmarks
+
+::: gazeforge.synthetic_benchmark
+    options:
+      show_root_heading: true
+      show_source: false
+
+### Known-truth synthetic robustness surfaces
+
+::: gazeforge.synthetic_surface
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Lund sensitivity workflow
 
 ::: gazeforge.lund_sensitivity
