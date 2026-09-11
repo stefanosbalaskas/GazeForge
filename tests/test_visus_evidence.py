@@ -220,11 +220,12 @@ def _resign_binding_and_transition(binding_path: Path, transition_path: Path, mu
     _write(transition_path, transition)
 
 
-def test_frozen_evidence_v3_rejects_legacy_suite_execution_pair(tmp_path):
+def test_frozen_evidence_v3_rejects_legacy_suite_execution_pair(monkeypatch, tmp_path):
     root = tmp_path / "bundle"
     root.mkdir()
     _write(root / "visus-dynamic-aoi-suite-manifest.json", {"placeholder": True})
     _write(root / "visus-execution-provenance.json", {"placeholder": True})
+    _mock_validators(monkeypatch, _suite_summary())
 
     with pytest.raises(BenchmarkIntegrityError, match="protocol-authority transition"):
         visus_evidence.validate_visus_frozen_evidence_bundle(root)
