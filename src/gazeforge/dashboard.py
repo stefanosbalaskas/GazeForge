@@ -28,6 +28,19 @@ _REQUIRED_BENCHMARK_FIELDS = (
 )
 _LUND_SUITE_MANIFEST_NAME = "lund2013-suite-manifest.json"
 _VISUS_SUITE_MANIFEST_NAME = "visus-dynamic-aoi-suite-manifest.json"
+_VISUS_REPORT_SCHEMAS = {
+    "visus-audited-model-human-dynamic-aoi": (
+        "audited-source-model-human-dynamic-aoi",
+        "model_human_validation",
+    ),
+    "visus-independent-human-dynamic-aoi-agreement": (
+        "audited-source-independent-human-dynamic-aoi-agreement",
+        "human_human_agreement",
+    ),
+}
+_VISUS_SCOPE_TO_CHILD = {
+    scope: child_name for scope, child_name in _VISUS_REPORT_SCHEMAS.values()
+}
 
 
 @dataclass(slots=True)
@@ -287,6 +300,84 @@ def _validate_visus_suite_for_dashboard(path: str | Path) -> dict[str, Any]:
     return summary
 
 
+def _visus_dashboard_child_name(report: dict[str, Any]) -> str | None:
+    """Classify VISUS result rows and reject unknown or internally inconsistent schemas."""
+    benchmark = report["benchmark"]
+    protocol = report.get("protocol")
+    protocol = protocol if isinstance(protocol, dict) else {}
+    name = str(benchmark.get("name", ""))
+    evaluation_type = str(protocol.get("evaluation_type", ""))
+    validation_scope = str(benchmark.get("validation_scope", ""))
+
+    schema = _VISUS_REPORT_SCHEMAS.get(evaluation_type)
+    evaluation_child = schema[1] if schema is not None else None
+    scope_child = _VISUS_SCOPE_TO_CHILD.get(validation_scope)
+    visus_named = name.startswith("VISUS-")
+
+    if not visus_named and evaluation_child is None and scope_child is None:
+        return None
+    if schema is None or evaluation_child is None or scope_child is None:
+        raise BenchmarkIntegrityError(
+            "VISUS dashboard report does not match a known review-gated child schema."
+        )
+    expected_scope, expected_child = schema
+    if validation_scope != expected_scope or scope_child != expected_child:
+        raise BenchmarkIntegrityError(
+            "VISUS dashboard report evaluation type and validation scope disagree."
+        )
+    return expected_child
+
+
+def _validate_visus_report_for_dashboard(
+    path: str | Path,
+    report: dict[str, Any],
+) -> None:
+    """Require exact approved-suite membership before surfacing a VISUS child report."""
+    child_name = _visus_dashboard_child_name(report)
+    if child_name is None:
+        return
+
+    report_path = Path(path)
+    suite_path = report_path.parent / _VISUS_SUITE_MANIFEST_NAME
+    if not suite_path.is_file():
+        raise BenchmarkIntegrityError(
+            "VISUS benchmark result rows require exact membership in a scientifically reviewed "
+            "suite; the sibling VISUS suite manifest is missing."
+        )
+
+    summary = _validate_visus_suite_for_dashboard(suite_path)
+    inventory = summary.get("reports")
+    if not isinstance(inventory, list):
+        raise BenchmarkIntegrityError("VISUS dashboard suite report inventory is invalid.")
+
+    members = [
+        item
+        for item in inventory
+        if isinstance(item, dict) and str(item.get("name", "")) == child_name
+    ]
+    if len(members) != 1:
+        raise BenchmarkIntegrityError(
+            f"VISUS dashboard requires exactly one approved suite child named {child_name!r}."
+        )
+
+    member = members[0]
+    fingerprint = str(report["report_fingerprint_sha256"])
+    if str(member.get("report_fingerprint_sha256", "")) != fingerprint:
+        raise BenchmarkIntegrityError(
+            "VISUS dashboard report fingerprint is not the exact scientifically reviewed suite "
+            "child fingerprint."
+        )
+
+    relative_path = str(member.get("path", "")).strip()
+    if not relative_path:
+        raise BenchmarkIntegrityError("VISUS dashboard suite child path is missing.")
+    approved_path = (suite_path.parent / relative_path).resolve()
+    if report_path.resolve() != approved_path:
+        raise BenchmarkIntegrityError(
+            "VISUS dashboard report path is not the exact scientifically reviewed suite child path."
+        )
+
+
 def build_benchmark_dashboard(
     root: str | Path,
     *,
@@ -296,9 +387,9 @@ def build_benchmark_dashboard(
 
     Duplicate report and suite fingerprints are rejected so copied artifacts cannot inflate the
     apparent number of independent validation results or completed tranches on a public dashboard.
-    Provenance-only JSON children are never promoted to performance-report rows. VISUS suites are
-    surfaced only after the v3 lineage gate and a separate explicit scientific-review approval both
-    verify against the same exact suite.
+    Provenance-only JSON children are never promoted to performance-report rows. VISUS suites and
+    their benchmark-shaped child result rows are surfaced only after the v3 lineage gate, separate
+    scientific-review approval, and exact suite-child fingerprint/path membership all verify.
     """
     paths = discover_frozen_benchmark_reports(root, recursive=recursive)
     reports: list[dict[str, Any]] = []
@@ -307,6 +398,7 @@ def build_benchmark_dashboard(
 
     for path in paths:
         report = load_frozen_benchmark_report(path)
+        _validate_visus_report_for_dashboard(path, report)
         fingerprint = str(report["report_fingerprint_sha256"])
         if fingerprint in fingerprints:
             raise BenchmarkIntegrityError(
@@ -450,8 +542,10 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
             [
                 "## Frozen reports\n\n",
                 (
-                    "Only reports whose deterministic fingerprint recomputes "
-                    "successfully are listed.\n\n"
+                    "Only reports whose deterministic fingerprint recomputes successfully are "
+                    "listed. VISUS model-human and independent-human result rows additionally "
+                    "must be the exact named, fingerprinted, path-bound children of the same "
+                    "scientifically reviewed suite approved for public Frozen Evidence.\n\n"
                 ),
                 _markdown_table(public),
                 "\n",
