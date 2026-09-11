@@ -1,5 +1,6 @@
 import copy
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
@@ -9,6 +10,7 @@ from test_visus_protocol_validation import _case as _unbound_case
 
 from gazeforge.benchmarks import benchmark_fingerprint
 from gazeforge.exceptions import BenchmarkIntegrityError
+from gazeforge.visus_audit import audit_visus_source
 from gazeforge.visus_authority_binding import (
     AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD,
     audit_visus_source_with_authority,
@@ -62,10 +64,15 @@ def _bound_case(tmp_path: Path):
     root = tmp_path / "case"
     root.mkdir()
     structural_audit, plans, timestamps, _ = _fixture(root)
-    certificate = build_visus_authority_certificate(structural_audit.spec)
+    authority_spec = replace(
+        structural_audit.spec,
+        redistribution_status="prohibited",
+    )
+    authority_audit = audit_visus_source(root / "source", authority_spec)
+    certificate = build_visus_authority_certificate(authority_audit.spec)
     bound_audit = audit_visus_source_with_authority(
         root / "source",
-        structural_audit.spec,
+        authority_audit.spec,
         certificate,
     )
     certificate_path = write_visus_authority_certificate(
