@@ -89,6 +89,28 @@ def _validate_column_names(columns: tuple[str, ...], *, purpose: str) -> None:
         raise ValueError(f"{purpose} column names must be distinct.")
 
 
+def _require_complete_grouping_identifiers(
+    data: pd.DataFrame,
+    columns: tuple[str, ...],
+    *,
+    purpose: str,
+) -> None:
+    """Reject unknown grouping identities before grouping can coalesce them."""
+    if not columns:
+        return
+    missing_counts = {
+        column: int(data[column].isna().sum())
+        for column in columns
+        if bool(data[column].isna().any())
+    }
+    if missing_counts:
+        raise SchemaError(
+            f"Missing grouping identifiers for {purpose}: {missing_counts}. "
+            "Grouping identity must be fully observed so rows are never combined "
+            "across an unknown participant, trial, or modality boundary."
+        )
+
+
 def _check_output_columns(
     data: pd.DataFrame,
     columns: tuple[str, ...],
@@ -132,7 +154,10 @@ def derive_accelerometer_motion_index(
     jerk over ``smoothing_window_ms``. The first sample in every group remains
     unknown because no within-group transition precedes it. Rows whose motion
     transition cannot be evaluated remain missing; missing accelerometer evidence
-    is never interpreted as a clean segment.
+    is never interpreted as a clean segment. When grouping is requested, every
+    grouping identifier must be present on every row; missing participant/trial
+    identity fails closed rather than allowing unknown identities to be grouped
+    together. Pass ``group_cols=()`` only for an intentionally ungrouped stream.
 
     Input order and source columns are preserved. ``overwrite=True`` may refresh
     prior motion-output columns, but output names can never alias timestamp,
@@ -146,6 +171,11 @@ def derive_accelerometer_motion_index(
 
     required = (*group_cols, timestamp_col, *accel_cols)
     _require_columns(data, required, purpose="accelerometer motion indexing")
+    _require_complete_grouping_identifiers(
+        data,
+        group_cols,
+        purpose="accelerometer motion indexing",
+    )
     _check_output_columns(
         data,
         (jerk_col, motion_index_col),
@@ -374,6 +404,12 @@ def summarize_motion_quality(
         (*group_cols, weight_col, state_col, modality_col),
         purpose="motion-quality summary",
     )
+    grouping = (*group_cols, modality_col)
+    _require_complete_grouping_identifiers(
+        data,
+        grouping,
+        purpose="motion-quality summary",
+    )
     weights_all = pd.to_numeric(data[weight_col], errors="coerce").to_numpy(dtype=float)
     finite_all = np.isfinite(weights_all)
     if np.any((weights_all[finite_all] < 0.0) | (weights_all[finite_all] > 1.0)):
@@ -382,9 +418,8 @@ def summarize_motion_quality(
     if unknown_states:
         raise ValueError(f"Unknown motion-quality states: {unknown_states}")
 
-    grouping = [*group_cols, modality_col]
     rows: list[dict[str, Any]] = []
-    groups = data.groupby(grouping, sort=False, dropna=False)
+    groups = data.groupby(list(grouping), sort=False, dropna=False)
     for keys, part in groups:
         if not isinstance(keys, tuple):
             keys = (keys,)
