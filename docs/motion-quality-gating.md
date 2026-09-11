@@ -28,9 +28,9 @@ The gate does **not** remove samples, rewrite the physiological signal, or claim
 
 `derive_accelerometer_motion_index()` computes the Euclidean norm of the derivative of the accelerometer vector and then a trailing root-mean-square value over a specified time window. Using vector jerk makes the index respond to changes in movement rather than treating a fixed sensor orientation or gravity component as motion contamination.
 
-The first valid sample in each participant/trial group has zero jerk because no within-group transition precedes it. Motion is never computed across participant or trial boundaries.
+The first sample in each participant/trial group remains unknown because there is no preceding within-group transition from which jerk can be estimated. Motion is never computed across participant or trial boundaries, and a boundary sample is never reinterpreted as clean merely because no derivative is available.
 
-Rows with missing acceleration or an unevaluable transition remain missing. GazeForge deliberately does not reinterpret missing motion evidence as a clean segment.
+Rows with missing acceleration or any other unevaluable transition likewise remain missing. GazeForge deliberately does not reinterpret missing motion evidence as a clean segment.
 
 ```python
 from gazeforge.quality_gating import derive_accelerometer_motion_index
@@ -73,7 +73,7 @@ spec = MotionQualityGateSpec(
 - intermediate motion → linear interpolation;
 - missing motion evidence → missing weight.
 
-This preserves uncertainty. A missing accelerometer segment is not silently treated as fully reliable.
+This preserves uncertainty. A missing accelerometer segment or unevaluable group-boundary transition is not silently treated as fully reliable.
 
 ```python
 from gazeforge.quality_gating import quality_weight_from_motion
@@ -111,7 +111,7 @@ The output adds:
 | `quality_weight` | continuous reliability weight |
 | `quality_state` | `clean`, `downweighted`, `severe`, `motion_unknown`, or `signal_missing` |
 
-If a declared signal column is missing at a row, that row receives weight `0` and state `signal_missing`. If the signal exists but motion cannot be estimated, the weight remains missing and the state is `motion_unknown`.
+If a declared signal column is missing at a row, that row receives weight `0` and state `signal_missing`. If the signal exists but motion cannot be estimated—including the first sample after each participant/trial boundary—the weight remains missing and the state is `motion_unknown`.
 
 The original rows, index, and source/signal values are preserved. Existing generated output columns are protected from silent overwrite by default. `overwrite=True` may refresh prior generated quality outputs, but output names must remain distinct and can never alias protected grouping, timestamp, accelerometer, motion-index, or declared signal columns.
 
