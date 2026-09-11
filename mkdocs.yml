@@ -50,6 +50,7 @@ nav:
   - Methods:
       - Adapters & validation: adapters-validation.md
       - Motion-quality gating: motion-quality-gating.md
+      - Hierarchical location-scale models: hierarchical-location-scale.md
       - Temporal models: temporal-models.md
       - Model comparison: model-comparison.md
       - Matched-fold differences: paired-model-differences.md
