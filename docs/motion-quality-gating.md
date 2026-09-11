@@ -62,7 +62,7 @@ spec = MotionQualityGateSpec(
 )
 ```
 
-`threshold_basis` records why those thresholds were chosen. It is provenance, not an automatic validation claim. The certificate always records that threshold validity requires separate domain justification.
+`threshold_basis` records why those thresholds were chosen. It is provenance, not an automatic validation claim. The certificate always records that threshold validity requires separate domain justification. Numeric threshold/window inputs are canonicalized to finite floats and the basis text is trimmed before certification so semantically equivalent settings replay identically.
 
 ## Continuous quality weights
 
@@ -113,7 +113,7 @@ The output adds:
 
 If a declared signal column is missing at a row, that row receives weight `0` and state `signal_missing`. If the signal exists but motion cannot be estimated, the weight remains missing and the state is `motion_unknown`.
 
-The original rows, index, and signal values are preserved. Existing output columns are protected from silent overwrite by default.
+The original rows, index, and source/signal values are preserved. Existing generated output columns are protected from silent overwrite by default. `overwrite=True` may refresh prior generated quality outputs, but output names must remain distinct and can never alias protected grouping, timestamp, accelerometer, motion-index, or declared signal columns.
 
 ## Summarize effective information
 
@@ -123,6 +123,8 @@ The original rows, index, and signal values are preserved. Existing output colum
 - the effective weight sum;
 - mean and minimum known reliability weight; and
 - the fraction of samples in each quality state.
+
+Summary input is itself validated: finite quality weights must remain in `[0, 1]`, and states must belong to the fixed gate-state taxonomy. This prevents a manually modified table from being summarized as though it were a valid gate output.
 
 This supports reporting how much usable information remained after quality weighting instead of merely stating that a sensor was recorded.
 
