@@ -206,6 +206,12 @@ def test_invalid_spec_and_missing_group_identity_fail_closed():
         HierarchicalLocationScaleSpec("y", "g", quadrature_points=4)
     with pytest.raises(ValueError, match="must be distinct"):
         HierarchicalLocationScaleSpec("y", "y")
+    with pytest.raises(ValueError, match="reserved term"):
+        HierarchicalLocationScaleSpec(
+            "y",
+            "participant_id",
+            location_predictors=("Intercept",),
+        )
 
     data = _synthetic_location_scale(groups=3, n_per_group=4)
     data.loc[0, "participant_id"] = None
