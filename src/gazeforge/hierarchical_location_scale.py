@@ -66,6 +66,8 @@ class HierarchicalLocationScaleSpec:
             if not isinstance(value, str) or not value.strip():
                 raise ValueError(f"{name} must be a non-empty string.")
             object.__setattr__(self, name, value.strip())
+        if self.outcome_col == self.group_col:
+            raise ValueError("outcome_col and group_col must be distinct columns.")
         location = _canonical_predictor_names(
             self.location_predictors, "location_predictors"
         )
@@ -104,7 +106,7 @@ class HierarchicalLocationScaleSpec:
         return asdict(self)
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class HierarchicalLocationScaleResult:
     """Fitted model and empirical-Bayes participant-effect summaries."""
 
@@ -975,16 +977,18 @@ def validate_hierarchical_location_scale_certificate(
             "Hierarchical location-scale certificate model spec is not "
             "canonical."
         )
-    expected_location_terms = (
+    expected_location_terms = {
         "Intercept",
         *canonical_spec.location_predictors,
-    )
-    expected_scale_terms = ("Intercept", *canonical_spec.scale_predictors)
-    if tuple(model["location_fixed_effects"]) != expected_location_terms:
+    }
+    expected_scale_terms = {"Intercept", *canonical_spec.scale_predictors}
+    location_effects = model["location_fixed_effects"]
+    scale_effects = model["scale_fixed_effects"]
+    if not isinstance(location_effects, dict) or set(location_effects) != expected_location_terms:
         raise SchemaError(
             "Location fixed-effect terms do not match the certified model spec."
         )
-    if tuple(model["scale_fixed_effects"]) != expected_scale_terms:
+    if not isinstance(scale_effects, dict) or set(scale_effects) != expected_scale_terms:
         raise SchemaError(
             "Scale fixed-effect terms do not match the certified model spec."
         )
@@ -996,8 +1000,8 @@ def validate_hierarchical_location_scale_certificate(
         model["tau_location"],
         model["tau_log_scale"],
         model["log_likelihood"],
-        *model["location_fixed_effects"].values(),
-        *model["scale_fixed_effects"].values(),
+        *location_effects.values(),
+        *scale_effects.values(),
     ]
     if not np.isfinite(np.asarray(numeric, dtype=float)).all():
         raise SchemaError(
