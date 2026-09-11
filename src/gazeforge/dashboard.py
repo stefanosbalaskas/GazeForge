@@ -11,6 +11,15 @@ from typing import Any
 import pandas as pd
 
 from .benchmarks import benchmark_fingerprint
+from .cross_dataset_evidence import (
+    CROSS_DATASET_BENCHMARK_NAME,
+    CROSS_DATASET_EVIDENCE_SCHEMA,
+    CROSS_DATASET_VALIDATION_SCOPE,
+    validate_cross_dataset_frozen_report,
+)
+from .cross_dataset_scientific_review import (
+    validate_cross_dataset_scientific_review_approval,
+)
 from .exceptions import BenchmarkIntegrityError
 from .lund_suite import validate_lund2013_suite_manifest
 from .native_scientific_review import validate_native_scientific_review_approval
@@ -218,14 +227,19 @@ def _model_names(model_metadata: Any) -> str:
     return ""
 
 
-def _dashboard_row(report: dict[str, Any], source_file: str) -> dict[str, Any]:
+def _dashboard_row(
+    report: dict[str, Any],
+    source_file: str,
+    *,
+    scientific_review: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     benchmark = report["benchmark"]
     sampling_rates = benchmark.get("sampling_rates_hz", [])
     if isinstance(sampling_rates, (list, tuple)):
         rate_text = ", ".join(f"{float(value):g}" for value in sampling_rates)
     else:
         rate_text = str(sampling_rates)
-    return {
+    row = {
         "benchmark": str(benchmark["name"]),
         "version": str(benchmark["version"]),
         "validation_scope": str(benchmark["validation_scope"]),
@@ -238,6 +252,18 @@ def _dashboard_row(report: dict[str, Any], source_file: str) -> dict[str, Any]:
         "report_fingerprint_sha256": str(report["report_fingerprint_sha256"]),
         "source_file": source_file,
     }
+    if scientific_review is not None:
+        row.update(
+            {
+                "scientific_review_reviewer": str(scientific_review["reviewer"]),
+                "scientific_reviewed_at": str(scientific_review["reviewed_at"]),
+                "scientific_review_scope": str(scientific_review["review_scope"]),
+                "scientific_review_fingerprint_sha256": str(
+                    scientific_review["review_fingerprint_sha256"]
+                ),
+            }
+        )
+    return row
 
 
 def _suite_source_fingerprint(summary: dict[str, Any]) -> str:
@@ -305,6 +331,79 @@ def _validated_suite_records(
     validator: Callable[[str | Path], dict[str, Any]],
 ) -> list[tuple[Path, dict[str, Any]]]:
     return [(path, validator(path)) for path in paths]
+
+
+def _cross_dataset_dashboard_signal(report: dict[str, Any]) -> bool:
+    """Recognize cross-dataset empirical rows and fail closed on partial schema signals."""
+    benchmark = report["benchmark"]
+    protocol = report.get("protocol")
+    protocol = protocol if isinstance(protocol, dict) else {}
+    name = str(benchmark.get("name", ""))
+    scope = str(benchmark.get("validation_scope", ""))
+    schema = str(protocol.get("evidence_schema", ""))
+    design = protocol.get("validation_design")
+    leave_one_dataset_out = isinstance(design, dict) and (
+        design.get("validation_design") == "leave_one_dataset_out"
+    )
+    cross_dataset_named = (
+        name == CROSS_DATASET_BENCHMARK_NAME
+        or ("Lund2013" in name and "Hollywood2EM" in name)
+    )
+    signalled = (
+        cross_dataset_named
+        or scope == CROSS_DATASET_VALIDATION_SCOPE
+        or schema == CROSS_DATASET_EVIDENCE_SCHEMA
+        or leave_one_dataset_out
+    )
+    if not signalled:
+        return False
+    if (
+        name != CROSS_DATASET_BENCHMARK_NAME
+        or scope != CROSS_DATASET_VALIDATION_SCOPE
+        or schema != CROSS_DATASET_EVIDENCE_SCHEMA
+        or not leave_one_dataset_out
+    ):
+        raise BenchmarkIntegrityError(
+            "Cross-dataset dashboard report does not match the review-gated Frozen Evidence schema."
+        )
+    return True
+
+
+def _validate_cross_dataset_report_for_dashboard(
+    path: str | Path,
+    report: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Require exact report validation plus separate scientific-review approval."""
+    if not _cross_dataset_dashboard_signal(report):
+        return None
+    report_path = Path(path)
+    validate_cross_dataset_frozen_report(report)
+    approval = validate_cross_dataset_scientific_review_approval(report_path.parent)
+    lineage = approval.get("lineage")
+    boundary = approval.get("scientific_boundary")
+    if not isinstance(lineage, dict) or not isinstance(boundary, dict):
+        raise BenchmarkIntegrityError(
+            "Cross-dataset scientific-review approval sections are invalid."
+        )
+    if str(lineage.get("report_file_name", "")) != report_path.name:
+        raise BenchmarkIntegrityError(
+            "Cross-dataset dashboard report is not the exact scientifically reviewed file."
+        )
+    if str(lineage.get("report_fingerprint_sha256", "")) != str(
+        report["report_fingerprint_sha256"]
+    ):
+        raise BenchmarkIntegrityError(
+            "Cross-dataset dashboard report fingerprint is not the exact reviewed fingerprint."
+        )
+    if boundary.get("scientific_review_completed") is not True:
+        raise BenchmarkIntegrityError(
+            "Cross-dataset dashboard publication requires completed scientific review."
+        )
+    if boundary.get("approved_for_public_frozen_evidence") is not True:
+        raise BenchmarkIntegrityError(
+            "Cross-dataset dashboard publication requires explicit Frozen Evidence approval."
+        )
+    return approval
 
 
 def _validate_native_suite_for_dashboard(path: str | Path) -> dict[str, Any]:
@@ -557,10 +656,10 @@ def build_benchmark_dashboard(
 
     Duplicate report and suite fingerprints are rejected so copied artifacts cannot inflate the
     apparent number of independent validation results or completed tranches on a public dashboard.
-    Provenance-only JSON children are never promoted to performance-report rows. Native and VISUS
-    suites and their benchmark-shaped child rows are surfaced only after a separate scientific
-    review approval and exact reviewed-suite child fingerprint/path membership verify. VISUS also
-    requires its complete v3 protocol/authority lineage gate.
+    Provenance-only JSON children are never promoted to performance-report rows. Cross-dataset,
+    native, and VISUS benchmark rows are surfaced only after their dedicated validation and
+    separate scientific-review publication gates pass; native and VISUS additionally require exact
+    reviewed-suite membership, and VISUS requires complete v3 protocol/authority lineage.
     """
     paths = discover_frozen_benchmark_reports(root, recursive=recursive)
     reports: list[dict[str, Any]] = []
@@ -569,6 +668,7 @@ def build_benchmark_dashboard(
 
     for path in paths:
         report = load_frozen_benchmark_report(path)
+        cross_dataset_review = _validate_cross_dataset_report_for_dashboard(path, report)
         _validate_native_report_for_dashboard(path, report)
         _validate_visus_report_for_dashboard(path, report)
         fingerprint = str(report["report_fingerprint_sha256"])
@@ -578,7 +678,13 @@ def build_benchmark_dashboard(
             )
         fingerprints.add(fingerprint)
         reports.append(report)
-        rows.append(_dashboard_row(report, str(path)))
+        rows.append(
+            _dashboard_row(
+                report,
+                str(path),
+                scientific_review=cross_dataset_review,
+            )
+        )
 
     table = pd.DataFrame(rows)
     if not table.empty:
@@ -732,19 +838,42 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
             "models",
             "report_fingerprint_sha256",
         ]
-        public = dashboard.table.loc[:, columns].copy()
+        show_report_review = (
+            "scientific_review_fingerprint_sha256" in dashboard.table.columns
+            and dashboard.table["scientific_review_fingerprint_sha256"]
+            .fillna("")
+            .astype(str)
+            .str.len()
+            .gt(0)
+            .any()
+        )
+        if show_report_review:
+            columns.extend(
+                [
+                    "scientific_review_reviewer",
+                    "scientific_reviewed_at",
+                    "scientific_review_scope",
+                    "scientific_review_fingerprint_sha256",
+                ]
+            )
+        public = dashboard.table.loc[:, columns].copy().fillna("")
         public["report_fingerprint_sha256"] = public[
             "report_fingerprint_sha256"
         ].str.slice(0, 12)
+        if show_report_review:
+            public["scientific_review_fingerprint_sha256"] = public[
+                "scientific_review_fingerprint_sha256"
+            ].str.slice(0, 12)
         sections.extend(
             [
                 "## Frozen reports\n\n",
                 (
                     "Only reports whose deterministic fingerprint recomputes successfully are "
-                    "listed. Native model/human-agreement and VISUS model-human/independent-human "
-                    "result rows additionally must be exact fingerprinted, path-bound children of "
-                    "the same scientifically reviewed suite approved for public Frozen "
-                    "Evidence.\n\n"
+                    "listed. Cross-dataset rows additionally require exact guarded-runner/source-"
+                    "audit lineage plus a separate report-bound scientific-review approval. Native "
+                    "model/human-agreement and VISUS model-human/independent-human result rows "
+                    "must be exact fingerprinted, path-bound children of the same scientifically "
+                    "reviewed suite approved for public Frozen Evidence.\n\n"
                 ),
                 _markdown_table(public),
                 "\n",
