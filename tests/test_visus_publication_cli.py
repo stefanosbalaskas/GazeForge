@@ -84,8 +84,7 @@ def test_cli_help_distinguishes_eligibility_from_publication():
     help_text = " ".join(visus_cli.build_parser().format_help().split())
 
     assert "evidence-validate" in help_text
-    assert "scientific-review eligibility" in help_text
+    assert "review eligibility" in help_text
     assert "does not approve public Frozen Evidence publication" in help_text
     assert "publication-validate" in help_text
-    assert "scientific-review approval" in help_text
-    assert "public Frozen Evidence publication" in help_text
+    assert "review approval required for public Frozen Evidence publication" in help_text
