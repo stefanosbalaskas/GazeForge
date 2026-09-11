@@ -493,9 +493,13 @@ def validate_synthetic_recovery_surface(
         raise ValueError("Synthetic recovery surface condition count is inconsistent.")
     row_ids = [row.get("condition_id") for row in rows if isinstance(row, dict)]
     if len(row_ids) != len(rows) or len(set(row_ids)) != len(row_ids):
-        raise ValueError("Synthetic recovery surface condition identifiers are missing or duplicated.")
+        raise ValueError(
+            "Synthetic recovery surface condition identifiers are missing or duplicated."
+        )
     if set(row_ids) != set(expected) or set(children) != set(expected):
-        raise ValueError("Synthetic recovery surface condition inventory does not match its design.")
+        raise ValueError(
+            "Synthetic recovery surface condition inventory does not match its design."
+        )
 
     estimator = certificate.get("estimator")
     if not isinstance(estimator, dict) or estimator.get("callback_input") != "observed_signal_only":
@@ -528,7 +532,9 @@ def validate_synthetic_recovery_surface(
         if row.get("estimate_sha256") != child.get("estimate_sha256"):
             raise ValueError("Synthetic recovery surface estimate fingerprint mismatch.")
         if row.get("metrics") != child.get("metrics"):
-            raise ValueError("Synthetic recovery surface metrics do not match the child certificate.")
+            raise ValueError(
+                "Synthetic recovery surface metrics do not match the child certificate."
+            )
         if row.get("thresholds_passed") is not child.get("thresholds_passed"):
             raise ValueError("Synthetic recovery surface threshold status mismatch.")
         if dict(child.get("thresholds") or {}) != thresholds:
