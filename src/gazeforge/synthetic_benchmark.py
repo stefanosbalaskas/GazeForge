@@ -351,23 +351,31 @@ def score_synthetic_gaze_recovery(
 ) -> dict[str, Any]:
     """Score estimates against exact coordinates and optional sample-level event truth."""
     _validate_estimate_keys(run, estimates)
+    selected_columns = [x_col, y_col]
+    if event_col is not None:
+        selected_columns.append(event_col)
+    if len(set(selected_columns)) != len(selected_columns):
+        raise ValueError("Recovery estimate column selectors must be distinct.")
     for column in (x_col, y_col):
         if column not in estimates.columns:
             raise ValueError(f"Recovery estimates are missing coordinate column: {column!r}")
     columns = [*_KEY_COLUMNS, x_col, y_col]
+    rename_map = {x_col: "__estimate_x", y_col: "__estimate_y"}
     if event_col is not None:
         if event_col not in estimates.columns:
             raise ValueError(f"Recovery estimates are missing event column: {event_col!r}")
         columns.append(event_col)
+        rename_map[event_col] = "__estimate_event"
+    estimate_view = estimates.loc[:, columns].rename(columns=rename_map)
     merged = run.truth.merge(
-        estimates.loc[:, columns],
+        estimate_view,
         on=list(_KEY_COLUMNS),
         how="left",
         validate="one_to_one",
         sort=False,
     )
-    x_est = pd.to_numeric(merged[x_col], errors="coerce").to_numpy(dtype=float)
-    y_est = pd.to_numeric(merged[y_col], errors="coerce").to_numpy(dtype=float)
+    x_est = pd.to_numeric(merged["__estimate_x"], errors="coerce").to_numpy(dtype=float)
+    y_est = pd.to_numeric(merged["__estimate_y"], errors="coerce").to_numpy(dtype=float)
     valid = np.isfinite(x_est) & np.isfinite(y_est)
     metrics: dict[str, Any] = {
         "n_truth_samples": int(len(merged)),
@@ -396,7 +404,7 @@ def score_synthetic_gaze_recovery(
             }
         )
     if event_col is not None:
-        predicted = merged[event_col].astype("string")
+        predicted = merged["__estimate_event"].astype("string")
         event_valid = predicted.notna()
         metrics["n_valid_event_estimates"] = int(event_valid.sum())
         metrics["valid_event_fraction"] = float(event_valid.mean())
@@ -564,7 +572,8 @@ def freeze_synthetic_recovery_certificate(
     *,
     overwrite: bool = False,
 ) -> Path:
-    """Freeze a deterministic certificate without overwriting by default."""
+    """Validate and freeze a deterministic certificate without overwriting by default."""
+    validate_synthetic_recovery_certificate(certificate)
     target = Path(path)
     if target.exists() and not overwrite:
         raise FileExistsError(f"Synthetic recovery certificate already exists: {target}")
