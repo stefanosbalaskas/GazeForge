@@ -20,6 +20,10 @@ from .provenance import fingerprint_frame
 _CERTIFICATE_SCHEMA = "gazeforge.correlated-location-scale-certificate.v1"
 _LOG_2PI = float(np.log(2.0 * np.pi))
 _MAX_ABS_CORRELATION_ETA = 4.0
+_CORRELATION_ETA_BOUNDARY_ATOL = 1e-6
+_MAX_ABS_CERTIFIABLE_RHO = float(
+    np.tanh(_MAX_ABS_CORRELATION_ETA - _CORRELATION_ETA_BOUNDARY_ATOL)
+)
 _MIN_ONE_MINUS_RHO_SQUARED = 1e-6
 _CLAIM_BOUNDARY = {
     "joint_location_scale_model": True,
@@ -610,6 +614,16 @@ def fit_correlated_location_scale(
         raise RuntimeError(
             "Correlated location-scale optimizer did not converge: " f"{optimized.message}"
         )
+    correlation_eta = float(np.asarray(optimized.x, dtype=float)[-1])
+    if (
+        not np.isfinite(correlation_eta)
+        or abs(correlation_eta)
+        >= _MAX_ABS_CORRELATION_ETA - _CORRELATION_ETA_BOUNDARY_ATOL
+    ):
+        raise RuntimeError(
+            "Correlated location-scale correlation estimate reached the artificial optimizer "
+            "bound; the correlation is boundary-censored and is not certifiable."
+        )
     n_location = prepared.location_design.shape[1]
     n_scale = prepared.scale_design.shape[1]
     beta, gamma, tau_location, tau_scale, rho = _unpack(
@@ -786,8 +800,14 @@ def _validate_result_identity(result: CorrelatedLocationScaleResult) -> dict[str
         )
     if not _is_sha256_hex(result.input_fingerprint_sha256):
         raise SchemaError("Correlated location-scale input fingerprint is invalid.")
-    if not -1.0 < float(result.rho_location_scale) < 1.0:
+    rho = float(result.rho_location_scale)
+    if not -1.0 < rho < 1.0:
         raise SchemaError("Random-effect correlation must lie strictly between -1 and 1.")
+    if abs(rho) >= _MAX_ABS_CERTIFIABLE_RHO:
+        raise SchemaError(
+            "Random-effect correlation is at the artificial optimizer boundary and is not "
+            "certifiable."
+        )
     if result.n_obs < result.n_groups * result.spec.min_group_size:
         raise SchemaError("Correlated location-scale result group/sample counts are inconsistent.")
     return identity
@@ -885,6 +905,10 @@ def validate_correlated_location_scale_certificate(certificate: dict[str, Any]) 
     rho = float(model["rho_location_log_scale"])
     if not -1.0 < rho < 1.0:
         raise SchemaError("Random-effect correlation must lie strictly between -1 and 1.")
+    if abs(rho) >= _MAX_ABS_CERTIFIABLE_RHO:
+        raise SchemaError(
+            "Certified random-effect correlation is at the artificial optimizer boundary."
+        )
     n_obs = model["n_obs"]
     n_groups = model["n_groups"]
     if not isinstance(n_obs, int) or isinstance(n_obs, bool) or n_obs <= 0:

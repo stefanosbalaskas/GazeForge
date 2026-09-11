@@ -27,7 +27,7 @@ This association is a **random-effect distribution parameter**. It is not the co
 
 `fit_correlated_location_scale()` estimates the location equation, log-scale equation, both random-effect standard deviations, and `rho` jointly by marginal maximum likelihood.
 
-Participant effects are integrated with two-dimensional adaptive Gauss-Hermite quadrature. Correlation is optimized on an unconstrained scale and mapped through `tanh`, which keeps the fitted value strictly inside `(-1, 1)`. An additional near-singularity guard prevents numerical evaluation arbitrarily close to `|rho| = 1`; this is a computational guard, not a scientific threshold.
+Participant effects are integrated with two-dimensional adaptive Gauss-Hermite quadrature. Correlation is optimized through an `eta` parameter mapped by `rho = tanh(eta)`, which keeps ordinary fitted values strictly inside `(-1, 1)`. The outer optimizer uses a finite computational guard on `eta`; if an otherwise successful optimization lands on that package-imposed guard, GazeForge now fails closed instead of reporting the corresponding `rho` as an ordinary interior estimate. Such a solution is **boundary-censored by the implementation** and is not certifiable. A separate near-singularity guard also prevents numerical evaluation arbitrarily close to `|rho| = 1`. Neither guard is a scientific threshold.
 
 ```python
 from gazeforge.correlated_location_scale import (
@@ -110,7 +110,7 @@ freeze_correlated_location_scale_certificate(
 )
 ```
 
-Result mutation and certificate tampering fail closed. Recomputing the outer certificate fingerprint after changing `rho` does not bypass the bound model fingerprint or the scientific claim boundary.
+Result mutation and certificate tampering fail closed. Recomputing the outer certificate fingerprint after changing `rho` does not bypass the bound model fingerprint, the optimizer-boundary guard, or the scientific claim boundary.
 
 ## Scientific claim boundary
 
@@ -138,5 +138,5 @@ For stable estimation:
 - avoid rank-deficient design matrices;
 - centre or scale predictors when magnitudes differ substantially;
 - inspect quadrature-order sensitivity for difficult fits;
-- inspect whether `rho` is approaching its numerical boundary; and
+- treat an optimizer-boundary rejection as evidence that the fitted correlation is not identified as an interior estimate under the current specification rather than clipping or reporting it as an exact near-±1 correlation; and
 - treat convergence as a numerical result, not proof that the Gaussian or random-effect assumptions are scientifically adequate.
