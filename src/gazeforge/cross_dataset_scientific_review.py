@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from .benchmarks import benchmark_fingerprint
 from .cross_dataset_evidence import (
     CROSS_DATASET_EVIDENCE_SCHEMA,
     CROSS_DATASET_EXPECTED_DATASETS,
     load_cross_dataset_frozen_report,
+    validate_cross_dataset_frozen_report,
 )
 from .exceptions import BenchmarkIntegrityError
 
@@ -60,7 +62,9 @@ _BOUNDARY = {
 }
 
 
-def _require_exact_keys(value: Mapping[str, Any], expected: frozenset[str], *, label: str) -> None:
+def _require_exact_keys(
+    value: Mapping[str, Any], expected: frozenset[str], *, label: str
+) -> None:
     observed = frozenset(value)
     if observed != expected:
         raise BenchmarkIntegrityError(
@@ -81,14 +85,18 @@ def _valid_sha256(value: Any) -> bool:
 
 def _required_text(value: Any, *, label: str) -> str:
     if not isinstance(value, str):
-        raise BenchmarkIntegrityError(f"Cross-dataset scientific review {label} must be text.")
+        raise BenchmarkIntegrityError(
+            f"Cross-dataset scientific review {label} must be text."
+        )
     text = value.strip()
     if not text:
         raise BenchmarkIntegrityError(
             f"Cross-dataset scientific review {label} must be non-empty."
         )
     if len(text) > _MAX_TEXT_LENGTH:
-        raise BenchmarkIntegrityError(f"Cross-dataset scientific review {label} is too long.")
+        raise BenchmarkIntegrityError(
+            f"Cross-dataset scientific review {label} is too long."
+        )
     return text
 
 
@@ -109,7 +117,11 @@ def _utc_timestamp(value: Any) -> str:
 
 def _review_fingerprint(record: Mapping[str, Any]) -> str:
     return benchmark_fingerprint(
-        {key: value for key, value in record.items() if key != "review_fingerprint_sha256"}
+        {
+            key: value
+            for key, value in record.items()
+            if key != "review_fingerprint_sha256"
+        }
     )
 
 
@@ -123,7 +135,10 @@ def _safe_report_name(value: Any) -> str:
     return name
 
 
-def _lineage_from_report(report_path: Path, report: Mapping[str, Any]) -> dict[str, Any]:
+def _lineage_from_report(
+    report_path: Path,
+    report: Mapping[str, Any],
+) -> dict[str, Any]:
     protocol = report.get("protocol")
     if not isinstance(protocol, Mapping):
         raise BenchmarkIntegrityError("Cross-dataset report protocol is invalid.")
@@ -134,7 +149,9 @@ def _lineage_from_report(report_path: Path, report: Mapping[str, Any]) -> dict[s
     hollywood = reports.get("Hollywood2EM")
     if not isinstance(hollywood, Mapping):
         raise BenchmarkIntegrityError("Cross-dataset Hollywood2EM provenance is missing.")
-    validation_fingerprint = protocol.get("cross_dataset_validation_fingerprint_sha256")
+    validation_fingerprint = protocol.get(
+        "cross_dataset_validation_fingerprint_sha256"
+    )
     report_fingerprint = report.get("report_fingerprint_sha256")
     for label, value in (
         ("report_fingerprint_sha256", report_fingerprint),
@@ -157,10 +174,18 @@ def _lineage_from_report(report_path: Path, report: Mapping[str, Any]) -> dict[s
                 f"Cross-dataset scientific-review lineage {label} is invalid."
             )
     dataset_ids = design.get("dataset_ids")
-    if not isinstance(dataset_ids, list) or tuple(sorted(map(str, dataset_ids))) != CROSS_DATASET_EXPECTED_DATASETS:
-        raise BenchmarkIntegrityError("Cross-dataset scientific-review dataset identity drifted.")
+    valid_dataset_ids = (
+        isinstance(dataset_ids, list)
+        and tuple(sorted(map(str, dataset_ids))) == CROSS_DATASET_EXPECTED_DATASETS
+    )
+    if not valid_dataset_ids:
+        raise BenchmarkIntegrityError(
+            "Cross-dataset scientific-review dataset identity drifted."
+        )
     if protocol.get("evidence_schema") != CROSS_DATASET_EVIDENCE_SCHEMA:
-        raise BenchmarkIntegrityError("Cross-dataset scientific-review report schema drifted.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset scientific-review report schema drifted."
+        )
     return {
         "report_file_name": report_path.name,
         "report_fingerprint_sha256": str(report_fingerprint),
@@ -196,12 +221,19 @@ def build_cross_dataset_scientific_review_approval(
         "reviewer": _required_text(reviewer, label="reviewer"),
         "reviewed_at": _utc_timestamp(reviewed_at),
         "review_scope": CROSS_DATASET_SCIENTIFIC_REVIEW_SCOPE,
-        "review_rationale": _required_text(review_rationale, label="review_rationale"),
+        "review_rationale": _required_text(
+            review_rationale,
+            label="review_rationale",
+        ),
         "lineage": _lineage_from_report(source, report),
         "scientific_boundary": dict(_BOUNDARY),
     }
     record["review_fingerprint_sha256"] = _review_fingerprint(record)
-    return validate_cross_dataset_scientific_review_record(record, report_path=source, report=report)
+    return validate_cross_dataset_scientific_review_record(
+        record,
+        report_path=source,
+        report=report,
+    )
 
 
 def validate_cross_dataset_scientific_review_record(
@@ -230,10 +262,15 @@ def validate_cross_dataset_scientific_review_record(
         raise BenchmarkIntegrityError("Cross-dataset scientific-review lineage is missing.")
     _require_exact_keys(lineage, _LINEAGE_KEYS, label="lineage")
     if value.get("scientific_boundary") != _BOUNDARY:
-        raise BenchmarkIntegrityError("Cross-dataset scientific-review claim boundary drifted.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset scientific-review claim boundary drifted."
+        )
 
     source = Path(report_path)
-    current_report = load_cross_dataset_frozen_report(source) if report is None else dict(report)
+    if report is None:
+        current_report = load_cross_dataset_frozen_report(source)
+    else:
+        current_report = validate_cross_dataset_frozen_report(report)
     expected_lineage = _lineage_from_report(source, current_report)
     if dict(lineage) != expected_lineage:
         raise BenchmarkIntegrityError(
@@ -241,7 +278,9 @@ def validate_cross_dataset_scientific_review_record(
         )
     observed = value.get("review_fingerprint_sha256")
     if not _valid_sha256(observed) or observed != _review_fingerprint(value):
-        raise BenchmarkIntegrityError("Cross-dataset scientific review fingerprint drifted.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset scientific review fingerprint drifted."
+        )
     return value
 
 
@@ -252,12 +291,15 @@ def _approval_paths(path: str | Path) -> tuple[Path, Path]:
     return source, source / CROSS_DATASET_SCIENTIFIC_REVIEW_FILENAME
 
 
-def validate_cross_dataset_scientific_review_approval(path: str | Path) -> dict[str, Any]:
+def validate_cross_dataset_scientific_review_approval(
+    path: str | Path,
+) -> dict[str, Any]:
     """Require one exact report plus its separate scientific-review approval."""
     root, review_path = _approval_paths(path)
     if review_path.is_symlink() or not review_path.is_file():
         raise BenchmarkIntegrityError(
-            "Cross-dataset public Frozen Evidence requires cross-dataset-scientific-review.json."
+            "Cross-dataset public Frozen Evidence requires "
+            "cross-dataset-scientific-review.json."
         )
     size = int(review_path.stat().st_size)
     if size <= 0 or size > _MAX_REVIEW_BYTES:
@@ -271,7 +313,9 @@ def validate_cross_dataset_scientific_review_approval(path: str | Path) -> dict[
             "Cross-dataset scientific review file is not valid UTF-8 JSON."
         ) from exc
     if not isinstance(payload, dict):
-        raise BenchmarkIntegrityError("Cross-dataset scientific review file must contain an object.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset scientific review file must contain an object."
+        )
     lineage = payload.get("lineage")
     if not isinstance(lineage, Mapping):
         raise BenchmarkIntegrityError("Cross-dataset scientific-review lineage is missing.")
@@ -283,7 +327,9 @@ def validate_cross_dataset_scientific_review_approval(path: str | Path) -> dict[
         )
     report = load_cross_dataset_frozen_report(report_path)
     return validate_cross_dataset_scientific_review_record(
-        payload, report_path=report_path, report=report
+        payload,
+        report_path=report_path,
+        report=report,
     )
 
 
