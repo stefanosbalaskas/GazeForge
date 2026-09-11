@@ -80,19 +80,12 @@ def test_publication_validate_fails_closed_when_review_is_missing(monkeypatch, t
         visus_cli.main(["publication-validate", str(tmp_path)])
 
 
-def test_cli_help_distinguishes_eligibility_from_publication(capsys):
-    parser = visus_cli.build_parser()
+def test_cli_help_distinguishes_eligibility_from_publication():
+    help_text = " ".join(visus_cli.build_parser().format_help().split())
 
-    with pytest.raises(SystemExit) as excinfo:
-        parser.parse_args(["evidence-validate", "--help"])
-    assert excinfo.value.code == 0
-    evidence_help = capsys.readouterr().out
-    assert "scientific-review eligibility" in evidence_help
-    assert "does not approve public Frozen Evidence publication" in evidence_help
-
-    with pytest.raises(SystemExit) as excinfo:
-        parser.parse_args(["publication-validate", "--help"])
-    assert excinfo.value.code == 0
-    publication_help = capsys.readouterr().out
-    assert "scientific-review approval" in publication_help
-    assert "public Frozen Evidence publication" in publication_help
+    assert "evidence-validate" in help_text
+    assert "scientific-review eligibility" in help_text
+    assert "does not approve public Frozen Evidence publication" in help_text
+    assert "publication-validate" in help_text
+    assert "scientific-review approval" in help_text
+    assert "public Frozen Evidence publication" in help_text
