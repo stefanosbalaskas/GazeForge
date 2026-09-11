@@ -34,6 +34,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Hierarchical location-scale models
+
+::: gazeforge.hierarchical_location_scale
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Eye events
 
 ::: gazeforge.events
