@@ -41,6 +41,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Correlated location-scale effects
+
+::: gazeforge.correlated_location_scale
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Eye events
 
 ::: gazeforge.events
