@@ -1,0 +1,67 @@
+{
+  "claim_limit": "This record preserves a public author-deposited Gazepoint GP3 source candidate. The Figshare record names the GP3, a visual-search gaze-event-detection study, original raw Gazepoint files, anonymized human data, and an MIT licence for the deposit. It does not establish collection-specific native sampling cadence, independent expert/manual fixation or saccade labels, annotation protocol/adjudication, participant-disjoint benchmark readiness, human-human agreement, or any GazeForge native-device performance or validity claim.",
+  "dataset": "Gazepoint GP3 manuscript code and data",
+  "evidence_fingerprint_sha256": "ef88c29c8dfa04de1d5b7d0d3883626370386b7486845d99426d02954f9adb73",
+  "fingerprint_method": "SHA-256 of canonical UTF-8 JSON for this object with evidence_fingerprint_sha256 omitted, sort_keys=true and separators=(',', ':').",
+  "next_authoritative_gate": [
+    "Inspect the deposited raw/data/code archives without altering them and fingerprint the obtained files.",
+    "Verify sampling cadence from the actual recorded timestamps rather than device-name assumptions.",
+    "Determine whether any event-reference stream is independently human/expert annotated rather than vendor- or algorithm-generated.",
+    "If manual labels exist, recover the event taxonomy, annotator identities/roles, annotation instructions, adjudication/blinding, and exact source-to-canonical column mapping.",
+    "Only after those checks may an empirical native evidence specification be considered; dataset_status must otherwise remain template."
+  ],
+  "record_type": "native-gp3-source-candidate-evidence-v1",
+  "review_status": "candidate_source_only_not_native_validation_evidence",
+  "reviewed_on": "2026-09-11",
+  "scientific_boundary": {
+    "approved_for_public_frozen_evidence": false,
+    "empirical_native_benchmark_eligible": false,
+    "expert_labelled_native_corpus_verified": false,
+    "gp3_validity_created": false,
+    "human_human_agreement_created": false,
+    "native_60hz_rate_verified": false,
+    "native_suite_eligible": false,
+    "participant_disjoint_model_validation_created": false,
+    "performance_claim_created": false,
+    "real_gp3_source_candidate_recovered": true,
+    "scientific_review_completed": false
+  },
+  "source": {
+    "author": "Gina Notaro",
+    "displayed_license": "MIT",
+    "displayed_total_download_size": "2.11 GB",
+    "doi": "10.6084/m9.figshare.5427310",
+    "posted_at": "2018-05-25T17:09:00",
+    "repository": "Figshare",
+    "resource_type": "dataset",
+    "source_record_observations": {
+      "analysis_archive_name_declared": "matlab.zip",
+      "gaze_event_detection_named": true,
+      "gazepoint_gp3_named": true,
+      "human_data_anonymized_declared": true,
+      "human_subjects_protocol_declared": "CPHS #21522",
+      "original_raw_gazepoint_files_declared": true,
+      "participant_structure_file_declared": "eparticipant_struct.mat",
+      "raw_archive_name_declared": "gazepointdata.zip",
+      "short_fixation_events_named": true,
+      "visual_search_task_named": true
+    },
+    "title": "Gazepoint GP3 manuscript code and data",
+    "url": "https://figshare.com/articles/dataset/Gazepoint_GP3_manuscript_code_and_data/5427310",
+    "version": 2
+  },
+  "unresolved_for_native_validation": {
+    "adjudication_protocol_verified": false,
+    "annotator_count_verified": false,
+    "archive_contents_independently_audited_for_native_benchmark": false,
+    "calibration_and_recording_software_version_verified": false,
+    "collection_specific_sampling_rate_verified_from_samples": false,
+    "fixation_reference_stream_verified": false,
+    "independent_expert_manual_event_labels_verified": false,
+    "manual_annotation_protocol_verified": false,
+    "participant_trial_timestamp_column_mapping_verified": false,
+    "saccade_reference_stream_verified": false,
+    "sample_level_event_label_column_verified": false,
+    "screen_geometry_and_viewing_distance_verified": false
+  }
+}
