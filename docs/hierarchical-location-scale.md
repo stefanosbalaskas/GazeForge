@@ -26,6 +26,8 @@ When the participant-level association between location and dispersion is itself
 
 This is deliberately different from fitting a mean model and then regressing absolute or squared residuals in a second stage. The location and scale parameters are estimated as one likelihood model.
 
+Random-effect standard deviations are optimized on log scales. Numerical evaluation is restricted to finite implementation ranges for `tau_location` and `tau_scale`; if an otherwise successful optimization reaches one of those package-imposed limits, GazeForge rejects the fit as **boundary-censored** before participant effects are recovered. The same guard is re-applied by result and certificate validation, so a boundary value cannot become certifiable through mutation or re-signing. These limits are computational safeguards, not scientific thresholds or evidence that a variance component is substantively large or small.
+
 ```python
 from gazeforge.hierarchical_location_scale import (
     HierarchicalLocationScaleSpec,
@@ -88,7 +90,7 @@ A fitted result is bound to:
 - the exact modelling-input fingerprint; and
 - optimizer convergence metadata.
 
-`build_hierarchical_location_scale_certificate()` and `freeze_hierarchical_location_scale_certificate()` fail closed if the fitted result has been mutated after fitting. Frozen certificate files are protected against overwrite by default.
+`build_hierarchical_location_scale_certificate()` and `freeze_hierarchical_location_scale_certificate()` fail closed if the fitted result has been mutated after fitting. Frozen certificate files are protected against overwrite by default. A result or re-signed certificate whose random-effect standard deviation lies on a package-imposed numerical boundary is refused independently of ordinary fingerprint integrity.
 
 ```python
 from gazeforge.hierarchical_location_scale import (
@@ -122,7 +124,8 @@ For stable fitting:
 - use enough repeated observations per participant;
 - avoid rank-deficient predictor matrices;
 - consider centring or scaling predictors with very different magnitudes;
-- inspect quadrature-order sensitivity when the fitted random-effect distribution is difficult; and
+- inspect quadrature-order sensitivity when the fitted random-effect distribution is difficult;
+- treat a random-effect SD boundary rejection as evidence that the variance component is not identified as an interior estimate under the current numerical/model specification rather than clipping or reporting the boundary value; and
 - do not interpret optimizer convergence as evidence that the Gaussian model itself is scientifically adequate.
 
-GazeForge constrains extreme intermediate log-scale values for numerical safety. That guard is computational, not an empirical threshold or substantive rule.
+GazeForge also constrains extreme intermediate conditional log-scale values for numerical safety. All of these guards are computational, not empirical thresholds or substantive rules.

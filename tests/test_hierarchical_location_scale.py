@@ -1,6 +1,7 @@
 import json
 from copy import deepcopy
-from dataclasses import FrozenInstanceError
+from dataclasses import FrozenInstanceError, replace
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -8,6 +9,7 @@ import pytest
 from numpy.polynomial.hermite import hermgauss
 from scipy.special import logsumexp
 
+import gazeforge.hierarchical_location_scale as hierarchical_module
 from gazeforge.benchmarks import benchmark_fingerprint
 from gazeforge.exceptions import SchemaError
 from gazeforge.hierarchical_location_scale import (
@@ -111,6 +113,46 @@ def test_diagnostics_are_finite(fitted_model):
     assert (diagnostics["sigma"] > 0).all()
 
 
+@pytest.mark.parametrize(
+    ("theta_index", "boundary"),
+    [
+        (-2, np.log(hierarchical_module._MIN_RANDOM_EFFECT_SD)),
+        (-2, np.log(hierarchical_module._MAX_LOCATION_RANDOM_EFFECT_SD)),
+        (-1, np.log(hierarchical_module._MIN_RANDOM_EFFECT_SD)),
+        (-1, np.log(hierarchical_module._MAX_LOG_SCALE_RANDOM_EFFECT_SD)),
+    ],
+)
+def test_fit_rejects_successful_outer_optimizer_at_variance_component_boundary(
+    monkeypatch,
+    theta_index,
+    boundary,
+):
+    data = _synthetic_location_scale(groups=3, n_per_group=4)
+    spec = HierarchicalLocationScaleSpec(
+        "y",
+        "participant_id",
+        quadrature_points=3,
+        max_iter=10,
+    )
+
+    def fake_minimize(fun, x0, *, method, **kwargs):
+        assert method == "L-BFGS-B"
+        forced = np.asarray(x0, dtype=float).copy()
+        forced[theta_index] = boundary
+        return SimpleNamespace(
+            x=forced,
+            success=True,
+            status=0,
+            message="CONVERGENCE: forced variance boundary regression",
+            nit=1,
+            fun=0.0,
+        )
+
+    monkeypatch.setattr(hierarchical_module, "minimize", fake_minimize)
+    with pytest.raises(RuntimeError, match="variance component is boundary-censored"):
+        fit_hierarchical_location_scale(data, spec=spec)
+
+
 def test_certificate_rejects_resigned_claim_promotion(fitted_model):
     _, fitted = fitted_model
     certificate = build_hierarchical_location_scale_certificate(fitted)
@@ -143,6 +185,36 @@ def test_certificate_rejects_resigned_model_promotion(fitted_model):
 
     with pytest.raises(SchemaError, match="model fingerprint"):
         validate_hierarchical_location_scale_certificate(tampered)
+
+
+def test_resigned_variance_boundary_certificate_fails_closed(fitted_model):
+    _, fitted = fitted_model
+    certificate = build_hierarchical_location_scale_certificate(fitted)
+    forged = deepcopy(certificate)
+    forged["model"]["tau_log_scale"] = hierarchical_module._MAX_LOG_SCALE_RANDOM_EFFECT_SD
+    forged["model_fingerprint_sha256"] = benchmark_fingerprint(forged["model"])
+    body = {
+        key: value
+        for key, value in forged.items()
+        if key != "certificate_fingerprint_sha256"
+    }
+    forged["certificate_fingerprint_sha256"] = benchmark_fingerprint(body)
+    with pytest.raises(SchemaError, match="artificial numerical boundary"):
+        validate_hierarchical_location_scale_certificate(forged)
+
+
+def test_resigned_variance_boundary_result_fails_closed(fitted_model):
+    _, fitted = fitted_model
+    certificate = build_hierarchical_location_scale_certificate(fitted)
+    forged_model = deepcopy(certificate["model"])
+    forged_model["tau_location"] = hierarchical_module._MAX_LOCATION_RANDOM_EFFECT_SD
+    forged = replace(
+        fitted,
+        tau_location=hierarchical_module._MAX_LOCATION_RANDOM_EFFECT_SD,
+        model_fingerprint_sha256=benchmark_fingerprint(forged_model),
+    )
+    with pytest.raises(SchemaError, match="artificial numerical boundary"):
+        build_hierarchical_location_scale_certificate(forged)
 
 
 def test_certificate_accepts_reordered_fixed_effect_keys(fitted_model):
