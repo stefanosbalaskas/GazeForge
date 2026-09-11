@@ -330,11 +330,12 @@ def _validate_native_suite_for_dashboard(path: str | Path) -> dict[str, Any]:
             "spec_fingerprint_sha256": source["spec_fingerprint_sha256"],
         }
     )
-    for field, expected in comparisons.items():
-        observed = lineage.get(field)
+    for lineage_field, expected in comparisons.items():
+        observed = lineage.get(lineage_field)
         if str(observed) != str(expected):
             raise BenchmarkIntegrityError(
-                f"Native scientific-review approval and dashboard suite {field} disagree."
+                "Native scientific-review approval and dashboard suite "
+                f"{lineage_field} disagree."
             )
 
     boundary = approval.get("scientific_boundary")
@@ -742,7 +743,8 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
                     "Only reports whose deterministic fingerprint recomputes successfully are "
                     "listed. Native model/human-agreement and VISUS model-human/independent-human "
                     "result rows additionally must be exact fingerprinted, path-bound children of "
-                    "the same scientifically reviewed suite approved for public Frozen Evidence.\n\n"
+                    "the same scientifically reviewed suite approved for public Frozen "
+                    "Evidence.\n\n"
                 ),
                 _markdown_table(public),
                 "\n",
