@@ -43,6 +43,7 @@ class BenchmarkDatasetCard:
             "human-reference",
             "derived-human-reference",
             "algorithmic-concordance",
+            "synthetic-known-truth",
             "synthetic-smoke-only",
             "unknown",
         }
@@ -83,6 +84,7 @@ class BenchmarkDatasetCard:
                 "Algorithm-generated annotations cannot be declared a human reference."
             )
         if self.sampling_origin == "synthetic" and self.reference_strength not in {
+            "synthetic-known-truth",
             "synthetic-smoke-only",
             "unknown",
         }:
@@ -101,6 +103,15 @@ class BenchmarkDatasetCard:
     def is_native_human_reference(self) -> bool:
         """Whether human reference labels are evaluated at the native acquisition rate."""
         return self.is_human_reference and self.sampling_origin == "native"
+
+    @property
+    def is_synthetic_known_truth_reference(self) -> bool:
+        """Whether the card is exact synthetic truth without an empirical-validity claim."""
+        return (
+            self.annotation_origin == "synthetic"
+            and self.sampling_origin == "synthetic"
+            and self.reference_strength == "synthetic-known-truth"
+        )
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize the dataset card."""
