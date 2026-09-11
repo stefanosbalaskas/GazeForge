@@ -65,9 +65,14 @@ class MotionQualityGateSpec:
             raise ValueError("smoothing_window_ms must be finite and positive.")
         if not isinstance(self.threshold_basis, str) or not self.threshold_basis.strip():
             raise ValueError("threshold_basis must be a non-empty string.")
+        object.__setattr__(self, "clean_threshold", clean)
+        object.__setattr__(self, "severe_threshold", severe)
+        object.__setattr__(self, "minimum_weight", minimum)
+        object.__setattr__(self, "smoothing_window_ms", window)
+        object.__setattr__(self, "threshold_basis", self.threshold_basis.strip())
 
     def to_dict(self) -> dict[str, Any]:
-        """Serialize the gate specification."""
+        """Serialize the canonical gate specification."""
         return asdict(self)
 
 
@@ -77,12 +82,28 @@ def _require_columns(data: pd.DataFrame, columns: tuple[str, ...], *, purpose: s
         raise SchemaError(f"Missing columns for {purpose}: {missing}")
 
 
+def _validate_column_names(columns: tuple[str, ...], *, purpose: str) -> None:
+    if any(not isinstance(column, str) or not column for column in columns):
+        raise ValueError(f"{purpose} column names must be non-empty strings.")
+    if len(set(columns)) != len(columns):
+        raise ValueError(f"{purpose} column names must be distinct.")
+
+
 def _check_output_columns(
     data: pd.DataFrame,
     columns: tuple[str, ...],
     *,
     overwrite: bool,
+    protected_columns: tuple[str, ...] = (),
 ) -> None:
+    _validate_column_names(columns, purpose="Motion-quality output")
+    protected = set(protected_columns)
+    protected_collisions = [column for column in columns if column in protected]
+    if protected_collisions:
+        raise SchemaError(
+            "Motion-quality output columns cannot overwrite protected input columns: "
+            f"{protected_collisions}"
+        )
     if overwrite:
         return
     collisions = [column for column in columns if column in data.columns]
@@ -112,20 +133,24 @@ def derive_accelerometer_motion_index(
     zero jerk. Rows whose motion transition cannot be evaluated remain missing;
     missing accelerometer evidence is never interpreted as a clean segment.
 
-    Input order and signal values are preserved. Timestamps must be finite and
-    strictly increasing within every group so motion is never computed across a
-    duplicated or reversed time step.
+    Input order and source columns are preserved. ``overwrite=True`` may refresh
+    prior motion-output columns, but output names can never alias timestamp,
+    grouping, or accelerometer input columns.
     """
-    if not accel_cols or len(set(accel_cols)) != len(accel_cols):
-        raise ValueError("accel_cols must contain one or more distinct columns.")
+    _validate_column_names(accel_cols, purpose="Accelerometer")
+    _validate_column_names(group_cols, purpose="Grouping")
+    _validate_column_names((timestamp_col,), purpose="Timestamp")
     if not np.isfinite(float(smoothing_window_ms)) or float(smoothing_window_ms) <= 0:
         raise ValueError("smoothing_window_ms must be finite and positive.")
-    if jerk_col == motion_index_col:
-        raise ValueError("jerk_col and motion_index_col must be distinct.")
 
     required = (*group_cols, timestamp_col, *accel_cols)
     _require_columns(data, required, purpose="accelerometer motion indexing")
-    _check_output_columns(data, (jerk_col, motion_index_col), overwrite=overwrite)
+    _check_output_columns(
+        data,
+        (jerk_col, motion_index_col),
+        overwrite=overwrite,
+        protected_columns=required,
+    )
     if data.empty:
         raise SchemaError("Accelerometer motion indexing requires at least one row.")
 
@@ -237,18 +262,20 @@ def apply_motion_quality_gate(
     """Append time-varying reliability weights without deleting or rewriting signals."""
     if not isinstance(modality, str) or not modality.strip():
         raise ValueError("modality must be a non-empty string.")
-    if len(set(signal_cols)) != len(signal_cols):
-        raise ValueError("signal_cols must be distinct.")
+    _validate_column_names(signal_cols, purpose="Signal")
+    _validate_column_names((motion_index_col,), purpose="Motion-index")
     _require_columns(data, (motion_index_col, *signal_cols), purpose="motion-quality gating")
     _check_output_columns(
         data,
         (weight_col, state_col, modality_col),
         overwrite=overwrite,
+        protected_columns=(motion_index_col, *signal_cols),
     )
 
     motion = pd.to_numeric(data[motion_index_col], errors="coerce")
-    finite = np.isfinite(motion.to_numpy(dtype=float))
-    if np.any(motion.to_numpy(dtype=float)[finite] < 0):
+    values = motion.to_numpy(dtype=float)
+    finite = np.isfinite(values)
+    if np.any(values[finite] < 0):
         raise ValueError("motion_index must be non-negative where finite.")
     weights = np.asarray(
         quality_weight_from_motion(
@@ -259,7 +286,6 @@ def apply_motion_quality_gate(
         ),
         dtype=float,
     )
-    values = motion.to_numpy(dtype=float)
     states = np.full(len(data), "motion_unknown", dtype=object)
     states[finite & (values <= spec.clean_threshold)] = "clean"
     states[
@@ -296,6 +322,17 @@ def apply_accelerometer_quality_gate(
     overwrite: bool = False,
 ) -> pd.DataFrame:
     """Derive vector-jerk motion and apply a continuous modality reliability gate."""
+    _validate_column_names(signal_cols, purpose="Signal")
+    _validate_column_names(accel_cols, purpose="Accelerometer")
+    _validate_column_names(group_cols, purpose="Grouping")
+    source_columns = (*group_cols, timestamp_col, *accel_cols, *signal_cols)
+    _require_columns(data, source_columns, purpose="accelerometer quality gating")
+    _check_output_columns(
+        data,
+        (jerk_col, motion_index_col, weight_col, state_col, modality_col),
+        overwrite=overwrite,
+        protected_columns=source_columns,
+    )
     indexed = derive_accelerometer_motion_index(
         data,
         accel_cols=accel_cols,
@@ -328,17 +365,24 @@ def summarize_motion_quality(
     modality_col: str = "quality_modality",
 ) -> pd.DataFrame:
     """Summarize usability weights without interpreting them as artifact correction."""
+    _validate_column_names(group_cols, purpose="Grouping")
+    _validate_column_names((weight_col, state_col, modality_col), purpose="Quality summary")
     _require_columns(
         data,
         (*group_cols, weight_col, state_col, modality_col),
         purpose="motion-quality summary",
     )
+    weights_all = pd.to_numeric(data[weight_col], errors="coerce").to_numpy(dtype=float)
+    finite_all = np.isfinite(weights_all)
+    if np.any((weights_all[finite_all] < 0.0) | (weights_all[finite_all] > 1.0)):
+        raise ValueError("quality_weight must be in [0, 1] where finite.")
+    unknown_states = sorted(set(data[state_col].astype(str)) - set(_GATE_STATES))
+    if unknown_states:
+        raise ValueError(f"Unknown motion-quality states: {unknown_states}")
+
     grouping = [*group_cols, modality_col]
     rows: list[dict[str, Any]] = []
-    if grouping:
-        groups = data.groupby(grouping, sort=False, dropna=False)
-    else:
-        groups = [((), data)]
+    groups = data.groupby(grouping, sort=False, dropna=False)
     for keys, part in groups:
         if not isinstance(keys, tuple):
             keys = (keys,)
@@ -415,7 +459,7 @@ def build_motion_quality_certificate(
         "output_fingerprint_sha256": fingerprint_frame(gated),
         "spec": spec.to_dict(),
         "gate_config": {
-            "modality": modality,
+            "modality": modality.strip(),
             "signal_cols": list(signal_cols),
             "accel_cols": list(accel_cols),
             "timestamp_col": timestamp_col,
