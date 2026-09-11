@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from gazeforge.benchmarks import benchmark_fingerprint
+from gazeforge.benchmarks import BenchmarkDatasetCard, benchmark_fingerprint
 from gazeforge.synthetic_benchmark import (
     SyntheticGazeSpec,
     build_synthetic_recovery_certificate,
@@ -60,6 +60,30 @@ def test_known_truth_card_is_not_human_or_empirical_reference():
     assert card.validation_scope == "synthetic-known-truth-method-validation"
     assert card.is_synthetic_known_truth_reference
     assert not card.is_human_reference
+
+
+@pytest.mark.parametrize(
+    "annotation_origin, sampling_origin",
+    [
+        ("human-manual", "synthetic"),
+        ("synthetic", "native"),
+        ("expert-manual", "native"),
+    ],
+)
+def test_known_truth_strength_requires_synthetic_annotation_and_sampling(
+    annotation_origin, sampling_origin
+):
+    with pytest.raises(ValueError, match="Synthetic known truth requires synthetic"):
+        BenchmarkDatasetCard(
+            name="invalid-known-truth",
+            version="1",
+            source="test",
+            license="MIT",
+            task="test",
+            annotation_origin=annotation_origin,
+            sampling_origin=sampling_origin,
+            reference_strength="synthetic-known-truth",
+        )
 
 
 def test_seed_changes_contract_and_generated_truth():
