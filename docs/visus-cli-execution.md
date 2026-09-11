@@ -141,15 +141,41 @@ gazeforge-visus execution-validate /path/to/frozen-visus-suite --provenance-only
 
 The provenance-only mode does not establish that the currently adjacent suite files still match the recorded binding.
 
-## 8. Run the final Frozen Evidence publication gate
+## 8. Revalidate v3 scientific-review eligibility
 
 ```bash
-gazeforge-visus evidence-validate /path/to/frozen-visus-suite
+gazeforge-visus evidence-validate /path/to/authority-transition
 ```
 
-This command always validates the complete Frozen Evidence bundle: the suite manifest and every required child report, the raw-execution provenance, the exact four-input execution contract, and the shared source/suite identities. It intentionally exposes no manifest-only or provenance-only switch. The lower-level validation commands above are useful diagnostics, but they cannot substitute for this final publication-integrity check.
+`evidence-validate` is deliberately the **eligibility** gate, not the publication gate. It validates the complete v3 protocol/authority lineage required before scientific review: the authority-bound suite and child reports, isolated authority-transition seal, protocol-bound validation binding, pre-execution protocol and prediction-batch identities, strict five-input raw-execution provenance, and source-authority certificate semantics.
 
-A successful `evidence-validate` result means only that the bundle satisfies the integrity contract required before scientific review. It does not itself make the VISUS result empirically valid.
+A successful result can report:
+
+```text
+frozen_evidence_eligible_for_scientific_review = true
+scientific_review_completed = false
+```
+
+That outcome is expected. It does **not** authorize public Frozen Evidence publication and does not create an empirical-performance claim. The lower-level validation commands above remain useful diagnostics, but they cannot substitute for this v3 eligibility check.
+
+## 9. Revalidate public Frozen Evidence publication approval
+
+After a separate scientific review has genuinely occurred and a lineage-bound `visus-scientific-review.json` approval has been created, use:
+
+```bash
+gazeforge-visus publication-validate /path/to/authority-transition
+```
+
+`publication-validate` calls the #133 scientific-review approval validator. It therefore revalidates the full v3 eligibility lineage and additionally requires the separately fingerprinted approval to match the exact current suite, transition, protocol-validation binding, protocol, prediction batch, execution provenance, and authority-certificate identities.
+
+The command fails closed when the review file is missing, invalid, re-signed after lineage drift, or attempts to promote a prohibited scientific claim. A successful result requires:
+
+```text
+scientific_review_completed = true
+approved_for_public_frozen_evidence = true
+```
+
+Even then, approval remains scoped to the GazeForge public Frozen Evidence dashboard. It does not create formal preregistration, independent human-stream evidence, ground-truth status, expanded source rights, redistribution permission, a changed evaluation-grid boundary, or a universal performance-validity claim.
 
 ## Scientific boundaries
 
@@ -162,4 +188,6 @@ The CLI does not relax the VISUS evidence policy:
 - raw ViPER XML parsing is not claimed unless an authoritative schema/sample is separately reviewed;
 - analysis-use permission and raw-data redistribution rights remain separate provenance fields;
 - exact raw-input fingerprints do not prove that a local VISUS copy is authoritative;
-- no VISUS performance result should enter Frozen Evidence until the authoritative source, reviewed human extraction, model output, external grid, suite, and scientific review have all been completed.
+- `evidence-validate` establishes scientific-review eligibility only;
+- `publication-validate` requires a separate explicit scientific-review approval; and
+- no VISUS performance result should enter Frozen Evidence until the authoritative source, reviewed human extraction, model output, external grid, complete v3 lineage, and scientific review have all been completed.

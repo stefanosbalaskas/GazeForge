@@ -28,6 +28,7 @@ from .visus_scaffold import (
     build_visus_source_audit_scaffold,
     write_visus_source_audit_scaffold,
 )
+from .visus_scientific_review import validate_visus_scientific_review_approval
 from .visus_suite import (
     run_visus_dynamic_aoi_validation_suite,
     validate_visus_dynamic_aoi_suite_manifest,
@@ -263,11 +264,20 @@ def build_parser() -> argparse.ArgumentParser:
     evidence_validate = subparsers.add_parser(
         "evidence-validate",
         help=(
-            "Verify the complete VISUS Frozen Evidence publication bundle: suite children plus "
-            "raw-execution provenance."
+            "Verify complete VISUS v3 lineage and scientific-review eligibility; this does not "
+            "approve public Frozen Evidence publication."
         ),
     )
     evidence_validate.add_argument("path", type=Path)
+
+    publication_validate = subparsers.add_parser(
+        "publication-validate",
+        help=(
+            "Verify VISUS v3 lineage plus the separate scientific-review approval required for "
+            "public Frozen Evidence publication."
+        ),
+    )
+    publication_validate.add_argument("path", type=Path)
     return parser
 
 
@@ -437,6 +447,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "evidence-validate":
         summary = validate_visus_frozen_evidence_bundle(args.path)
+        print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
+        return 0
+
+    if args.command == "publication-validate":
+        summary = validate_visus_scientific_review_approval(args.path)
         print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
         return 0
 
