@@ -1,5 +1,6 @@
 import json
 
+import pandas as pd
 import pytest
 
 from gazeforge import dashboard
@@ -212,6 +213,10 @@ def test_dashboard_accepts_only_approval_bound_to_exact_suite(monkeypatch, tmp_p
     suite_path = tmp_path / "visus-dynamic-aoi-suite-manifest.json"
     suite_path.write_text("{}\n", encoding="utf-8")
     approval = {
+        "reviewer": "Scientific Reviewer",
+        "reviewed_at": "2026-09-11T18:30:00Z",
+        "review_scope": review.SCIENTIFIC_REVIEW_SCOPE,
+        "review_fingerprint_sha256": "5" * 64,
         "lineage": {
             "suite_fingerprint_sha256": "a" * 64,
             "report_count": 3,
@@ -232,7 +237,34 @@ def test_dashboard_accepts_only_approval_bound_to_exact_suite(monkeypatch, tmp_p
         lambda path: approval,
     )
 
-    assert dashboard._validate_visus_suite_for_dashboard(suite_path) == _suite()
+    validated = dashboard._validate_visus_suite_for_dashboard(suite_path)
+    assert validated["scientific_review"] == {
+        "reviewer": "Scientific Reviewer",
+        "reviewed_at": "2026-09-11T18:30:00Z",
+        "review_scope": review.SCIENTIFIC_REVIEW_SCOPE,
+        "review_fingerprint_sha256": "5" * 64,
+    }
+
+    row = dashboard._suite_row(validated, str(suite_path))
+    assert row["scientific_review_reviewer"] == "Scientific Reviewer"
+    assert row["scientific_reviewed_at"] == "2026-09-11T18:30:00Z"
+    assert row["scientific_review_scope"] == review.SCIENTIFIC_REVIEW_SCOPE
+    assert row["scientific_review_fingerprint_sha256"] == "5" * 64
+
+    evidence_dashboard = dashboard.BenchmarkDashboard(
+        reports=(),
+        table=pd.DataFrame(),
+        source_files=(),
+        suites=(validated,),
+        suite_table=pd.DataFrame([row]),
+        suite_source_files=(str(suite_path),),
+    )
+    markdown = dashboard.render_benchmark_dashboard_markdown(evidence_dashboard)
+    assert "Scientific Reviewer" in markdown
+    assert "2026-09-11T18:30:00Z" in markdown
+    assert review.SCIENTIFIC_REVIEW_SCOPE in markdown
+    assert ("5" * 12) in markdown
+    assert ("5" * 64) not in markdown
 
     approval["lineage"]["suite_fingerprint_sha256"] = "f" * 64
     with pytest.raises(BenchmarkIntegrityError, match="fingerprints disagree"):
