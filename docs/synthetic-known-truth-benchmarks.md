@@ -80,8 +80,13 @@ participant/trial/sample key. Missing, duplicated, or additional sample identiti
 Coordinate missingness is allowed but lowers the reported coverage. Optional event estimates add
 sample-level accuracy and macro-F1 against exact latent event states.
 
+Estimate columns are internally namespaced before they are joined to the truth table, so an
+estimator may legitimately use names such as `x_true_px`, `y_true_px`, or `event_label` without
+silently colliding with the latent reference columns. The selected x/y/event estimate columns must
+still be distinct.
+
 This prevents an estimator from improving its apparent error by silently dropping difficult
-samples or changing the evaluation set.
+samples, changing the evaluation set, or creating ambiguous reference/estimate joins.
 
 ## Synthetic recovery certificates
 
@@ -95,8 +100,10 @@ samples or changing the evaluation set.
 - a closed scientific claim boundary.
 
 Error thresholds are maxima; coverage, accuracy, and F1 thresholds are minima. Unknown or
-non-finite thresholds fail closed. `freeze_synthetic_recovery_certificate()` protects an existing
-certificate from accidental overwrite by default.
+non-finite thresholds fail closed. `freeze_synthetic_recovery_certificate()` first validates the
+certificate fingerprint, dataset-card semantics, threshold consistency, and closed claim boundary,
+then protects an existing certificate from accidental overwrite by default. A re-fingerprinted
+certificate with a promoted empirical claim is therefore rejected before any file is written.
 
 A passing certificate means only that the specified method met the declared recovery criteria
 **under the frozen simulator assumptions**. It explicitly does not establish:
