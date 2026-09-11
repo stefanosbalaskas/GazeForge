@@ -173,14 +173,17 @@ Changing any lineage identity invalidates the approval even if the review record
 
 ## Dashboard behavior
 
-The public benchmark dashboard now enforces **two distinct VISUS gates**:
+The public benchmark dashboard now enforces **three linked VISUS publication checks**:
 
-1. v3 lineage eligibility must validate completely; and
-2. `visus-scientific-review.json` must validate as an explicit approval for the exact same suite.
+1. v3 lineage eligibility must validate completely;
+2. `visus-scientific-review.json` must validate as an explicit approval for the exact same suite; and
+3. every benchmark-shaped VISUS model-human or independent-human result row must be the exact named child recorded by that approved suite, with the same report fingerprint and the exact manifest-relative path.
 
 A suite is therefore not surfaced merely because its completion manifest, child reports, transition seal, protocol-validation binding, authority certificate, and raw-execution provenance are internally valid. Those artifacts establish review eligibility. Publication requires the separate scientific-review decision.
 
-An older VISUS directory containing only a suite manifest and `visus-execution-provenance.json` fails closed. A complete v3 directory without a scientific-review approval also fails closed instead of appearing under **Frozen benchmark evidence**. Lund and other non-VISUS suite paths are unchanged.
+The third check closes the detached-child route. A copied or separately surfaced VISUS result JSON cannot enter **Frozen reports** merely because its deterministic benchmark fingerprint is internally valid. The dashboard first classifies known VISUS child schemas using both `evaluation_type` and `validation_scope`; unknown or inconsistent `VISUS-` result schemas fail closed. It then validates the sibling reviewed suite and requires the report's child name, fingerprint, and exact relative path to match the approved suite inventory. Generic non-VISUS benchmark reports retain the existing integrity-only publication path.
+
+An older VISUS directory containing only a suite manifest and `visus-execution-provenance.json` fails closed. A complete v3 directory without a scientific-review approval also fails closed instead of appearing under **Frozen benchmark evidence**. A detached VISUS child without the approved suite fails closed as well. Lund and other non-VISUS suite paths are unchanged.
 
 ## What eligibility means
 
@@ -202,8 +205,8 @@ Even an approved public Frozen Evidence record is scoped only to GazeForge's rev
 
 The previous v2 gate required an authority-bound suite plus strict execution provenance. That was a strong raw-input and authority-integrity check, but it did not require the newer #130 protocol-validation binding or #131 transition seal. A caller could therefore reach review eligibility without proving that model inference and validation were tied back to the pre-execution protocol.
 
-v3 closes that lineage bypass. #133 closes the subsequent publication-layer bypass. The complete public path is now:
+v3 closes that lineage bypass. #133 closes the subsequent suite-publication bypass. #135 closes the remaining detached-child publication route. The complete public path is now:
 
-**pre-execution protocol → protocol-bound prediction batch → protocol-bound model-human validation → isolated authority transition → authority-bound suite → strict five-input execution provenance → v3 scientific-review eligibility → explicit scientific-review approval → public Frozen Evidence dashboard**.
+**pre-execution protocol → protocol-bound prediction batch → protocol-bound model-human validation → isolated authority transition → authority-bound suite → strict five-input execution provenance → v3 scientific-review eligibility → explicit scientific-review approval → exact approved suite-child membership → public Frozen Evidence dashboard**.
 
-Every arrow before the final approval is an integrity/provenance statement. The final approval is an explicit scoped review decision, not an automatically inferred scientific claim.
+Every arrow before the final approval is an integrity/provenance statement. The approval is an explicit scoped review decision, and the child-membership check only proves that a displayed VISUS result is one of the artifacts that decision actually covered. Neither step automatically creates a scientific performance claim.
