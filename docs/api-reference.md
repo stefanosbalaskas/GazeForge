@@ -48,6 +48,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Location-scale residual calibration
+
+::: gazeforge.location_scale_residual_calibration
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Eye events
 
 ::: gazeforge.events

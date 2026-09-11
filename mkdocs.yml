@@ -52,6 +52,7 @@ nav:
       - Motion-quality gating: motion-quality-gating.md
       - Hierarchical location-scale models: hierarchical-location-scale.md
       - Correlated location-scale effects: correlated-location-scale.md
+      - Location-scale residual calibration: location-scale-residual-calibration.md
       - Temporal models: temporal-models.md
       - Model comparison: model-comparison.md
       - Matched-fold differences: paired-model-differences.md
