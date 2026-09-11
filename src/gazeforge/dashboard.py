@@ -247,6 +247,20 @@ def _suite_row(summary: dict[str, Any], source_file: str) -> dict[str, Any]:
             human_agreement = str(
                 bool(protocol["human_human_agreement_included"])
             ).lower()
+
+    scientific_review = summary.get("scientific_review")
+    review_reviewer = ""
+    reviewed_at = ""
+    review_scope = ""
+    review_fingerprint = ""
+    if isinstance(scientific_review, dict):
+        review_reviewer = str(scientific_review.get("reviewer", ""))
+        reviewed_at = str(scientific_review.get("reviewed_at", ""))
+        review_scope = str(scientific_review.get("review_scope", ""))
+        review_fingerprint = str(
+            scientific_review.get("review_fingerprint_sha256", "")
+        )
+
     return {
         "suite": str(summary["suite"]),
         "status": str(summary["status"]),
@@ -257,6 +271,10 @@ def _suite_row(summary: dict[str, Any], source_file: str) -> dict[str, Any]:
         "human_human_agreement_included": human_agreement,
         "source_manifest_fingerprint_sha256": _suite_source_fingerprint(summary),
         "suite_fingerprint_sha256": str(summary["suite_fingerprint_sha256"]),
+        "scientific_review_reviewer": review_reviewer,
+        "scientific_reviewed_at": reviewed_at,
+        "scientific_review_scope": review_scope,
+        "scientific_review_fingerprint_sha256": review_fingerprint,
         "source_file": source_file,
     }
 
@@ -297,7 +315,15 @@ def _validate_visus_suite_for_dashboard(path: str | Path) -> dict[str, Any]:
         raise BenchmarkIntegrityError(
             "VISUS dashboard publication requires explicit Frozen Evidence approval."
         )
-    return summary
+
+    enriched = dict(summary)
+    enriched["scientific_review"] = {
+        "reviewer": str(approval["reviewer"]),
+        "reviewed_at": str(approval["reviewed_at"]),
+        "review_scope": str(approval["review_scope"]),
+        "review_fingerprint_sha256": str(approval["review_fingerprint_sha256"]),
+    }
+    return enriched
 
 
 def _visus_dashboard_child_name(report: dict[str, Any]) -> str | None:
@@ -503,11 +529,32 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
             "source_manifest_fingerprint_sha256",
             "suite_fingerprint_sha256",
         ]
+        show_review_provenance = (
+            "scientific_review_fingerprint_sha256" in dashboard.suite_table.columns
+            and dashboard.suite_table["scientific_review_fingerprint_sha256"]
+            .astype(str)
+            .str.len()
+            .gt(0)
+            .any()
+        )
+        if show_review_provenance:
+            suite_columns.extend(
+                [
+                    "scientific_review_reviewer",
+                    "scientific_reviewed_at",
+                    "scientific_review_scope",
+                    "scientific_review_fingerprint_sha256",
+                ]
+            )
+
         public_suites = dashboard.suite_table.loc[:, suite_columns].copy()
-        for column in (
+        fingerprint_columns = [
             "source_manifest_fingerprint_sha256",
             "suite_fingerprint_sha256",
-        ):
+        ]
+        if show_review_provenance:
+            fingerprint_columns.append("scientific_review_fingerprint_sha256")
+        for column in fingerprint_columns:
             public_suites[column] = public_suites[column].str.slice(0, 12)
         sections.extend(
             [
@@ -516,7 +563,10 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
                     "A suite appears here only when its completion manifest and every "
                     "referenced child report verify successfully. VISUS suites additionally "
                     "require complete v3 protocol/authority lineage and an explicit, separately "
-                    "fingerprinted scientific-review approval for public Frozen Evidence.\n\n"
+                    "fingerprinted scientific-review approval for public Frozen Evidence. When "
+                    "present, the validated reviewer, UTC review time, review scope, and approval "
+                    "fingerprint are surfaced with the suite so the exact publication decision "
+                    "is publicly traceable.\n\n"
                 ),
                 _markdown_table(public_suites),
                 "\n\n",
