@@ -32,6 +32,8 @@ The first sample in each participant/trial group remains unknown because there i
 
 Rows with missing acceleration or any other unevaluable transition likewise remain missing. GazeForge deliberately does not reinterpret missing motion evidence as a clean segment.
 
+When grouping columns are supplied, every participant/trial grouping identifier must be present on every row. Missing identifiers fail closed before grouping so multiple rows with unknown identity can never be coalesced into a synthetic group and used to estimate jerk across an unverifiable boundary. Use `group_cols=()` only when the data intentionally represent one ungrouped continuous stream.
+
 ```python
 from gazeforge.quality_gating import derive_accelerometer_motion_index
 
@@ -124,7 +126,7 @@ The original rows, index, and source/signal values are preserved. Existing gener
 - mean and minimum known reliability weight; and
 - the fraction of samples in each quality state.
 
-Summary input is itself validated: finite quality weights must remain in `[0, 1]`, and states must belong to the fixed gate-state taxonomy. This prevents a manually modified table from being summarized as though it were a valid gate output.
+Summary input is itself validated: finite quality weights must remain in `[0, 1]`, states must belong to the fixed gate-state taxonomy, and every grouping key—including the quality-modality key—must be fully observed. This prevents a manually modified table or an unknown identity bucket from being summarized as though it were a valid gate output.
 
 This supports reporting how much usable information remained after quality weighting instead of merely stating that a sensor was recorded.
 
