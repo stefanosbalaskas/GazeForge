@@ -49,6 +49,7 @@ nav:
       - Scientific governance: scientific-governance.md
   - Methods:
       - Adapters & validation: adapters-validation.md
+      - Motion-quality gating: motion-quality-gating.md
       - Temporal models: temporal-models.md
       - Model comparison: model-comparison.md
       - Matched-fold differences: paired-model-differences.md
