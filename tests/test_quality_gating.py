@@ -34,12 +34,14 @@ def motion_frame():
     )
 
 
-def test_constant_acceleration_has_zero_motion_index():
+def test_constant_acceleration_keeps_first_transition_unknown_then_zero():
     data = motion_frame()
     data["acc_x"] = 0.0
     out = derive_accelerometer_motion_index(data, smoothing_window_ms=200.0)
-    assert (out["motion_jerk"] == 0.0).all()
-    assert (out["motion_index"] == 0.0).all()
+    assert np.isnan(out.iloc[0]["motion_jerk"])
+    assert np.isnan(out.iloc[0]["motion_index"])
+    assert (out.iloc[1:]["motion_jerk"] == 0.0).all()
+    assert (out.iloc[1:]["motion_index"] == 0.0).all()
     assert out.index.equals(data.index)
 
 
@@ -58,8 +60,22 @@ def test_motion_derivative_resets_at_group_boundary():
     second["acc_x"] = 100.0
     combined = pd.concat([first, second], ignore_index=True)
     out = derive_accelerometer_motion_index(combined, smoothing_window_ms=100.0)
-    assert out.loc[0, "motion_jerk"] == pytest.approx(0.0)
-    assert out.loc[3, "motion_jerk"] == pytest.approx(0.0)
+    assert np.isnan(out.loc[0, "motion_jerk"])
+    assert np.isnan(out.loc[0, "motion_index"])
+    assert np.isnan(out.loc[3, "motion_jerk"])
+    assert np.isnan(out.loc[3, "motion_index"])
+
+
+def test_group_boundary_unknown_propagates_to_quality_gate():
+    spec = MotionQualityGateSpec(clean_threshold=2.0, severe_threshold=12.0)
+    out = apply_accelerometer_quality_gate(
+        motion_frame(),
+        spec=spec,
+        modality="pupil",
+        signal_cols=("pupil",),
+    )
+    assert out.iloc[0]["quality_state"] == "motion_unknown"
+    assert np.isnan(out.iloc[0]["quality_weight"])
 
 
 def test_missing_acceleration_stays_unknown_instead_of_clean():
