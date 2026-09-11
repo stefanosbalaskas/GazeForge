@@ -1,6 +1,6 @@
 # VISUS Frozen Evidence bundle gate
 
-A completed VISUS validation suite is not, by itself, sufficient for publication in GazeForge's Frozen Evidence layer. The current gate is **v3** and requires the complete protocol-bound lineage introduced by the guarded VISUS workflow:
+A completed VISUS validation suite is not, by itself, sufficient for publication in GazeForge's Frozen Evidence layer. The lineage-integrity gate is **v3** and requires the complete protocol-bound lineage introduced by the guarded VISUS workflow:
 
 1. a pre-execution protocol frozen before detector inference;
 2. the protocol-bound Grounding DINO + SAM 2 prediction batch;
@@ -9,9 +9,11 @@ A completed VISUS validation suite is not, by itself, sufficient for publication
 5. the authority-bound validation-suite clone; and
 6. strict five-input raw-execution provenance with the reviewed authority-certificate semantics revalidated.
 
-A legacy suite plus execution-provenance pair is therefore no longer sufficient for scientific-review eligibility.
+A legacy suite plus execution-provenance pair is therefore no longer sufficient for scientific-review eligibility. Passing v3 is also **not** sufficient for public Frozen Evidence publication: the dashboard additionally requires a separate explicit scientific-review approval bound to the exact v3 lineage.
 
 ## Public Python entry points
+
+The v3 eligibility gate remains:
 
 ```python
 from gazeforge import (
@@ -48,13 +50,13 @@ summary = validate_visus_frozen_evidence_bundle(
 
 This lookup does not modify or relocate the #130 validation directory.
 
-## Strict command-line review path
+## Strict command-line eligibility path
 
 ```bash
 gazeforge-visus evidence-validate /path/to/authority-transition
 ```
 
-`evidence-validate` deliberately has no suite-only, execution-only, or legacy-v2 eligibility mode. It requires the v3 lineage to resolve completely. Lower-level validation commands remain useful for diagnostics, but they are not substitutes for the publication-review gate.
+`evidence-validate` deliberately has no suite-only, execution-only, or legacy-v2 eligibility mode. It requires the v3 lineage to resolve completely. Lower-level validation commands remain useful for diagnostics, but they are not substitutes for the review-eligibility gate. A successful `evidence-validate` result does not itself authorize dashboard publication.
 
 ## What v3 verifies
 
@@ -96,11 +98,89 @@ formal_preregistration_verified = false
 
 The typed `VisusFrozenEvidenceBundle` also carries the transition fingerprint, protocol-validation binding fingerprint, pre-execution protocol fingerprint, protocol-batch fingerprint, suite fingerprint, execution fingerprint, and source-authority certificate fingerprint.
 
+## Separate scientific-review approval
+
+Public VISUS Frozen Evidence requires an additional file in the authority-transition directory:
+
+```text
+visus-scientific-review.json
+```
+
+The review artifact is a separate closed-schema decision record. It is **not generated from model metrics**. A reviewer must explicitly supply reviewer identity, an ISO-8601 UTC review timestamp, and a non-empty review rationale after scientific review has occurred.
+
+The Python review path is intentionally separate from v3 eligibility:
+
+```python
+from gazeforge.visus_scientific_review import (
+    build_visus_scientific_review_approval,
+    validate_visus_scientific_review_approval,
+    write_visus_scientific_review_approval,
+)
+
+record = build_visus_scientific_review_approval(
+    "path/to/authority-transition",
+    reviewer="Reviewer identity",
+    reviewed_at="2026-09-11T18:30:00Z",
+    review_rationale="Documented scientific review rationale.",
+)
+
+write_visus_scientific_review_approval(
+    "path/to/authority-transition",
+    reviewer="Reviewer identity",
+    reviewed_at="2026-09-11T18:30:00Z",
+    review_rationale="Documented scientific review rationale.",
+)
+
+validated = validate_visus_scientific_review_approval(
+    "path/to/authority-transition"
+)
+```
+
+The approval record binds the exact:
+
+- authority-bound suite fingerprint;
+- pre-authority suite fingerprint;
+- strict execution fingerprint;
+- protocol-authority transition fingerprint;
+- protocol-validation binding fingerprint;
+- pre-execution protocol fingerprint;
+- protocol-bound prediction-batch fingerprint;
+- source-authority certificate fingerprint;
+- report count; and
+- required five-input execution cardinality.
+
+The record may promote only these publication-state fields:
+
+```text
+scientific_review_completed = true
+approved_for_public_frozen_evidence = true
+```
+
+It must keep all of the following false:
+
+```text
+empirical_performance_claim_created
+formal_preregistration_verified
+independent_human_streams_verified
+human_reference_ground_truth_promoted
+source_authority_or_rights_expanded
+raw_source_redistribution_authorized
+evaluation_grid_boundary_changed
+universal_performance_validity_claim_created
+```
+
+Changing any lineage identity invalidates the approval even if the review record is re-fingerprinted. Likewise, changing a prohibited claim to `true` remains invalid after re-fingerprinting. Existing review files are protected from replacement by default.
+
 ## Dashboard behavior
 
-The public benchmark dashboard uses this same gate when it discovers a VISUS suite. A suite is not surfaced merely because its completion manifest and child reports are internally valid. The v3 transition seal, exact #130 binding, authority-bound suite, and strict execution provenance must all resolve and verify.
+The public benchmark dashboard now enforces **two distinct VISUS gates**:
 
-This means an older VISUS directory containing only a suite manifest and `visus-execution-provenance.json` now fails closed instead of appearing publication-ready. Lund and other non-VISUS suite paths are unchanged.
+1. v3 lineage eligibility must validate completely; and
+2. `visus-scientific-review.json` must validate as an explicit approval for the exact same suite.
+
+A suite is therefore not surfaced merely because its completion manifest, child reports, transition seal, protocol-validation binding, authority certificate, and raw-execution provenance are internally valid. Those artifacts establish review eligibility. Publication requires the separate scientific-review decision.
+
+An older VISUS directory containing only a suite manifest and `visus-execution-provenance.json` fails closed. A complete v3 directory without a scientific-review approval also fails closed instead of appearing under **Frozen benchmark evidence**. Lund and other non-VISUS suite paths are unchanged.
 
 ## What eligibility means
 
@@ -116,12 +196,14 @@ Eligibility is intentionally narrower than empirical validity. It means that the
 
 Formal preregistration would require separate trusted temporal evidence. Independent human-stream evidence, empirical performance interpretation, source-authority/rights review, and final scientific review remain separate gates.
 
-## Why v2 was insufficient
+Even an approved public Frozen Evidence record is scoped only to GazeForge's reviewed evidence index. It does not create a universal performance-validity claim, convert the human reference into ground truth, expand source rights, authorize redistribution, or establish formal preregistration.
 
-The previous v2 gate required an authority-bound suite plus strict execution provenance. That was a strong raw-input and authority-integrity check, but it did not require the newer #130 protocol-validation binding or #131 transition seal. A caller could therefore reach `frozen_evidence_eligible_for_scientific_review=true` without proving that model inference and validation were tied back to the pre-execution protocol.
+## Why v2 and v3 eligibility alone are insufficient
 
-v3 closes that bypass. The review-eligibility chain is now:
+The previous v2 gate required an authority-bound suite plus strict execution provenance. That was a strong raw-input and authority-integrity check, but it did not require the newer #130 protocol-validation binding or #131 transition seal. A caller could therefore reach review eligibility without proving that model inference and validation were tied back to the pre-execution protocol.
 
-**pre-execution protocol → protocol-bound prediction batch → protocol-bound model-human validation → isolated authority transition → authority-bound suite → strict five-input execution provenance → Frozen Evidence review eligibility**.
+v3 closes that lineage bypass. #133 closes the subsequent publication-layer bypass. The complete public path is now:
 
-Every arrow is an integrity/provenance statement. None of them, individually or together, substitutes for scientific interpretation of the empirical result.
+**pre-execution protocol → protocol-bound prediction batch → protocol-bound model-human validation → isolated authority transition → authority-bound suite → strict five-input execution provenance → v3 scientific-review eligibility → explicit scientific-review approval → public Frozen Evidence dashboard**.
+
+Every arrow before the final approval is an integrity/provenance statement. The final approval is an explicit scoped review decision, not an automatically inferred scientific claim.
