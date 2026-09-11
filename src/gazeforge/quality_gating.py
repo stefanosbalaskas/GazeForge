@@ -192,7 +192,9 @@ def derive_accelerometer_motion_index(
 
         elapsed = pd.to_timedelta(timestamps - timestamps[0], unit="ms")
         squared = pd.Series(jerk**2, index=elapsed)
-        rms = np.sqrt(squared.rolling(window=window, min_periods=1).mean()).to_numpy(dtype=float)
+        rms = np.sqrt(
+            squared.rolling(window=window, min_periods=1).mean()
+        ).to_numpy(dtype=float, copy=True)
         # A trailing window must not turn an unevaluable current transition into known motion.
         rms[~np.isfinite(jerk)] = np.nan
         jerk_values[positions] = jerk
@@ -277,7 +279,7 @@ def apply_motion_quality_gate(
     finite = np.isfinite(values)
     if np.any(values[finite] < 0):
         raise ValueError("motion_index must be non-negative where finite.")
-    weights = np.asarray(
+    weights = np.array(
         quality_weight_from_motion(
             motion,
             clean_threshold=spec.clean_threshold,
@@ -285,6 +287,7 @@ def apply_motion_quality_gate(
             minimum_weight=spec.minimum_weight,
         ),
         dtype=float,
+        copy=True,
     )
     states = np.full(len(data), "motion_unknown", dtype=object)
     states[finite & (values <= spec.clean_threshold)] = "clean"
