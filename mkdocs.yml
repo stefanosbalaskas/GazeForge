@@ -61,6 +61,7 @@ nav:
       - Calibration & dataset holdouts: calibration.md
   - Validation:
       - Validation status: validation-status.md
+      - Validation scope certificates: validation-scope-certificates.md
       - Source-resolution status: source-resolution-status.md
       - Source-resolution contract: source-resolution-contract.md
       - Native 60 Hz event validation: native-60hz-validation.md
