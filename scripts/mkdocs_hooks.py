@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from gazeforge.dashboard import build_benchmark_dashboard, render_benchmark_dashboard_markdown
+from gazeforge.dashboard import render_benchmark_dashboard_markdown
 from gazeforge.evidence_details import render_validated_report_detail_markdown
+from gazeforge.public_evidence import build_public_benchmark_dashboard
 from gazeforge.source_resolution_dashboard import (
     build_source_resolution_dashboard,
     render_source_resolution_dashboard_markdown,
@@ -22,7 +23,7 @@ def _project_root(config) -> Path:
 def on_pre_build(config) -> None:
     """Regenerate public evidence and source-resolution pages from validated JSON."""
     root = _project_root(config)
-    dashboard = build_benchmark_dashboard(root / "validation")
+    dashboard = build_public_benchmark_dashboard(root / "validation")
     content = render_benchmark_dashboard_markdown(dashboard)
     if dashboard.reports:
         content += "\n## Validated report details\n\n"
@@ -37,10 +38,16 @@ def on_pre_build(config) -> None:
 
 ## What appears on this page
 
-A JSON file is listed here only when it follows the GazeForge frozen benchmark-report schema and
+A JSON file is listed here only when it follows the GazeForge frozen benchmark-report schema,
 its deterministic SHA-256 fingerprint recomputes successfully from the benchmark metadata, model
-metadata, protocol, and metrics. Candidate protocols and configuration manifests are not treated as
-performance evidence.
+metadata, protocol, and metrics, and any applicable dataset-specific public-publication gate passes.
+Candidate protocols and configuration manifests are not treated as performance evidence.
+
+Gaze-in-the-Wild benchmark-schema result rows do not use the generic publication route. The
+currently reviewed exact-distribution Gaze-in-the-Wild evidence remains a separately validated
+evidence record; future generic dashboard rows require a dedicated reviewed publication contract,
+and task-stratified rows additionally require an authoritative reviewed file-to-publication-task
+mapping.
 
 ## Evidence interpretation
 
@@ -49,9 +56,10 @@ sampling rate so evidence strength remains visible alongside any future performa
 Derived lower-rate evidence is therefore distinguishable from native-rate recordings, and
 algorithmic/vendor labels cannot silently appear as human ground truth.
 
-Detailed performance tables are generated only from reports that passed the same integrity check.
-Unknown future report schemas remain visible in the frozen-report index without GazeForge guessing
-which nested values should be presented as headline performance metrics.
+Detailed performance tables are generated only from reports that passed the same integrity and
+publication checks. Unknown future report schemas remain visible in the frozen-report index only
+when they do not claim a result family that has a stricter fail-closed publication boundary;
+GazeForge does not guess which nested values should be presented as headline performance metrics.
 
 ## Current scientific rule
 
