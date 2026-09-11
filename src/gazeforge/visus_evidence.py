@@ -419,6 +419,10 @@ def validate_visus_frozen_evidence_bundle(
         )
 
     suite = validate_visus_dynamic_aoi_suite_manifest(suite_path, verify_reports=True)
+    execution = validate_visus_authority_execution_provenance(
+        execution_path,
+        verify_suite=True,
+    )
     transition, transition_fingerprint = _transition_summary(root, suite_path, suite)
     binding_path = _find_protocol_binding(
         root,
@@ -429,10 +433,6 @@ def validate_visus_frozen_evidence_bundle(
         binding_path,
         transition,
         suite,
-    )
-    execution = validate_visus_authority_execution_provenance(
-        execution_path,
-        verify_suite=True,
     )
 
     suite_fingerprint = str(suite.get("suite_fingerprint_sha256", ""))
