@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from .benchmarks import (
     BenchmarkDatasetCard,
@@ -68,7 +69,9 @@ def _require_mapping(value: Any, *, field_name: str) -> dict[str, Any]:
     return dict(value)
 
 
-def _require_exact_keys(value: Mapping[str, Any], expected: frozenset[str], *, label: str) -> None:
+def _require_exact_keys(
+    value: Mapping[str, Any], expected: frozenset[str], *, label: str
+) -> None:
     observed = frozenset(value)
     if observed != expected:
         raise BenchmarkIntegrityError(
@@ -100,12 +103,18 @@ def _validate_design(design: Mapping[str, Any]) -> dict[str, Any]:
     if value.get("validation_design") != "leave_one_dataset_out":
         raise BenchmarkIntegrityError("Cross-dataset validation must be leave-one-dataset-out.")
     dataset_ids = value.get("dataset_ids")
-    if not isinstance(dataset_ids, list) or tuple(sorted(map(str, dataset_ids))) != CROSS_DATASET_EXPECTED_DATASETS:
+    valid_dataset_ids = (
+        isinstance(dataset_ids, list)
+        and tuple(sorted(map(str, dataset_ids))) == CROSS_DATASET_EXPECTED_DATASETS
+    )
+    if not valid_dataset_ids:
         raise BenchmarkIntegrityError(
             "Cross-dataset Frozen Evidence requires exactly Lund2013 and Hollywood2EM."
         )
     if float(value.get("target_sampling_rate_hz", -1.0)) != 60.0:
-        raise BenchmarkIntegrityError("Cross-dataset Frozen Evidence requires derived 60 Hz analysis.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset Frozen Evidence requires derived 60 Hz analysis."
+        )
     if value.get("require_resolved_participants") is not True:
         raise BenchmarkIntegrityError("Cross-dataset participant identities must be resolved.")
     if value.get("require_verified_coordinates") is not True:
@@ -113,7 +122,10 @@ def _validate_design(design: Mapping[str, Any]) -> dict[str, Any]:
     if value.get("require_source_audits") is not True:
         raise BenchmarkIntegrityError("Cross-dataset source-audit enforcement must remain enabled.")
     models = value.get("models")
-    if not isinstance(models, list) or tuple(map(str, models)) != ("RandomForest", "ContextMLP"):
+    if not isinstance(models, list) or tuple(map(str, models)) != (
+        "RandomForest",
+        "ContextMLP",
+    ):
         raise BenchmarkIntegrityError(
             "Cross-dataset Frozen Evidence requires the matched RandomForest/ContextMLP design."
         )
@@ -127,7 +139,9 @@ def _validate_dataset_reports(reports: Mapping[str, Any]) -> dict[str, Any]:
             "Cross-dataset dataset_reports must contain exactly Lund2013 and Hollywood2EM."
         )
     for dataset_id in CROSS_DATASET_EXPECTED_DATASETS:
-        report = _require_mapping(value[dataset_id], field_name=f"dataset_reports.{dataset_id}")
+        report = _require_mapping(
+            value[dataset_id], field_name=f"dataset_reports.{dataset_id}"
+        )
         if report.get("participant_identity_resolved") is not True:
             raise BenchmarkIntegrityError(
                 f"Cross-dataset {dataset_id} participant identities are not resolved."
@@ -220,7 +234,9 @@ def _validate_summary(summary: Any) -> list[dict[str, Any]]:
             )
         key = (model, held_out)
         if key in observed:
-            raise BenchmarkIntegrityError("Cross-dataset summary contains a duplicate model/fold row.")
+            raise BenchmarkIntegrityError(
+                "Cross-dataset summary contains a duplicate model/fold row."
+            )
         observed.add(key)
         if int(row.get("n_test_rows", 0)) <= 0:
             raise BenchmarkIntegrityError("Cross-dataset summary n_test_rows must be positive.")
@@ -231,7 +247,9 @@ def _validate_summary(summary: Any) -> list[dict[str, Any]]:
         for dataset in CROSS_DATASET_EXPECTED_DATASETS
     }
     if observed != expected:
-        raise BenchmarkIntegrityError("Cross-dataset summary does not cover the complete matched design.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset summary does not cover the complete matched design."
+        )
     return rows
 
 
@@ -298,11 +316,16 @@ def build_lund_hollywood2_cross_dataset_report(
     return validate_cross_dataset_frozen_report(report)
 
 
-def validate_cross_dataset_frozen_report(report: Mapping[str, Any]) -> dict[str, Any]:
+def validate_cross_dataset_frozen_report(
+    report: Mapping[str, Any],
+) -> dict[str, Any]:
     """Validate one closed-schema Lund↔Hollywood2 Frozen Evidence report."""
     value = dict(report)
     _require_exact_keys(value, _TOP_LEVEL_KEYS, label="report")
-    body = {key: value[key] for key in ("benchmark", "model", "protocol", "metrics")}
+    body = {
+        key: value[key]
+        for key in ("benchmark", "model", "protocol", "metrics")
+    }
     observed_report_fingerprint = value.get("report_fingerprint_sha256")
     if not _valid_sha256(observed_report_fingerprint):
         raise BenchmarkIntegrityError("Cross-dataset report fingerprint is invalid.")
@@ -315,7 +338,9 @@ def validate_cross_dataset_frozen_report(report: Mapping[str, Any]) -> dict[str,
     if benchmark.get("validation_scope") != CROSS_DATASET_VALIDATION_SCOPE:
         raise BenchmarkIntegrityError("Cross-dataset validation scope is invalid.")
     if benchmark.get("annotation_origin") != "expert-manual":
-        raise BenchmarkIntegrityError("Cross-dataset annotation origin must remain expert-manual.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset annotation origin must remain expert-manual."
+        )
     if benchmark.get("sampling_origin") != "resampled":
         raise BenchmarkIntegrityError("Cross-dataset sampling origin must remain resampled.")
     if benchmark.get("reference_strength") != "derived-human-reference":
@@ -324,7 +349,9 @@ def validate_cross_dataset_frozen_report(report: Mapping[str, Any]) -> dict[str,
         )
     rates = benchmark.get("sampling_rates_hz")
     if not isinstance(rates, list) or len(rates) != 1 or float(rates[0]) != 60.0:
-        raise BenchmarkIntegrityError("Cross-dataset benchmark rate must be exactly 60 Hz derived.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset benchmark rate must be exactly 60 Hz derived."
+        )
 
     model = _require_mapping(value.get("model"), field_name="model")
     if model.get("models") != ["RandomForest", "ContextMLP"]:
@@ -335,10 +362,14 @@ def validate_cross_dataset_frozen_report(report: Mapping[str, Any]) -> dict[str,
     if protocol.get("evidence_schema") != CROSS_DATASET_EVIDENCE_SCHEMA:
         raise BenchmarkIntegrityError("Cross-dataset evidence schema is invalid.")
     design = _validate_design(
-        _require_mapping(protocol.get("validation_design"), field_name="validation_design")
+        _require_mapping(
+            protocol.get("validation_design"), field_name="validation_design"
+        )
     )
     dataset_reports = _validate_dataset_reports(
-        _require_mapping(protocol.get("dataset_reports"), field_name="dataset_reports")
+        _require_mapping(
+            protocol.get("dataset_reports"), field_name="dataset_reports"
+        )
     )
     lineage = _validate_hollywood_lineage(
         _require_mapping(
@@ -361,13 +392,18 @@ def validate_cross_dataset_frozen_report(report: Mapping[str, Any]) -> dict[str,
             "summary": summary,
         }
     )
-    if protocol.get("cross_dataset_validation_fingerprint_sha256") != expected_validation_fingerprint:
+    observed_validation_fingerprint = protocol.get(
+        "cross_dataset_validation_fingerprint_sha256"
+    )
+    if observed_validation_fingerprint != expected_validation_fingerprint:
         raise BenchmarkIntegrityError(
             "Cross-dataset report is not bound to the exact guarded validation result."
         )
-    if lineage["receipt_fingerprint_sha256"] != dataset_reports["Hollywood2EM"][
-        "source_audit_lineage_receipt_fingerprint_sha256"
-    ]:
+    hollywood = dataset_reports["Hollywood2EM"]
+    if (
+        lineage["receipt_fingerprint_sha256"]
+        != hollywood["source_audit_lineage_receipt_fingerprint_sha256"]
+    ):
         raise BenchmarkIntegrityError(
             "Cross-dataset report lineage receipt fingerprint disagrees with runner provenance."
         )
@@ -378,13 +414,19 @@ def load_cross_dataset_frozen_report(path: str | Path) -> dict[str, Any]:
     """Load and validate one serialized cross-dataset Frozen Evidence report."""
     source = Path(path)
     if source.is_symlink() or not source.is_file():
-        raise BenchmarkIntegrityError("Cross-dataset Frozen Evidence report must be a regular file.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset Frozen Evidence report must be a regular file."
+        )
     try:
         payload = json.loads(source.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise BenchmarkIntegrityError("Cross-dataset Frozen Evidence report is invalid JSON.") from exc
+        raise BenchmarkIntegrityError(
+            "Cross-dataset Frozen Evidence report is invalid JSON."
+        ) from exc
     if not isinstance(payload, dict):
-        raise BenchmarkIntegrityError("Cross-dataset Frozen Evidence report must contain an object.")
+        raise BenchmarkIntegrityError(
+            "Cross-dataset Frozen Evidence report must contain an object."
+        )
     return validate_cross_dataset_frozen_report(payload)
 
 
