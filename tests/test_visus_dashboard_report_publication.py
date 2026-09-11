@@ -98,7 +98,10 @@ def test_dashboard_rejects_visus_child_fingerprint_not_in_reviewed_suite(monkeyp
     )
     monkeypatch.setattr(dashboard, "_validate_visus_suite_for_dashboard", lambda path: summary)
 
-    with pytest.raises(BenchmarkIntegrityError, match="exact scientifically reviewed suite child fingerprint"):
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="exact scientifically reviewed suite child fingerprint",
+    ):
         dashboard.build_benchmark_dashboard(tmp_path)
 
 
@@ -114,7 +117,10 @@ def test_dashboard_rejects_copied_visus_child_at_unapproved_path(monkeypatch, tm
     )
     monkeypatch.setattr(dashboard, "_validate_visus_suite_for_dashboard", lambda path: summary)
 
-    with pytest.raises(BenchmarkIntegrityError, match="exact scientifically reviewed suite child path"):
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="exact scientifically reviewed suite child path",
+    ):
         dashboard.build_benchmark_dashboard(tmp_path)
 
 
@@ -135,7 +141,10 @@ def test_dashboard_rejects_unknown_or_inconsistent_visus_report_schema(tmp_path)
     )
     _write(tmp_path / "inconsistent.json", inconsistent)
 
-    with pytest.raises(BenchmarkIntegrityError, match="evaluation type and validation scope disagree"):
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="evaluation type and validation scope disagree",
+    ):
         dashboard.build_benchmark_dashboard(tmp_path)
 
 
