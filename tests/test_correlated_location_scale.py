@@ -1,6 +1,7 @@
 import json
 from copy import deepcopy
 from dataclasses import FrozenInstanceError, replace
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -8,6 +9,7 @@ import pytest
 from numpy.polynomial.hermite import hermgauss
 from scipy.special import logsumexp
 
+import gazeforge.correlated_location_scale as correlated_module
 from gazeforge.benchmarks import benchmark_fingerprint
 from gazeforge.correlated_location_scale import (
     CorrelatedLocationScaleSpec,
@@ -190,6 +192,33 @@ def test_correlated_adaptive_likelihood_matches_fixed_quadrature_reference():
     assert adaptive == pytest.approx(reference, abs=3e-4)
 
 
+@pytest.mark.parametrize("correlation_eta", [-4.0, 4.0])
+def test_fit_rejects_successful_outer_optimizer_at_correlation_bound(
+    monkeypatch, correlation_eta
+):
+    data = _synthetic_correlated(groups=3, n_per_group=4)
+    spec = CorrelatedLocationScaleSpec(
+        "y", "participant_id", quadrature_points=3, max_iter=10
+    )
+
+    def fake_minimize(fun, x0, *, method, **kwargs):
+        assert method == "L-BFGS-B"
+        forced = np.asarray(x0, dtype=float).copy()
+        forced[-1] = correlation_eta
+        return SimpleNamespace(
+            x=forced,
+            success=True,
+            status=0,
+            message="CONVERGENCE: forced boundary regression",
+            nit=1,
+            fun=0.0,
+        )
+
+    monkeypatch.setattr(correlated_module, "minimize", fake_minimize)
+    with pytest.raises(RuntimeError, match="boundary-censored"):
+        fit_correlated_location_scale(data, spec=spec)
+
+
 def test_certificate_binds_correlation_and_rejects_resigned_tamper(fitted_model):
     _, fitted = fitted_model
     certificate = build_correlated_location_scale_certificate(fitted)
@@ -200,6 +229,32 @@ def test_certificate_binds_correlation_and_rejects_resigned_tamper(fitted_model)
     tampered["certificate_fingerprint_sha256"] = benchmark_fingerprint(body)
     with pytest.raises(SchemaError, match="model fingerprint"):
         validate_correlated_location_scale_certificate(tampered)
+
+
+def test_resigned_boundary_correlation_certificate_fails_closed(fitted_model):
+    _, fitted = fitted_model
+    certificate = build_correlated_location_scale_certificate(fitted)
+    forged = deepcopy(certificate)
+    forged["model"]["rho_location_log_scale"] = float(np.tanh(4.0))
+    forged["model_fingerprint_sha256"] = benchmark_fingerprint(forged["model"])
+    body = {k: v for k, v in forged.items() if k != "certificate_fingerprint_sha256"}
+    forged["certificate_fingerprint_sha256"] = benchmark_fingerprint(body)
+    with pytest.raises(SchemaError, match="artificial optimizer boundary"):
+        validate_correlated_location_scale_certificate(forged)
+
+
+def test_resigned_boundary_correlation_result_fails_closed(fitted_model):
+    _, fitted = fitted_model
+    certificate = build_correlated_location_scale_certificate(fitted)
+    forged_model = deepcopy(certificate["model"])
+    forged_model["rho_location_log_scale"] = float(np.tanh(4.0))
+    forged = replace(
+        fitted,
+        rho_location_scale=float(np.tanh(4.0)),
+        model_fingerprint_sha256=benchmark_fingerprint(forged_model),
+    )
+    with pytest.raises(SchemaError, match="artificial optimizer boundary"):
+        build_correlated_location_scale_certificate(forged)
 
 
 def test_certificate_rejects_claim_promotion(fitted_model):
