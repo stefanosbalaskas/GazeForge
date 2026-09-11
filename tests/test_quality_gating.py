@@ -97,7 +97,7 @@ def test_motion_index_requires_distinct_axes_and_output_names():
     data = motion_frame()
     with pytest.raises(ValueError, match="distinct"):
         derive_accelerometer_motion_index(data, accel_cols=("acc_x", "acc_x"))
-    with pytest.raises(ValueError, match="must be distinct"):
+    with pytest.raises(ValueError, match="distinct"):
         derive_accelerometer_motion_index(data, jerk_col="motion", motion_index_col="motion")
 
 
@@ -113,6 +113,14 @@ def test_motion_index_refuses_silent_output_overwrite():
         derive_accelerometer_motion_index(data)
     out = derive_accelerometer_motion_index(data, overwrite=True)
     assert "motion_index" in out
+
+
+def test_overwrite_never_allows_motion_outputs_to_replace_source_columns():
+    data = motion_frame()
+    with pytest.raises(SchemaError, match="protected input"):
+        derive_accelerometer_motion_index(data, jerk_col="acc_x", overwrite=True)
+    with pytest.raises(SchemaError, match="protected input"):
+        derive_accelerometer_motion_index(data, motion_index_col="timestamp_ms", overwrite=True)
 
 
 def test_quality_weight_mapping_is_bounded_monotone_and_exact_at_thresholds():
@@ -169,6 +177,27 @@ def test_gate_spec_rejects_invalid_settings(kwargs, message):
         MotionQualityGateSpec(**kwargs)
 
 
+def test_gate_spec_canonicalizes_numeric_inputs_and_threshold_basis():
+    spec = MotionQualityGateSpec(
+        clean_threshold="1.0",
+        severe_threshold="4.0",
+        minimum_weight="0.2",
+        smoothing_window_ms="250",
+        threshold_basis="  pilot calibration  ",
+    )
+    assert spec.clean_threshold == pytest.approx(1.0)
+    assert spec.severe_threshold == pytest.approx(4.0)
+    assert spec.minimum_weight == pytest.approx(0.2)
+    assert spec.smoothing_window_ms == pytest.approx(250.0)
+    assert spec.threshold_basis == "pilot calibration"
+    assert quality_weight_from_motion(
+        [0.0, 2.5, 5.0],
+        clean_threshold=spec.clean_threshold,
+        severe_threshold=spec.severe_threshold,
+        minimum_weight=spec.minimum_weight,
+    ).tolist() == pytest.approx([1.0, 0.6, 0.2])
+
+
 def test_apply_gate_classifies_clean_downweighted_severe_and_unknown():
     data = pd.DataFrame({"motion_index": [0.5, 2.5, 5.0, np.nan], "pupil": [1, 2, 3, 4]})
     spec = MotionQualityGateSpec(clean_threshold=1.0, severe_threshold=4.0)
@@ -222,6 +251,67 @@ def test_gate_refuses_silent_output_overwrite():
         apply_motion_quality_gate(data, spec=spec, modality="eda")
 
 
+def test_gate_outputs_must_be_distinct_even_when_overwrite_is_requested():
+    data = pd.DataFrame({"motion_index": [0.0], "pupil": [3.0]})
+    spec = MotionQualityGateSpec(clean_threshold=1.0, severe_threshold=4.0)
+    with pytest.raises(ValueError, match="distinct"):
+        apply_motion_quality_gate(
+            data,
+            spec=spec,
+            modality="pupil",
+            signal_cols=("pupil",),
+            weight_col="quality",
+            state_col="quality",
+            overwrite=True,
+        )
+
+
+def test_overwrite_never_allows_quality_outputs_to_replace_signal_or_motion_inputs():
+    data = pd.DataFrame({"motion_index": [0.0], "pupil": [3.0]})
+    spec = MotionQualityGateSpec(clean_threshold=1.0, severe_threshold=4.0)
+    with pytest.raises(SchemaError, match="protected input"):
+        apply_motion_quality_gate(
+            data,
+            spec=spec,
+            modality="pupil",
+            signal_cols=("pupil",),
+            weight_col="pupil",
+            overwrite=True,
+        )
+    with pytest.raises(SchemaError, match="protected input"):
+        apply_motion_quality_gate(
+            data,
+            spec=spec,
+            modality="pupil",
+            state_col="motion_index",
+            overwrite=True,
+        )
+
+
+def test_combined_gate_protects_all_source_columns_and_cross_stage_output_names():
+    data = motion_frame()
+    spec = MotionQualityGateSpec(clean_threshold=2.0, severe_threshold=12.0)
+    with pytest.raises(SchemaError, match="protected input"):
+        apply_accelerometer_quality_gate(
+            data,
+            spec=spec,
+            modality="pupil",
+            signal_cols=("pupil",),
+            weight_col="acc_x",
+            overwrite=True,
+        )
+    with pytest.raises(ValueError, match="distinct"):
+        apply_accelerometer_quality_gate(
+            data,
+            spec=spec,
+            modality="pupil",
+            signal_cols=("pupil",),
+            jerk_col="derived",
+            weight_col="derived",
+            overwrite=True,
+        )
+
+
 def test_summary_reports_effective_weight_and_state_fractions():
     data = pd.DataFrame(
         {
@@ -241,6 +331,25 @@ def test_summary_reports_effective_weight_and_state_fractions():
     assert row["effective_weight_sum"] == pytest.approx(1.6)
     assert row["clean_fraction"] == pytest.approx(0.25)
     assert row["motion_unknown_fraction"] == pytest.approx(0.25)
+
+
+def test_summary_rejects_invalid_weights_and_unknown_states():
+    base = pd.DataFrame(
+        {
+            "participant_id": ["P1"],
+            "trial_id": ["T1"],
+            "quality_modality": ["pupil"],
+            "quality_weight": [1.2],
+            "quality_state": ["clean"],
+        }
+    )
+    with pytest.raises(ValueError, match=r"\[0, 1\]"):
+        summarize_motion_quality(base)
+    changed = base.copy()
+    changed["quality_weight"] = 0.5
+    changed["quality_state"] = "invented"
+    with pytest.raises(ValueError, match="Unknown motion-quality states"):
+        summarize_motion_quality(changed)
 
 
 def test_certificate_is_deterministic_replayable_and_privacy_preserving():
@@ -264,6 +373,25 @@ def test_certificate_is_deterministic_replayable_and_privacy_preserving():
     assert first["summary"]["n_rows"] == len(data)
     assert '"P1"' not in str(first)
     assert validate_motion_quality_certificate(first, data)
+
+
+def test_certificate_normalizes_modality_and_spec_metadata():
+    data = motion_frame()
+    spec = MotionQualityGateSpec(
+        clean_threshold="2",
+        severe_threshold="12",
+        threshold_basis="  pilot  ",
+    )
+    certificate = build_motion_quality_certificate(
+        data,
+        spec=spec,
+        modality="  pupil  ",
+        signal_cols=("pupil",),
+    )
+    assert certificate["spec"]["clean_threshold"] == pytest.approx(2.0)
+    assert certificate["spec"]["threshold_basis"] == "pilot"
+    assert certificate["gate_config"]["modality"] == "pupil"
+    assert validate_motion_quality_certificate(certificate, data)
 
 
 def test_resigned_claim_promotion_cannot_replay():
