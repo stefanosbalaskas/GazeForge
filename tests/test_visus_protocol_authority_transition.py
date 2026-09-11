@@ -7,10 +7,6 @@ import pytest
 from test_visus_preexecution_protocol import _FakeRuntime, _fixture, _freeze
 from test_visus_protocol_validation import _case as _unbound_case
 
-from _visus_authority_fixture import (
-    build_visus_authority_certificate,
-    write_visus_authority_certificate,
-)
 from gazeforge.benchmarks import benchmark_fingerprint
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.visus_authority_binding import (
@@ -32,6 +28,11 @@ from gazeforge.visus_protocol_batch import run_visus_grounded_sam2_protocol_batc
 from gazeforge.visus_protocol_validation import (
     run_visus_protocol_bound_validation_suite,
     validate_visus_protocol_bound_validation_run,
+)
+
+from _visus_authority_fixture import (
+    build_visus_authority_certificate,
+    write_visus_authority_certificate,
 )
 
 
