@@ -219,6 +219,43 @@ def test_fit_rejects_successful_outer_optimizer_at_correlation_bound(
         fit_correlated_location_scale(data, spec=spec)
 
 
+@pytest.mark.parametrize(
+    ("theta_index", "boundary"),
+    [
+        (-3, np.log(correlated_module._MIN_RANDOM_EFFECT_SD)),
+        (-3, np.log(correlated_module._MAX_LOCATION_RANDOM_EFFECT_SD)),
+        (-2, np.log(correlated_module._MIN_RANDOM_EFFECT_SD)),
+        (-2, np.log(correlated_module._MAX_LOG_SCALE_RANDOM_EFFECT_SD)),
+    ],
+)
+def test_fit_rejects_successful_outer_optimizer_at_variance_component_boundary(
+    monkeypatch,
+    theta_index,
+    boundary,
+):
+    data = _synthetic_correlated(groups=3, n_per_group=4)
+    spec = CorrelatedLocationScaleSpec(
+        "y", "participant_id", quadrature_points=3, max_iter=10
+    )
+
+    def fake_minimize(fun, x0, *, method, **kwargs):
+        assert method == "L-BFGS-B"
+        forced = np.asarray(x0, dtype=float).copy()
+        forced[theta_index] = boundary
+        return SimpleNamespace(
+            x=forced,
+            success=True,
+            status=0,
+            message="CONVERGENCE: forced variance boundary regression",
+            nit=1,
+            fun=0.0,
+        )
+
+    monkeypatch.setattr(correlated_module, "minimize", fake_minimize)
+    with pytest.raises(RuntimeError, match="variance component is boundary-censored"):
+        fit_correlated_location_scale(data, spec=spec)
+
+
 def test_certificate_binds_correlation_and_rejects_resigned_tamper(fitted_model):
     _, fitted = fitted_model
     certificate = build_correlated_location_scale_certificate(fitted)
@@ -254,6 +291,32 @@ def test_resigned_boundary_correlation_result_fails_closed(fitted_model):
         model_fingerprint_sha256=benchmark_fingerprint(forged_model),
     )
     with pytest.raises(SchemaError, match="artificial optimizer boundary"):
+        build_correlated_location_scale_certificate(forged)
+
+
+def test_resigned_variance_boundary_certificate_fails_closed(fitted_model):
+    _, fitted = fitted_model
+    certificate = build_correlated_location_scale_certificate(fitted)
+    forged = deepcopy(certificate)
+    forged["model"]["tau_log_scale"] = correlated_module._MAX_LOG_SCALE_RANDOM_EFFECT_SD
+    forged["model_fingerprint_sha256"] = benchmark_fingerprint(forged["model"])
+    body = {k: v for k, v in forged.items() if k != "certificate_fingerprint_sha256"}
+    forged["certificate_fingerprint_sha256"] = benchmark_fingerprint(body)
+    with pytest.raises(SchemaError, match="artificial numerical boundary"):
+        validate_correlated_location_scale_certificate(forged)
+
+
+def test_resigned_variance_boundary_result_fails_closed(fitted_model):
+    _, fitted = fitted_model
+    certificate = build_correlated_location_scale_certificate(fitted)
+    forged_model = deepcopy(certificate["model"])
+    forged_model["tau_location"] = correlated_module._MAX_LOCATION_RANDOM_EFFECT_SD
+    forged = replace(
+        fitted,
+        tau_location=correlated_module._MAX_LOCATION_RANDOM_EFFECT_SD,
+        model_fingerprint_sha256=benchmark_fingerprint(forged_model),
+    )
+    with pytest.raises(SchemaError, match="artificial numerical boundary"):
         build_correlated_location_scale_certificate(forged)
 
 

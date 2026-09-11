@@ -25,6 +25,10 @@ _MAX_ABS_CERTIFIABLE_RHO = float(
     np.tanh(_MAX_ABS_CORRELATION_ETA - _CORRELATION_ETA_BOUNDARY_ATOL)
 )
 _MIN_ONE_MINUS_RHO_SQUARED = 1e-6
+_MIN_RANDOM_EFFECT_SD = 1e-8
+_MAX_LOCATION_RANDOM_EFFECT_SD = 1e8
+_MAX_LOG_SCALE_RANDOM_EFFECT_SD = 20.0
+_RANDOM_EFFECT_LOG_BOUNDARY_ATOL = 1e-6
 _CLAIM_BOUNDARY = {
     "joint_location_scale_model": True,
     "participant_random_location_intercept": True,
@@ -284,6 +288,35 @@ def _unpack(
     return beta, gamma, tau_location, tau_scale, rho
 
 
+def _random_effect_sd_at_numerical_boundary(
+    value: float,
+    *,
+    upper: float,
+) -> bool:
+    if not np.isfinite(value) or value <= 0.0:
+        return False
+    log_value = float(np.log(value))
+    return (
+        log_value
+        <= np.log(_MIN_RANDOM_EFFECT_SD) + _RANDOM_EFFECT_LOG_BOUNDARY_ATOL
+        or log_value
+        >= np.log(upper) - _RANDOM_EFFECT_LOG_BOUNDARY_ATOL
+    )
+
+
+def _random_effect_sd_boundary_reached(
+    tau_location: float,
+    tau_scale: float,
+) -> bool:
+    return _random_effect_sd_at_numerical_boundary(
+        tau_location,
+        upper=_MAX_LOCATION_RANDOM_EFFECT_SD,
+    ) or _random_effect_sd_at_numerical_boundary(
+        tau_scale,
+        upper=_MAX_LOG_SCALE_RANDOM_EFFECT_SD,
+    )
+
+
 def _random_effect_precision(
     tau_location: float, tau_scale: float, rho: float
 ) -> tuple[np.ndarray, float]:
@@ -470,10 +503,10 @@ def _objective_factory(
             not np.isfinite(tau_location)
             or not np.isfinite(tau_scale)
             or not np.isfinite(rho)
-            or tau_location < 1e-8
-            or tau_scale < 1e-8
-            or tau_location > 1e8
-            or tau_scale > 20.0
+            or tau_location < _MIN_RANDOM_EFFECT_SD
+            or tau_scale < _MIN_RANDOM_EFFECT_SD
+            or tau_location > _MAX_LOCATION_RANDOM_EFFECT_SD
+            or tau_scale > _MAX_LOG_SCALE_RANDOM_EFFECT_SD
             or 1.0 - rho**2 < _MIN_ONE_MINUS_RHO_SQUARED
         ):
             return 1e100
@@ -634,6 +667,12 @@ def fit_correlated_location_scale(
     )
     if not np.isfinite(numeric).all():
         raise RuntimeError("Correlated location-scale fit produced non-finite parameters.")
+    if _random_effect_sd_boundary_reached(tau_location, tau_scale):
+        raise RuntimeError(
+            "Correlated location-scale random-effect standard deviation reached an "
+            "artificial numerical boundary; the variance component is "
+            "boundary-censored and is not certifiable."
+        )
     group_effects = _posterior_group_effects(
         prepared,
         spec,
@@ -800,6 +839,19 @@ def _validate_result_identity(result: CorrelatedLocationScaleResult) -> dict[str
         )
     if not _is_sha256_hex(result.input_fingerprint_sha256):
         raise SchemaError("Correlated location-scale input fingerprint is invalid.")
+    random_effect_sds = np.asarray(
+        [result.tau_location, result.tau_scale], dtype=float
+    )
+    if not np.isfinite(random_effect_sds).all() or np.any(random_effect_sds <= 0.0):
+        raise SchemaError(
+            "Correlated location-scale random-effect standard deviations must be "
+            "finite and positive."
+        )
+    if _random_effect_sd_boundary_reached(result.tau_location, result.tau_scale):
+        raise SchemaError(
+            "Correlated location-scale random-effect standard deviation is at an "
+            "artificial numerical boundary and is not certifiable."
+        )
     rho = float(result.rho_location_scale)
     if not -1.0 < rho < 1.0:
         raise SchemaError("Random-effect correlation must lie strictly between -1 and 1.")
@@ -900,8 +952,15 @@ def validate_correlated_location_scale_certificate(certificate: dict[str, Any]) 
     ]
     if not np.isfinite(np.asarray(numeric, dtype=float)).all():
         raise SchemaError("Correlated location-scale certificate contains non-finite estimates.")
-    if float(model["tau_location"]) <= 0 or float(model["tau_log_scale"]) <= 0:
+    tau_location = float(model["tau_location"])
+    tau_scale = float(model["tau_log_scale"])
+    if tau_location <= 0.0 or tau_scale <= 0.0:
         raise SchemaError("Random-effect standard deviations must be positive.")
+    if _random_effect_sd_boundary_reached(tau_location, tau_scale):
+        raise SchemaError(
+            "Certified random-effect standard deviation is at an artificial "
+            "numerical boundary."
+        )
     rho = float(model["rho_location_log_scale"])
     if not -1.0 < rho < 1.0:
         raise SchemaError("Random-effect correlation must lie strictly between -1 and 1.")
