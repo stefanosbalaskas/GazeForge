@@ -13,7 +13,7 @@ import pandas as pd
 from .benchmarks import benchmark_fingerprint
 from .exceptions import BenchmarkIntegrityError
 from .lund_suite import validate_lund2013_suite_manifest
-from .visus_evidence import validate_visus_frozen_evidence_bundle
+from .visus_scientific_review import validate_visus_scientific_review_approval
 from .visus_suite import validate_visus_dynamic_aoi_suite_manifest
 
 _REPORT_BODY_KEYS = ("benchmark", "model", "protocol", "metrics")
@@ -256,18 +256,33 @@ def _validated_suite_records(
 
 
 def _validate_visus_suite_for_dashboard(path: str | Path) -> dict[str, Any]:
-    """Require raw-execution provenance before surfacing a VISUS suite publicly."""
-    bundle = validate_visus_frozen_evidence_bundle(path)
+    """Require explicit scientific review before surfacing a VISUS suite publicly."""
+    suite_path = Path(path)
+    approval = validate_visus_scientific_review_approval(suite_path.parent)
     summary = validate_visus_dynamic_aoi_suite_manifest(path, verify_reports=True)
-    if str(bundle["suite_fingerprint_sha256"]) != str(
+    lineage = approval.get("lineage")
+    if not isinstance(lineage, dict):
+        raise BenchmarkIntegrityError("VISUS scientific-review approval lineage is invalid.")
+    if str(lineage["suite_fingerprint_sha256"]) != str(
         summary["suite_fingerprint_sha256"]
     ):
         raise BenchmarkIntegrityError(
-            "VISUS Frozen Evidence bundle and dashboard suite fingerprints disagree."
+            "VISUS scientific-review approval and dashboard suite fingerprints disagree."
         )
-    if int(bundle["report_count"]) != int(summary["report_count"]):
+    if int(lineage["report_count"]) != int(summary["report_count"]):
         raise BenchmarkIntegrityError(
-            "VISUS Frozen Evidence bundle and dashboard suite report counts disagree."
+            "VISUS scientific-review approval and dashboard suite report counts disagree."
+        )
+    boundary = approval.get("scientific_boundary")
+    if not isinstance(boundary, dict):
+        raise BenchmarkIntegrityError("VISUS scientific-review approval boundary is invalid.")
+    if boundary.get("scientific_review_completed") is not True:
+        raise BenchmarkIntegrityError(
+            "VISUS dashboard publication requires completed scientific review."
+        )
+    if boundary.get("approved_for_public_frozen_evidence") is not True:
+        raise BenchmarkIntegrityError(
+            "VISUS dashboard publication requires explicit Frozen Evidence approval."
         )
     return summary
 
@@ -282,8 +297,8 @@ def build_benchmark_dashboard(
     Duplicate report and suite fingerprints are rejected so copied artifacts cannot inflate the
     apparent number of independent validation results or completed tranches on a public dashboard.
     Provenance-only JSON children are never promoted to performance-report rows. VISUS suites are
-    surfaced only after the Frozen Evidence bundle gate verifies both the suite and its
-    raw-execution provenance manifest.
+    surfaced only after the v3 lineage gate and a separate explicit scientific-review approval both
+    verify against the same exact suite.
     """
     paths = discover_frozen_benchmark_reports(root, recursive=recursive)
     reports: list[dict[str, Any]] = []
@@ -408,7 +423,8 @@ def render_benchmark_dashboard_markdown(dashboard: BenchmarkDashboard) -> str:
                 (
                     "A suite appears here only when its completion manifest and every "
                     "referenced child report verify successfully. VISUS suites additionally "
-                    "require a verified raw-execution provenance bundle.\n\n"
+                    "require complete v3 protocol/authority lineage and an explicit, separately "
+                    "fingerprinted scientific-review approval for public Frozen Evidence.\n\n"
                 ),
                 _markdown_table(public_suites),
                 "\n\n",
