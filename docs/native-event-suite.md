@@ -105,6 +105,39 @@ gazeforge native-event-suite-validate \
 
 Manifest-only validation does not establish that child files are present or untampered. Use full validation before publication, review, or evidence deployment.
 
+## Scientific review and public Frozen Evidence
+
+A complete native suite is **not** automatically approved for the public Frozen Evidence dashboard. Publication requires a separate manual scientific-review decision bound to the exact verified suite.
+
+After an actual scientific review has occurred, record that decision explicitly:
+
+```bash
+gazeforge native-event-review-approve \
+  validation/native-gp3-v1 \
+  --reviewer "Reviewer name or stable identifier" \
+  --reviewed-at "2026-09-11T18:30:00Z" \
+  --rationale "Publication decision and scientific-review rationale."
+```
+
+This writes `native-scientific-review.json`. The approval binds the exact suite fingerprint, report count, source-data filename and SHA-256, and specification filename and fingerprint. It also records the reviewer, explicit UTC review time, fixed review scope, rationale, and a deterministic review fingerprint.
+
+Validate the complete publication gate with:
+
+```bash
+gazeforge native-event-publication-validate validation/native-gp3-v1
+```
+
+The public dashboard then applies two linked native publication checks:
+
+1. the `native-event-validation-v1` completion manifest and all three referenced child reports must verify;
+2. the separate scientific-review approval must bind that exact suite, and each benchmark-shaped native result row must match exactly one approved suite child by allowed child role, report fingerprint, and manifest-relative path.
+
+Consequently, a detached or copied native model/agreement JSON file cannot become public Frozen Evidence merely because its standalone benchmark fingerprint is valid. A changed suite also invalidates an older review approval because the approval is bound to the previous suite/source/spec identity.
+
+The review artifact is a **publication-governance record**, not an automatic scientific conclusion. Creating or validating it does not establish cross-device generalizability, universal GP3 validity, human-reference ground truth, broader source rights, or permission to redistribute raw source data. Those boundaries remain explicitly false in the approval schema.
+
+No real native corpus or scientific-review approval is supplied by this infrastructure. The review command must be used only after the actual empirical suite exists and a separate scientific review has genuinely occurred.
+
 ## Primary annotator versus sensitivity annotator
 
 The role names are methodological bookkeeping. The primary annotator should be selected in the empirical protocol before final evaluation; the second annotator provides reference-sensitivity analysis. Human-human agreement is reported separately so disagreement between model and one annotator can be interpreted against observed human annotation variability.
@@ -113,7 +146,7 @@ The suite does not treat either annotator as infallible. Human-human event preci
 
 ## Evidence boundary
 
-A suite can be called **complete** only when its completion manifest validates. A complete suite can be called **native empirical evidence** only when the underlying specification describes a real audited native dataset and passes all intake guardrails.
+A suite can be called **complete** only when its completion manifest validates. A complete suite can be called **native empirical evidence** only when the underlying specification describes a real audited native dataset and passes all intake guardrails. Public Frozen Evidence additionally requires the separate exact-suite scientific-review approval described above.
 
 Accordingly, the repository's bundled native 60 Hz protocol template remains non-executable while `dataset_status` is `template`. Synthetic unit-test suites exercise software behavior only and must not be cited as tracker validation.
 

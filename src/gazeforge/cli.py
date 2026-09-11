@@ -15,6 +15,10 @@ from .lund_sensitivity import run_lund2013_sampling_sensitivity
 from .lund_suite import run_lund2013_benchmark_suite, validate_lund2013_suite_manifest
 from .native_agreement import run_native_event_file_annotator_agreement
 from .native_event import run_native_event_file_benchmark
+from .native_scientific_review import (
+    validate_native_scientific_review_approval,
+    write_native_scientific_review_approval,
+)
 from .native_suite import (
     run_native_event_validation_suite,
     validate_native_event_suite_manifest,
@@ -300,6 +304,36 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Validate the completion manifest without reading child reports.",
     )
+
+    native_review = subparsers.add_parser(
+        "native-event-review-approve",
+        help=(
+            "Record a separate manual scientific-review approval bound to an exact "
+            "complete native event suite."
+        ),
+    )
+    native_review.add_argument(
+        "path",
+        type=Path,
+        help="Native suite output directory.",
+    )
+    native_review.add_argument("--reviewer", required=True)
+    native_review.add_argument("--reviewed-at", required=True)
+    native_review.add_argument("--rationale", required=True)
+    native_review.add_argument("--overwrite", action="store_true")
+
+    native_publication = subparsers.add_parser(
+        "native-event-publication-validate",
+        help=(
+            "Require the exact complete native suite plus its separate scientific-review "
+            "approval for public Frozen Evidence."
+        ),
+    )
+    native_publication.add_argument(
+        "path",
+        type=Path,
+        help="Native suite output directory or native-scientific-review.json path.",
+    )
     return parser
 
 
@@ -506,6 +540,38 @@ def main(argv: Sequence[str] | None = None) -> int:
             verify_reports=not args.manifest_only,
         )
         print(json.dumps(summary, indent=2, sort_keys=True, allow_nan=False))
+        return 0
+
+    if args.command == "native-event-review-approve":
+        review_path = write_native_scientific_review_approval(
+            args.path,
+            reviewer=args.reviewer,
+            reviewed_at=args.reviewed_at,
+            review_rationale=args.rationale,
+            overwrite=args.overwrite,
+        )
+        approval = validate_native_scientific_review_approval(review_path)
+        print(
+            json.dumps(
+                {
+                    "status": approval["status"],
+                    "decision": approval["decision"],
+                    "review": str(review_path),
+                    "review_fingerprint_sha256": approval[
+                        "review_fingerprint_sha256"
+                    ],
+                    "suite_fingerprint_sha256": approval["lineage"][
+                        "suite_fingerprint_sha256"
+                    ],
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+
+    if args.command == "native-event-publication-validate":
+        approval = validate_native_scientific_review_approval(args.path)
+        print(json.dumps(approval, indent=2, sort_keys=True, allow_nan=False))
         return 0
 
     print(json.dumps({"package": "gazeforge", "status": "ready"}))
