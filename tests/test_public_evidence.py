@@ -2,7 +2,11 @@ import json
 
 import pytest
 
-from gazeforge.benchmarks import BenchmarkDatasetCard, build_benchmark_report
+from gazeforge.benchmarks import (
+    BenchmarkDatasetCard,
+    benchmark_fingerprint,
+    build_benchmark_report,
+)
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.public_evidence import (
     build_public_benchmark_dashboard,
@@ -125,8 +129,6 @@ def test_public_dashboard_rejects_partial_gaze_in_wild_family_signal(tmp_path):
     report["benchmark"]["validation_scope"] = (
         "lineage-bound-audited-source-participant-held-out-model-validation"
     )
-    from gazeforge.benchmarks import benchmark_fingerprint
-
     body = {key: report[key] for key in ("benchmark", "model", "protocol", "metrics")}
     report["report_fingerprint_sha256"] = benchmark_fingerprint(body)
     _write(tmp_path / "partial-signal.json", report)
