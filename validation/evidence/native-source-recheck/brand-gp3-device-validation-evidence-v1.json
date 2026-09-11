@@ -1,0 +1,69 @@
+{
+  "claim_limit": "This record preserves a published Gazepoint GP3 data-quality validation study as a native-device evidence lead. The study reports GP3 sampling behavior and evaluates target-fixation detection in a visual-search task, but fixation events were generated algorithmically with the R saccades package and the behavioral reference for target observation was a mouse click. It therefore does not provide independent manual/expert sample-wise fixation/saccade labels and is not eligible as GazeForge native event-classifier ground truth or Frozen Evidence.",
+  "dataset": "Brand et al. Gazepoint GP3 independent-use validation study",
+  "evidence_fingerprint_sha256": "e86371996d396b4a227ee613480b1167b2d19820c3ff03041e811e6fea4a068f",
+  "fingerprint_method": "SHA-256 of canonical UTF-8 JSON for this object with evidence_fingerprint_sha256 omitted, sort_keys=true and separators=(',', ':').",
+  "next_authoritative_gate": [
+    "Obtain any study dataset or supplementary files from the corresponding author or another authorized source and fingerprint the received bytes.",
+    "If raw timestamps are obtained, verify the collection-specific cadence directly from recorded samples rather than treating the nominal GP3 rate as exact.",
+    "Do not reuse mouse-click target observation as a sample-wise fixation/saccade event reference.",
+    "Continue the search for a real GP3 corpus with independent human/expert event annotations, including fixation and saccade labels plus annotation/adjudication provenance.",
+    "Only such independently annotated event data may advance the empirical native event-classifier benchmark."
+  ],
+  "record_type": "native-gp3-device-validation-evidence-v1",
+  "review_status": "published_device_validation_not_event_ground_truth",
+  "reviewed_on": "2026-09-11",
+  "scientific_boundary": {
+    "published_gp3_device_validation_recovered": true,
+    "collection_specific_sampling_characterized_in_publication": true,
+    "independent_manual_event_labels_verified": false,
+    "samplewise_fixation_saccade_ground_truth_verified": false,
+    "mouse_click_behavioral_reference_is_event_ground_truth": false,
+    "empirical_native_event_benchmark_eligible": false,
+    "native_suite_eligible": false,
+    "approved_for_public_frozen_evidence": false,
+    "gp3_event_classifier_validity_created": false,
+    "performance_claim_for_gazeforge_created": false,
+    "scientific_review_completed_for_gazeforge": false
+  },
+  "source": {
+    "authors": [
+      "John Brand",
+      "Solomon G. Diamond",
+      "Natalie Thomas",
+      "Diane Gilbert-Diamond"
+    ],
+    "doi": "10.3758/s13428-020-01504-2",
+    "journal": "Behavior Research Methods",
+    "publication": {
+      "accepted": "2020-10-17",
+      "published_online": "2020-11-27",
+      "volume": 53,
+      "pages": "1502-1514"
+    },
+    "title": "Evaluating the data quality of the Gazepoint GP3 low-cost eye tracker when used independently by study participants",
+    "article_pdf_url": "https://link.springer.com/content/pdf/10.3758/s13428-020-01504-2.pdf",
+    "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/33245514/",
+    "study_observations": {
+      "device": "Gazepoint GP3",
+      "participants": 20,
+      "expert_users": 2,
+      "tasks": [
+        "calibration",
+        "visual search"
+      ],
+      "participant_mean_inter_sample_ms": 16.99,
+      "participant_inter_sample_sd_ms": 3.0,
+      "expert_mean_inter_sample_ms": 16.43,
+      "expert_inter_sample_sd_ms": 2.3,
+      "published_visual_search_reference": "mouse click indicating target observation",
+      "fixation_detection": "R saccades package velocity-based algorithm attributed to Engbert and Kliegl (2003)",
+      "minimum_fixation_durations_ms": [
+        100,
+        150,
+        275
+      ],
+      "data_availability": "Datasets generated and/or analyzed are available from the corresponding author on reasonable request."
+    }
+  }
+}
