@@ -62,6 +62,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Full-covariance location random-slope scale model
+
+::: gazeforge.full_covariance_location_random_slope_scale
+    options:
+      show_root_heading: true
+      show_source: false
+
 ### Location-scale residual calibration
 
 ::: gazeforge.location_scale_residual_calibration
