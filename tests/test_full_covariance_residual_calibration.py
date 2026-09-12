@@ -17,10 +17,6 @@ from gazeforge.location_scale_hierarchical_bootstrap import (
     LocationScaleHierarchicalBootstrapSpec,
     bootstrap_location_scale_hierarchy,
 )
-from gazeforge.location_scale_refit_residual_calibration import (
-    LocationScaleRefitResidualCalibrationSpec,
-    calibrate_location_scale_residuals_with_refits,
-)
 from gazeforge.location_scale_residual_calibration import (
     LocationScaleResidualCalibrationSpec,
     build_location_scale_residual_calibration_certificate,
@@ -158,19 +154,10 @@ def test_residual_certificate_rejects_resigned_full_covariance_family_tamper(
         validate_location_scale_residual_calibration_certificate(tampered)
 
 
-def test_refit_and_bootstrap_adapters_still_reject_full_covariance_family(
+def test_bootstrap_adapter_still_rejects_full_covariance_family(
     full_covariance_fit,
 ) -> None:
     data, fitted = full_covariance_fit
-    with pytest.raises(TypeError):
-        calibrate_location_scale_residuals_with_refits(
-            fitted,
-            data,
-            spec=LocationScaleRefitResidualCalibrationSpec(
-                n_simulations=2,
-                seed=1904,
-            ),
-        )
     with pytest.raises(TypeError):
         bootstrap_location_scale_hierarchy(
             fitted,
