@@ -55,6 +55,7 @@ nav:
       - Location random-slope scale model: location-random-slope-scale.md
       - Correlated location random-slope scale model: correlated-location-random-slope-scale.md
       - Location-scale residual calibration: location-scale-residual-calibration.md
+      - Conditional refit residual calibration: location-scale-refit-residual-calibration.md
       - Temporal models: temporal-models.md
       - Model comparison: model-comparison.md
       - Matched-fold differences: paired-model-differences.md
