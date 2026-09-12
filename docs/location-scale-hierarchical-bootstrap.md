@@ -1,6 +1,6 @@
 # Hierarchical parametric bootstrap
 
-GazeForge provides a **design-conditional hierarchical parametric bootstrap** for the four Gaussian location-scale model families currently supported by this bootstrap adapter. It is the population-random-effect extension of the conditional refit calibration, but it has a different inferential target.
+GazeForge provides a **design-conditional hierarchical parametric bootstrap** for the five Gaussian location-scale model families supported by this bootstrap adapter. It is the population-random-effect extension of the conditional refit calibration, but it has a different inferential target.
 
 The method asks: **under this fitted hierarchical model, with the observed participant/predictor design held fixed, what parameter estimates would the same fitting procedure produce across repeated model-generated datasets?**
 
@@ -42,7 +42,15 @@ log(sigma_i*) = Z_i gamma + c_g
 
 where `w_i` is the prespecified random-slope predictor. In the independent family, `(b0_g, b1_g, c_g)` are independent population Gaussian effects. In the correlated-slope family, `(b0_g, b1_g)` use the fitted intercept/slope correlation and `c_g` remains independent.
 
-The separate full-3×3-covariance random-slope family is not supported by this bootstrap adapter in this tranche. Base-model certification does not imply bootstrap parity.
+For the full-covariance family,
+
+```text
+(b0_g, b1_g, c_g) ~ Normal_3(0, Sigma)
+```
+
+where `Sigma` is the fitted positive-definite 3×3 population covariance across the location intercept, location slope, and log-scale intercept. Each bootstrap replicate draws fresh participant effects by applying a Cholesky factor of that exact fitted covariance to fresh independent standard-normal draws. The bootstrap therefore propagates all three fitted marginal pairwise correlations jointly while preserving positive-definite covariance geometry.
+
+The full-covariance model uses a vine partial-correlation coordinate internally to guarantee positive definiteness. That coordinate is an implementation parameterization, not a fourth population covariance estimand. The bootstrap parameter inventory therefore reports the three marginal correlations—location-intercept/location-slope, location-intercept/log-scale, and location-slope/log-scale—rather than promoting the internal partial correlation to a separate scientific target.
 
 The generating fixed effects, variance components, and supported correlations are the fitted base-model estimates. The bootstrap therefore conditions on those fitted generating values.
 
@@ -58,6 +66,7 @@ The canonical parameter inventory includes:
 | Correlated location-scale | the above plus the location/log-scale random-effect correlation |
 | Independent location random slope | all location fixed effects; all log-scale fixed effects; location-intercept SD; location-slope SD; log-scale-intercept SD |
 | Correlated location random slope | the above plus the location-intercept/location-slope correlation |
+| Full-covariance location random slope | all location fixed effects; all log-scale fixed effects; location-intercept SD; location-slope SD; log-scale-intercept SD; location-intercept/location-slope correlation; location-intercept/log-scale correlation; location-slope/log-scale correlation |
 
 Scale-equation fixed effects remain on the fitted **log-sigma scale**. The bootstrap does not silently convert them to sigma ratios.
 
@@ -83,6 +92,8 @@ The same model is then re-estimated in every replicate, so optimizer/refit varia
 
 For model-based parameter uncertainty, this targets a broader repeated-sample variation than conditional refit residual calibration because the participant effects are newly sampled from the fitted population distribution rather than held at their empirical-Bayes values.
 
+For the full-covariance family, the fresh participant effects are sampled jointly from the fitted 3×3 covariance, not from three independent marginal distributions and not from empirical-Bayes effects. The same full-covariance specification is then re-estimated on every generated dataset.
+
 ## What remains conditional
 
 The method is **design-conditional**. It does not resample or regenerate:
@@ -96,7 +107,7 @@ The method is **design-conditional**. It does not resample or regenerate:
 
 It is not a nonparametric participant/cluster bootstrap and it does not integrate a Bayesian posterior for random effects or fixed parameters.
 
-For the correlated location random-slope family, the intercept/slope covariance is interpreted in the exact fitted predictor-origin parameterization. The bootstrap preserves that observed predictor design and does not promote the resulting interval to a zero-point-invariant covariance claim.
+For random-slope families with estimated covariance, covariance parameters are interpreted in the exact fitted predictor-origin parameterization. The bootstrap preserves the observed predictor design. In the full-covariance family, shifting the random-slope predictor origin changes the location-intercept definition and transforms the associated covariance matrix. Bootstrap intervals for its SD/correlation representation therefore belong to the fitted origin and must not be promoted to zero-point-invariant covariance claims.
 
 ## Reproducibility and lineage
 
@@ -153,5 +164,7 @@ Use **fixed-fit residual calibration** for conditional residual geometry against
 Use **conditional refit residual calibration** when the residual reference should include refitting variability but retain the observed empirical-Bayes participant effects in the generating surface.
 
 Use **hierarchical parametric bootstrap** when the target is the model-based sampling distribution of fitted parameters and participant effects should be freshly drawn from the fitted population hierarchy.
+
+All three procedures support the full-covariance family under their own separately validated simulation semantics and certificate boundaries. Support in one procedure never implies that the others share its inferential target.
 
 These methods answer different questions and use separate certificate schemas.
