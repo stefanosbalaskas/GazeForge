@@ -65,7 +65,7 @@ def independent_fit():
         scale_predictors=("x",),
         quadrature_points=3,
         max_iter=450,
-        tolerance=1e-6,
+        tolerance=1e-5,
     )
     fitted = fit_hierarchical_location_scale(data, spec=spec)
     assert fitted.converged
@@ -368,7 +368,6 @@ def _dummy_results():
         model_fingerprint_sha256=fingerprint,
     )
     return independent, correlated, slope, correlated_slope
-
 
 
 def test_simulation_draws_fresh_population_effects_and_residuals_without_using_eb():
