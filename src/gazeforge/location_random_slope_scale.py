@@ -13,6 +13,12 @@ from numpy.polynomial.hermite import hermgauss
 from scipy.optimize import minimize
 from scipy.special import logsumexp
 
+from ._certificate_schema import (
+    CERTIFICATE_FIELDS,
+    require_canonical_optimizer,
+    require_exact_mapping_keys,
+    require_finite_json_numbers,
+)
 from .benchmarks import benchmark_fingerprint
 from .exceptions import SchemaError
 from .provenance import fingerprint_frame
@@ -994,8 +1000,11 @@ def validate_location_random_slope_scale_certificate(
     certificate: dict[str, Any],
 ) -> None:
     """Fail closed on certificate tampering or scientific-claim promotion."""
-    if not isinstance(certificate, dict):
-        raise SchemaError("Location random-slope scale certificate must be a mapping.")
+    require_exact_mapping_keys(
+        certificate,
+        CERTIFICATE_FIELDS,
+        context="Location random-slope scale certificate",
+    )
     if certificate.get("schema") != _CERTIFICATE_SCHEMA:
         raise SchemaError("Unsupported location random-slope scale certificate schema.")
     fingerprint = certificate.get("certificate_fingerprint_sha256")
@@ -1008,15 +1017,11 @@ def validate_location_random_slope_scale_certificate(
         raise SchemaError("Location random-slope scale certificate fingerprint mismatch.")
     if certificate.get("claim_boundary") != _CLAIM_BOUNDARY:
         raise SchemaError("Location random-slope scale scientific claim boundary was altered.")
-    optimizer = certificate.get("optimizer")
-    if not isinstance(optimizer, dict) or optimizer.get("converged") is not True:
-        raise SchemaError("Only converged location random-slope scale fits are certifiable.")
-    iterations = optimizer.get("iterations")
-    if not isinstance(iterations, int) or isinstance(iterations, bool) or iterations < 0:
-        raise SchemaError("Location random-slope scale optimizer metadata are invalid.")
+    require_canonical_optimizer(
+        certificate.get("optimizer"),
+        context="location random-slope scale",
+    )
     model = certificate.get("model")
-    if not isinstance(model, dict):
-        raise SchemaError("Location random-slope scale model payload must be a mapping.")
     required_model_fields = (
         "spec",
         "location_fixed_effects",
@@ -1031,11 +1036,11 @@ def validate_location_random_slope_scale_certificate(
         "group_effects_fingerprint_sha256",
         "input_fingerprint_sha256",
     )
-    for key in required_model_fields:
-        if key not in model:
-            raise SchemaError(
-                f"Location random-slope scale certificate is missing model.{key}."
-            )
+    require_exact_mapping_keys(
+        model,
+        required_model_fields,
+        context="Location random-slope scale model payload",
+    )
     model_fingerprint = certificate.get("model_fingerprint_sha256")
     if (
         not _is_sha256_hex(model_fingerprint)
@@ -1074,14 +1079,10 @@ def validate_location_random_slope_scale_certificate(
         *location_effects.values(),
         *scale_effects.values(),
     ]
-    try:
-        numeric_array = np.asarray(numeric, dtype=float)
-    except (TypeError, ValueError) as exc:
-        raise SchemaError(
-            "Location random-slope scale certificate contains non-numeric estimates."
-        ) from exc
-    if not np.isfinite(numeric_array).all():
-        raise SchemaError("Location random-slope scale certificate contains non-finite estimates.")
+    require_finite_json_numbers(
+        numeric,
+        context="Location random-slope scale certificate estimates",
+    )
     tau_intercept = float(model["tau_location_intercept"])
     tau_slope = float(model["tau_location_slope"])
     tau_scale = float(model["tau_log_scale"])
