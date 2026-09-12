@@ -60,7 +60,7 @@ In particular, this implementation is conditional on the fitted row-level partic
 - establish causal effects; or
 - establish device, sensor, or measurement validity.
 
-These boundaries are encoded directly in the refit-calibration certificate and validation fails closed if they are promoted. Full-covariance support here does not imply full-covariance parity for `bootstrap_location_scale_hierarchy`, which remains a separately qualified population-random-effect resampling procedure.
+These boundaries are encoded directly in the refit-calibration certificate and validation fails closed if they are promoted. The separate `bootstrap_location_scale_hierarchy` procedure now also supports the full-covariance family, but under a distinct hierarchical-bootstrap certificate and generating process that draws fresh participant effects from the fitted population covariance. Support in the hierarchical bootstrap does not change this diagnostic's conditional empirical-Bayes generating surface.
 
 ## Refit lineage and reproducibility
 
@@ -82,10 +82,12 @@ The schema permits as few as two simulations so that deterministic software test
 
 Similarly, existing quadrature-point, optimizer-iteration, variance-component, and correlation bounds remain numerical safeguards inherited from the fitted model families; they are not scientific cutoffs.
 
-## Relationship to fixed-fit calibration
+## Relationship to fixed-fit calibration and hierarchical bootstrap
 
 Use fixed-fit residual calibration when the target is the conditional residual geometry relative to an `N(0, 1)` reference while holding the fitted model fixed.
 
 Use conditional refit residual calibration when the target is the same residual metric inventory but the reference should also reflect repeated re-estimation of the same model on synthetic outcomes generated from the fitted conditional surface.
 
-Neither diagnostic establishes model truth. They answer related but different conditional diagnostic questions and therefore use separate certificate schemas.
+Use hierarchical parametric bootstrap when the target is a model-based parameter sampling distribution and fresh participant effects should be drawn from the fitted population hierarchy.
+
+These procedures answer different questions and use separate certificate schemas. None establishes model truth.
