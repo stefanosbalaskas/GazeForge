@@ -1,6 +1,6 @@
 # Hierarchical parametric bootstrap
 
-GazeForge provides a **design-conditional hierarchical parametric bootstrap** for the four certified Gaussian location-scale model families. It is the population-random-effect extension of the conditional refit calibration, but it has a different inferential target.
+GazeForge provides a **design-conditional hierarchical parametric bootstrap** for the four Gaussian location-scale model families currently supported by this bootstrap adapter. It is the population-random-effect extension of the conditional refit calibration, but it has a different inferential target.
 
 The method asks: **under this fitted hierarchical model, with the observed participant/predictor design held fixed, what parameter estimates would the same fitting procedure produce across repeated model-generated datasets?**
 
@@ -41,6 +41,8 @@ log(sigma_i*) = Z_i gamma + c_g
 ```
 
 where `w_i` is the prespecified random-slope predictor. In the independent family, `(b0_g, b1_g, c_g)` are independent population Gaussian effects. In the correlated-slope family, `(b0_g, b1_g)` use the fitted intercept/slope correlation and `c_g` remains independent.
+
+The separate full-3×3-covariance random-slope family is not supported by this bootstrap adapter in this tranche. Base-model certification does not imply bootstrap parity.
 
 The generating fixed effects, variance components, and supported correlations are the fitted base-model estimates. The bootstrap therefore conditions on those fitted generating values.
 

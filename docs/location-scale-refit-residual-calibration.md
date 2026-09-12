@@ -1,6 +1,6 @@
 # Conditional refit residual calibration
 
-GazeForge provides a separate **conditional parametric refit residual calibration** for the four currently certified Gaussian location-scale model families. It complements, rather than replaces, the cheaper fixed-fit residual calibration.
+GazeForge provides a separate **conditional parametric refit residual calibration** for the four Gaussian location-scale model families currently supported by this refit adapter. It complements, rather than replaces, the cheaper fixed-fit residual calibration.
 
 The diagnostic asks a narrow question: **how unusual are selected properties of the fitted conditional standardized residuals when compared with synthetic outcomes generated from this fitted conditional mean/scale surface and then analysed by refitting the same model specification?**
 
@@ -27,6 +27,8 @@ Every synthetic outcome table is fitted from scratch using the **same model spec
 - correlated participant location/log-scale random intercepts;
 - one participant location random slope with independent location-intercept, location-slope, and log-scale random effects; and
 - one participant location random slope with an estimated location-intercept/location-slope population correlation and an independent log-scale random intercept.
+
+The separate full-3×3-covariance random-slope family is not supported by this refit adapter in this tranche. Base-model certification does not imply refit-calibration parity.
 
 Each replicate must converge and produce a valid existing GazeForge model certificate. A failed, boundary-censored, non-converged, or otherwise non-certifiable replicate aborts the calibration. Failed replicates are never silently discarded or replaced.
 
