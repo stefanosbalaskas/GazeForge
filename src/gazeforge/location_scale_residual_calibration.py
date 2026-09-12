@@ -13,6 +13,12 @@ from scipy.stats import norm
 
 from ._certificate_schema import require_exact_mapping_keys
 from .benchmarks import benchmark_fingerprint
+from .correlated_location_random_slope_scale import (
+    CorrelatedLocationRandomSlopeScaleResult,
+    build_correlated_location_random_slope_scale_certificate,
+    correlated_location_random_slope_scale_diagnostics,
+    validate_correlated_location_random_slope_scale_certificate,
+)
 from .correlated_location_scale import (
     CorrelatedLocationScaleResult,
     build_correlated_location_scale_certificate,
@@ -41,12 +47,14 @@ _SUPPORTED_MODEL_FAMILIES = frozenset(
         "independent_location_scale",
         "correlated_location_scale",
         "location_random_slope_scale",
+        "correlated_location_random_slope_scale",
     }
 )
 LocationScaleModelResult = (
     HierarchicalLocationScaleResult
     | CorrelatedLocationScaleResult
     | LocationRandomSlopeScaleResult
+    | CorrelatedLocationRandomSlopeScaleResult
 )
 _CERTIFICATE_FIELDS = frozenset(
     {
@@ -198,9 +206,16 @@ def _model_adapter(
             result.spec,
             location_random_slope_scale_diagnostics,
         )
+    if isinstance(result, CorrelatedLocationRandomSlopeScaleResult):
+        return (
+            "correlated_location_random_slope_scale",
+            result.spec,
+            correlated_location_random_slope_scale_diagnostics,
+        )
     raise TypeError(
         "result must be a HierarchicalLocationScaleResult, "
-        "CorrelatedLocationScaleResult, or LocationRandomSlopeScaleResult."
+        "CorrelatedLocationScaleResult, LocationRandomSlopeScaleResult, or "
+        "CorrelatedLocationRandomSlopeScaleResult."
     )
 
 
@@ -216,10 +231,14 @@ def _require_certifiable_base_model(
     elif isinstance(result, LocationRandomSlopeScaleResult):
         certificate = build_location_random_slope_scale_certificate(result)
         validate_location_random_slope_scale_certificate(certificate)
+    elif isinstance(result, CorrelatedLocationRandomSlopeScaleResult):
+        certificate = build_correlated_location_random_slope_scale_certificate(result)
+        validate_correlated_location_random_slope_scale_certificate(certificate)
     else:
         raise TypeError(
             "result must be a HierarchicalLocationScaleResult, "
-            "CorrelatedLocationScaleResult, or LocationRandomSlopeScaleResult."
+            "CorrelatedLocationScaleResult, LocationRandomSlopeScaleResult, or "
+            "CorrelatedLocationRandomSlopeScaleResult."
         )
     fingerprint = certificate.get("certificate_fingerprint_sha256")
     if not _is_sha256_hex(fingerprint):

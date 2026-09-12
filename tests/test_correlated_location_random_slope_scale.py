@@ -23,6 +23,12 @@ from gazeforge.correlated_location_random_slope_scale import (
     validate_correlated_location_random_slope_scale_certificate,
 )
 from gazeforge.exceptions import SchemaError
+from gazeforge.location_scale_residual_calibration import (
+    LocationScaleResidualCalibrationSpec,
+    build_location_scale_residual_calibration_certificate,
+    calibrate_location_scale_residuals,
+    validate_location_scale_residual_calibration_certificate,
+)
 
 
 def _synthetic(seed: int = 731) -> pd.DataFrame:
@@ -345,3 +351,78 @@ def test_freeze_roundtrip_and_overwrite_protection(
     validate_correlated_location_random_slope_scale_certificate(payload)
     with pytest.raises(FileExistsError):
         freeze_correlated_location_random_slope_scale_certificate(result, path)
+
+
+def test_fixed_fit_residual_calibration_supports_correlated_random_slope(
+    fitted: tuple[pd.DataFrame, object],
+) -> None:
+    data, result = fitted
+    spec = LocationScaleResidualCalibrationSpec(n_simulations=50, seed=4099)
+    first = calibrate_location_scale_residuals(result, data, spec=spec)
+    second = calibrate_location_scale_residuals(result, data, spec=spec)
+    base_certificate = build_correlated_location_random_slope_scale_certificate(result)
+
+    assert first.model_family == "correlated_location_random_slope_scale"
+    assert first.model_fingerprint_sha256 == result.model_fingerprint_sha256
+    assert (
+        first.base_model_certificate_fingerprint_sha256
+        == base_certificate["certificate_fingerprint_sha256"]
+    )
+    assert first.diagnostic_fingerprint_sha256 == second.diagnostic_fingerprint_sha256
+    pd.testing.assert_frame_equal(first.metrics(), second.metrics())
+
+    certificate = build_location_scale_residual_calibration_certificate(first)
+    validate_location_scale_residual_calibration_certificate(certificate)
+
+
+def test_fixed_fit_residual_calibration_rejects_noncertifiable_correlated_random_slope(
+    fitted: tuple[pd.DataFrame, object],
+) -> None:
+    data, result = fitted
+    noncertifiable = replace(result, converged=False)
+    with pytest.raises(SchemaError, match="Only converged"):
+        calibrate_location_scale_residuals(
+            noncertifiable,
+            data,
+            spec=LocationScaleResidualCalibrationSpec(n_simulations=50, seed=4100),
+        )
+
+
+def test_fixed_fit_residual_calibration_requires_exact_correlated_random_slope_input(
+    fitted: tuple[pd.DataFrame, object],
+) -> None:
+    data, result = fitted
+    changed = data.copy()
+    changed.loc[0, "condition"] += 0.01
+    with pytest.raises(SchemaError, match="exact fitted modelling input"):
+        calibrate_location_scale_residuals(
+            result,
+            changed,
+            spec=LocationScaleResidualCalibrationSpec(n_simulations=50, seed=4101),
+        )
+
+
+def test_fixed_fit_residual_certificate_rejects_resigned_unknown_family(
+    fitted: tuple[pd.DataFrame, object],
+) -> None:
+    data, result = fitted
+    calibration = calibrate_location_scale_residuals(
+        result,
+        data,
+        spec=LocationScaleResidualCalibrationSpec(n_simulations=50, seed=4102),
+    )
+    certificate = build_location_scale_residual_calibration_certificate(calibration)
+    attacked = copy.deepcopy(certificate)
+    attacked["diagnostic"]["model_family"] = "unrestricted_random_effect_covariance"
+    attacked["diagnostic_fingerprint_sha256"] = benchmark_fingerprint(
+        attacked["diagnostic"]
+    )
+    body = {
+        key: value
+        for key, value in attacked.items()
+        if key != "certificate_fingerprint_sha256"
+    }
+    attacked["certificate_fingerprint_sha256"] = benchmark_fingerprint(body)
+
+    with pytest.raises(SchemaError, match="model family is invalid"):
+        validate_location_scale_residual_calibration_certificate(attacked)
