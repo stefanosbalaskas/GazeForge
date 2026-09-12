@@ -53,6 +53,7 @@ nav:
       - Hierarchical location-scale models: hierarchical-location-scale.md
       - Correlated location-scale effects: correlated-location-scale.md
       - Location random-slope scale model: location-random-slope-scale.md
+      - Correlated location random-slope scale model: correlated-location-random-slope-scale.md
       - Location-scale residual calibration: location-scale-residual-calibration.md
       - Temporal models: temporal-models.md
       - Model comparison: model-comparison.md
