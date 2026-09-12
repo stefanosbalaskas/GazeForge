@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
+from ._certificate_schema import require_exact_mapping_keys
 from .benchmarks import benchmark_fingerprint
 from .correlated_location_scale import (
     CorrelatedLocationScaleResult,
@@ -29,6 +30,30 @@ from .provenance import fingerprint_frame
 
 _CERTIFICATE_SCHEMA = "gazeforge.location-scale-residual-calibration-certificate.v1"
 _DIAGNOSTIC_SCHEMA = "gazeforge.location-scale-residual-calibration.v1"
+_CERTIFICATE_FIELDS = frozenset(
+    {
+        "schema",
+        "diagnostic",
+        "diagnostic_fingerprint_sha256",
+        "summary",
+        "claim_boundary",
+        "certificate_fingerprint_sha256",
+    }
+)
+_DIAGNOSTIC_FIELDS = frozenset(
+    {
+        "schema",
+        "spec",
+        "model_family",
+        "model_fingerprint_sha256",
+        "base_model_certificate_fingerprint_sha256",
+        "input_fingerprint_sha256",
+        "n_obs",
+        "n_groups",
+        "residuals_fingerprint_sha256",
+        "summary_fingerprint_sha256",
+    }
+)
 _SUMMARY_COLUMNS = (
     "metric",
     "observed",
@@ -534,6 +559,11 @@ def validate_location_scale_residual_calibration_certificate(
     """Fail closed on diagnostic, summary, or scientific-claim tampering."""
     if not isinstance(certificate, dict):
         raise TypeError("certificate must be a dictionary.")
+    require_exact_mapping_keys(
+        certificate,
+        _CERTIFICATE_FIELDS,
+        context="Residual calibration certificate",
+    )
     if certificate.get("schema") != _CERTIFICATE_SCHEMA:
         raise SchemaError("Unsupported residual calibration certificate schema.")
     fingerprint = certificate.get("certificate_fingerprint_sha256")
@@ -546,8 +576,12 @@ def validate_location_scale_residual_calibration_certificate(
         raise SchemaError("Residual calibration certificate fingerprint mismatch.")
     if certificate.get("claim_boundary") != _CLAIM_BOUNDARY:
         raise SchemaError("Residual calibration scientific claim boundary was altered.")
-    diagnostic = certificate.get("diagnostic")
-    if not isinstance(diagnostic, dict) or diagnostic.get("schema") != _DIAGNOSTIC_SCHEMA:
+    diagnostic = require_exact_mapping_keys(
+        certificate.get("diagnostic"),
+        _DIAGNOSTIC_FIELDS,
+        context="Residual calibration diagnostic identity",
+    )
+    if diagnostic.get("schema") != _DIAGNOSTIC_SCHEMA:
         raise SchemaError("Residual calibration diagnostic identity is invalid.")
     try:
         canonical_spec = LocationScaleResidualCalibrationSpec(**diagnostic["spec"])
