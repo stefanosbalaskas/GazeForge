@@ -52,13 +52,15 @@ fit.random_effect_correlation()
 
 Predictors must already be numeric. Dummy coding, interactions, transformations, centring, and scaling remain explicit analysis-protocol decisions.
 
-## Relationship to the independent model
+## Relationship to the other location-scale families
 
 The original `gazeforge.hierarchical_location_scale` model assumes independent participant location and log-scale random intercepts. The correlated model is a separate model family and certificate schema so that adding a stronger population-level association assumption does not silently change already frozen independent-model results.
 
 At `rho = 0`, the bivariate Gaussian random-effect density reduces to the independent random-intercept density. GazeForge tests this special case directly and also checks the nonzero-correlation adaptive marginal likelihood against a high-order fixed Gaussian-Hermite reference.
 
-The correlated model should therefore be selected because the association is scientifically relevant, not simply because an extra parameter can be estimated.
+When the scientific target is instead participant heterogeneity in one location slope, use the separate [location random-slope scale model](location-random-slope-scale.md). That family keeps its three participant random effects independent rather than combining correlation and random-slope assumptions in one step.
+
+These extensions should therefore be selected because their additional structure is scientifically relevant, not simply because extra parameters can be estimated.
 
 ## Participant effects and prediction
 
@@ -120,7 +122,8 @@ This model supports **one grouping variable**, a random intercept in the locatio
 
 It does **not** currently provide:
 
-- random slopes;
+- random slopes within this correlated model family; a single independent location random slope is available only through the separate [location random-slope scale model](location-random-slope-scale.md);
+- an unrestricted three-effect covariance model;
 - nested or crossed grouping structures;
 - fixed-effect p-values;
 - causal identification;

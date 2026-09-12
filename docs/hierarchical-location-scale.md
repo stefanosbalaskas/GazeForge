@@ -18,7 +18,7 @@ c_g ~ Normal(0, tau_scale^2)
 
 The two participant random intercepts are independent in this base model. The location equation models the conditional mean. The scale equation models the logarithm of the conditional **standard deviation**, not the variance. A scale coefficient `gamma_j` has a multiplicative standard-deviation interpretation of `exp(gamma_j)` for a one-unit increase in its predictor, conditional on the rest of the model.
 
-When the participant-level association between location and dispersion is itself scientifically relevant, use the separate [correlated location-scale model](correlated-location-scale.md). Keeping it as a separate model family preserves the scientific identity and certificate semantics of independent-model fits.
+When the participant-level association between location and dispersion is itself scientifically relevant, use the separate [correlated location-scale model](correlated-location-scale.md). When the scientific question instead requires participant heterogeneity in one location slope, use the separate [location random-slope scale model](location-random-slope-scale.md). Keeping these as separate model families preserves the scientific identity and certificate semantics of independent-model fits.
 
 ## Estimation
 
@@ -109,7 +109,7 @@ The certificate fixes the scientific claim boundary. Re-signing a modified certi
 
 ## Scientific claim boundary
 
-This base model supports a joint Gaussian location-scale model with **one grouping variable** and independent participant random intercepts in the location and log-scale equations. It does **not** estimate random slopes or nested/crossed grouping structures. Correlated location/log-scale random intercepts are available only through the separate correlated model family and its separate certificate schema.
+This base model supports a joint Gaussian location-scale model with **one grouping variable** and independent participant random intercepts in the location and log-scale equations. It does **not** estimate random slopes or nested/crossed grouping structures. A single independent location random slope is available only through the separate [location random-slope scale model](location-random-slope-scale.md), while correlated location/log-scale random intercepts are available only through the separate correlated model family and its separate certificate schema.
 
 It also does not provide fixed-effect p-values, establish causal effects, validate a device or measurement system, or infer random effects for unseen participants. A coefficient can describe a conditional association under the fitted model; it does not become a causal effect merely because it appears in a hierarchical model.
 
