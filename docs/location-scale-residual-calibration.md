@@ -8,7 +8,7 @@ GazeForge provides deterministic **simulation-calibrated residual diagnostics** 
 - `CorrelatedLocationRandomSlopeScaleResult`, with one participant location random slope and an estimated participant location-intercept/location-slope correlation while the log-scale random intercept remains population-independent; and
 - `FullCovarianceLocationRandomSlopeScaleResult`, with a full positive-definite 3×3 participant random-effect covariance across the location intercept, one location random slope, and log-scale intercept.
 
-This parity is deliberately limited to the **fixed-fit** residual-calibration adapter described here. `calibrate_location_scale_residuals_with_refits` and `bootstrap_location_scale_hierarchy` remain unsupported for `FullCovarianceLocationRandomSlopeScaleResult`; those procedures involve separate refitting or random-effect resampling semantics and require their own qualification rather than inheriting support from base-model certification.
+This page describes the **fixed-fit** residual-calibration adapter. The separate `calibrate_location_scale_residuals_with_refits` procedure now also supports `FullCovarianceLocationRandomSlopeScaleResult` under its own conditional-refit certificate and claim boundary. `bootstrap_location_scale_hierarchy` remains unsupported for the full-covariance family because population random-effect resampling requires separate qualification rather than inheriting support from either residual-calibration path.
 
 The diagnostic asks a deliberately narrow question: **how unusual are selected properties of the fitted conditional standardized residuals relative to an `N(0, 1)` reference with the same number of observations and the same participant grouping structure?**
 
@@ -122,8 +122,9 @@ It does **not** establish:
 - causal identification;
 - device, sensor, or measurement validity;
 - that the observed residuals are independent;
-- that parameter or random-effect population uncertainty has been propagated;
-- full-covariance conditional-refit calibration parity; or
+- that parameter or random-effect population uncertainty has been propagated; or
 - full-covariance hierarchical-bootstrap parity.
+
+Conditional-refit calibration is a separate supported diagnostic with a separate certificate and different simulation semantics; its support should not be conflated with this fixed-fit calculation.
 
 An envelope exceedance should motivate scientific inspection of the model specification, outcome distribution, transformations, predictor structure, participant structure, influential observations, and alternative models. It should not be automatically translated into a substantive conclusion.

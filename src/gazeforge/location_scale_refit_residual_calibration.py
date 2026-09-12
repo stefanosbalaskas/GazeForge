@@ -22,6 +22,10 @@ from .correlated_location_scale import (
     fit_correlated_location_scale,
 )
 from .exceptions import SchemaError
+from .full_covariance_location_random_slope_scale import (
+    FullCovarianceLocationRandomSlopeScaleResult,
+    fit_full_covariance_location_random_slope_scale,
+)
 from .hierarchical_location_scale import (
     HierarchicalLocationScaleResult,
     fit_hierarchical_location_scale,
@@ -54,6 +58,7 @@ _SUPPORTED_MODEL_FAMILIES = frozenset(
         "correlated_location_scale",
         "location_random_slope_scale",
         "correlated_location_random_slope_scale",
+        "full_covariance_location_random_slope_scale",
     }
 )
 _CERTIFICATE_FIELDS = frozenset(
@@ -204,6 +209,8 @@ def _fit_function_for_result(
         return fit_correlated_location_random_slope_scale
     if isinstance(result, LocationRandomSlopeScaleResult):
         return fit_location_random_slope_scale
+    if isinstance(result, FullCovarianceLocationRandomSlopeScaleResult):
+        return fit_full_covariance_location_random_slope_scale
     raise TypeError(
         "result must be a supported certified location-scale result type."
     )

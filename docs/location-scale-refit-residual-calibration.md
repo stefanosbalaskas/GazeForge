@@ -1,6 +1,6 @@
 # Conditional refit residual calibration
 
-GazeForge provides a separate **conditional parametric refit residual calibration** for the four Gaussian location-scale model families currently supported by this refit adapter. It complements, rather than replaces, the cheaper fixed-fit residual calibration.
+GazeForge provides a separate **conditional parametric refit residual calibration** for the five Gaussian location-scale model families currently supported by this refit adapter. It complements, rather than replaces, the cheaper fixed-fit residual calibration.
 
 The diagnostic asks a narrow question: **how unusual are selected properties of the fitted conditional standardized residuals when compared with synthetic outcomes generated from this fitted conditional mean/scale surface and then analysed by refitting the same model specification?**
 
@@ -17,7 +17,7 @@ y_i* = fitted_location_i + fitted_sigma_i * z_i,
 z_i ~ Normal(0, 1).
 ```
 
-The observed predictors, participant identities, row order, and grouping structure are retained exactly. No new participant random effects are drawn.
+The observed predictors, participant identities, row order, and grouping structure are retained exactly. No new participant random effects are drawn. For the full-covariance family, this means the base fit's conditional participant effects are part of the generating surface; the fitted 3×3 population covariance is **not** used to draw new participant effects for the synthetic outcomes.
 
 ## What is refitted
 
@@ -25,10 +25,11 @@ Every synthetic outcome table is fitted from scratch using the **same model spec
 
 - independent participant location/log-scale random intercepts;
 - correlated participant location/log-scale random intercepts;
-- one participant location random slope with independent location-intercept, location-slope, and log-scale random effects; and
-- one participant location random slope with an estimated location-intercept/location-slope population correlation and an independent log-scale random intercept.
+- one participant location random slope with independent location-intercept, location-slope, and log-scale random effects;
+- one participant location random slope with an estimated location-intercept/location-slope population correlation and an independent log-scale random intercept; and
+- one participant location random slope with the full positive-definite 3×3 participant covariance across location intercept, location slope, and log-scale intercept.
 
-The separate full-3×3-covariance random-slope family is not supported by this refit adapter in this tranche. Base-model certification does not imply refit-calibration parity.
+For the full-covariance family, each synthetic table is refitted with the same quadrature, predictor, optimizer, and covariance specification as the certified base model. Its three random-effect standard deviations and all three implied pairwise correlations are therefore re-estimated on every replicate and must pass the full-covariance model's existing certificate checks, including positive-definiteness, vine-coordinate, numerical-support, and predictor-origin-conditioned covariance semantics.
 
 Each replicate must converge and produce a valid existing GazeForge model certificate. A failed, boundary-censored, non-converged, or otherwise non-certifiable replicate aborts the calibration. Failed replicates are never silently discarded or replaced.
 
@@ -45,7 +46,7 @@ The resulting simulation distribution supplies the envelope, simulation mean, an
 
 ## What the refit step adds
 
-Unlike fixed-fit calibration, model parameters are re-estimated for every simulation replicate. The reference distribution therefore includes variability induced by applying the package's fitting procedure repeatedly to synthetic outcomes generated on the fitted conditional surface.
+Unlike fixed-fit calibration, model parameters are re-estimated for every simulation replicate. The reference distribution therefore includes variability induced by applying the package's fitting procedure repeatedly to synthetic outcomes generated on the fitted conditional surface. For the full-covariance family, that repeated estimation includes the entire 3×3 participant covariance parameterization.
 
 This is deliberately described as **estimation-procedure variability in the reference distribution**. It is not a claim that full parameter-estimation uncertainty has been quantified.
 
@@ -59,7 +60,7 @@ In particular, this implementation is conditional on the fitted row-level partic
 - establish causal effects; or
 - establish device, sensor, or measurement validity.
 
-These boundaries are encoded directly in the refit-calibration certificate and validation fails closed if they are promoted.
+These boundaries are encoded directly in the refit-calibration certificate and validation fails closed if they are promoted. Full-covariance support here does not imply full-covariance parity for `bootstrap_location_scale_hierarchy`, which remains a separately qualified population-random-effect resampling procedure.
 
 ## Refit lineage and reproducibility
 
