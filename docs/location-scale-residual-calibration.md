@@ -1,13 +1,14 @@
 # Location-scale residual calibration
 
-GazeForge provides deterministic **simulation-calibrated residual diagnostics** for the four location-scale model families currently supported by this residual-calibration adapter:
+GazeForge provides deterministic **simulation-calibrated residual diagnostics** for the five location-scale model families currently supported by this residual-calibration adapter:
 
 - `HierarchicalLocationScaleResult`, with independent participant location and log-scale random intercepts;
 - `CorrelatedLocationScaleResult`, with an estimated participant location/log-scale random-effect correlation;
-- `LocationRandomSlopeScaleResult`, with one participant location random slope plus independent participant location-intercept and log-scale random effects; and
-- `CorrelatedLocationRandomSlopeScaleResult`, with one participant location random slope and an estimated participant location-intercept/location-slope correlation while the log-scale random intercept remains population-independent.
+- `LocationRandomSlopeScaleResult`, with one participant location random slope plus independent participant location-intercept and log-scale random effects;
+- `CorrelatedLocationRandomSlopeScaleResult`, with one participant location random slope and an estimated participant location-intercept/location-slope correlation while the log-scale random intercept remains population-independent; and
+- `FullCovarianceLocationRandomSlopeScaleResult`, with a full positive-definite 3×3 participant random-effect covariance across the location intercept, one location random slope, and log-scale intercept.
 
-The separate `FullCovarianceLocationRandomSlopeScaleResult` model family is not supported by this adapter in this tranche. Base-model certification does not imply residual-calibration parity.
+This parity is deliberately limited to the **fixed-fit** residual-calibration adapter described here. `calibrate_location_scale_residuals_with_refits` and `bootstrap_location_scale_hierarchy` remain unsupported for `FullCovarianceLocationRandomSlopeScaleResult`; those procedures involve separate refitting or random-effect resampling semantics and require their own qualification rather than inheriting support from base-model certification.
 
 The diagnostic asks a deliberately narrow question: **how unusual are selected properties of the fitted conditional standardized residuals relative to an `N(0, 1)` reference with the same number of observations and the same participant grouping structure?**
 
@@ -15,7 +16,7 @@ It does not turn that comparison into a proof that the model is correct or incor
 
 ## Certifiable-model and exact-input requirement
 
-Residual calibration is an in-sample fitted-model diagnostic. Before calibration starts, the supplied fitted result must pass its own existing GazeForge model-certificate validator. This means a structurally usable but non-converged fit cannot be promoted into a residual-calibration certificate through a weaker downstream path. For correlated-intercept models, the same gate inherits the certified correlation-boundary protections. For the independent one-location-random-slope family, it inherits the certified random-effect standard-deviation boundary and random-slope specification/identity protections. For the correlated location random-slope family, it additionally inherits the certified intercept-slope correlation boundary and latent covariance-factor boundary. Residual calibration does not introduce or infer a stronger covariance structure than the supported fitted result itself.
+Residual calibration is an in-sample fitted-model diagnostic. Before calibration starts, the supplied fitted result must pass its own existing GazeForge model-certificate validator. This means a structurally usable but non-converged fit cannot be promoted into a residual-calibration certificate through a weaker downstream path. For correlated-intercept models, the same gate inherits the certified correlation-boundary protections. For the independent one-location-random-slope family, it inherits the certified random-effect standard-deviation boundary and random-slope specification/identity protections. For the correlated location random-slope family, it additionally inherits the certified intercept-slope correlation boundary and latent covariance-factor boundary. For the full-covariance family, it inherits the certified random-effect standard-deviation, vine-correlation-coordinate, positive-definite covariance, numerical-support, and exact predictor-origin-conditioned covariance semantics of the fitted base model. Residual calibration does not introduce, alter, or infer a stronger covariance structure than the supported fitted result itself.
 
 The resulting base-model certificate fingerprint is bound into the residual-calibration identity. The supplied table must also reproduce the exact modelling-input fingerprint stored in the fitted result. Together, these checks bind the diagnostic to a certifiable fit and to the exact rows, participant identities, outcome, and predictors that produced that fit.
 
@@ -56,7 +57,7 @@ Each replicate preserves:
 - the original participant membership of every row; and
 - the observed per-participant sample sizes used by the group-level metrics.
 
-The fitted coefficients, variance components, random-effect correlation when applicable, and empirical-Bayes participant effects are **held fixed**. The model is not re-fitted for each replicate. Consequently, these reference envelopes do not propagate parameter-estimation uncertainty.
+The fitted coefficients, variance components, random-effect correlations/covariance structure when applicable, and empirical-Bayes participant effects are **held fixed**. The model is not re-fitted for each replicate. Consequently, these reference envelopes do not propagate parameter-estimation uncertainty or random-effect population uncertainty.
 
 ## Diagnostic metrics
 
@@ -121,7 +122,8 @@ It does **not** establish:
 - causal identification;
 - device, sensor, or measurement validity;
 - that the observed residuals are independent;
-- that parameter uncertainty has been propagated; or
-- that the model would pass a refit-based posterior-predictive or bootstrap goodness-of-fit procedure.
+- that parameter or random-effect population uncertainty has been propagated;
+- full-covariance conditional-refit calibration parity; or
+- full-covariance hierarchical-bootstrap parity.
 
 An envelope exceedance should motivate scientific inspection of the model specification, outcome distribution, transformations, predictor structure, participant structure, influential observations, and alternative models. It should not be automatically translated into a substantive conclusion.
