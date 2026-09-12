@@ -1,0 +1,231 @@
+name: dev-refit-four-family
+
+on:
+  push:
+    branches:
+      - dev/refit-four-family-gate
+
+permissions:
+  contents: write
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: dev/refit-four-family-gate
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Recover reviewed refit payload and add fourth-family parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          OLD=94dbc10d6645ebe4828ff748c5abd0f936d6247f
+          git fetch origin "$OLD"
+          git show "$OLD:src/gazeforge/location_scale_refit_residual_calibration.py" > src/gazeforge/location_scale_refit_residual_calibration.py
+          git show "$OLD:tests/test_location_scale_refit_residual_calibration.py" > tests/test_location_scale_refit_residual_calibration.py
+          git show "$OLD:docs/location-scale-refit-residual-calibration.md" > docs/location-scale-refit-residual-calibration.md
+          python - <<'PY'
+          from pathlib import Path
+
+          source_path = Path('src/gazeforge/location_scale_refit_residual_calibration.py')
+          text = source_path.read_text()
+          old = '''from .correlated_location_scale import (
+              CorrelatedLocationScaleResult,
+              fit_correlated_location_scale,
+          )
+          '''
+          new = '''from .correlated_location_random_slope_scale import (
+              CorrelatedLocationRandomSlopeScaleResult,
+              fit_correlated_location_random_slope_scale,
+          )
+          from .correlated_location_scale import (
+              CorrelatedLocationScaleResult,
+              fit_correlated_location_scale,
+          )
+          '''
+          if old not in text:
+              raise SystemExit('source import anchor missing')
+          text = text.replace(old, new, 1)
+          old = '''        "location_random_slope_scale",
+              }
+          )'''
+          new = '''        "location_random_slope_scale",
+                  "correlated_location_random_slope_scale",
+              }
+          )'''
+          if old not in text:
+              raise SystemExit('supported-family anchor missing')
+          text = text.replace(old, new, 1)
+          old = '''    if isinstance(result, CorrelatedLocationScaleResult):
+                  return fit_correlated_location_scale
+              if isinstance(result, LocationRandomSlopeScaleResult):
+                  return fit_location_random_slope_scale
+          '''
+          new = '''    if isinstance(result, CorrelatedLocationScaleResult):
+                  return fit_correlated_location_scale
+              if isinstance(result, CorrelatedLocationRandomSlopeScaleResult):
+                  return fit_correlated_location_random_slope_scale
+              if isinstance(result, LocationRandomSlopeScaleResult):
+                  return fit_location_random_slope_scale
+          '''
+          if old not in text:
+              raise SystemExit('fit-dispatch anchor missing')
+          text = text.replace(old, new, 1)
+          old = '''    raise TypeError(
+                  "result must be a HierarchicalLocationScaleResult, "
+                  "CorrelatedLocationScaleResult, or LocationRandomSlopeScaleResult."
+              )'''
+          new = '''    raise TypeError(
+                  "result must be a supported certified location-scale result type."
+              )'''
+          if old not in text:
+              raise SystemExit('type-error anchor missing')
+          text = text.replace(old, new, 1)
+          source_path.write_text(text)
+
+          test_path = Path('tests/test_location_scale_refit_residual_calibration.py')
+          tests = test_path.read_text()
+          import_anchor = '''from gazeforge.benchmarks import benchmark_fingerprint
+          from gazeforge.exceptions import SchemaError
+          '''
+          import_replacement = '''from gazeforge.benchmarks import benchmark_fingerprint
+          from gazeforge.correlated_location_random_slope_scale import (
+              CorrelatedLocationRandomSlopeScaleSpec,
+              fit_correlated_location_random_slope_scale,
+          )
+          from gazeforge.exceptions import SchemaError
+          '''
+          if import_anchor not in tests:
+              raise SystemExit('test import anchor missing')
+          tests = tests.replace(import_anchor, import_replacement, 1)
+          tests += '''
+
+          def _correlated_slope_synthetic(seed: int = 731) -> pd.DataFrame:
+              rng = np.random.default_rng(seed)
+              rows: list[dict[str, float | str]] = []
+              x_grid = np.linspace(-1.25, 1.25, 10)
+              latent = np.linspace(-1.7, 1.7, 12)
+              for group_index, z in enumerate(latent):
+                  b0 = 0.48 * z + rng.normal(0.0, 0.08)
+                  b1 = 0.38 * z + rng.normal(0.0, 0.10)
+                  c = rng.normal(0.0, 0.22)
+                  for x in x_grid:
+                      sigma = np.exp(np.log(0.58) + 0.08 * x + c)
+                      mean = 1.7 + 0.85 * x + b0 + b1 * x
+                      rows.append(
+                          {
+                              "participant_id": f"P{group_index:02d}",
+                              "condition": float(x),
+                              "outcome": float(rng.normal(mean, sigma)),
+                          }
+                      )
+              return pd.DataFrame(rows)
+
+
+          def test_refit_calibration_supports_correlated_random_slope_family():
+              data = _correlated_slope_synthetic()
+              model_spec = CorrelatedLocationRandomSlopeScaleSpec(
+                  outcome_col="outcome",
+                  group_col="participant_id",
+                  random_slope_predictor="condition",
+                  location_predictors=("condition",),
+                  scale_predictors=("condition",),
+                  quadrature_points=3,
+                  min_group_size=4,
+                  max_iter=320,
+                  tolerance=1e-7,
+              )
+              fitted = fit_correlated_location_random_slope_scale(data, spec=model_spec)
+              assert fitted.converged
+              calibration = calibrate_location_scale_residuals_with_refits(
+                  fitted,
+                  data,
+                  spec=LocationScaleRefitResidualCalibrationSpec(
+                      n_simulations=2,
+                      seed=991,
+                      envelope_level=0.90,
+                      max_refit_rows=1_000,
+                  ),
+              )
+              assert calibration.model_family == "correlated_location_random_slope_scale"
+              assert len(calibration.refit_ledger) == 2
+              assert (
+                  calibration.base_model_certificate_fingerprint_sha256
+                  != calibration.model_fingerprint_sha256
+              )
+              certificate = build_location_scale_refit_residual_calibration_certificate(
+                  calibration
+              )
+              validate_location_scale_refit_residual_calibration_certificate(certificate)
+              assert (
+                  certificate["diagnostic"]["model_family"]
+                  == "correlated_location_random_slope_scale"
+              )
+          '''
+          test_path.write_text(tests)
+
+          docs_path = Path('docs/location-scale-refit-residual-calibration.md')
+          docs = docs_path.read_text()
+          docs = docs.replace(
+              'for the three currently certified Gaussian location-scale model families.',
+              'for the four currently certified Gaussian location-scale model families.',
+              1,
+          )
+          old = '''- independent participant location/log-scale random intercepts;
+          - correlated participant location/log-scale random intercepts; and
+          - one participant location random slope with independent location-intercept, location-slope, and log-scale random effects.
+          '''
+          new = '''- independent participant location/log-scale random intercepts;
+          - correlated participant location/log-scale random intercepts;
+          - one participant location random slope with independent location-intercept, location-slope, and log-scale random effects; and
+          - one participant location random slope with an estimated location-intercept/location-slope population correlation and an independent log-scale random intercept.
+          '''
+          if old not in docs:
+              raise SystemExit('docs family-list anchor missing')
+          docs = docs.replace(old, new, 1)
+          docs_path.write_text(docs)
+
+          nav_path = Path('mkdocs.yml')
+          nav = nav_path.read_text()
+          anchor = '      - Location-scale residual calibration: location-scale-residual-calibration.md\n'
+          addition = anchor + '      - Conditional refit residual calibration: location-scale-refit-residual-calibration.md\n'
+          if 'Conditional refit residual calibration:' not in nav:
+              if anchor not in nav:
+                  raise SystemExit('mkdocs nav anchor missing')
+              nav = nav.replace(anchor, addition, 1)
+          nav_path.write_text(nav)
+          PY
+      - name: Install development and docs dependencies
+        run: python -m pip install -U pip && python -m pip install -e ".[dev,docs]"
+      - name: Ruff
+        run: ruff check src tests
+      - name: Focused scientific regressions
+        run: |
+          pytest -q \
+            tests/test_location_scale_refit_residual_calibration.py \
+            tests/test_location_scale_residual_calibration.py \
+            tests/test_location_random_slope_residual_calibration.py \
+            tests/test_location_scale_residual_calibration_canonical_schema.py \
+            tests/test_correlated_location_random_slope_scale.py \
+            tests/test_correlated_location_random_slope_zero_point_invariance.py
+      - name: Strict documentation build
+        run: mkdocs build --strict
+      - name: Retain payload and self-delete gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/dev-refit-four-family.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/gazeforge/location_scale_refit_residual_calibration.py \
+            tests/test_location_scale_refit_residual_calibration.py \
+            docs/location-scale-refit-residual-calibration.md \
+            mkdocs.yml \
+            .github/workflows/dev-refit-four-family.yml
+          git commit -m "dev: retain four-family refit calibration payload"
+          git push origin HEAD:dev/refit-four-family-gate
