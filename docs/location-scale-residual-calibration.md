@@ -1,9 +1,10 @@
 # Location-scale residual calibration
 
-GazeForge provides deterministic **simulation-calibrated residual diagnostics** for both hierarchical location-scale model families:
+GazeForge provides deterministic **simulation-calibrated residual diagnostics** for the three currently certified location-scale model families:
 
-- `HierarchicalLocationScaleResult`, with independent participant location and log-scale random intercepts; and
-- `CorrelatedLocationScaleResult`, with an estimated participant location/log-scale random-effect correlation.
+- `HierarchicalLocationScaleResult`, with independent participant location and log-scale random intercepts;
+- `CorrelatedLocationScaleResult`, with an estimated participant location/log-scale random-effect correlation; and
+- `LocationRandomSlopeScaleResult`, with one participant location random slope plus independent participant location-intercept and log-scale random effects.
 
 The diagnostic asks a deliberately narrow question: **how unusual are selected properties of the fitted conditional standardized residuals relative to an `N(0, 1)` reference with the same number of observations and the same participant grouping structure?**
 
@@ -11,7 +12,7 @@ It does not turn that comparison into a proof that the model is correct or incor
 
 ## Certifiable-model and exact-input requirement
 
-Residual calibration is an in-sample fitted-model diagnostic. Before calibration starts, the supplied fitted result must pass its own existing GazeForge model-certificate validator. This means a structurally usable but non-converged fit cannot be promoted into a residual-calibration certificate through a weaker downstream path. For correlated models, the same gate also inherits the certified correlation-boundary protections.
+Residual calibration is an in-sample fitted-model diagnostic. Before calibration starts, the supplied fitted result must pass its own existing GazeForge model-certificate validator. This means a structurally usable but non-converged fit cannot be promoted into a residual-calibration certificate through a weaker downstream path. For correlated-intercept models, the same gate inherits the certified correlation-boundary protections. For the one-location-random-slope family, it inherits the certified random-effect standard-deviation boundary and random-slope specification/identity protections; it does not introduce or imply an unrestricted random-effect covariance structure.
 
 The resulting base-model certificate fingerprint is bound into the residual-calibration identity. The supplied table must also reproduce the exact modelling-input fingerprint stored in the fitted result. Together, these checks bind the diagnostic to a certifiable fit and to the exact rows, participant identities, outcome, and predictors that produced that fit.
 

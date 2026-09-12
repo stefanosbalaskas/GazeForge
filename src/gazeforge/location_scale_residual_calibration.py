@@ -26,10 +26,28 @@ from .hierarchical_location_scale import (
     hierarchical_location_scale_diagnostics,
     validate_hierarchical_location_scale_certificate,
 )
+from .location_random_slope_scale import (
+    LocationRandomSlopeScaleResult,
+    build_location_random_slope_scale_certificate,
+    location_random_slope_scale_diagnostics,
+    validate_location_random_slope_scale_certificate,
+)
 from .provenance import fingerprint_frame
 
 _CERTIFICATE_SCHEMA = "gazeforge.location-scale-residual-calibration-certificate.v1"
 _DIAGNOSTIC_SCHEMA = "gazeforge.location-scale-residual-calibration.v1"
+_SUPPORTED_MODEL_FAMILIES = frozenset(
+    {
+        "independent_location_scale",
+        "correlated_location_scale",
+        "location_random_slope_scale",
+    }
+)
+LocationScaleModelResult = (
+    HierarchicalLocationScaleResult
+    | CorrelatedLocationScaleResult
+    | LocationRandomSlopeScaleResult
+)
 _CERTIFICATE_FIELDS = frozenset(
     {
         "schema",
@@ -168,20 +186,26 @@ def _is_sha256_hex(value: Any) -> bool:
 
 
 def _model_adapter(
-    result: HierarchicalLocationScaleResult | CorrelatedLocationScaleResult,
+    result: LocationScaleModelResult,
 ) -> tuple[str, Any, Any]:
     if isinstance(result, HierarchicalLocationScaleResult):
         return "independent_location_scale", result.spec, hierarchical_location_scale_diagnostics
     if isinstance(result, CorrelatedLocationScaleResult):
         return "correlated_location_scale", result.spec, correlated_location_scale_diagnostics
+    if isinstance(result, LocationRandomSlopeScaleResult):
+        return (
+            "location_random_slope_scale",
+            result.spec,
+            location_random_slope_scale_diagnostics,
+        )
     raise TypeError(
-        "result must be a HierarchicalLocationScaleResult or "
-        "CorrelatedLocationScaleResult."
+        "result must be a HierarchicalLocationScaleResult, "
+        "CorrelatedLocationScaleResult, or LocationRandomSlopeScaleResult."
     )
 
 
 def _require_certifiable_base_model(
-    result: HierarchicalLocationScaleResult | CorrelatedLocationScaleResult,
+    result: LocationScaleModelResult,
 ) -> str:
     if isinstance(result, HierarchicalLocationScaleResult):
         certificate = build_hierarchical_location_scale_certificate(result)
@@ -189,10 +213,13 @@ def _require_certifiable_base_model(
     elif isinstance(result, CorrelatedLocationScaleResult):
         certificate = build_correlated_location_scale_certificate(result)
         validate_correlated_location_scale_certificate(certificate)
+    elif isinstance(result, LocationRandomSlopeScaleResult):
+        certificate = build_location_random_slope_scale_certificate(result)
+        validate_location_random_slope_scale_certificate(certificate)
     else:
         raise TypeError(
-            "result must be a HierarchicalLocationScaleResult or "
-            "CorrelatedLocationScaleResult."
+            "result must be a HierarchicalLocationScaleResult, "
+            "CorrelatedLocationScaleResult, or LocationRandomSlopeScaleResult."
         )
     fingerprint = certificate.get("certificate_fingerprint_sha256")
     if not _is_sha256_hex(fingerprint):
@@ -395,7 +422,7 @@ def _diagnostic_identity_payload(
 
 
 def calibrate_location_scale_residuals(
-    result: HierarchicalLocationScaleResult | CorrelatedLocationScaleResult,
+    result: LocationScaleModelResult,
     data: pd.DataFrame,
     *,
     spec: LocationScaleResidualCalibrationSpec | None = None,
@@ -512,7 +539,7 @@ def _current_result_identity(result: LocationScaleResidualCalibrationResult) -> 
 def _validate_result_identity(result: LocationScaleResidualCalibrationResult) -> dict[str, Any]:
     if not isinstance(result, LocationScaleResidualCalibrationResult):
         raise TypeError("result must be a LocationScaleResidualCalibrationResult.")
-    if result.model_family not in {"independent_location_scale", "correlated_location_scale"}:
+    if result.model_family not in _SUPPORTED_MODEL_FAMILIES:
         raise SchemaError("Residual calibration model family is invalid.")
     for name, value in (
         ("model_fingerprint_sha256", result.model_fingerprint_sha256),
@@ -591,10 +618,7 @@ def validate_location_scale_residual_calibration_certificate(
         diagnostic["spec"]
     ):
         raise SchemaError("Residual calibration certificate spec is not canonical.")
-    if diagnostic.get("model_family") not in {
-        "independent_location_scale",
-        "correlated_location_scale",
-    }:
+    if diagnostic.get("model_family") not in _SUPPORTED_MODEL_FAMILIES:
         raise SchemaError("Residual calibration certificate model family is invalid.")
     for name in (
         "model_fingerprint_sha256",
