@@ -13,6 +13,12 @@ from numpy.polynomial.hermite import hermgauss
 from scipy.optimize import minimize
 from scipy.special import logsumexp
 
+from ._certificate_schema import (
+    CERTIFICATE_FIELDS,
+    require_canonical_optimizer,
+    require_exact_mapping_keys,
+    require_finite_json_numbers,
+)
 from .benchmarks import benchmark_fingerprint
 from .exceptions import SchemaError
 from .provenance import fingerprint_frame
@@ -961,6 +967,11 @@ def validate_hierarchical_location_scale_certificate(
     certificate: dict[str, Any],
 ) -> None:
     """Fail closed on certificate tampering or scientific-claim promotion."""
+    require_exact_mapping_keys(
+        certificate,
+        CERTIFICATE_FIELDS,
+        context="Hierarchical location-scale certificate",
+    )
     if certificate.get("schema") != _CERTIFICATE_SCHEMA:
         raise SchemaError(
             "Unsupported hierarchical location-scale certificate schema."
@@ -982,16 +993,11 @@ def validate_hierarchical_location_scale_certificate(
         raise SchemaError(
             "Hierarchical location-scale scientific claim boundary was altered."
         )
-    optimizer = certificate.get("optimizer", {})
-    if optimizer.get("converged") is not True:
-        raise SchemaError(
-            "Only converged hierarchical location-scale fits are certifiable."
-        )
-    if int(optimizer.get("iterations", -1)) < 0:
-        raise SchemaError(
-            "Hierarchical location-scale optimizer metadata are invalid."
-        )
-    model = certificate.get("model", {})
+    require_canonical_optimizer(
+        certificate.get("optimizer"),
+        context="hierarchical location-scale",
+    )
+    model = certificate.get("model")
     required_model_fields = (
         "spec",
         "location_fixed_effects",
@@ -1004,12 +1010,11 @@ def validate_hierarchical_location_scale_certificate(
         "group_effects_fingerprint_sha256",
         "input_fingerprint_sha256",
     )
-    for key in required_model_fields:
-        if key not in model:
-            raise SchemaError(
-                "Hierarchical location-scale certificate is missing "
-                f"model.{key}."
-            )
+    require_exact_mapping_keys(
+        model,
+        required_model_fields,
+        context="Hierarchical location-scale model payload",
+    )
     model_fingerprint = certificate.get("model_fingerprint_sha256")
     if (
         not _is_sha256_hex(model_fingerprint)
@@ -1057,11 +1062,10 @@ def validate_hierarchical_location_scale_certificate(
         *location_effects.values(),
         *scale_effects.values(),
     ]
-    if not np.isfinite(np.asarray(numeric, dtype=float)).all():
-        raise SchemaError(
-            "Hierarchical location-scale certificate contains non-finite "
-            "estimates."
-        )
+    require_finite_json_numbers(
+        numeric,
+        context="Hierarchical location-scale certificate estimates",
+    )
     tau_location = float(model["tau_location"])
     tau_scale = float(model["tau_log_scale"])
     if tau_location <= 0.0 or tau_scale <= 0.0:

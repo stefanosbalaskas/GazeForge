@@ -13,6 +13,12 @@ from numpy.polynomial.hermite import hermgauss
 from scipy.optimize import minimize
 from scipy.special import logsumexp
 
+from ._certificate_schema import (
+    CERTIFICATE_FIELDS,
+    require_canonical_optimizer,
+    require_exact_mapping_keys,
+    require_finite_json_numbers,
+)
 from .benchmarks import benchmark_fingerprint
 from .exceptions import SchemaError
 from .provenance import fingerprint_frame
@@ -887,6 +893,11 @@ def build_correlated_location_scale_certificate(
 
 def validate_correlated_location_scale_certificate(certificate: dict[str, Any]) -> None:
     """Fail closed on certificate tampering or scientific-claim promotion."""
+    require_exact_mapping_keys(
+        certificate,
+        CERTIFICATE_FIELDS,
+        context="Correlated location-scale certificate",
+    )
     if certificate.get("schema") != _CERTIFICATE_SCHEMA:
         raise SchemaError("Unsupported correlated location-scale certificate schema.")
     fingerprint = certificate.get("certificate_fingerprint_sha256")
@@ -897,12 +908,11 @@ def validate_correlated_location_scale_certificate(certificate: dict[str, Any]) 
         raise SchemaError("Correlated location-scale certificate fingerprint mismatch.")
     if certificate.get("claim_boundary") != _CLAIM_BOUNDARY:
         raise SchemaError("Correlated location-scale scientific claim boundary was altered.")
-    optimizer = certificate.get("optimizer", {})
-    if optimizer.get("converged") is not True:
-        raise SchemaError("Only converged correlated location-scale fits are certifiable.")
-    if int(optimizer.get("iterations", -1)) < 0:
-        raise SchemaError("Correlated location-scale optimizer metadata are invalid.")
-    model = certificate.get("model", {})
+    require_canonical_optimizer(
+        certificate.get("optimizer"),
+        context="correlated location-scale",
+    )
+    model = certificate.get("model")
     required_model_fields = (
         "spec",
         "location_fixed_effects",
@@ -916,9 +926,11 @@ def validate_correlated_location_scale_certificate(certificate: dict[str, Any]) 
         "group_effects_fingerprint_sha256",
         "input_fingerprint_sha256",
     )
-    for key in required_model_fields:
-        if key not in model:
-            raise SchemaError(f"Correlated location-scale certificate is missing model.{key}.")
+    require_exact_mapping_keys(
+        model,
+        required_model_fields,
+        context="Correlated location-scale model payload",
+    )
     model_fingerprint = certificate.get("model_fingerprint_sha256")
     if not _is_sha256_hex(model_fingerprint) or model_fingerprint != benchmark_fingerprint(model):
         raise SchemaError("Correlated location-scale model fingerprint mismatch.")
@@ -950,8 +962,10 @@ def validate_correlated_location_scale_certificate(certificate: dict[str, Any]) 
         *location_effects.values(),
         *scale_effects.values(),
     ]
-    if not np.isfinite(np.asarray(numeric, dtype=float)).all():
-        raise SchemaError("Correlated location-scale certificate contains non-finite estimates.")
+    require_finite_json_numbers(
+        numeric,
+        context="Correlated location-scale certificate estimates",
+    )
     tau_location = float(model["tau_location"])
     tau_scale = float(model["tau_log_scale"])
     if tau_location <= 0.0 or tau_scale <= 0.0:
