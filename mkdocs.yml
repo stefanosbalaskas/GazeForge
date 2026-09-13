@@ -58,6 +58,7 @@ nav:
       - Location-scale residual calibration: location-scale-residual-calibration.md
       - Conditional refit residual calibration: location-scale-refit-residual-calibration.md
       - Hierarchical parametric bootstrap: location-scale-hierarchical-bootstrap.md
+      - Bootstrap Monte Carlo precision: location-scale-bootstrap-monte-carlo.md
       - Temporal models: temporal-models.md
       - Model comparison: model-comparison.md
       - Matched-fold differences: paired-model-differences.md
