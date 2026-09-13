@@ -31,6 +31,29 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
 
 </div>
 
+<div class="gf-status-strip">
+  <div class="gf-status-card">
+    <span class="gf-status-kicker">Release</span>
+    <strong>0.1.0a1</strong>
+    <span>Public alpha on PyPI and Zenodo.</span>
+  </div>
+  <div class="gf-status-card">
+    <span class="gf-status-kicker">External checkpoints</span>
+    <strong>3 reviewed datasets</strong>
+    <span>Lund2013, Hollywood2EM, and Gaze-in-the-Wild, each with an explicitly different validation boundary.</span>
+  </div>
+  <div class="gf-status-card">
+    <span class="gf-status-kicker">Native 60 Hz / GP3</span>
+    <strong>Evidence gate open</strong>
+    <span>An expert-labelled native corpus is still required for device-specific event validity.</span>
+  </div>
+  <div class="gf-status-card">
+    <span class="gf-status-kicker">CI matrix</span>
+    <strong>3 Python × 3 OS</strong>
+    <span>Python 3.10, 3.12, and 3.14 on Linux, macOS, and Windows.</span>
+  </div>
+</div>
+
 <div class="grid cards" markdown>
 
 -   :material-eye-check-outline:{ .lg .middle } **Eye-event AI**
