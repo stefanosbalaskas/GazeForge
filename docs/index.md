@@ -13,6 +13,8 @@ hide:
 Machine learning, computer vision, temporal event modelling, semantic AOIs, scanpaths, validation, and provenance — designed so AI can assist eye-tracking research **without silently rewriting the empirical record**.
 
 [Get started](getting-started.md){ .md-button .md-button--primary }
+[Learning paths](learning-paths.md){ .md-button }
+[Results gallery](results-gallery.md){ .md-button }
 [Frozen evidence](frozen-evidence.md){ .md-button }
 [For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
 [PyPI](https://pypi.org/project/gazeforge/){ .md-button }
@@ -53,6 +55,54 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
     <span>Python 3.10, 3.12, and 3.14 on Linux, macOS, and Windows.</span>
   </div>
 </div>
+
+## Choose your path
+
+<div class="gf-path-grid" markdown>
+
+<div class="gf-path-card" markdown>
+
+### :material-rocket-launch-outline: First 15 minutes
+
+Run deterministic synthetic gaze through canonicalisation, non-destructive anomaly flags, and trial-quality summaries.
+
+[Synthetic QC tutorial →](tutorial-synthetic-qc.md)
+
+</div>
+
+<div class="gf-path-card" markdown>
+
+### :material-eye-outline: Transparent event baseline
+
+Build an inspectable I-VT fixation/saccade/noise baseline before deciding whether a learned model adds value.
+
+[I-VT tutorial →](tutorial-ivt-baseline.md)
+
+</div>
+
+<div class="gf-path-card" markdown>
+
+### :material-chart-box-outline: Read the evidence
+
+Compare reviewed benchmark plots while keeping native/derived rate and split provenance visible beside every headline metric.
+
+[Results gallery →](results-gallery.md)
+
+</div>
+
+<div class="gf-path-card" markdown>
+
+### :material-file-document-check-outline: Report reproducibly
+
+Turn software identity, acquisition provenance, split design, rate handling, metrics, and fingerprints into a manuscript-ready record.
+
+[Reporting guide →](reproducible-reporting.md)
+
+</div>
+
+</div>
+
+[See all learning paths →](learning-paths.md)
 
 <div class="grid cards" markdown>
 
@@ -98,6 +148,11 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
 
 GazeForge now contains its first reviewed external evidence suite from **Lund2013**, pinned to an exact upstream commit and verified file-by-file before analysis. The primary lower-rate analysis derives a 60 Hz human-reference condition from the native 500 Hz expert labels and evaluates all methods on identical participant-held-out folds.
 
+<figure class="gf-figure-card">
+  <img src="assets/figures/lund2013-derived60-performance.svg" alt="Grouped bar chart of Lund2013 derived 60 Hz balanced accuracy, macro-F1, and event-F1 for I-VT, RandomForest, and ContextMLP." loading="lazy">
+  <figcaption>Primary RA-labelled participant-held-out checkpoint. The 60 Hz condition is derived from native 500 Hz data and is not native GP3 validation.</figcaption>
+</figure>
+
 | Model | Balanced accuracy | Macro-F1 | Event-F1 |
 | --- | ---: | ---: | ---: |
 | **I-VT** | 0.388 | 0.287 | **0.626** |
@@ -109,7 +164,7 @@ The result is intentionally multi-criterion: **ContextMLP leads sample-level mul
 !!! warning "Derived 60 Hz is not native GP3 validation"
     Lund2013 is a native 500 Hz corpus. These lower-rate results quantify a controlled derivation from expert annotations; they do not establish device-specific validity for a native 60 Hz Gazepoint GP3 recording. Native GP3-class expert-labelled event validation remains a major open evidence gate.
 
-[Inspect all verified Lund tables →](frozen-evidence.md) · [Read the validation interpretation →](validation-status.md)
+[Open the visual results gallery →](results-gallery.md) · [Inspect all verified Lund tables →](frozen-evidence.md) · [Read the validation interpretation →](validation-status.md)
 
 ## A workflow designed for scientific review
 
@@ -176,7 +231,7 @@ gaze = canonicalize_gaze(raw, sampling_rate_hz=60)
 flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 ```
 
-[Continue with the getting-started guide →](getting-started.md)
+[Continue with the getting-started guide →](getting-started.md) · [Run the guided QC tutorial →](tutorial-synthetic-qc.md)
 
 ## Current project phase
 
