@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+<title id="title">Synthetic quality-control anomaly timeline</title>
+<desc id="desc">Demo anomaly score over time. Four flagged samples are marked with large X symbols. This is synthetic software-demo data, not empirical evidence.</desc>
+<rect x="1" y="1" width="958" height="418" rx="20" fill="#fff" stroke="#d7dce3"/>
+<text x="70" y="48" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="27" font-weight="700" fill="#111827">QC anomaly timeline</text>
+<rect x="742" y="24" width="160" height="30" rx="15" fill="#f3f4f6" stroke="#9ca3af"/><text x="822" y="44" text-anchor="middle" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="#374151">SYNTHETIC / DEMO</text>
+<text x="70" y="75" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" fill="#4b5563">Flags remain review targets; this plot does not delete or rewrite samples.</text>
+<line x1="78" y1="338" x2="912" y2="338" stroke="#9ca3af"/><line x1="78" y1="102" x2="78" y2="338" stroke="#9ca3af"/>
+<line x1="78" y1="279" x2="912" y2="279" stroke="#e5e7eb"/><line x1="78" y1="220" x2="912" y2="220" stroke="#e5e7eb"/><line x1="78" y1="161" x2="912" y2="161" stroke="#e5e7eb"/>
+<text x="61" y="342" text-anchor="end" font-family="Arial" font-size="12" fill="#6b7280">0.0</text><text x="61" y="283" text-anchor="end" font-family="Arial" font-size="12" fill="#6b7280">0.25</text><text x="61" y="224" text-anchor="end" font-family="Arial" font-size="12" fill="#6b7280">0.50</text><text x="61" y="165" text-anchor="end" font-family="Arial" font-size="12" fill="#6b7280">0.75</text><text x="61" y="106" text-anchor="end" font-family="Arial" font-size="12" fill="#6b7280">1.0</text>
+<polyline points="78,310 120,302 162,314 204,291 246,300 288,272 330,295 372,184 414,287 456,300 498,276 540,302 582,145 624,291 666,278 708,306 750,198 792,290 834,305 876,174 912,294" fill="none" stroke="#2563eb" stroke-width="3"/>
+<g stroke="#b91c1c" stroke-width="4"><path d="M362 174l20 20M382 174l-20 20"/><path d="M572 135l20 20M592 135l-20 20"/><path d="M740 188l20 20M760 188l-20 20"/><path d="M866 164l20 20M886 164l-20 20"/></g>
+<line x1="682" y1="112" x2="722" y2="112" stroke="#2563eb" stroke-width="3"/><text x="732" y="117" font-family="Arial" font-size="13" fill="#374151">anomaly score</text><path d="M684 128l16 16M700 128l-16 16" stroke="#b91c1c" stroke-width="3"/><text x="732" y="143" font-family="Arial" font-size="13" fill="#374151">flagged sample</text>
+<text x="495" y="382" text-anchor="middle" font-family="Arial" font-size="13" fill="#374151">time (ms)</text><text x="20" y="220" transform="rotate(-90 20 220)" text-anchor="middle" font-family="Arial" font-size="13" fill="#374151">anomaly score</text>
+<text x="912" y="402" text-anchor="end" font-family="Arial" font-size="11" fill="#6b7280">Illustrative synthetic data — not tracker validation or empirical performance evidence.</text>
+</svg>
