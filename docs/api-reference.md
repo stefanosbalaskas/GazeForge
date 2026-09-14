@@ -111,6 +111,13 @@ The public API is intentionally organised around scientific workflow layers rath
       show_root_heading: true
       show_source: false
 
+### Visual diagnostics
+
+::: gazeforge.visualization
+    options:
+      show_root_heading: true
+      show_source: false
+
 ## Validation modules
 
 ### Structural validation scope

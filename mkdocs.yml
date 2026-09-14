@@ -23,6 +23,7 @@ theme:
     - navigation.sections
     - navigation.top
     - navigation.indexes
+    - navigation.path
     - toc.follow
     - content.code.copy
     - content.code.annotate
@@ -49,6 +50,7 @@ nav:
   - Home: index.md
   - Start:
       - Getting started: getting-started.md
+      - For researchers: for-researchers.md
       - For Gazepoint / GP3: gazepoint-gp3.md
       - Research workflows: research-workflows.md
       - Architecture: architecture.md
@@ -57,6 +59,7 @@ nav:
       - Learning paths: learning-paths.md
       - Synthetic QC tutorial: tutorial-synthetic-qc.md
       - I-VT baseline tutorial: tutorial-ivt-baseline.md
+      - Visual diagnostics: visual-diagnostics.md
       - Results gallery: results-gallery.md
       - Reproducible reporting: reproducible-reporting.md
   - Methods:
