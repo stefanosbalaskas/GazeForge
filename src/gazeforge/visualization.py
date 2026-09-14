@@ -19,7 +19,6 @@ from .calibration import top_label_calibration_table
 from .dynamic_aoi import DynamicAOIKeyframe, interpolate_dynamic_aoi
 from .exceptions import OptionalDependencyError, SchemaError
 
-
 _PLOT_INSTALL_GUIDANCE = (
     "Visual diagnostics require Matplotlib. For a repository checkout, install the "
     "plotting extra with `python -m pip install -e \".[plot]\"`; for a packaged "
