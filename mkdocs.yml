@@ -15,11 +15,17 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.top
     - navigation.indexes
+    - toc.follow
     - content.code.copy
+    - content.code.annotate
     - content.tabs.link
     - search.highlight
     - search.suggest
@@ -47,6 +53,12 @@ nav:
       - Research workflows: research-workflows.md
       - Architecture: architecture.md
       - Scientific governance: scientific-governance.md
+  - Learn:
+      - Learning paths: learning-paths.md
+      - Synthetic QC tutorial: tutorial-synthetic-qc.md
+      - I-VT baseline tutorial: tutorial-ivt-baseline.md
+      - Results gallery: results-gallery.md
+      - Reproducible reporting: reproducible-reporting.md
   - Methods:
       - Adapters & validation: adapters-validation.md
       - Motion-quality gating: motion-quality-gating.md
