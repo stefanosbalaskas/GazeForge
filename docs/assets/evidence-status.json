@@ -1,0 +1,83 @@
+{
+  "bundle_fingerprint_sha256": "64a7be9cbe165a5079c93da85aaeb93a0e997b9c3a0b12443c51c3069eff2913",
+  "manifest_fingerprint_sha256": "81d85dc002bf3225b2fbb9b983c85a214bff370fabdca285bd7d7f8197f243dd",
+  "records": [
+    {
+      "blockers": [
+        "Complete authoritative TrIdx-to-task mapping remains unresolved; task-stratified claims remain blocked.",
+        "The 60 Hz grid is derived rather than native 60 Hz/Gazepoint GP3 validation.",
+        "Cross-dataset validation and quarantine exit remain unauthorized."
+      ],
+      "dataset": "Gaze-in-the-Wild",
+      "fingerprint": "b2fe85ec7e5d5cd425c0cd2593742bab835686c3f560d8a6c06e9c6d67dc547a",
+      "reference_strength": "human-reference",
+      "sampling_origin": "derived-60hz",
+      "scope": "external participant-disjoint task-agnostic event validation",
+      "slug": "gaze-in-the-wild",
+      "source_path": "validation/evidence/gaze-in-wild/gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1.json",
+      "state": "reviewed_empirical_evidence",
+      "summary": "Reviewed exact-distribution participant-disjoint event-model evidence on a derived 60 Hz task-agnostic analysis grid."
+    },
+    {
+      "blockers": [
+        "Exact annotation-repository licence identifier/text and dataset-specific analysis terms remain unresolved.",
+        "Source-token-held-out evidence is not participant-held-out evidence.",
+        "Native 60 Hz or Gazepoint GP3 validity is not established."
+      ],
+      "dataset": "Hollywood2EM",
+      "fingerprint": "e1f1c030f843e118ebd65520dfab8e872efb4ea3e1d520299a993b0ca00ddabf",
+      "reference_strength": "derived-human-reference",
+      "sampling_origin": "resampled",
+      "scope": "external source-token-held-out event validation",
+      "slug": "hollywood2",
+      "source_path": "validation/evidence/hollywood2/hollywood2-source-token-60hz-frozen-summary-v1.json",
+      "state": "frozen_empirical_evidence",
+      "summary": "Frozen aggregate derived-60-Hz performance on source-token-held-out folds; the split unit is not a verified participant identity."
+    },
+    {
+      "blockers": [
+        "Derived 60 Hz results do not establish native 60 Hz or Gazepoint GP3 validity."
+      ],
+      "dataset": "Lund2013",
+      "fingerprint": "5dc6d6336b505b0a2283fe64d478a27b0394c9568a86fc4eb4d2771b8d600f93",
+      "reference_strength": "expert-human-reference",
+      "sampling_origin": "mixed-native-and-derived",
+      "scope": "external expert-labelled event validation",
+      "slug": "lund2013",
+      "source_path": "validation/evidence/lund2013/lund2013-suite-manifest.json",
+      "state": "frozen_empirical_evidence",
+      "summary": "Frozen external expert-labelled event-validation suite; 60 Hz model evidence is derived from native 500 Hz recordings."
+    },
+    {
+      "blockers": [
+        "No native 60 Hz/GP3-class expert-labelled event corpus has yet cleared the frozen empirical validation gate."
+      ],
+      "dataset": "Native 60 Hz / GP3-class validation",
+      "fingerprint": null,
+      "reference_strength": "expert-human-reference-required",
+      "sampling_origin": "native-60hz-required",
+      "scope": "native device validation",
+      "slug": "native-60hz-gp3",
+      "source_path": null,
+      "state": "empirical_execution_pending",
+      "summary": "Native 60 Hz/GP3-class expert-labelled event validation remains an explicit scientific requirement."
+    },
+    {
+      "blockers": [
+        "Only a partial public derivative is covered; the original 25-participant × 11-stimulus VISUS benchmark is not recovered.",
+        "Original source licence remains unresolved.",
+        "No model-validation, human-human-agreement, Frozen Evidence, or native Gazepoint GP3 claim is created."
+      ],
+      "dataset": "VISUS public derivative",
+      "fingerprint": "80e008228e39c2b17bae99a526e2a0157c2c850ebe803c5a370abe9167efde14",
+      "reference_strength": "bounded-empirical-observation",
+      "sampling_origin": "native-tobii-60hz-partial",
+      "scope": "partial public derivative empirical analysis",
+      "slug": "visus",
+      "source_path": "validation/evidence/visus-public-partial/visus-public-partial-evidence-v1.json",
+      "state": "bounded_empirical_evidence",
+      "summary": "Verified partial empirical evidence from public VISUS-supervised derivative Tobii 60 Hz files; no full-dataset model-validation or Frozen Evidence claim."
+    }
+  ],
+  "schema_version": 1
+}
