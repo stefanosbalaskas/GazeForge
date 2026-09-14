@@ -15,10 +15,9 @@ Release archive: `10.5281/zenodo.22650013`.
 The GitHub Release distributions were identity-matched to the PyPI publication:
 
 ```text
-gazeforge-0.1.0a1-py3-none-any.whl  sha256:3e409fbfc3c194db30baaa5aa90f68b656c43e
+gazeforge-0.1.0a1-py3-none-any.whl  sha256:3e409fbfc3c194db30ba25fefdf7f6459a3a003aefa0ab4303555d96982fbb46
+gazeforge-0.1.0a1.tar.gz            sha256:cee4e061a90d74b3a354a0fb4aa5c7bd00d53577e17167f75342cd476a5c25fa
 ```
-
-> The line above is **not** a package checksum. For authoritative distribution checksums, use the release metadata and README table. This page intentionally avoids copying a long-lived checksum claim unless it is generated from release metadata.
 
 `0.1.0a1` predates later repository work such as the first-class visual-diagnostics layer. Do not infer that an optional extra visible in the current `pyproject.toml` exists in the already-published alpha.
 
