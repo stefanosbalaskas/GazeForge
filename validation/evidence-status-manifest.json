@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "dataset": "Lund2013",
+      "slug": "lund2013",
+      "state": "frozen_empirical_evidence",
+      "summary": "Frozen external expert-labelled event-validation suite; 60 Hz model evidence is derived from native 500 Hz recordings.",
+      "scope": "external expert-labelled event validation",
+      "sampling_origin": "mixed-native-and-derived",
+      "reference_strength": "expert-human-reference",
+      "source_path": "validation/evidence/lund2013/lund2013-suite-manifest.json",
+      "git_blob_sha1": "0bb70c8d5629c892dca4f3a1e6d5aa3b58e4be73",
+      "fingerprint_field": "suite_fingerprint_sha256",
+      "fingerprint": "5dc6d6336b505b0a2283fe64d478a27b0394c9568a86fc4eb4d2771b8d600f93",
+      "validator": "lund2013_suite",
+      "required_equals": {
+        "status": "complete",
+        "suite": "lund2013-event-validation-v1"
+      },
+      "blockers": [
+        "Derived 60 Hz results do not establish native 60 Hz or Gazepoint GP3 validity."
+      ]
+    },
+    {
+      "dataset": "Hollywood2EM",
+      "slug": "hollywood2",
+      "state": "frozen_empirical_evidence",
+      "summary": "Frozen aggregate derived-60-Hz performance on source-token-held-out folds; the split unit is not a verified participant identity.",
+      "scope": "external source-token-held-out event validation",
+      "sampling_origin": "resampled",
+      "reference_strength": "derived-human-reference",
+      "source_path": "validation/evidence/hollywood2/hollywood2-source-token-60hz-frozen-summary-v1.json",
+      "git_blob_sha1": "4ddbcbb4e633c779ea9ad28d00097a4e9c00cd93",
+      "fingerprint_field": "report_fingerprint_sha256",
+      "fingerprint": "e1f1c030f843e118ebd65520dfab8e872efb4ea3e1d520299a993b0ca00ddabf",
+      "validator": "benchmark_report",
+      "required_equals": {
+        "benchmark.name": "Hollywood2EM",
+        "benchmark.sampling_origin": "resampled",
+        "benchmark.split_unit": "canonical_file_subject_token",
+        "protocol.scientific_boundary.frozen_source_token_summary_created": true,
+        "protocol.scientific_boundary.participant_disjoint_validation_created": false,
+        "protocol.scientific_boundary.participant_identity_mapping_verified": false
+      },
+      "blockers": [
+        "Exact annotation-repository licence identifier/text and dataset-specific analysis terms remain unresolved.",
+        "Source-token-held-out evidence is not participant-held-out evidence.",
+        "Native 60 Hz or Gazepoint GP3 validity is not established."
+      ]
+    },
+    {
+      "dataset": "Gaze-in-the-Wild",
+      "slug": "gaze-in-the-wild",
+      "state": "reviewed_empirical_evidence",
+      "summary": "Reviewed exact-distribution participant-disjoint event-model evidence on a derived 60 Hz task-agnostic analysis grid.",
+      "scope": "external participant-disjoint task-agnostic event validation",
+      "sampling_origin": "derived-60hz",
+      "reference_strength": "human-reference",
+      "source_path": "validation/evidence/gaze-in-wild/gaze-in-wild-exact-participant-disjoint-model-validation-evidence-v1.json",
+      "git_blob_sha1": "0786cde4aa03a6e1fc970a5359c52602a66cd5fa",
+      "fingerprint_field": "evidence_fingerprint_sha256",
+      "fingerprint": "b2fe85ec7e5d5cd425c0cd2593742bab835686c3f560d8a6c06e9c6d67dc547a",
+      "validator": "semantic_lock",
+      "required_equals": {
+        "status": "reviewed-convergence-qualified-participant-disjoint-evidence",
+        "scientific_boundary.performance_evidence_reviewed": true,
+        "scientific_boundary.participant_disjoint_model_validation_created": true,
+        "scientific_boundary.task_stratified_model_validation_created": false,
+        "scientific_boundary.native_gp3_or_native_60hz_validity_created": false,
+        "scientific_boundary.quarantine_exit_authorized": false,
+        "split_integrity.participant_disjoint": true,
+        "validation_scope.task_mapping_used": false
+      },
+      "blockers": [
+        "Complete authoritative TrIdx-to-task mapping remains unresolved; task-stratified claims remain blocked.",
+        "The 60 Hz grid is derived rather than native 60 Hz/Gazepoint GP3 validation.",
+        "Cross-dataset validation and quarantine exit remain unauthorized."
+      ]
+    },
+    {
+      "dataset": "VISUS public derivative",
+      "slug": "visus",
+      "state": "bounded_empirical_evidence",
+      "summary": "Verified partial empirical evidence from public VISUS-supervised derivative Tobii 60 Hz files; no full-dataset model-validation or Frozen Evidence claim.",
+      "scope": "partial public derivative empirical analysis",
+      "sampling_origin": "native-tobii-60hz-partial",
+      "reference_strength": "bounded-empirical-observation",
+      "source_path": "validation/evidence/visus-public-partial/visus-public-partial-evidence-v1.json",
+      "git_blob_sha1": "56c9433785f7a4d31fc5a0018652a7d53abcea79",
+      "fingerprint_field": "evidence_fingerprint_sha256",
+      "fingerprint": "80e008228e39c2b17bae99a526e2a0157c2c850ebe803c5a370abe9167efde14",
+      "validator": "semantic_lock",
+      "required_equals": {
+        "status": "verified-partial-empirical",
+        "coverage.full_visus_recovered": false,
+        "reuse_boundary.source_license_resolved": false,
+        "scientific_boundary.empirical_metrics_created": true,
+        "scientific_boundary.model_validation_created": false,
+        "scientific_boundary.frozen_evidence_created": false,
+        "scientific_boundary.native_gp3_evidence": false,
+        "scientific_boundary.public_derivative_partial_corpus_only": true
+      },
+      "blockers": [
+        "Only a partial public derivative is covered; the original 25-participant × 11-stimulus VISUS benchmark is not recovered.",
+        "Original source licence remains unresolved.",
+        "No model-validation, human-human-agreement, Frozen Evidence, or native Gazepoint GP3 claim is created."
+      ]
+    },
+    {
+      "dataset": "Native 60 Hz / GP3-class validation",
+      "slug": "native-60hz-gp3",
+      "state": "empirical_execution_pending",
+      "summary": "Native 60 Hz/GP3-class expert-labelled event validation remains an explicit scientific requirement.",
+      "scope": "native device validation",
+      "sampling_origin": "native-60hz-required",
+      "reference_strength": "expert-human-reference-required",
+      "source_path": null,
+      "git_blob_sha1": null,
+      "fingerprint_field": null,
+      "fingerprint": null,
+      "validator": "policy_only",
+      "required_equals": {},
+      "blockers": [
+        "No native 60 Hz/GP3-class expert-labelled event corpus has yet cleared the frozen empirical validation gate."
+      ]
+    }
+  ],
+  "manifest_fingerprint_sha256": "81d85dc002bf3225b2fbb9b983c85a214bff370fabdca285bd7d7f8197f243dd"
+}
