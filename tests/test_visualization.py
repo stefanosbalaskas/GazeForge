@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-import matplotlib
 import pandas as pd
 import pandas.testing as pdt
 import pytest
-
-matplotlib.use("Agg")
-from matplotlib import pyplot as plt  # noqa: E402
+from matplotlib import pyplot as plt
 
 from gazeforge.aoi import AOI
 from gazeforge.dynamic_aoi import DynamicAOIKeyframe
@@ -21,6 +18,8 @@ from gazeforge.visualization import (
     plot_qc_timeline,
     plot_scanpath,
 )
+
+plt.switch_backend("Agg")
 
 
 def test_plot_qc_timeline_marks_flags_without_mutation() -> None:
