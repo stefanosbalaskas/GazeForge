@@ -6,6 +6,11 @@ from pathlib import Path
 
 from gazeforge.dashboard import render_benchmark_dashboard_markdown
 from gazeforge.evidence_details import render_validated_report_detail_markdown
+from gazeforge.evidence_status import (
+    build_evidence_status,
+    render_evidence_status_json,
+    render_evidence_status_markdown,
+)
 from gazeforge.public_evidence import build_public_benchmark_dashboard
 from gazeforge.source_resolution_dashboard import (
     build_source_resolution_dashboard,
@@ -20,8 +25,21 @@ def _project_root(config) -> Path:
     return Path(config_path).resolve().parent
 
 
+def _render_changelog(root: Path) -> str:
+    changelog = (root / "CHANGELOG.md").read_text(encoding="utf-8")
+    if changelog.startswith("# Changelog"):
+        changelog = changelog.removeprefix("# Changelog").lstrip()
+    return (
+        "# Changelog and releases\n\n"
+        "> **Release boundary:** entries under **Unreleased** describe repository development and "
+        "are not part of the immutable `0.1.0a1` PyPI/Zenodo artifact. For installation and "
+        "artifact identity, see [Release & install](release-install.md).\n\n"
+        + changelog
+    )
+
+
 def on_pre_build(config) -> None:
-    """Regenerate public evidence and source-resolution pages from validated JSON."""
+    """Regenerate evidence, status, source-resolution, and changelog pages."""
     root = _project_root(config)
     dashboard = build_public_benchmark_dashboard(root / "validation")
     content = render_benchmark_dashboard_markdown(dashboard)
@@ -71,6 +89,18 @@ as empirical evidence.
 """
     (root / "docs" / "frozen-evidence.md").write_text(content, encoding="utf-8")
 
+    evidence_status = build_evidence_status(root)
+    (root / "docs" / "evidence-status.md").write_text(
+        render_evidence_status_markdown(evidence_status),
+        encoding="utf-8",
+    )
+    assets = root / "docs" / "assets"
+    assets.mkdir(parents=True, exist_ok=True)
+    (assets / "evidence-status.json").write_text(
+        render_evidence_status_json(evidence_status),
+        encoding="utf-8",
+    )
+
     source_resolution_dashboard = build_source_resolution_dashboard(
         root / "validation" / "protocols",
         lock_path=(
@@ -85,5 +115,10 @@ as empirical evidence.
     )
     (root / "docs" / "source-resolution-status.md").write_text(
         source_resolution_content,
+        encoding="utf-8",
+    )
+
+    (root / "docs" / "changelog.md").write_text(
+        _render_changelog(root),
         encoding="utf-8",
     )
