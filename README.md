@@ -26,6 +26,17 @@ GazeForge is a vendor-neutral Python research-software package for integrating *
 
 GazeForge does **not** infer diagnoses, emotions, personality, protected traits, or unsupported latent mental states from gaze.
 
+## Start here
+
+| Goal | Best starting point |
+| --- | --- |
+| Install and run a first analysis | [Getting started](docs/getting-started.md) |
+| Work with Gazepoint / GP3 exports | [Gazepoint / GP3 guide](docs/gazepoint-gp3.md) |
+| Understand what is empirically supported | [Validation status](docs/validation-status.md) and [Frozen evidence](docs/frozen-evidence.md) |
+| Inspect methods, certificates, and scientific boundaries | [Documentation site](https://stefanosbalaskas.github.io/GazeForge/) |
+| Contribute or reproduce a repository workflow | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| Cite the public alpha | [CITATION.cff](CITATION.cff) and [Zenodo](https://doi.org/10.5281/zenodo.22650013) |
+
 ## Public alpha release
 
 **GazeForge 0.1.0a1** is the first public alpha release. It is published on [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) through GitHub OIDC Trusted Publishing and archived on Zenodo as [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The release is intentionally alpha: APIs may change while native 60 Hz/GP3-class validation, broader external benchmark qualification, and remaining dynamic-detection validation are completed.
@@ -102,13 +113,13 @@ AI outputs remain ordinary data structures with confidence, source, model, sampl
 | Benchmark | Reference | Native rate | GazeForge status |
 | --- | --- | ---: | --- |
 | **Lund2013** | paired expert manual event labels | 500 Hz | **first frozen external evidence complete**: native/derived human agreement, derived 60 Hz matched-fold modelling, MN sensitivity, stimulus-family results, sampling×purity sensitivity |
-| **Hollywood2EM** | expert-corrected manual event labels | 500 Hz | adapter and Lund↔Hollywood cross-dataset infrastructure implemented; authoritative identity/coordinate audit still required |
+| **Hollywood2EM** | sequential student labels with expert-corrected final labels | 500 Hz | **reviewed aggregate derived-60-Hz source-token-held-out evidence available**; split is opaque-token-disjoint, not participant-disjoint; exact annotation-repository licence text/identifier and token→participant mapping remain unresolved, so participant-held-out and Lund↔Hollywood2 claims stay blocked |
 | **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **frozen exact-distribution participant-disjoint evidence available** on a derived 60-Hz task-agnostic grid; first-party RIT task-separated extraction structure is frozen and ACE-DNV secondarily corroborates `TrIdx` 1–3, while the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
 | **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **infrastructure validated, empirical execution pending**: source-resolution checkpoint/validator, exact-source audit, canonical AOI/model intake, external-grid validation, and Frozen Evidence gates; current authoritative distribution/reuse terms unresolved |
 
-GazeForge never upgrades derived evidence into a stronger evidence category. The reviewed Gaze-in-the-Wild participant-disjoint result remains explicitly **task-agnostic**: first-party structural provenance and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task lookup, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Resampled or derived 60 Hz results do not establish native GP3/60 Hz validity, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, contributor count is not treated as evidence of independent annotation streams.
+GazeForge never upgrades derived evidence into a stronger evidence category. The reviewed Hollywood2EM checkpoint is explicitly source-token-disjoint rather than participant-disjoint. The reviewed Gaze-in-the-Wild participant-disjoint result remains explicitly **task-agnostic**: first-party structural provenance and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task lookup, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Resampled or derived 60 Hz results do not establish native GP3/60 Hz validity, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, contributor count is not treated as evidence of independent annotation streams.
 
-[Gaze-in-the-Wild task-mapping evidence →](docs/gaze-in-wild-task-mapping-corroboration.md) · [Full validation status →](docs/validation-status.md)
+[Hollywood2EM evidence boundary →](docs/hollywood2-benchmark.md) · [Gaze-in-the-Wild task-mapping evidence →](docs/gaze-in-wild-task-mapping-corroboration.md) · [Full validation status →](docs/validation-status.md)
 
 ## Installation
 
@@ -250,6 +261,7 @@ GazeForge is under active public alpha development. Version `0.1.0a1` is publish
 - native/derived MN–RA human agreement
 - derived 60 Hz RA primary model comparison and MN annotator sensitivity
 - stimulus-family and sampling-rate × annotation-purity sensitivity analyses
+- **Hollywood2EM derived-60-Hz four-fold source-token-held-out aggregate evidence with opaque-token, licence, and participant-identity boundaries preserved**
 - **Gaze-in-the-Wild exact-distribution task-agnostic participant-disjoint model-validation evidence with event-class sensitivity**
 - **first-party RIT GIW task-separated extraction-structure corroboration with the complete numeric task mapping still fail-closed**
 - integrity-checked frozen-evidence website generation
@@ -258,6 +270,7 @@ GazeForge is under active public alpha development. Version `0.1.0a1` is publish
 ### Still required before a stable scientific release
 
 - **native 60 Hz/GP3-class expert-labelled event validation**
+- Hollywood2EM annotation-repository licence resolution and token→participant mapping before participant-held-out or Lund↔Hollywood2 claims
 - complete authoritative Gaze-in-the-Wild `TrIdx`→task mapping before task-stratified claims
 - authoritative audits and frozen cross-dataset results for additional external benchmarks
 - validated dynamic object-detection/tracking backend results

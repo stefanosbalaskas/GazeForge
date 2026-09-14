@@ -17,7 +17,7 @@ GazeForge distinguishes **implemented software**, **validated methodology**, and
 | --- | --- | ---: | --- | --- |
 | **Lund2013** | paired expert manual labels | 500 Hz | **Frozen external evidence available**: native and derived-60-Hz MN/RA agreement; derived-60-Hz participant-held-out I-VT/RF/ContextMLP comparison; MN annotator sensitivity; stimulus-family summaries; 120/90/60/30-Hz × .60/.75/.90 purity sensitivity | native 60-Hz/GP3-class expert-labelled events still required for device-specific validity |
 | **Native 60 Hz / GP3-class event corpus** | intended expert manual labels | 60 Hz | **Infrastructure validated, empirical execution pending**: strict native-rate intake, source/spec fingerprints, complete multi-annotator sample/gaze-identity verification, all-label and analysis-label human agreement, bidirectional event-boundary agreement, participant-held-out I-VT/RF/ContextMLP comparison, event metrics, three-report suite orchestration/verification, and non-executable protocol template | collect or independently obtain a real authoritative native corpus; document expert annotation protocol; freeze and review the complete native suite |
-| **Hollywood2EM** | novice labels corrected by expert | 500 Hz | ARFF adapter; explicit student/expert streams; exact-source audit contract; common-label harmonisation; leave-one-dataset-out infrastructure with source-audit requirement | obtain and audit an authoritative local copy; verify real identity/coordinate/reuse evidence; freeze annotator sensitivity and cross-dataset reports |
+| **Hollywood2EM** | sequential novice labels with expert-corrected final labels | 500 Hz | **Reviewed aggregate source-token-held-out evidence available**: pinned canonical source; derived-60-Hz four-fold matched I-VT/RF/ContextMLP evaluation over 16 opaque source tokens; deterministic reviewed report/frozen-summary identities; no raw source rows or predictions retained | exact annotation-repository licence text/identifier and token→participant mapping remain unresolved; participant-/stimulus-held-out and cross-dataset claims stay blocked |
 | **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **Frozen exact-distribution participant-disjoint evidence available**: all selected LabelData/ProcessData pairs reverified; exact timestamp-vector equality; preregistered labeller-5 reference; derived 60-Hz 5-fold participant-held-out I-VT/RF/ContextMLP comparison; complete sample/event class sensitivity; convergence-qualified ContextMLP; immutable source-run provenance plus 8-decimal cross-run scientific-signature certification | authoritative `TrIdx`→task mapping and task-stratified validation; cross-dataset validation; native-60-Hz/GP3 evidence; acquisition-hardware cadence verification; quarantine exit remain open |
 | **VISUS** | one published curated AOI annotation process involving two human contributors | 60 Hz | **Infrastructure validated, empirical execution pending**: exact-source audit; reviewed human-reference canonical intake; audited model-prediction intake; explicit external-grid model-human validation; guarded bidirectional human-human agreement only when independent streams are verified | obtain and audit an authoritative current copy/reuse terms; extract/review canonical reference AOIs; determine whether independent streams exist; run at least one documented detector/tracker and freeze model-human evidence; freeze human-human evidence only if independence is verified |
 
@@ -77,6 +77,36 @@ At the planned **60 Hz / .75 purity** condition, 94.4% of target samples are ret
 This prevents apparent score changes from being interpreted without accounting for how much boundary data were retained.
 
 [Inspect the generated frozen-evidence tables →](frozen-evidence.md)
+
+## Hollywood2EM source-token-held-out checkpoint
+
+The reviewed Hollywood2EM tranche is bound to the canonical GIN source commit `870fa6d6209c9085260918d61433a0a2c70fd497`. The source-token preparation retained **450,649 derived-60-Hz analysis rows** and evaluated I-VT, RandomForest, and ContextMLP on **four matched source-token-held-out folds** across **16 opaque canonical filename tokens**.
+
+Four-fold means are:
+
+| Model | Accuracy | Macro-F1 | Event-F1 |
+| --- | ---: | ---: | ---: |
+| **I-VT** | 0.70149 | 0.56046 | **0.62856** |
+| **RandomForest** | 0.75339 | 0.74038 | 0.43974 |
+| **ContextMLP** | **0.81733** | **0.81194** | 0.60227 |
+
+The result is again multi-criterion: ContextMLP leads the reported aggregate sample-level summaries, while I-VT has the highest event-F1. It does not support a universal superiority claim.
+
+The reviewed report fingerprint is:
+
+```text
+a7a6219d6ffcb1fc6622110887a95f2c9d0646fea6e22d0ada941fe07b90586a
+```
+
+The frozen-summary fingerprint is:
+
+```text
+e1f1c030f843e118ebd65520dfab8e872efb4ea3e1d520299a993b0ca00ddabf
+```
+
+The split is **opaque source-token-disjoint only**. The 16 filename tokens are not verified participant identities, so this checkpoint is not participant-held-out, stimulus-held-out, or cross-dataset evidence. Exact annotation-repository licence text/identifier and the token→participant mapping remain unresolved. The student/final labels form a sequential correction process, so student-versus-final equality is annotation sensitivity rather than independent human-human agreement. No raw source rows or predictions are redistributed by the frozen summary.
+
+See [Hollywood2EM benchmark & reviewed source-token evidence](hollywood2-benchmark.md).
 
 ## Gaze-in-the-Wild exact participant-disjoint checkpoint
 
@@ -184,6 +214,7 @@ Accordingly:
 
 - Lund2013-derived 60 Hz evidence cannot establish GP3-specific validity;
 - the native-event intake, agreement runner, and validation suite can verify and freeze a future GP3-class corpus but do not manufacture that corpus;
+- the reviewed Hollywood2EM checkpoint is derived-60-Hz and source-token-disjoint only; it does not establish participant-held-out, cross-dataset, native-60-Hz, or GP3-specific validity;
 - the reviewed Gaze-in-the-Wild result uses a derived 60-Hz analysis grid from exact processed timestamp grids and does not establish native-60-Hz or GP3 validity;
 - VISUS can contribute native 60 Hz human dynamic-AOI evidence, not manually labelled fixation/saccade ground truth, and its published two-contributor annotation process is not assumed to provide two independent human-reference streams;
 - a native 60 Hz/GP3-class manually event-labelled empirical corpus remains open.
@@ -194,6 +225,7 @@ GazeForge does not currently claim:
 
 - universal superiority of learned event models over established detectors;
 - GP3-specific event-classification validity;
+- participant-held-out, stimulus-held-out, or cross-dataset Hollywood2EM validity from the reviewed source-token checkpoint;
 - task-stratified Gaze-in-the-Wild validity without an authoritative complete task mapping;
 - cross-dataset generalization from the Gaze-in-the-Wild exact result;
 - uniformly strong recognition of all Gaze-in-the-Wild event classes, especially pursuit;
@@ -206,4 +238,4 @@ The current external evidence instead demonstrates that performance depends on t
 
 ## Roadmap evidence gates
 
-The primary empirical work remains tracked in [GitHub Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1). The Lund tranche is frozen, the exact Gaze-in-the-Wild participant-disjoint tranche now has reviewed evidence, and the native-rate intake, human-agreement workflow, and suite-completion infrastructure are implemented. The highest-priority remaining event-model gate is independent **native 60 Hz/GP3-class human event evidence**. Gaze-in-the-Wild task mapping/task-stratified validation and cross-dataset validation remain separate open gates. Dynamic AOI validation remains tracked separately in the project roadmap.
+The primary empirical work remains tracked in [GitHub Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1). The Lund tranche is frozen, the Hollywood2EM source-token-disjoint aggregate checkpoint and exact Gaze-in-the-Wild participant-disjoint tranche now have reviewed evidence, and the native-rate intake, human-agreement workflow, and suite-completion infrastructure are implemented. The highest-priority remaining event-model gate is independent **native 60 Hz/GP3-class human event evidence**. Hollywood2EM participant identity/licence resolution, Gaze-in-the-Wild task mapping/task-stratified validation, and cross-dataset validation remain separate open gates. Dynamic AOI validation remains tracked separately in the project roadmap.

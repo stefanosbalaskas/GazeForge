@@ -84,62 +84,66 @@ nav:
       - Sampling sensitivity: sampling-sensitivity.md
       - Cross-dataset events: cross-dataset-events.md
   - Benchmarks:
-      - Lund2013 benchmark: lund2013-benchmark.md
-      - Lund2013 sensitivity: lund-sensitivity.md
-      - Hollywood2EM: hollywood2-benchmark.md
-      - Hollywood2 authoritative evidence: hollywood2-authoritative-evidence.md
-      - Hollywood2 source resolution: hollywood2-source-resolution.md
-      - Hollywood2 participant-ledger intake: hollywood2-participant-ledger-intake.md
-      - Hollywood2 participant cardinality audit: hollywood2-participant-cardinality.md
-      - Hollywood2 participant-crosswalk exhaustion: hollywood2-participant-crosswalk-exhaustion.md
-      - Hollywood2 explicit crosswalk intake: hollywood2-explicit-crosswalk-intake.md
-      - Hollywood2 underlying rights: hollywood2-underlying-rights.md
-      - Hollywood2 author license statement: hollywood2-author-license-statement.md
-      - Hollywood2 annotation provenance: hollywood2-annotation-provenance.md
-      - Hollywood2 source audit: hollywood2-source-audit.md
-      - Gaze-in-the-Wild: gaze-in-wild-benchmark.md
-      - Gaze-in-the-Wild source resolution: gaze-in-wild-source-resolution.md
-      - Gaze-in-the-Wild distribution availability: gaze-in-wild-distribution-availability.md
-      - Gaze-in-the-Wild Figshare distribution rights: gaze-in-wild-figshare-distribution-rights.md
-      - Gaze-in-the-Wild exact Figshare bytes: gaze-in-wild-exact-figshare-bytes.md
-      - Gaze-in-the-Wild first-party resolution: gaze-in-wild-first-party-resolution.md
-      - Gaze-in-the-Wild first-party readiness: gaze-in-wild-first-party-readiness.md
-      - Gaze-in-the-Wild exact-copy review: gaze-in-wild-exact-copy-review.md
-      - Gaze-in-the-Wild recovery candidate quarantine: gaze-in-wild-recovery-candidates.md
-      - Gaze-in-the-Wild layout convergence: gaze-in-wild-layout-convergence.md
-      - Gaze-in-the-Wild historical-tree recovery: gaze-in-wild-historical-tree-recovery.md
-      - Gaze-in-the-Wild task-identity source recovery: gaze-in-wild-task-identity-source-recovery.md
-      - Gaze-in-the-Wild authoritative task-mapping exhaustion: gaze-in-wild-authoritative-task-mapping-exhaustion.md
-      - Gaze-in-the-Wild explicit task-mapping intake: gaze-in-wild-explicit-task-mapping-intake.md
-      - Gaze-in-the-Wild task-mapping corroboration: gaze-in-wild-task-mapping-corroboration.md
-      - Gaze-in-the-Wild roadmap evidence sync: gaze-in-wild-roadmap-sync.md
-      - Gaze-in-the-Wild ProcessData preflight: gaze-in-wild-processdata-preflight.md
-      - Gaze-in-the-Wild exact ProcessData structure: gaze-in-wild-exact-processdata-structure.md
-      - Gaze-in-the-Wild candidate ProcessData preflight: gaze-in-wild-candidate-preflight.md
-      - Gaze-in-the-Wild source audit: gaze-in-wild-source-audit.md
-      - Gaze-in-the-Wild labeller agreement: gaze-in-wild-labeller-agreement.md
-      - Gaze-in-the-Wild overlap human-human agreement: gaze-in-wild-overlap-human-human-agreement.md
-      - Gaze-in-the-Wild model validation: gaze-in-wild-model-validation.md
-      - VISUS public partial 60 Hz evidence: visus-public-partial-evidence.md
-      - VISUS public 60 Hz event extension: visus-public-event-extension-evidence.md
-      - VISUS source resolution: visus-source-resolution.md
-      - VISUS 2021 supplement recovery: visus-supplement-recovery-exhaustion.md
-      - VISUS Osnabrueck derivative recovery: visus-osnabrueck-derivative-recovery.md
-      - VISUS source scaffold: visus-source-scaffold.md
-      - VISUS authoritative source intake: visus-authoritative-source-intake.md
-      - VISUS source audit: visus-source-audit.md
-      - VISUS canonical AOI intake: visus-canonical-intake.md
-      - VISUS model prediction intake: visus-prediction-intake.md
-      - VISUS pre-execution protocol: visus-preexecution-protocol.md
-      - VISUS protocol-bound model batch: visus-protocol-bound-batch.md
-      - VISUS protocol-bound validation: visus-protocol-bound-validation.md
-      - VISUS protocol authority transition: visus-protocol-authority-transition.md
-      - VISUS model validation: visus-model-validation.md
-      - VISUS human agreement: visus-human-agreement.md
-      - VISUS validation suite: visus-validation-suite.md
-      - VISUS execution CLI: visus-cli-execution.md
-      - VISUS execution provenance: visus-execution-provenance.md
-      - VISUS Frozen Evidence gate: visus-frozen-evidence-gate.md
+      - Lund2013:
+          - Overview: lund2013-benchmark.md
+          - Sampling & purity sensitivity: lund-sensitivity.md
+      - Hollywood2EM:
+          - Benchmark & reviewed source-token evidence: hollywood2-benchmark.md
+          - Authoritative evidence: hollywood2-authoritative-evidence.md
+          - Source resolution: hollywood2-source-resolution.md
+          - Participant-ledger intake: hollywood2-participant-ledger-intake.md
+          - Participant cardinality audit: hollywood2-participant-cardinality.md
+          - Participant-crosswalk exhaustion: hollywood2-participant-crosswalk-exhaustion.md
+          - Explicit crosswalk intake: hollywood2-explicit-crosswalk-intake.md
+          - Underlying rights: hollywood2-underlying-rights.md
+          - Author license statement: hollywood2-author-license-statement.md
+          - Annotation provenance: hollywood2-annotation-provenance.md
+          - Source audit: hollywood2-source-audit.md
+      - Gaze-in-the-Wild:
+          - Benchmark: gaze-in-wild-benchmark.md
+          - Source resolution: gaze-in-wild-source-resolution.md
+          - Distribution availability: gaze-in-wild-distribution-availability.md
+          - Figshare distribution rights: gaze-in-wild-figshare-distribution-rights.md
+          - Exact Figshare bytes: gaze-in-wild-exact-figshare-bytes.md
+          - First-party resolution: gaze-in-wild-first-party-resolution.md
+          - First-party readiness: gaze-in-wild-first-party-readiness.md
+          - Exact-copy review: gaze-in-wild-exact-copy-review.md
+          - Recovery candidate quarantine: gaze-in-wild-recovery-candidates.md
+          - Layout convergence: gaze-in-wild-layout-convergence.md
+          - Historical-tree recovery: gaze-in-wild-historical-tree-recovery.md
+          - Task-identity source recovery: gaze-in-wild-task-identity-source-recovery.md
+          - Authoritative task-mapping exhaustion: gaze-in-wild-authoritative-task-mapping-exhaustion.md
+          - Explicit task-mapping intake: gaze-in-wild-explicit-task-mapping-intake.md
+          - Task-mapping corroboration: gaze-in-wild-task-mapping-corroboration.md
+          - Roadmap evidence sync: gaze-in-wild-roadmap-sync.md
+          - ProcessData preflight: gaze-in-wild-processdata-preflight.md
+          - Exact ProcessData structure: gaze-in-wild-exact-processdata-structure.md
+          - Candidate ProcessData preflight: gaze-in-wild-candidate-preflight.md
+          - Source audit: gaze-in-wild-source-audit.md
+          - Labeller agreement: gaze-in-wild-labeller-agreement.md
+          - Overlap human-human agreement: gaze-in-wild-overlap-human-human-agreement.md
+          - Model validation: gaze-in-wild-model-validation.md
+      - VISUS:
+          - Public partial 60 Hz evidence: visus-public-partial-evidence.md
+          - Public 60 Hz event extension: visus-public-event-extension-evidence.md
+          - Source resolution: visus-source-resolution.md
+          - 2021 supplement recovery: visus-supplement-recovery-exhaustion.md
+          - Osnabrueck derivative recovery: visus-osnabrueck-derivative-recovery.md
+          - Source scaffold: visus-source-scaffold.md
+          - Authoritative source intake: visus-authoritative-source-intake.md
+          - Source audit: visus-source-audit.md
+          - Canonical AOI intake: visus-canonical-intake.md
+          - Model prediction intake: visus-prediction-intake.md
+          - Pre-execution protocol: visus-preexecution-protocol.md
+          - Protocol-bound model batch: visus-protocol-bound-batch.md
+          - Protocol-bound validation: visus-protocol-bound-validation.md
+          - Protocol authority transition: visus-protocol-authority-transition.md
+          - Model validation: visus-model-validation.md
+          - Human agreement: visus-human-agreement.md
+          - Validation suite: visus-validation-suite.md
+          - Execution CLI: visus-cli-execution.md
+          - Execution provenance: visus-execution-provenance.md
+          - Frozen Evidence gate: visus-frozen-evidence-gate.md
   - API: api-reference.md
 
 plugins:
