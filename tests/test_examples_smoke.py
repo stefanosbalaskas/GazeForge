@@ -5,7 +5,6 @@ from __future__ import annotations
 import pathlib
 import runpy
 
-
 _REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
