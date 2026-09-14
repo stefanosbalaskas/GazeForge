@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import pathlib
 import runpy
-from pathlib import Path
 
 
-_REPO_ROOT = Path(__file__).resolve().parents[1]
+_REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 def test_synthetic_qc_example_runs(capsys) -> None:
