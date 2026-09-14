@@ -20,14 +20,18 @@ from .dynamic_aoi import DynamicAOIKeyframe, interpolate_dynamic_aoi
 from .exceptions import OptionalDependencyError, SchemaError
 
 
+_PLOT_INSTALL_GUIDANCE = (
+    "Visual diagnostics require Matplotlib. For a repository checkout, install the "
+    "plotting extra with `python -m pip install -e \".[plot]\"`; for a packaged "
+    "release, use the plotting extra documented for that release."
+)
+
+
 def _pyplot():
     try:
         from matplotlib import pyplot as plt
     except ImportError as exc:  # pragma: no cover - exercised with import isolation
-        raise OptionalDependencyError(
-            "Visual diagnostics require Matplotlib. Install GazeForge with "
-            "`python -m pip install \"gazeforge[plot]\"`."
-        ) from exc
+        raise OptionalDependencyError(_PLOT_INSTALL_GUIDANCE) from exc
     return plt
 
 
@@ -198,10 +202,7 @@ def plot_aoi_overlay(
     try:
         from matplotlib.patches import Rectangle
     except ImportError as exc:  # pragma: no cover - guarded by normal optional install
-        raise OptionalDependencyError(
-            "Visual diagnostics require Matplotlib. Install GazeForge with "
-            "`python -m pip install \"gazeforge[plot]\"`."
-        ) from exc
+        raise OptionalDependencyError(_PLOT_INSTALL_GUIDANCE) from exc
 
     colors = cycle(_pyplot().rcParams["axes.prop_cycle"].by_key()["color"])
     styles = cycle(("solid", "dashed", "dashdot", "dotted"))
