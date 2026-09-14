@@ -23,6 +23,7 @@ theme:
     - navigation.sections
     - navigation.top
     - navigation.indexes
+    - navigation.path
     - toc.follow
     - content.code.copy
     - content.code.annotate
@@ -49,6 +50,7 @@ nav:
   - Home: index.md
   - Start:
       - Getting started: getting-started.md
+      - For researchers: for-researchers.md
       - For Gazepoint / GP3: gazepoint-gp3.md
       - Research workflows: research-workflows.md
       - Architecture: architecture.md
@@ -57,6 +59,7 @@ nav:
       - Learning paths: learning-paths.md
       - Synthetic QC tutorial: tutorial-synthetic-qc.md
       - I-VT baseline tutorial: tutorial-ivt-baseline.md
+      - Visual diagnostics: visual-diagnostics.md
       - Results gallery: results-gallery.md
       - Reproducible reporting: reproducible-reporting.md
   - Methods:
@@ -129,7 +132,7 @@ nav:
           - Task-mapping corroboration: gaze-in-wild-task-mapping-corroboration.md
           - Roadmap evidence sync: gaze-in-wild-roadmap-sync.md
           - ProcessData preflight: gaze-in-wild-processdata-preflight.md
-          - Exact ProcessData structure: gaze-in-wild-exact-processdata-structure.md
+          - Exact ProcessData structure: gaze-in-wild-exactprocessdata-structure.md
           - Candidate ProcessData preflight: gaze-in-wild-candidate-preflight.md
           - Source audit: gaze-in-wild-source-audit.md
           - Labeller agreement: gaze-in-wild-labeller-agreement.md
