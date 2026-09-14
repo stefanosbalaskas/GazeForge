@@ -1,8 +1,8 @@
 """Optional, composable visual diagnostics for eye-tracking workflows.
 
-Plotting is deliberately separated from scientific estimation.  The functions in
+Plotting is deliberately separated from scientific estimation. The functions in
 this module do not delete rows, refit models, change classifications, or call
-``show()``/``savefig()``.  They render already-computed analytic structures and
+``show()``/``savefig()``. They render already-computed analytic structures and
 return a Matplotlib ``Axes`` so callers retain control of composition and output.
 """
 
@@ -12,7 +12,6 @@ from collections.abc import Sequence
 from itertools import cycle
 from typing import Any
 
-import numpy as np
 import pandas as pd
 
 from .aoi import AOI
@@ -204,16 +203,17 @@ def plot_aoi_overlay(
             "`python -m pip install \"gazeforge[plot]\"`."
         ) from exc
 
-    colors = cycle(axis._get_lines.get_next_color() for _ in range(max(1, len(aois))))
+    colors = cycle(_pyplot().rcParams["axes.prop_cycle"].by_key()["color"])
+    styles = cycle(("solid", "dashed", "dashdot", "dotted"))
     for aoi in aois:
-        color = next(colors)
         rectangle = Rectangle(
             (aoi.xmin, aoi.ymin),
             aoi.xmax - aoi.xmin,
             aoi.ymax - aoi.ymin,
             fill=False,
             linewidth=2.0,
-            edgecolor=color,
+            edgecolor=next(colors),
+            linestyle=next(styles),
         )
         axis.add_patch(rectangle)
         axis.text(
