@@ -75,22 +75,27 @@ Looking at transitions is often more informative than looking only at sample-lev
 
 ## 4. Prefer angular velocity when geometry is known
 
-Pixel velocity is easy to inspect but is not geometry-normalised. When screen dimensions and viewing distance are available, use the angular baseline instead.
+Pixel velocity is easy to inspect but is not geometry-normalised. The angular baseline requires geometry columns in the gaze table so every participant/trial is tied to explicit, invariant screen dimensions and viewing distance.
 
 ```python
 from gazeforge import ivt_classify_events_angular
 
+with_geometry = gaze.data.assign(
+    screen_width_px=1920.0,
+    screen_height_px=1080.0,
+    screen_width_physical=53.0,
+    screen_height_physical=29.8,
+    view_distance_physical=65.0,
+)
+
 angular = ivt_classify_events_angular(
-    gaze.data,
+    with_geometry,
     sampling_rate_hz=60,
     velocity_threshold_deg_s=45.0,
-    screen_width_cm=53.0,
-    screen_resolution_px=(1920, 1080),
-    viewing_distance_cm=65.0,
 )
 ```
 
-Use the actual geometry of the experiment. Do not copy the illustrative dimensions above into an empirical analysis unless they match the acquisition setup.
+The physical screen dimensions and viewing distance may use any shared length unit. Use the actual geometry of the experiment; do not copy the illustrative values above into an empirical analysis unless they match the acquisition setup.
 
 ## 5. Move from labels to validation
 
