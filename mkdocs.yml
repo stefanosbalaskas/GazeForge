@@ -53,6 +53,7 @@ nav:
   - Start:
       - Getting started: getting-started.md
       - Release & install: release-install.md
+      - Citation & attribution: citation-attribution.md
       - Changelog & releases: changelog.md
       - For researchers: for-researchers.md
       - For Gazepoint / GP3: gazepoint-gp3.md
