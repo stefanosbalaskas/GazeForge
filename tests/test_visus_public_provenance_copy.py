@@ -15,19 +15,17 @@ def test_public_visus_copy_does_not_claim_two_independent_annotators():
         assert _REQUIRED in text
 
 
-def test_public_visus_copy_surfaces_unresolved_source_status():
+def test_public_visus_copy_surfaces_bounded_unresolved_source_status():
     for path in _PUBLIC_FILES:
         text = path.read_text(encoding="utf-8")
-        assert "empirical execution pending" in text
-        assert "authoritative" in text
-        assert "unresolved" in text
+        assert "Bounded empirical evidence" in text
+        assert "full 25-participant × 11-stimulus benchmark is not recovered" in text
+        assert "original source licensing remains unresolved" in text
+        assert "native-GP3 claim" in text
 
 
 def test_public_visus_copy_never_promotes_contributor_count_to_independence():
-    readme = Path("README.md").read_text(encoding="utf-8")
-    homepage = Path("docs/index.md").read_text(encoding="utf-8")
-
-    assert (
-        "contributor count is not treated as evidence of independent annotation streams" in readme
-    )
-    assert "two contributors to one curation process are not treated as two independent" in homepage
+    for path in _PUBLIC_FILES:
+        text = path.read_text(encoding="utf-8")
+        assert _REQUIRED in text
+        assert "no full-dataset model-validation, human-human-agreement" in text
