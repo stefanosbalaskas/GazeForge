@@ -32,3 +32,19 @@ def test_root_changelog_retains_unreleased_boundary() -> None:
     seed = (PROJECT_ROOT / "docs" / "changelog.md").read_text(encoding="utf-8")
     assert "Unreleased" in seed
     assert "not part of the immutable `0.1.0a1`" in seed
+
+
+def test_public_entry_points_do_not_reintroduce_stale_evidence_claims() -> None:
+    readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
+    homepage = (PROJECT_ROOT / "docs" / "index.md").read_text(encoding="utf-8")
+
+    for text in (readme, homepage):
+        assert "infrastructure validated, empirical execution pending" not in text
+        assert "frozen exact-distribution participant-disjoint evidence available" not in text
+        assert "Reviewed empirical evidence" in text
+        assert "Bounded empirical evidence" in text
+
+    assert "3 reviewed datasets" not in homepage
+    assert "Generated &amp; fail-closed" in homepage
+    assert "evidence-status.md" in readme
+    assert "evidence-status.md" in homepage
