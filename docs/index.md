@@ -194,14 +194,16 @@ The package does **not** infer diagnoses, emotions, personality, protected trait
 
 ## Validation is visible, not implied
 
+The generated [Evidence status](evidence-status.md) page is the canonical public status layer. This summary uses the same status classes while retaining key benchmark-specific boundaries.
+
 <div class="gf-status-grid" markdown>
 
 | Benchmark | Human reference | Native rate | Current role |
 | --- | --- | ---: | --- |
-| **Lund2013** | paired expert event labels | 500 Hz | **frozen external event evidence available**; native/derived human agreement, derived 60 Hz modelling, annotator and sampling/purity sensitivity |
-| **Hollywood2EM** | sequential student labels with expert-corrected final labels | ≈500 Hz | **reviewed aggregate source-token-held-out evidence available**; token-disjoint only, not participant-disjoint; exact annotation-repository licence and token→participant mapping remain unresolved |
-| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz acquisition; exact ProcessData nominal 300 Hz | **frozen exact-distribution participant-disjoint evidence available** on a derived 60-Hz task-agnostic grid; first-party RIT code now verifies task-separated extraction structure and ACE-DNV secondarily corroborates `TrIdx` 1–3, while the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
-| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **bounded public-derivative empirical evidence available** from verified partial Tobii 60 Hz exports; the full 25-participant × 11-stimulus benchmark is not recovered, original source licensing remains unresolved, and no full-dataset model-validation, human-human-agreement, Frozen Evidence, or native-GP3 claim is created |
+| **Lund2013** | paired expert event labels | 500 Hz | **Frozen empirical evidence**: native/derived human agreement, derived 60 Hz modelling, annotator and sampling/purity sensitivity |
+| **Hollywood2EM** | sequential student labels with expert-corrected final labels | ≈500 Hz | **Frozen empirical evidence**: aggregate derived-60-Hz source-token-held-out evidence; token-disjoint only, not participant-disjoint; exact annotation-repository licence and token→participant mapping remain unresolved |
+| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz acquisition; exact ProcessData nominal 300 Hz | **Reviewed empirical evidence**: exact-distribution participant-disjoint evidence on a derived 60-Hz task-agnostic grid; the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
+| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **Bounded empirical evidence**: verified partial public-derivative Tobii 60 Hz observations; the full 25-participant × 11-stimulus benchmark is not recovered, original source licensing remains unresolved, and no full-dataset model-validation, human-human-agreement, Frozen Evidence, or native-GP3 claim is created |
 
 </div>
 
@@ -238,7 +240,7 @@ flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 
 ## Current project phase
 
-GazeForge is **public alpha research software with frozen, reviewed, and bounded external empirical evidence under explicitly different scientific scopes**. Version `0.1.0a1` is published through PyPI Trusted Publishing and archived on Zenodo, but a stable scientific-performance claim still requires broader independent validation.
+GazeForge is **public alpha research software with Frozen, Reviewed, and Bounded external empirical evidence under explicitly different scientific scopes**. Version `0.1.0a1` is published through PyPI Trusted Publishing and archived on Zenodo, but a stable scientific-performance claim still requires broader independent validation.
 
 - CI spans Python 3.10, 3.12, and 3.14 on Linux, Windows, and macOS.
 - Documentation is built strictly and deployed through GitHub Pages.
