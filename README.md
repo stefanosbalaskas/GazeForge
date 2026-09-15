@@ -14,7 +14,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-alpha-orange)](CHANGELOG.md)
 
-[Website](https://stefanosbalaskas.github.io/GazeForge/) · [PyPI](https://pypi.org/project/gazeforge/) · [Zenodo](https://doi.org/10.5281/zenodo.22650013) · [Frozen evidence](docs/frozen-evidence.md) · [Validation status](docs/validation-status.md) · [For Gazepoint / GP3](docs/gazepoint-gp3.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
+[Website](https://stefanosbalaskas.github.io/GazeForge/) · [PyPI](https://pypi.org/project/gazeforge/) · [Zenodo](https://doi.org/10.5281/zenodo.22650013) · [Evidence status](docs/evidence-status.md) · [Frozen evidence](docs/frozen-evidence.md) · [Validation status](docs/validation-status.md) · [For Gazepoint / GP3](docs/gazepoint-gp3.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
 
 </div>
 
@@ -32,7 +32,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | --- | --- |
 | Install and run a first analysis | [Getting started](docs/getting-started.md) |
 | Work with Gazepoint / GP3 exports | [Gazepoint / GP3 guide](docs/gazepoint-gp3.md) |
-| Understand what is empirically supported | [Validation status](docs/validation-status.md) and [Frozen evidence](docs/frozen-evidence.md) |
+| Understand what is empirically supported | [Evidence status](docs/evidence-status.md) and [Frozen evidence](docs/frozen-evidence.md) |
 | Inspect methods, certificates, and scientific boundaries | [Documentation site](https://stefanosbalaskas.github.io/GazeForge/) |
 | Contribute or reproduce a repository workflow | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Cite the public alpha | [CITATION.cff](CITATION.cff) and [Zenodo](https://doi.org/10.5281/zenodo.22650013) |
@@ -47,6 +47,8 @@ The exact GitHub Release distributions are identity-matched to the PyPI publicat
 gazeforge-0.1.0a1-py3-none-any.whl  sha256:3e409fbfc3c194db30ba25fefdf7f6459a3a003aefa0ab4303555d96982fbb46
 gazeforge-0.1.0a1.tar.gz            sha256:cee4e061a90d74b3a354a0fb4aa5c7bd00d53577e17167f75342cd476a5c25fa
 ```
+
+[Release & install guidance →](docs/release-install.md)
 
 ## First frozen external empirical evidence
 
@@ -115,11 +117,11 @@ AI outputs remain ordinary data structures with confidence, source, model, sampl
 | **Lund2013** | paired expert manual event labels | 500 Hz | **first frozen external evidence complete**: native/derived human agreement, derived 60 Hz matched-fold modelling, MN sensitivity, stimulus-family results, sampling×purity sensitivity |
 | **Hollywood2EM** | sequential student labels with expert-corrected final labels | 500 Hz | **reviewed aggregate derived-60-Hz source-token-held-out evidence available**; split is opaque-token-disjoint, not participant-disjoint; exact annotation-repository licence text/identifier and token→participant mapping remain unresolved, so participant-held-out and Lund↔Hollywood2 claims stay blocked |
 | **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **frozen exact-distribution participant-disjoint evidence available** on a derived 60-Hz task-agnostic grid; first-party RIT task-separated extraction structure is frozen and ACE-DNV secondarily corroborates `TrIdx` 1–3, while the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
-| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **infrastructure validated, empirical execution pending**: source-resolution checkpoint/validator, exact-source audit, canonical AOI/model intake, external-grid validation, and Frozen Evidence gates; current authoritative distribution/reuse terms unresolved |
+| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **bounded public-derivative empirical evidence available** from verified partial Tobii 60 Hz exports; the full 25-participant × 11-stimulus VISUS benchmark is not recovered, original source licensing remains unresolved, and no full-dataset model-validation, human-human-agreement, Frozen Evidence, or native-GP3 claim is created |
 
-GazeForge never upgrades derived evidence into a stronger evidence category. The reviewed Hollywood2EM checkpoint is explicitly source-token-disjoint rather than participant-disjoint. The reviewed Gaze-in-the-Wild participant-disjoint result remains explicitly **task-agnostic**: first-party structural provenance and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task lookup, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Resampled or derived 60 Hz results do not establish native GP3/60 Hz validity, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, contributor count is not treated as evidence of independent annotation streams.
+GazeForge never upgrades derived evidence into a stronger evidence category. The reviewed Hollywood2EM checkpoint is explicitly source-token-disjoint rather than participant-disjoint. The reviewed Gaze-in-the-Wild participant-disjoint result remains explicitly **task-agnostic**: first-party structural provenance and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task lookup, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Resampled or derived 60 Hz results do not establish native GP3/60 Hz validity, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, the current public derivative supports bounded empirical observations only; it does not recover the original full benchmark or establish model validity, independent human-human agreement, Frozen Evidence, unrestricted source redistribution, or native GP3 validity.
 
-[Hollywood2EM evidence boundary →](docs/hollywood2-benchmark.md) · [Gaze-in-the-Wild task-mapping evidence →](docs/gaze-in-wild-task-mapping-corroboration.md) · [Full validation status →](docs/validation-status.md)
+[Evidence status →](docs/evidence-status.md) · [Hollywood2EM evidence boundary →](docs/hollywood2-benchmark.md) · [Gaze-in-the-Wild task-mapping evidence →](docs/gaze-in-wild-task-mapping-corroboration.md) · [Full validation status →](docs/validation-status.md)
 
 ## Installation
 
@@ -264,6 +266,8 @@ GazeForge is under active public alpha development. Version `0.1.0a1` is publish
 - **Hollywood2EM derived-60-Hz four-fold source-token-held-out aggregate evidence with opaque-token, licence, and participant-identity boundaries preserved**
 - **Gaze-in-the-Wild exact-distribution task-agnostic participant-disjoint model-validation evidence with event-class sensitivity**
 - **first-party RIT GIW task-separated extraction-structure corroboration with the complete numeric task mapping still fail-closed**
+- **bounded empirical VISUS public-derivative evidence from verified partial Tobii 60 Hz exports, without promoting it to full-dataset model validation or Frozen Evidence**
+- generated fail-closed public evidence-status Markdown/JSON bound to exact repository evidence artifacts
 - integrity-checked frozen-evidence website generation
 - CI across Python 3.10/3.12/3.14 on Linux, Windows, and macOS
 
@@ -272,6 +276,7 @@ GazeForge is under active public alpha development. Version `0.1.0a1` is publish
 - **native 60 Hz/GP3-class expert-labelled event validation**
 - Hollywood2EM annotation-repository licence resolution and token→participant mapping before participant-held-out or Lund↔Hollywood2 claims
 - complete authoritative Gaze-in-the-Wild `TrIdx`→task mapping before task-stratified claims
+- recovery/authorization of stronger VISUS source material before full-dataset model-validation or Frozen Evidence claims
 - authoritative audits and frozen cross-dataset results for additional external benchmarks
 - validated dynamic object-detection/tracking backend results
 - broader cross-dataset validation after coordinate and identity audits
@@ -291,7 +296,7 @@ See [Scientific governance](docs/scientific-governance.md).
 
 ## Documentation
 
-The documentation source lives under `docs/`, is strict-built with MkDocs Material, and deploys to GitHub Pages after successful builds:
+The documentation source lives under `docs/`, is strict-built with MkDocs Material, and deploys to GitHub Pages after successful builds. Public evidence status is generated from versioned policy plus integrity-checked evidence and is available in both human-readable and machine-readable form:
 
 **https://stefanosbalaskas.github.io/GazeForge/**
 
