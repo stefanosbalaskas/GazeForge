@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">GazeForge mark</title>
+  <desc id="desc">A geometric gaze aperture with a central sample point and an audit check trace.</desc>
+  <defs>
+    <linearGradient id="bg" x1="18" y1="14" x2="112" y2="118" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="28" fill="url(#bg)"/>
+  <path d="M27 62C38 43 51 34 64 34s26 9 37 28c-11 19-24 28-37 28S38 81 27 62Z"
+        fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="62" r="10" fill="#fff"/>
+  <path d="M49 86l10 9 21-21" fill="none" stroke="#fff" stroke-width="7"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
