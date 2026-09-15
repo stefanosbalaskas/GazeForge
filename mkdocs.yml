@@ -50,6 +50,8 @@ nav:
   - Home: index.md
   - Start:
       - Getting started: getting-started.md
+      - Release & install: release-install.md
+      - Changelog & releases: changelog.md
       - For researchers: for-researchers.md
       - For Gazepoint / GP3: gazepoint-gp3.md
       - Research workflows: research-workflows.md
@@ -85,6 +87,7 @@ nav:
       - Dynamic AOI evaluation: dynamic-aoi-evaluation.md
       - Calibration & dataset holdouts: calibration.md
   - Validation:
+      - Evidence status: evidence-status.md
       - Validation status: validation-status.md
       - Validation scope certificates: validation-scope-certificates.md
       - Source-resolution status: source-resolution-status.md

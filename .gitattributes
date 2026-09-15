@@ -1,0 +1,4 @@
+# Preserve canonical repository bytes for integrity-bound validation artifacts.
+# Git's Windows checkout defaults may otherwise rewrite LF to CRLF and cause
+# exact Git-blob identity checks to fail even when the committed artifact is unchanged.
+validation/**/*.json text eol=lf
