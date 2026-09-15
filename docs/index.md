@@ -20,6 +20,7 @@ Machine learning, computer vision, temporal event modelling, semantic AOIs, scan
 [For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
 [PyPI](https://pypi.org/project/gazeforge/){ .md-button }
 [DOI](https://doi.org/10.5281/zenodo.22650013){ .md-button }
+[Citation & attribution](citation-attribution.md){ .md-button }
 [GitHub](https://github.com/stefanosbalaskas/GazeForge){ .md-button }
 
 </div>
@@ -145,7 +146,7 @@ Turn software identity, acquisition provenance, split design, rate handling, met
 
 **GazeForge 0.1.0a1** is the first public alpha release. It is available from [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) and archived on Zenodo with version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The release remains intentionally alpha: APIs may change while native 60 Hz/GP3-class validation, broader external benchmark qualification, and remaining dynamic-detection validation are completed.
 
-[Release & install guidance →](release-install.md) · [Changelog & releases →](changelog.md)
+[Release & install guidance →](release-install.md) · [Citation & attribution →](citation-attribution.md) · [Changelog & releases →](changelog.md)
 
 ## First frozen empirical checkpoint
 
@@ -249,4 +250,4 @@ GazeForge is **public alpha research software with Frozen, Reviewed, and Bounded
 - Frozen benchmark reports carry deterministic SHA-256 fingerprints and are revalidated before website display.
 - The highest-priority event-model evidence gap is a native 60 Hz/GP3-class expert-labelled corpus.
 
-[Scientific governance →](scientific-governance.md) · [Evidence status →](evidence-status.md) · [Benchmark evidence →](benchmark-evidence.md) · [Roadmap on GitHub →](https://github.com/stefanosbalaskas/GazeForge/issues)
+[Scientific governance →](scientific-governance.md) · [Citation & attribution →](citation-attribution.md) · [Evidence status →](evidence-status.md) · [Benchmark evidence →](benchmark-evidence.md) · [Roadmap on GitHub →](https://github.com/stefanosbalaskas/GazeForge/issues)

@@ -21,6 +21,8 @@ gazeforge-0.1.0a1.tar.gz            sha256:cee4e061a90d74b3a354a0fb4aa5c7bd00d53
 
 `0.1.0a1` predates later repository work such as the first-class visual-diagnostics layer. Do not infer that an optional extra visible in the current `pyproject.toml` exists in the already-published alpha.
 
+For manuscript-ready software and development citation guidance, use the dedicated [Citation & attribution](citation-attribution.md) page.
+
 ## Current `main`: development software
 
 For the latest repository capabilities, clone GazeForge and install the checkout in editable mode:
@@ -61,6 +63,7 @@ Record the commit SHA together with the analysis environment, data fingerprints,
 | Use newly developed APIs not yet released | commit-pinned repository checkout |
 | Develop or contribute | editable `.[dev]` checkout |
 | Generate current visual diagnostics | current checkout with `.[plot]` |
+| Cite the software artifact | [Citation & attribution](citation-attribution.md) |
 | Cite scientific validation strength | [Evidence status](evidence-status.md), not the package version alone |
 
 ## Release-state rule
