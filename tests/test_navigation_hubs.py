@@ -46,7 +46,8 @@ def test_navigation_hubs_preserve_scientific_boundaries() -> None:
     benchmarks = _read("docs/benchmark-guide.md")
     combined = validation + "\n" + benchmarks
 
-    assert "generated **Evidence status**" in combined
+    assert "Evidence status" in combined
+    assert "canonical public status layer" in validation
     assert "derived 60 Hz" in combined
     assert "native 60 Hz" in combined
     assert "GP3" in combined
