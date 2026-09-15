@@ -86,9 +86,9 @@ Build an inspectable I-VT fixation/saccade/noise baseline before deciding whethe
 
 ### :material-chart-box-outline: Read the evidence
 
-Compare reviewed benchmark plots while keeping native/derived rate and split provenance visible beside every headline metric.
+Start from the evidence question, then drill into the benchmark that matches the provenance, labels, rate, and split design you need.
 
-[Results gallery →](results-gallery.md)
+[Validation guide →](validation-evidence-guide.md) · [Benchmark guide →](benchmark-guide.md) · [Results gallery →](results-gallery.md)
 
 </div>
 

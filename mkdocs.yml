@@ -91,6 +91,7 @@ nav:
       - Dynamic AOI evaluation: dynamic-aoi-evaluation.md
       - Calibration & dataset holdouts: calibration.md
   - Validation:
+      - Guide: validation-evidence-guide.md
       - Evidence status: evidence-status.md
       - Validation status: validation-status.md
       - Validation scope certificates: validation-scope-certificates.md
@@ -106,6 +107,7 @@ nav:
       - Sampling sensitivity: sampling-sensitivity.md
       - Cross-dataset events: cross-dataset-events.md
   - Benchmarks:
+      - Guide: benchmark-guide.md
       - Lund2013:
           - Overview: lund2013-benchmark.md
           - Sampling & purity sensitivity: lund-sensitivity.md
