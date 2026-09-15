@@ -1,3 +1,4 @@
+import json
 from html import escape
 from pathlib import Path
 
@@ -37,12 +38,15 @@ def _report(name: str = "Example-human-benchmark"):
     )
 
 
-def test_report_cards_come_from_validated_dashboard_and_use_short_fingerprint(tmp_path):
+def test_report_cards_come_from_validated_dashboard_and_use_short_fingerprint(
+    tmp_path,
+):
     report = _report()
     path = tmp_path / "report.json"
-    import json
-
-    path.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    path.write_text(
+        json.dumps(report, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
     dashboard = build_benchmark_dashboard(tmp_path)
 
     cards = render_frozen_report_cards(dashboard)
@@ -59,9 +63,10 @@ def test_report_cards_come_from_validated_dashboard_and_use_short_fingerprint(tm
 def test_card_renderer_html_escapes_validated_values(tmp_path):
     report = _report("<script>alert('x')</script>")
     path = tmp_path / "report.json"
-    import json
-
-    path.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    path.write_text(
+        json.dumps(report, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
     cards = render_frozen_report_cards(build_benchmark_dashboard(tmp_path))
 
     assert "<script>" not in cards
@@ -147,6 +152,11 @@ def test_repository_public_dashboard_cards_match_publication_gated_rows():
         assert escape(str(row["benchmark"]), quote=True) in markdown
         assert str(row["report_fingerprint_sha256"])[:12] in markdown
 
-    assert "Gaze-in-the-Wild" not in "\n".join(
-        str(value) for value in dashboard.table.get("benchmark", pd.Series(dtype=str))
+    published_benchmarks = "\n".join(
+        str(value)
+        for value in dashboard.table.get(
+            "benchmark",
+            pd.Series(dtype=str),
+        )
     )
+    assert "Gaze-in-the-Wild" not in published_benchmarks
