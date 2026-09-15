@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from gazeforge.dashboard import render_benchmark_dashboard_markdown
+from gazeforge.evidence_cards import render_benchmark_dashboard_with_cards
 from gazeforge.evidence_details import render_validated_report_detail_markdown
 from gazeforge.evidence_status import (
     build_evidence_status,
@@ -42,7 +42,7 @@ def on_pre_build(config) -> None:
     """Regenerate evidence, status, source-resolution, and changelog pages."""
     root = _project_root(config)
     dashboard = build_public_benchmark_dashboard(root / "validation")
-    content = render_benchmark_dashboard_markdown(dashboard)
+    content = render_benchmark_dashboard_with_cards(dashboard)
     if dashboard.reports:
         content += "\n## Validated report details\n\n"
         content += (
