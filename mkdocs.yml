@@ -12,6 +12,8 @@ hooks:
 theme:
   name: material
   language: en
+  logo: assets/brand/gazeforge-mark.svg
+  favicon: assets/brand/gazeforge-favicon.svg
   icon:
     repo: fontawesome/brands/github
   features:
@@ -57,6 +59,7 @@ nav:
       - Research workflows: research-workflows.md
       - Architecture: architecture.md
       - Scientific governance: scientific-governance.md
+      - Brand & sharing: brand-assets.md
   - Learn:
       - Learning paths: learning-paths.md
       - Synthetic QC tutorial: tutorial-synthetic-qc.md
