@@ -51,13 +51,11 @@ def test_navigation_hubs_preserve_scientific_boundaries() -> None:
     assert "derived 60 Hz" in combined
     assert "native 60 Hz" in combined
     assert "GP3" in combined
-    assert "source-token" in combined
-    assert "not a participant" in combined
+    assert "source-token-disjoint evidence is not participant-disjoint" in combined
     assert "participant-disjoint" in combined
     assert "task-agnostic" in combined
-    assert "TrIdx" in combined
-    assert "bounded" in combined.lower()
-    assert "public derivative" in combined.lower()
+    assert "complete authoritative numeric task mapping remains unresolved" in combined
+    assert "bounded partial public-derivative" in combined.lower()
     assert "league table" in benchmarks.lower()
 
 
