@@ -112,14 +112,16 @@ AI outputs remain ordinary data structures with confidence, source, model, sampl
 
 ## Validation matrix
 
+The canonical public status class for each benchmark is generated from `validation/evidence-status-manifest.json`; the descriptions below preserve the corresponding scientific boundary.
+
 | Benchmark | Reference | Native rate | GazeForge status |
 | --- | --- | ---: | --- |
-| **Lund2013** | paired expert manual event labels | 500 Hz | **first frozen external evidence complete**: native/derived human agreement, derived 60 Hz matched-fold modelling, MN sensitivity, stimulus-family results, sampling×purity sensitivity |
-| **Hollywood2EM** | sequential student labels with expert-corrected final labels | 500 Hz | **reviewed aggregate derived-60-Hz source-token-held-out evidence available**; split is opaque-token-disjoint, not participant-disjoint; exact annotation-repository licence text/identifier and token→participant mapping remain unresolved, so participant-held-out and Lund↔Hollywood2 claims stay blocked |
-| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **frozen exact-distribution participant-disjoint evidence available** on a derived 60-Hz task-agnostic grid; first-party RIT task-separated extraction structure is frozen and ACE-DNV secondarily corroborates `TrIdx` 1–3, while the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
-| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **bounded public-derivative empirical evidence available** from verified partial Tobii 60 Hz exports; the full 25-participant × 11-stimulus VISUS benchmark is not recovered, original source licensing remains unresolved, and no full-dataset model-validation, human-human-agreement, Frozen Evidence, or native-GP3 claim is created |
+| **Lund2013** | paired expert manual event labels | 500 Hz | **Frozen empirical evidence**: native/derived human agreement, derived 60 Hz matched-fold modelling, MN sensitivity, stimulus-family results, sampling×purity sensitivity |
+| **Hollywood2EM** | sequential student labels with expert-corrected final labels | 500 Hz | **Frozen empirical evidence**: aggregate derived-60-Hz source-token-held-out evidence; the split is opaque-token-disjoint, not participant-disjoint; exact annotation-repository licence text/identifier and token→participant mapping remain unresolved |
+| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **Reviewed empirical evidence**: exact-distribution participant-disjoint evidence on a derived 60-Hz task-agnostic grid; the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
+| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **Bounded empirical evidence**: verified partial public-derivative Tobii 60 Hz observations; the full 25-participant × 11-stimulus benchmark is not recovered, original source licensing remains unresolved, and no full-dataset model-validation, human-human-agreement, Frozen Evidence, or native-GP3 claim is created |
 
-GazeForge never upgrades derived evidence into a stronger evidence category. The reviewed Hollywood2EM checkpoint is explicitly source-token-disjoint rather than participant-disjoint. The reviewed Gaze-in-the-Wild participant-disjoint result remains explicitly **task-agnostic**: first-party structural provenance and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task lookup, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Resampled or derived 60 Hz results do not establish native GP3/60 Hz validity, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, the current public derivative supports bounded empirical observations only; it does not recover the original full benchmark or establish model validity, independent human-human agreement, Frozen Evidence, unrestricted source redistribution, or native GP3 validity.
+GazeForge never upgrades derived evidence into a stronger evidence category. Hollywood2EM remains explicitly source-token-disjoint rather than participant-disjoint. The reviewed Gaze-in-the-Wild participant-disjoint result remains explicitly **task-agnostic**: first-party structural provenance and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task lookup, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Resampled or derived 60 Hz results do not establish native GP3/60 Hz validity, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, the current public derivative supports bounded empirical observations only; it does not recover the original full benchmark or establish model validity, independent human-human agreement, Frozen Evidence, unrestricted source redistribution, or native GP3 validity.
 
 [Evidence status →](docs/evidence-status.md) · [Hollywood2EM evidence boundary →](docs/hollywood2-benchmark.md) · [Gaze-in-the-Wild task-mapping evidence →](docs/gaze-in-wild-task-mapping-corroboration.md) · [Full validation status →](docs/validation-status.md)
 
@@ -245,9 +247,9 @@ Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event
 
 ## Project status
 
-GazeForge is under active public alpha development. Version `0.1.0a1` is published on PyPI through Trusted Publishing and archived on Zenodo, while reviewed external empirical benchmark evidence is frozen and publicly rendered. This does not establish mature performance across trackers or tasks.
+GazeForge is under active public alpha development. Version `0.1.0a1` is published on PyPI through Trusted Publishing and archived on Zenodo, while external empirical evidence is publicly rendered under explicit Frozen, Reviewed, Bounded, and pending status classes. This does not establish mature performance across trackers or tasks.
 
-### Implemented and frozen
+### Implemented and evidenced
 
 - vendor-neutral gaze schema and Gazepoint interoperability
 - auditable QC and anomaly scoring
