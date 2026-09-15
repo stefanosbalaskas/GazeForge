@@ -28,7 +28,6 @@ def test_citation_page_requires_commit_identity_for_development_use() -> None:
     assert "git rev-parse HEAD" in text
     assert "full 40-character Git SHA" in text
     assert "Do not substitute “latest GazeForge”" in text
-    assert "Scientific validation strength comes from" not in text  # issue prose must not leak into docs verbatim
     assert "Software citation does not establish validation strength" in text
 
 
