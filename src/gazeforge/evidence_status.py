@@ -221,7 +221,9 @@ def _validate_bound_source(root: Path, row: dict[str, Any]) -> dict[str, Any] | 
     if validator == "lund2013_suite":
         validated = validate_lund2013_suite_manifest(source_path, verify_reports=True)
         if validated["suite_fingerprint_sha256"] != expected_fingerprint:
-            raise BenchmarkIntegrityError("Lund2013 suite fingerprint does not match status policy.")
+            raise BenchmarkIntegrityError(
+                "Lund2013 suite fingerprint does not match status policy."
+            )
     elif validator == "benchmark_report":
         body = {
             key: value
