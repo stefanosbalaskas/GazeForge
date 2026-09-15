@@ -14,6 +14,7 @@ Machine learning, computer vision, temporal event modelling, semantic AOIs, scan
 
 [Get started](getting-started.md){ .md-button .md-button--primary }
 [Learning paths](learning-paths.md){ .md-button }
+[Evidence status](evidence-status.md){ .md-button }
 [Results gallery](results-gallery.md){ .md-button }
 [Frozen evidence](frozen-evidence.md){ .md-button }
 [For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
@@ -40,9 +41,9 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
     <span>Public alpha on PyPI and Zenodo.</span>
   </div>
   <div class="gf-status-card">
-    <span class="gf-status-kicker">External checkpoints</span>
-    <strong>3 reviewed datasets</strong>
-    <span>Lund2013, Hollywood2EM, and Gaze-in-the-Wild, each with an explicitly different validation boundary.</span>
+    <span class="gf-status-kicker">Evidence status</span>
+    <strong>Generated &amp; fail-closed</strong>
+    <span>Lund2013, Hollywood2EM, Gaze-in-the-Wild, bounded VISUS evidence, and native-device gaps are rendered from versioned evidence policy.</span>
   </div>
   <div class="gf-status-card">
     <span class="gf-status-kicker">Native 60 Hz / GP3</span>
@@ -136,13 +137,15 @@ Turn software identity, acquisition provenance, split design, rate handling, met
 
     Participant-held-out folds, leave-one-dataset-out validation, calibration, event-level metrics, evidence-aware dataset cards, fingerprints, and protected frozen reports.
 
-    [Frozen empirical evidence →](frozen-evidence.md)
+    [Evidence status →](evidence-status.md)
 
 </div>
 
 ## Public alpha release
 
 **GazeForge 0.1.0a1** is the first public alpha release. It is available from [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) and archived on Zenodo with version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The release remains intentionally alpha: APIs may change while native 60 Hz/GP3-class validation, broader external benchmark qualification, and remaining dynamic-detection validation are completed.
+
+[Release & install guidance →](release-install.md) · [Changelog & releases →](changelog.md)
 
 ## First frozen empirical checkpoint
 
@@ -164,7 +167,7 @@ The result is intentionally multi-criterion: **ContextMLP leads sample-level mul
 !!! warning "Derived 60 Hz is not native GP3 validation"
     Lund2013 is a native 500 Hz corpus. These lower-rate results quantify a controlled derivation from expert annotations; they do not establish device-specific validity for a native 60 Hz Gazepoint GP3 recording. Native GP3-class expert-labelled event validation remains a major open evidence gate.
 
-[Open the visual results gallery →](results-gallery.md) · [Inspect all verified Lund tables →](frozen-evidence.md) · [Read the validation interpretation →](validation-status.md)
+[Open the visual results gallery →](results-gallery.md) · [Inspect all verified Lund tables →](frozen-evidence.md) · [Read the generated evidence status →](evidence-status.md)
 
 ## A workflow designed for scientific review
 
@@ -198,13 +201,13 @@ The package does **not** infer diagnoses, emotions, personality, protected trait
 | **Lund2013** | paired expert event labels | 500 Hz | **frozen external event evidence available**; native/derived human agreement, derived 60 Hz modelling, annotator and sampling/purity sensitivity |
 | **Hollywood2EM** | sequential student labels with expert-corrected final labels | ≈500 Hz | **reviewed aggregate source-token-held-out evidence available**; token-disjoint only, not participant-disjoint; exact annotation-repository licence and token→participant mapping remain unresolved |
 | **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz acquisition; exact ProcessData nominal 300 Hz | **frozen exact-distribution participant-disjoint evidence available** on a derived 60-Hz task-agnostic grid; first-party RIT code now verifies task-separated extraction structure and ACE-DNV secondarily corroborates `TrIdx` 1–3, while the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
-| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **infrastructure validated, empirical execution pending**; current authoritative distribution and reuse terms unresolved |
+| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **bounded public-derivative empirical evidence available** from verified partial Tobii 60 Hz exports; the full 25-participant × 11-stimulus benchmark is not recovered, original source licensing remains unresolved, and no full-dataset model-validation, human-human-agreement, Frozen Evidence, or native-GP3 claim is created |
 
 </div>
 
-GazeForge never silently upgrades evidence strength. Resampled lower-rate evidence remains labelled as derived, human-human agreement is not treated as an error-free ceiling, and unresolved coordinate or identity evidence blocks stronger cross-dataset claims. For Gaze-in-the-Wild, the reviewed participant-disjoint benchmark remains task-agnostic: first-party task-separated extraction structure and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task mapping, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Published 120 Hz acquisition provenance also remains distinct from the official 300 Hz processed-stream target and from the **actual analysis cadence from timestamps**, which is separately resolved before constructing the derived analysis grid; for VISUS, two contributors to one curation process are not treated as two independent annotation streams.
+GazeForge never silently upgrades evidence strength. Resampled lower-rate evidence remains labelled as derived, human-human agreement is not treated as an error-free ceiling, and unresolved coordinate or identity evidence blocks stronger cross-dataset claims. For Gaze-in-the-Wild, the reviewed participant-disjoint benchmark remains task-agnostic: first-party task-separated extraction structure and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task mapping, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Published 120 Hz acquisition provenance also remains distinct from the official 300 Hz processed-stream target and from the **actual analysis cadence from timestamps**, which is separately resolved before constructing the derived analysis grid. For VISUS, the current public derivative supports bounded empirical observations only; it does not recover the original full benchmark or establish model validity, independent human-human agreement, Frozen Evidence, unrestricted source redistribution, or native GP3 validity.
 
-[See the full validation matrix →](validation-status.md) · [Gaze-in-the-Wild task-mapping evidence →](gaze-in-wild-task-mapping-corroboration.md) · [Gaze-in-the-Wild source-resolution status →](gaze-in-wild-source-resolution.md) · [VISUS source-resolution status →](visus-source-resolution.md) · [See frozen empirical evidence →](frozen-evidence.md)
+[Evidence status →](evidence-status.md) · [See the full validation matrix →](validation-status.md) · [Gaze-in-the-Wild task-mapping evidence →](gaze-in-wild-task-mapping-corroboration.md) · [VISUS public partial evidence →](visus-public-partial-evidence.md) · [See frozen empirical evidence →](frozen-evidence.md)
 
 ## Quick start
 
@@ -235,12 +238,13 @@ flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 
 ## Current project phase
 
-GazeForge is **public alpha research software with its first frozen external empirical tranche**. Version `0.1.0a1` is published through PyPI Trusted Publishing and archived on Zenodo, but a stable scientific-performance claim still requires broader independent validation.
+GazeForge is **public alpha research software with frozen, reviewed, and bounded external empirical evidence under explicitly different scientific scopes**. Version `0.1.0a1` is published through PyPI Trusted Publishing and archived on Zenodo, but a stable scientific-performance claim still requires broader independent validation.
 
 - CI spans Python 3.10, 3.12, and 3.14 on Linux, Windows, and macOS.
 - Documentation is built strictly and deployed through GitHub Pages.
+- Public evidence status is generated from versioned policy plus exact evidence bindings and is available as Markdown and machine-readable JSON.
 - External benchmark files are not silently bundled or relicensed.
 - Frozen benchmark reports carry deterministic SHA-256 fingerprints and are revalidated before website display.
 - The highest-priority event-model evidence gap is a native 60 Hz/GP3-class expert-labelled corpus.
 
-[Scientific governance →](scientific-governance.md) · [Benchmark evidence →](benchmark-evidence.md) · [Roadmap on GitHub →](https://github.com/stefanosbalaskas/GazeForge/issues)
+[Scientific governance →](scientific-governance.md) · [Evidence status →](evidence-status.md) · [Benchmark evidence →](benchmark-evidence.md) · [Roadmap on GitHub →](https://github.com/stefanosbalaskas/GazeForge/issues)
