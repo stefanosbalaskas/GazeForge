@@ -7,6 +7,8 @@ on:
       - research/hollywood2-gin-live-probe
       - research/hollywood2-coordinate-metadata
       - validation/hollywood2-gin-host-availability
+    # Automatic probing is reserved for files that can change Hollywood2 source/evidence
+    # semantics. Generic docs/CI/workflow surfaces are covered by CI contract tests instead.
     paths:
       - "scripts/hollywood2_gin_live_probe.py"
       - "scripts/hollywood2_gin_resilient_probe.py"
@@ -21,7 +23,6 @@ on:
       - "tests/test_hollywood2_source_resolution.py"
       - "tests/test_hollywood2_coordinate_metadata.py"
       - "tests/test_hollywood2_coordinate_evidence.py"
-      - "tests/test_docs_hook.py"
       - "tests/test_source_resolution*.py"
       - "validation/evidence/hollywood2/**"
       - "validation/protocols/hollywood2-source-resolution-*.json"
@@ -30,11 +31,6 @@ on:
       - "docs/hollywood2-authoritative-evidence.md"
       - "docs/hollywood2-source-resolution.md"
       - "docs/source-resolution-status.md"
-      - "docs/api-reference.md"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/docs.yml"
-      - ".github/workflows/hollywood2-gin-live-probe.yml"
-      - ".github/workflows/hollywood2-coordinate-metadata-probe.yml"
   workflow_dispatch:
 
 permissions:
