@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/assets/brand/gazeforge-lockup.svg" alt="GazeForge — Auditable AI for eye-tracking research" width="680">
+
 # GazeForge
 
 ### Auditable AI for eye-tracking research

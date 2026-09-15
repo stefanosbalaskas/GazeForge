@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 190" role="img" aria-labelledby="title desc">
+  <title id="title">GazeForge</title>
+  <desc id="desc">GazeForge wordmark with the tagline Auditable AI for eye-tracking research.</desc>
+  <defs>
+    <linearGradient id="brand-bg" x1="0" y1="0" x2="760" y2="190" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#172554"/>
+    </linearGradient>
+    <linearGradient id="mark-bg" x1="34" y1="30" x2="152" y2="160" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="760" height="190" rx="28" fill="url(#brand-bg)"/>
+  <rect x="28" y="26" width="138" height="138" rx="34" fill="url(#mark-bg)"/>
+  <path d="M51 93C65 69 79 59 97 59s32 10 46 34c-14 24-28 34-46 34S65 117 51 93Z"
+        fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="97" cy="93" r="11" fill="#fff"/>
+  <path d="M78 125l11 10 23-23" fill="none" stroke="#fff" stroke-width="8"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="198" y="92" fill="#fff" font-family="Inter, ui-sans-serif, system-ui, sans-serif"
+        font-size="58" font-weight="750" letter-spacing="-1.8">GazeForge</text>
+  <text x="201" y="130" fill="#cbd5e1" font-family="Inter, ui-sans-serif, system-ui, sans-serif"
+        font-size="22" font-weight="500">Auditable AI for eye-tracking research</text>
+</svg>

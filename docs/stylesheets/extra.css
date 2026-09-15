@@ -11,6 +11,12 @@
   --gf-shadow: 0 16px 42px rgba(0, 0, 0, 0.22);
 }
 
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  width: 2rem;
+  height: 2rem;
+}
+
 .gf-hero {
   padding: 3.5rem 1.5rem 3rem;
   margin: -1.5rem -1rem 2rem;
@@ -20,6 +26,16 @@
     radial-gradient(circle at 20% 10%, rgba(88, 101, 242, 0.20), transparent 34%),
     radial-gradient(circle at 80% 10%, rgba(0, 188, 212, 0.15), transparent 30%),
     linear-gradient(180deg, rgba(88, 101, 242, 0.06), transparent);
+}
+
+.gf-hero::before {
+  content: "";
+  display: block;
+  width: 5.25rem;
+  height: 5.25rem;
+  margin: 0 auto 0.9rem;
+  background: url("../assets/brand/gazeforge-mark.svg") center / contain no-repeat;
+  filter: drop-shadow(0 10px 22px rgba(20, 28, 45, 0.16));
 }
 
 .gf-hero h1 {
@@ -233,6 +249,12 @@
 @media screen and (max-width: 44.9844em) {
   .gf-hero {
     padding-top: 2.4rem;
+  }
+
+  .gf-hero::before {
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .gf-hero h1 {
