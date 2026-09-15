@@ -4,7 +4,11 @@ from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from types import SimpleNamespace
 
-from gazeforge.benchmarks import BenchmarkDatasetCard, build_benchmark_report
+from gazeforge.benchmarks import (
+    BenchmarkDatasetCard,
+    benchmark_fingerprint,
+    build_benchmark_report,
+)
 
 
 def _load_on_pre_build():
@@ -35,10 +39,43 @@ def _copy_source_resolution_governance(root: Path) -> None:
     shutil.copy2(source_lock, target_governance / source_lock.name)
 
 
+def _write_site_generation_fixtures(root: Path) -> None:
+    record = {
+        "dataset": "Native 60 Hz / GP3-class validation",
+        "slug": "native-60hz-gp3",
+        "state": "empirical_execution_pending",
+        "summary": "Test-only native-device evidence gate.",
+        "scope": "native device validation",
+        "sampling_origin": "native-60hz-required",
+        "reference_strength": "expert-human-reference-required",
+        "source_path": None,
+        "git_blob_sha1": None,
+        "fingerprint_field": None,
+        "fingerprint": None,
+        "validator": "policy_only",
+        "required_equals": {},
+        "blockers": ["Test-only fixture; no empirical claim."],
+    }
+    body = {"schema_version": 1, "records": [record]}
+    manifest = {
+        **body,
+        "manifest_fingerprint_sha256": benchmark_fingerprint(body),
+    }
+    (root / "validation" / "evidence-status-manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (root / "CHANGELOG.md").write_text(
+        "# Changelog\n\n## Unreleased\n\n- Test-only fixture.\n",
+        encoding="utf-8",
+    )
+
+
 def test_mkdocs_hook_generates_conservative_empty_evidence_page(tmp_path):
     (tmp_path / "validation").mkdir()
     (tmp_path / "docs").mkdir()
     _copy_source_resolution_governance(tmp_path)
+    _write_site_generation_fixtures(tmp_path)
     config = SimpleNamespace(config_file_path=str(tmp_path / "mkdocs.yml"))
 
     _load_on_pre_build()(config)
@@ -47,6 +84,14 @@ def test_mkdocs_hook_generates_conservative_empty_evidence_page(tmp_path):
     assert "No integrity-checked frozen empirical benchmark reports" in page
     assert "do **not** become empirical validation" in page
     assert "validation-status.md" in page
+
+    status_page = (tmp_path / "docs" / "evidence-status.md").read_text(encoding="utf-8")
+    assert "Empirical execution pending" in status_page
+    assert "Test-only native-device evidence gate" in status_page
+
+    changelog_page = (tmp_path / "docs" / "changelog.md").read_text(encoding="utf-8")
+    assert "Release boundary" in changelog_page
+    assert "Test-only fixture" in changelog_page
 
     source_page = (tmp_path / "docs" / "source-resolution-status.md").read_text(
         encoding="utf-8"
@@ -65,6 +110,7 @@ def test_mkdocs_hook_renders_details_from_validated_frozen_report(tmp_path):
     validation.mkdir()
     (tmp_path / "docs").mkdir()
     _copy_source_resolution_governance(tmp_path)
+    _write_site_generation_fixtures(tmp_path)
     card = BenchmarkDatasetCard(
         name="Hook-test-benchmark",
         version="1",
