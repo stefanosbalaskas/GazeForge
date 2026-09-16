@@ -57,6 +57,30 @@
   font-size: 1.08rem;
 }
 
+.gf-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin: 1.45rem auto 0.8rem;
+}
+
+.gf-hero-actions .md-button {
+  min-width: 9.6rem;
+  justify-content: center;
+}
+
+.gf-resource-rail {
+  margin: 0.8rem auto 0;
+  font-size: 0.82rem;
+  line-height: 1.9;
+  opacity: 0.84;
+}
+
+.gf-resource-rail a {
+  white-space: nowrap;
+}
+
 .gf-contract {
   margin: 2rem 0;
   padding: 1.4rem 1.6rem;
@@ -107,6 +131,128 @@
   font-size: 0.82rem;
   line-height: 1.45;
   opacity: 0.88;
+}
+
+.gf-task-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0 1rem;
+}
+
+.gf-task-card {
+  position: relative;
+  min-width: 0;
+  padding: 1.25rem 1.25rem 1.2rem;
+  border: 1px solid var(--gf-border);
+  border-radius: 1rem;
+  background: var(--gf-surface);
+  box-shadow: var(--gf-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.gf-task-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 0.2rem;
+  background: linear-gradient(90deg, var(--gf-accent), rgba(0, 188, 212, 0.72));
+}
+
+.gf-task-kicker,
+.gf-preview-kicker {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  opacity: 0.68;
+}
+
+.gf-task-card h3 {
+  margin-top: 0.25rem;
+}
+
+.gf-task-card p:last-child {
+  margin-bottom: 0;
+}
+
+.gf-support-links {
+  margin: 0 0 2.4rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--gf-border);
+  border-radius: 0.75rem;
+  background: var(--gf-accent-soft);
+  font-size: 0.88rem;
+}
+
+.gf-support-links p {
+  margin: 0;
+}
+
+.gf-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.15rem 0 0.8rem;
+}
+
+.gf-preview-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+  overflow: hidden;
+  border: 1px solid var(--gf-border);
+  border-radius: 1rem;
+  background: var(--gf-surface);
+  box-shadow: 0 10px 28px rgba(20, 28, 45, 0.06);
+  color: var(--md-typeset-color);
+  text-decoration: none;
+}
+
+.gf-preview-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
+  padding: 0.45rem;
+  border-bottom: 1px solid var(--gf-border);
+  background: rgba(128, 128, 128, 0.035);
+}
+
+.gf-preview-card > span,
+.gf-preview-card > strong {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.gf-preview-card .gf-preview-kicker {
+  margin-top: 0.65rem;
+  margin-bottom: 0;
+}
+
+.gf-preview-card strong {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.gf-preview-card > span:last-child {
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  opacity: 0.86;
+}
+
+.gf-preview-note {
+  margin-top: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border-left: 0.22rem solid var(--gf-accent);
+  font-size: 0.82rem !important;
+  opacity: 0.86;
 }
 
 .gf-path-grid,
@@ -281,7 +427,8 @@
 }
 
 .md-typeset a:focus-visible,
-.md-typeset .md-button:focus-visible {
+.md-typeset .md-button:focus-visible,
+.gf-preview-card:focus-visible {
   outline: 3px solid var(--gf-accent);
   outline-offset: 3px;
   border-radius: 0.25rem;
@@ -301,6 +448,8 @@
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .gf-status-card,
+  .gf-task-card,
+  .gf-preview-card,
   .gf-path-card,
   .gf-figure-card,
   .gf-evidence-card,
@@ -310,6 +459,8 @@
   }
 
   .gf-status-card:hover,
+  .gf-task-card:hover,
+  .gf-preview-card:hover,
   .gf-path-card:hover,
   .gf-figure-card:hover,
   .gf-evidence-card:hover,
@@ -326,6 +477,8 @@
   }
 
   .gf-status-card,
+  .gf-task-card,
+  .gf-preview-card,
   .gf-path-card,
   .gf-figure-card,
   .gf-evidence-card,
@@ -343,6 +496,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .gf-task-grid,
+  .gf-preview-grid,
   .gf-evidence-grid {
     grid-template-columns: 1fr;
   }
@@ -350,7 +505,7 @@
 
 @media screen and (max-width: 44.9844em) {
   .gf-hero {
-    padding-top: 2.4rem;
+    padding: 2.4rem 0.9rem 2.2rem;
   }
 
   .gf-hero::before {
@@ -361,6 +516,21 @@
 
   .gf-hero h1 {
     font-size: 3rem;
+  }
+
+  .gf-hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 20rem;
+  }
+
+  .gf-hero-actions .md-button {
+    width: 100%;
+  }
+
+  .gf-resource-rail {
+    max-width: 22rem;
+    line-height: 2.05;
   }
 
   .gf-status-strip,
@@ -374,10 +544,18 @@
     min-height: 0;
   }
 
+  .gf-task-card,
+  .gf-preview-card,
+  .gf-path-card,
+  .gf-figure-card,
+  .gf-evidence-card {
+    border-radius: 0.85rem;
+  }
+
+  .gf-task-card,
   .gf-path-card,
   .gf-figure-card,
   .gf-evidence-card {
     padding: 1rem;
-    border-radius: 0.85rem;
   }
 }
