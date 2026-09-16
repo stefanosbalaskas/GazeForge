@@ -21,7 +21,11 @@ def test_real_data_clinic_is_first_class_learn_navigation() -> None:
     assert learning_paths in learn_nav
     assert import_clinic in learn_nav
     assert runnable in learn_nav
-    assert learn_nav.index(learning_paths) < learn_nav.index(import_clinic) < learn_nav.index(runnable)
+    assert (
+        learn_nav.index(learning_paths)
+        < learn_nav.index(import_clinic)
+        < learn_nav.index(runnable)
+    )
 
 
 def test_clinic_covers_all_supported_import_paths_and_public_helpers() -> None:
