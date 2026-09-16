@@ -13,11 +13,15 @@ def _read(path: str) -> str:
 
 def test_practical_workflow_is_reachable_from_public_learning_surfaces() -> None:
     mkdocs = _read("mkdocs.yml")
-    assert (
-        "  - Learn:\n"
-        "      - Learning paths: learning-paths.md\n"
-        "      - Practical end-to-end workflow: practical-workflow.md"
-    ) in mkdocs
+    learn_start = mkdocs.index("  - Learn:\n")
+    methods_start = mkdocs.index("  - Methods:\n", learn_start)
+    learn_nav = mkdocs[learn_start:methods_start]
+
+    learning_paths = "      - Learning paths: learning-paths.md"
+    practical_workflow = "      - Practical end-to-end workflow: practical-workflow.md"
+    assert learning_paths in learn_nav
+    assert practical_workflow in learn_nav
+    assert learn_nav.index(learning_paths) < learn_nav.index(practical_workflow)
 
     for path in (
         "docs/index.md",

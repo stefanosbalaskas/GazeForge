@@ -50,6 +50,10 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 </div>
 
+## Prefer runnable scripts?
+
+Open the [Runnable examples gallery](runnable-examples.md) for four deterministic scripts with exact commands, dependencies, expected outputs, and links to the underlying repository files. For a task-first map of the deeper technical documentation, use the [Methods overview](methods-overview.md).
+
 ## A practical progression
 
 | Stage | Learn | Produce | Do not claim yet |

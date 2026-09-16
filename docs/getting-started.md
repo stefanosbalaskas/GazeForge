@@ -30,6 +30,8 @@ pytest
 !!! tip "Run one complete workflow"
     Want to see the layers composed before adapting your own tracker export? Run the [practical end-to-end workflow](practical-workflow.md), which writes reviewable source/canonical/QC/event/AOI/scanpath/provenance artifacts and keeps the demo explicitly separate from empirical validation.
 
+    Prefer to choose among smaller scripts first? Browse the [runnable examples](runnable-examples.md) for exact commands, dependencies, and expected outputs.
+
 ## 1. Canonicalise gaze samples
 
 GazeForge works around a vendor-neutral sample table. The core required columns are participant, trial, timestamp, and gaze coordinates.

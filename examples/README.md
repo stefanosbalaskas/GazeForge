@@ -2,6 +2,8 @@
 
 These scripts are intentionally small and deterministic. They are learning and smoke-test examples, not empirical validation artifacts.
 
+Website gallery: [Runnable examples](../docs/runnable-examples.md)
+
 ## 1. Synthetic QC
 
 ```bash

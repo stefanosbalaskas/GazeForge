@@ -105,7 +105,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**Also useful:** [Research workflows](research-workflows.md) · [Reproducible reporting](reproducible-reporting.md) · [Benchmark guide](benchmark-guide.md) · [Results gallery](results-gallery.md)
+**Also useful:** [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Research workflows](research-workflows.md) · [Reproducible reporting](reproducible-reporting.md) · [Benchmark guide](benchmark-guide.md) · [Results gallery](results-gallery.md)
 
 </div>
 
