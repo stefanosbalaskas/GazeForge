@@ -64,11 +64,11 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
 
 <div class="gf-path-card" markdown>
 
-### :material-rocket-launch-outline: First 15 minutes
+### :material-rocket-launch-outline: Complete research workflow
 
-Run deterministic synthetic gaze through canonicalisation, non-destructive anomaly flags, and trial-quality summaries.
+Run one deterministic demo through canonicalisation, QC, I-VT events, fixation centroids, researcher-defined AOIs, semantic scanpaths, provenance, and reviewable exports.
 
-[Synthetic QC tutorial →](tutorial-synthetic-qc.md)
+[Practical end-to-end workflow →](practical-workflow.md)
 
 </div>
 
@@ -191,7 +191,7 @@ canonical gaze schema
 
 The package does **not** infer diagnoses, emotions, personality, protected traits, or unsupported latent mental states from gaze.
 
-[Choose a research workflow →](research-workflows.md)
+[Run the practical end-to-end workflow →](practical-workflow.md) · [Choose a research workflow →](research-workflows.md)
 
 ## Validation is visible, not implied
 
@@ -237,7 +237,7 @@ gaze = canonicalize_gaze(raw, sampling_rate_hz=60)
 flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 ```
 
-[Continue with the getting-started guide →](getting-started.md) · [Run the guided QC tutorial →](tutorial-synthetic-qc.md)
+[Continue with the getting-started guide →](getting-started.md) · [Run the practical end-to-end workflow →](practical-workflow.md) · [Run the guided QC tutorial →](tutorial-synthetic-qc.md)
 
 ## Current project phase
 
