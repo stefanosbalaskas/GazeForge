@@ -4,7 +4,7 @@ GazeForge is a methods toolkit rather than a domain-specific inference engine. T
 
 Use this page to enter the documentation from your **research question** rather than from a software module.
 
-If you want to inspect one complete executable path first, run the [practical end-to-end workflow](practical-workflow.md), then return here to adapt the layers to your domain question.
+If you want to inspect one complete executable path first, run the [practical end-to-end workflow](practical-workflow.md). If you are planning a full study, use the [Study lifecycle](study-lifecycle.md) to connect acquisition, import, QC, measurement, validation, evidence freezing, and reporting before returning here to adapt the layers to your domain question.
 
 <div class="gf-path-grid" markdown>
 
@@ -24,7 +24,7 @@ Start with: [Visual diagnostics](visual-diagnostics.md) · [Dynamic AOIs](dynami
 
 Map fixations to researcher-defined or reviewed semantic regions such as brand, claim, price, disclosure, product, or call-to-action elements. Use scanpaths and event timing as behavioural process measures without labelling them as emotion or persuasion by default.
 
-Start with: [Visual diagnostics](visual-diagnostics.md) · [Research workflows](research-workflows.md)
+Start with: [Worked advertising/interface study](worked-advertising-study.md) · [Visual diagnostics](visual-diagnostics.md) · [Research workflows](research-workflows.md)
 
 </div>
 
@@ -136,4 +136,4 @@ Decide in advance:
 8. how uncertainty, missingness, and abstention will be represented;
 9. which evidence artifacts and software identity will be archived.
 
-Then use [Reproducible reporting](reproducible-reporting.md) as the manuscript-facing checklist.
+Then follow the [Study lifecycle](study-lifecycle.md), use the [Publication-readiness checklist](publication-readiness.md) before freezing a manuscript-facing analysis, and use [Reproducible reporting](reproducible-reporting.md) for the final methods record.
