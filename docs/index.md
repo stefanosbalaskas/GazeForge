@@ -12,16 +12,19 @@ hide:
 
 Machine learning, computer vision, temporal event modelling, semantic AOIs, scanpaths, validation, and provenance — designed so AI can assist eye-tracking research **without silently rewriting the empirical record**.
 
-[Get started](getting-started.md){ .md-button .md-button--primary }
-[Learning paths](learning-paths.md){ .md-button }
-[Evidence status](evidence-status.md){ .md-button }
-[Results gallery](results-gallery.md){ .md-button }
-[Frozen evidence](frozen-evidence.md){ .md-button }
-[For Gazepoint / GP3](gazepoint-gp3.md){ .md-button }
-[PyPI](https://pypi.org/project/gazeforge/){ .md-button }
-[DOI](https://doi.org/10.5281/zenodo.22650013){ .md-button }
-[Citation & attribution](citation-attribution.md){ .md-button }
-[GitHub](https://github.com/stefanosbalaskas/GazeForge){ .md-button }
+<div class="gf-hero-actions" markdown>
+
+[Run a workflow](practical-workflow.md){ .md-button .md-button--primary }
+[Explore methods](learning-paths.md){ .md-button }
+[Inspect evidence](validation-evidence-guide.md){ .md-button }
+
+</div>
+
+<div class="gf-resource-rail" markdown>
+
+[Install](release-install.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation & attribution](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650013) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
+
+</div>
 
 </div>
 
@@ -58,53 +61,82 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
   </div>
 </div>
 
-## Choose your path
+## Start from your task
 
-<div class="gf-path-grid" markdown>
+<div class="gf-task-grid" markdown>
 
-<div class="gf-path-card" markdown>
+<div class="gf-task-card" markdown>
 
-### :material-rocket-launch-outline: Complete research workflow
+<span class="gf-task-kicker">Do the work</span>
 
-Run one deterministic demo through canonicalisation, QC, I-VT events, fixation centroids, researcher-defined AOIs, semantic scanpaths, provenance, and reviewable exports.
+### :material-rocket-launch-outline: Run a workflow
 
-[Practical end-to-end workflow →](practical-workflow.md)
+Follow one executable path from source gaze through canonicalisation, QC, transparent events, AOIs, scanpaths, provenance, and reviewable exports.
 
-</div>
-
-<div class="gf-path-card" markdown>
-
-### :material-eye-outline: Transparent event baseline
-
-Build an inspectable I-VT fixation/saccade/noise baseline before deciding whether a learned model adds value.
-
-[I-VT tutorial →](tutorial-ivt-baseline.md)
+[Open the practical workflow →](practical-workflow.md)
 
 </div>
 
-<div class="gf-path-card" markdown>
+<div class="gf-task-card" markdown>
 
-### :material-chart-box-outline: Read the evidence
+<span class="gf-task-kicker">Understand the methods</span>
 
-Start from the evidence question, then drill into the benchmark that matches the provenance, labels, rate, and split design you need.
+### :material-flask-outline: Explore methods
 
-[Validation guide →](validation-evidence-guide.md) · [Benchmark guide →](benchmark-guide.md) · [Results gallery →](results-gallery.md)
+Choose a learning route for event modelling, AOIs, scanpaths, validation, calibration, reporting, or tracker adaptation before dropping into API details.
+
+[Choose a learning path →](learning-paths.md)
 
 </div>
 
-<div class="gf-path-card" markdown>
+<div class="gf-task-card" markdown>
 
-### :material-file-document-check-outline: Report reproducibly
+<span class="gf-task-kicker">Check the claims</span>
 
-Turn software identity, acquisition provenance, split design, rate handling, metrics, and fingerprints into a manuscript-ready record.
+### :material-shield-search-outline: Inspect evidence
 
-[Reporting guide →](reproducible-reporting.md)
+Start with the generated evidence layer, then drill into the benchmark whose provenance, labels, sampling rate, and split design match your question.
+
+[Open the validation guide →](validation-evidence-guide.md)
 
 </div>
 
 </div>
 
-[See all learning paths →](learning-paths.md)
+<div class="gf-support-links" markdown>
+
+**Also useful:** [Research workflows](research-workflows.md) · [Reproducible reporting](reproducible-reporting.md) · [Benchmark guide](benchmark-guide.md) · [Results gallery](results-gallery.md)
+
+</div>
+
+## See the workflow before you run it
+
+The previews below use **synthetic/demo data only**. They illustrate software behaviour and review surfaces; they are **not empirical validation evidence** and do not establish native-device, native 60 Hz, Gazepoint, or GP3 validity.
+
+<div class="gf-preview-grid">
+  <a class="gf-preview-card" href="visual-diagnostics/">
+    <img src="assets/figures/synthetic-qc-diagnostics.svg" alt="Synthetic demo quality-control anomaly timeline with flagged samples marked for review." loading="lazy">
+    <span class="gf-preview-kicker">1 · Inspect quality</span>
+    <strong>Non-destructive QC</strong>
+    <span>Flag suspicious samples and review trial quality without silently deleting observations.</span>
+  </a>
+  <a class="gf-preview-card" href="visual-diagnostics/">
+    <img src="assets/figures/synthetic-event-diagnostics.svg" alt="Synthetic demo event probability and calibration diagnostics with line-style and point annotations." loading="lazy">
+    <span class="gf-preview-kicker">2 · Inspect predictions</span>
+    <strong>Events &amp; calibration</strong>
+    <span>Keep probabilities, thresholds, calibration, and uncertainty visible instead of reducing the pipeline to one opaque label.</span>
+  </a>
+  <a class="gf-preview-card" href="visual-diagnostics/">
+    <img src="assets/figures/synthetic-aoi-scanpath.svg" alt="Synthetic demo semantic AOI rectangles with a numbered fixation scanpath." loading="lazy">
+    <span class="gf-preview-kicker">3 · Inspect meaning</span>
+    <strong>AOIs &amp; scanpaths</strong>
+    <span>Review semantic regions and sequence structure while preserving explicit labels and fixation order.</span>
+  </a>
+</div>
+
+<p class="gf-preview-note">Synthetic/demo preview · not empirical validation evidence. <a href="visual-diagnostics/">Open all visual diagnostics →</a></p>
+
+## What GazeForge covers
 
 <div class="grid cards" markdown>
 
