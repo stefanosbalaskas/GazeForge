@@ -2,7 +2,7 @@
 
 GazeForge spans data preparation, quality control, eye-event modelling, semantic AOIs, scanpaths, benchmark validation, and scientific provenance. You do not need to learn every layer before starting.
 
-Choose the path that matches your immediate research question.
+Choose the path that matches your immediate research question. If you are planning an entire study rather than learning one method, use the [Study lifecycle](study-lifecycle.md) as the orchestration layer from acquisition through publication.
 
 <div class="gf-path-grid" markdown>
 
@@ -52,7 +52,7 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for four deterministic scripts with exact commands, dependencies, expected outputs, and links to the underlying repository files. For a task-first map of the deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for five deterministic scripts with exact commands, dependencies, expected outputs, and links to the underlying repository files. The [worked advertising/interface study](worked-advertising-study.md) shows how the pieces fit a recognizable domain design without inventing an empirical effect. For a task-first map of the deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
@@ -64,6 +64,8 @@ Open the [Runnable examples gallery](runnable-examples.md) for four deterministi
 | **4. Validate** | participant-disjoint folds, calibration, event matching | out-of-sample performance | native-device validity from resampled data |
 | **5. Extend** | semantic/dynamic AOIs, scanpaths, hierarchical models | task-specific analytic structures | unsupported psychological inference |
 | **6. Freeze** | manifests, fingerprints, certificates, source resolution | auditable evidence bundle | stronger provenance than the source supports |
+
+For a more complete research route, the [Study lifecycle](study-lifecycle.md) expands this progression into ten stages and ties every stage to a reviewable artifact and explicit claim boundary.
 
 ## Which event workflow should I use?
 
@@ -99,4 +101,4 @@ The [results gallery](results-gallery.md) puts the current reviewed benchmark su
 
 ## Report the analysis so somebody else can reconstruct it
 
-When an analysis becomes manuscript-facing, continue with [Reproducible reporting](reproducible-reporting.md). That guide turns the package/version, acquisition rate, split policy, model identity, derived/native distinction, and evidence fingerprints into a compact reporting checklist.
+When an analysis becomes manuscript-facing, continue with the [Publication-readiness checklist](publication-readiness.md) and [Reproducible reporting](reproducible-reporting.md). Those guides turn package/version, acquisition rate, split policy, model identity, derived/native distinction, evidence fingerprints, and explicit claim boundaries into a compact manuscript-facing record.

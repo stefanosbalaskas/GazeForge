@@ -1,9 +1,9 @@
 # Runnable examples
 
-The repository contains four deterministic examples that move from a small first result to a complete reviewable workflow. Use this page to choose a script, see what it produces, and open the corresponding guide.
+The repository contains five deterministic examples that move from a small first result to a complete reviewable workflow and a domain-shaped worked study. Use this page to choose a script, see what it produces, and open the corresponding guide.
 
 !!! warning "Demo output is not validation evidence"
-    Every example on this page uses synthetic/demo inputs. The scripts demonstrate software behaviour, composition, plotting, and provenance. They are **not empirical validation evidence** and do not establish native-device, native 60 Hz, Gazepoint, or GP3 validity.
+    Every example on this page uses synthetic/demo inputs. The scripts demonstrate software behaviour, composition, plotting, provenance, and reporting structure. They are **not empirical validation evidence** and do not establish native-device, native 60 Hz, Gazepoint, or GP3 validity.
 
 !!! tip "Already have a tracker export?"
     Use the [Real-data import clinic](data-import-clinic.md) before substituting your study data into an example. It makes identity, units, screen geometry, timestamp cadence, duplicate keys, and source fingerprints explicit before QC or modelling.
@@ -16,6 +16,7 @@ The repository contains four deterministic examples that move from a small first
 | **Transparent I-VT** | base package | `python examples/02_ivt_baseline.py` | printed event counts and first-trial transitions |
 | **Visual diagnostics** | `.[plot]` | `python examples/03_visual_diagnostics.py --output-dir visual-demo` | six PNG diagnostics |
 | **End-to-end workflow** | `.[plot]` by default; base path with `--no-figures` | `python examples/end_to_end_research_workflow.py --output-dir end-to-end-research-demo` | ten CSV tables, provenance, manifest, optional figures |
+| **Worked advertising/interface study** | base package | `python examples/04_worked_advertising_study.py --output-dir worked-advertising-demo` | ten study-shaped CSV tables, analysis plan, provenance, manifest |
 
 ## 1 · Synthetic QC
 
@@ -139,13 +140,50 @@ The script takes a deep snapshot of the synthetic source table and verifies at t
 
 [Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/end_to_end_research_workflow.py) · [Read the practical workflow](practical-workflow.md)
 
+## 5 · Worked advertising / interface study
+
+Use this example when you want to see the same auditable layers shaped around a recognizable static-stimulus research design rather than a generic pipeline.
+
+```bash
+python examples/04_worked_advertising_study.py \
+  --output-dir worked-advertising-demo
+```
+
+The study predeclares four semantic AOIs—`brand`, `claim`, `disclosure`, and `product`—then composes source preservation, canonicalisation, QC, transparent I-VT classification, event intervals, fixation/AOI assignment, semantic scanpaths, and provenance.
+
+It writes these ten tables:
+
+```text
+01_source_gaze.csv
+02_canonical_gaze.csv
+03_qc_samples.csv
+04_trial_quality.csv
+05_event_samples.csv
+06_event_intervals.csv
+07_fixation_centroids.csv
+08_aoi_definitions.csv
+09_fixation_aoi_assignments.csv
+10_semantic_scanpaths.csv
+```
+
+It also writes:
+
+- `analysis_plan.json`, making the illustrative study decisions explicit;
+- `provenance.json`, recording the analysis operations; and
+- `workflow_manifest.json`, recording software identity, source/output fingerprints, evidence classification, and source immutability.
+
+The script verifies that the source table remains unchanged and requires the synthetic demonstration to visit all four AOIs. The resulting AOI assignments and scanpaths are descriptive software-demo outputs—not estimates of real consumer attention effects, persuasion, comprehension, liking, or purchase intention. The manifest uses `synthetic_demo_not_empirical_evidence`.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/04_worked_advertising_study.py) · [Read the worked-study guide](worked-advertising-study.md) · [Follow the study lifecycle](study-lifecycle.md)
+
 ## Which example should I run first?
 
 ```text
-Need to verify installation / QC?        → 01_synthetic_qc.py
-Need an inspectable event baseline?       → 02_ivt_baseline.py
-Need figure-generation patterns?          → 03_visual_diagnostics.py
-Need a complete reviewable output bundle? → end_to_end_research_workflow.py
+Need to verify installation / QC?         → 01_synthetic_qc.py
+Need an inspectable event baseline?        → 02_ivt_baseline.py
+Need figure-generation patterns?           → 03_visual_diagnostics.py
+Need a complete reviewable output bundle?  → end_to_end_research_workflow.py
+Need a domain-shaped worked study?         → 04_worked_advertising_study.py
 ```
 
 ## Move from demo data to a study
@@ -160,4 +198,4 @@ The examples intentionally avoid pretending that synthetic behaviour validates a
 6. preserve whether lower-rate data are native or derived; and
 7. freeze software identity, provenance, fingerprints, and evidence boundaries with the reported result.
 
-Continue with [Real-data import clinic](data-import-clinic.md), [Methods overview](methods-overview.md), [Practical end-to-end workflow](practical-workflow.md), [Validation guide](validation-evidence-guide.md), and [Reproducible reporting](reproducible-reporting.md).
+Continue with [Study lifecycle](study-lifecycle.md), [Real-data import clinic](data-import-clinic.md), [Methods overview](methods-overview.md), [Publication readiness](publication-readiness.md), [Validation guide](validation-evidence-guide.md), and [Reproducible reporting](reproducible-reporting.md).

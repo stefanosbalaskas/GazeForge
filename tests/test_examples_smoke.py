@@ -66,3 +66,35 @@ def test_end_to_end_research_workflow_runs(tmp_path, monkeypatch, capsys) -> Non
     assert manifest["source_unchanged"] is True
     assert manifest["figure_outputs"] == []
     assert "Source table unchanged: yes" in captured.out
+
+
+def test_worked_advertising_study_runs(tmp_path, monkeypatch, capsys) -> None:
+    output_dir = tmp_path / "worked-advertising-study-demo"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "04_worked_advertising_study.py",
+            "--output-dir",
+            str(output_dir),
+        ],
+    )
+    runpy.run_path(
+        str(_REPO_ROOT / "examples" / "04_worked_advertising_study.py"),
+        run_name="__main__",
+    )
+    captured = capsys.readouterr()
+
+    assert len(list(output_dir.glob("*.csv"))) == 10
+    for filename in ("analysis_plan.json", "provenance.json", "workflow_manifest.json"):
+        assert (output_dir / filename).is_file()
+
+    manifest = json.loads((output_dir / "workflow_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["evidence_classification"] == "synthetic_demo_not_empirical_evidence"
+    assert manifest["source_unchanged"] is True
+    assert set(manifest["aoi_labels"]) == {"brand", "claim", "disclosure", "product"}
+
+    aoi_table = (output_dir / "08_aoi_definitions.csv").read_text(encoding="utf-8")
+    for label in ("brand", "claim", "disclosure", "product"):
+        assert label in aoi_table
+    assert "Source table unchanged: yes" in captured.out

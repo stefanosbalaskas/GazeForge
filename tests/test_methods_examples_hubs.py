@@ -44,16 +44,20 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "02_ivt_baseline.py",
         "03_visual_diagnostics.py",
         "end_to_end_research_workflow.py",
+        "04_worked_advertising_study.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
+    assert "five deterministic examples" in page
     assert "python examples/01_synthetic_qc.py" in page
     assert "python examples/02_ivt_baseline.py" in page
     assert "python examples/03_visual_diagnostics.py --output-dir visual-demo" in page
     assert "--output-dir end-to-end-research-demo" in page
     assert "--no-figures" in page
+    assert "python examples/04_worked_advertising_study.py" in page
+    assert "--output-dir worked-advertising-demo" in page
 
 
 def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> None:
@@ -64,11 +68,15 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "06_dynamic_aoi.png",
         "01_source_gaze.csv",
         "10_semantic_scanpaths.csv",
+        "analysis_plan.json",
         "provenance.json",
         "workflow_manifest.json",
         "figures/03_scanpath.png",
     ):
         assert output in page
+
+    for aoi in ("`brand`", "`claim`", "`disclosure`", "`product`"):
+        assert aoi in page
 
     lower = page.lower()
     assert "not empirical validation evidence" in lower
@@ -90,9 +98,13 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "      - Runnable examples: runnable-examples.md" in mkdocs
     assert "methods-overview.md" in homepage
     assert "runnable-examples.md" in homepage
+    assert "study-lifecycle.md" in homepage
+    assert "worked-advertising-study.md" in homepage
+    assert "publication-readiness.md" in homepage
     assert "runnable-examples.md" in getting_started
     assert "runnable-examples.md" in learning_paths
     assert "../docs/runnable-examples.md" in examples_readme
+    assert "04_worked_advertising_study.py" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)
