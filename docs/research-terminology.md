@@ -63,6 +63,8 @@ Use calibration metrics such as ECE or Brier score when the claim concerns confi
 
 ## Demo evidence and empirical evidence
 
+A **software demo** is an example used to illustrate software behaviour, workflow composition, plotting, provenance, regression testing, or reporting structure. A software demo is not empirical validation evidence.
+
 | Label | Appropriate interpretation |
 | --- | --- |
 | **Synthetic/demo output** | software behaviour, workflow composition, plotting, provenance, regression testing |
