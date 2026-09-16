@@ -23,6 +23,7 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
+    - navigation.prune
     - navigation.top
     - navigation.indexes
     - navigation.path
@@ -32,6 +33,7 @@ theme:
     - content.tabs.link
     - search.highlight
     - search.suggest
+    - search.share
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
