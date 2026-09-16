@@ -77,9 +77,9 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ The archive records source identity without overstating access or redistribution rights.
 - ☐ Final tables, figures, manifests, certificates, fingerprints, and analysis code share a consistent analysis identity.
 - ☐ Random seeds and non-default parameters are recorded.
-- ☐ The archive contains a short evidence-boundary statement.
+- ☐ The archive contains a short **evidence boundary** statement.
 
-## Compact evidence-boundary record
+## Compact evidence boundary record
 
 A manuscript or supplement can retain a short machine- and human-readable record like this:
 
