@@ -105,7 +105,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**Also useful:** [Import real data](data-import-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Research terminology](research-terminology.md) · [Reproducible reporting](reproducible-reporting.md)
+**Also useful:** [Import real data](data-import-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 
