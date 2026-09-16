@@ -22,7 +22,7 @@ Machine learning, computer vision, temporal event modelling, semantic AOIs, scan
 
 <div class="gf-resource-rail" markdown>
 
-[Install](release-install.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650013) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
+[Install](release-install.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation & attribution](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650013) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
 
 </div>
 
