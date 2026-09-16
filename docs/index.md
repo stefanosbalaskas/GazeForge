@@ -105,7 +105,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**Also useful:** [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Research workflows](research-workflows.md) · [Reproducible reporting](reproducible-reporting.md) · [Benchmark guide](benchmark-guide.md) · [Results gallery](results-gallery.md)
+**Also useful:** [Import real data](data-import-clinic.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Research workflows](research-workflows.md) · [Reproducible reporting](reproducible-reporting.md) · [Benchmark guide](benchmark-guide.md) · [Results gallery](results-gallery.md)
 
 </div>
 
@@ -269,7 +269,7 @@ gaze = canonicalize_gaze(raw, sampling_rate_hz=60)
 flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 ```
 
-[Continue with the getting-started guide →](getting-started.md) · [Run the practical end-to-end workflow →](practical-workflow.md) · [Run the guided QC tutorial →](tutorial-synthetic-qc.md)
+[Import real study data →](data-import-clinic.md) · [Continue with the getting-started guide →](getting-started.md) · [Run the practical end-to-end workflow →](practical-workflow.md) · [Run the guided QC tutorial →](tutorial-synthetic-qc.md)
 
 ## Current project phase
 
