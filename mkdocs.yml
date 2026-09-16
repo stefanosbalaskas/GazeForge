@@ -66,13 +66,17 @@ nav:
   - Learn:
       - Learning paths: learning-paths.md
       - Real-data import clinic: data-import-clinic.md
+      - Study lifecycle: study-lifecycle.md
       - Runnable examples: runnable-examples.md
+      - Worked advertising/interface study: worked-advertising-study.md
       - Practical end-to-end workflow: practical-workflow.md
       - Synthetic QC tutorial: tutorial-synthetic-qc.md
       - I-VT baseline tutorial: tutorial-ivt-baseline.md
       - Visual diagnostics: visual-diagnostics.md
       - Results gallery: results-gallery.md
       - Reproducible reporting: reproducible-reporting.md
+      - Publication readiness: publication-readiness.md
+      - Research terminology: research-terminology.md
   - Methods:
       - Overview: methods-overview.md
       - Adapters & validation: adapters-validation.md
