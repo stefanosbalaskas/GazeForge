@@ -2,6 +2,8 @@
 
 GazeForge is most useful when AI is one transparent component inside a broader eye-tracking design. This page shows common workflow patterns and the evidence each one requires.
 
+For a concrete runnable composition of these layers, start with the [practical end-to-end workflow](practical-workflow.md); this page then helps choose variations by scientific question.
+
 ## 1. AI-assisted quality control
 
 **Question:** Which trials or samples deserve inspection before analysis?
