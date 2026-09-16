@@ -58,6 +58,19 @@ python examples/end_to_end_research_workflow.py \
 
 Guide: [Practical end-to-end research workflow](../docs/practical-workflow.md)
 
+## 5. Worked advertising / interface study
+
+Run a domain-shaped static-stimulus example with explicit `brand`, `claim`, `disclosure`, and `product` AOIs:
+
+```bash
+python examples/04_worked_advertising_study.py \
+  --output-dir worked-advertising-demo
+```
+
+The script writes ten study-shaped CSV tables plus `analysis_plan.json`, `provenance.json`, and `workflow_manifest.json`. It verifies source immutability, records fingerprints, and labels the bundle `synthetic_demo_not_empirical_evidence`. The outputs illustrate software workflow and reporting structure; they are not empirical estimates of consumer behaviour or tracker validity.
+
+Guide: [Worked advertising / interface study](../docs/worked-advertising-study.md) · [Study lifecycle](../docs/study-lifecycle.md)
+
 ## Reproducibility notes
 
-The examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence.
+The five examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence. Use the [Publication readiness](../docs/publication-readiness.md) checklist before freezing a study bundle.
