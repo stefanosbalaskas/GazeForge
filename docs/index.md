@@ -105,9 +105,53 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**Also useful:** [Import real data](data-import-clinic.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Research workflows](research-workflows.md) · [Reproducible reporting](reproducible-reporting.md) · [Benchmark guide](benchmark-guide.md) · [Results gallery](results-gallery.md)
+**Also useful:** [Import real data](data-import-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Research terminology](research-terminology.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
+
+## From research question to publication
+
+<div class="gf-task-grid" markdown>
+
+<div class="gf-task-card" markdown>
+
+<span class="gf-task-kicker">Plan the study</span>
+
+### :material-map-marker-path: Follow the study lifecycle
+
+Move from an observable research construct through acquisition, import, QC, events, AOIs, scanpaths, validation, provenance, analysis freeze, and reporting.
+
+[Open the study lifecycle →](study-lifecycle.md)
+
+</div>
+
+<div class="gf-task-card" markdown>
+
+<span class="gf-task-kicker">Learn by example</span>
+
+### :material-bullhorn-outline: Run a worked study
+
+Use a deterministic static advertising/interface demonstration with explicit `brand`, `claim`, `disclosure`, and `product` AOIs, reviewable outputs, and source fingerprints.
+
+[Open the worked study →](worked-advertising-study.md)
+
+</div>
+
+<div class="gf-task-card" markdown>
+
+<span class="gf-task-kicker">Before submission</span>
+
+### :material-clipboard-check-outline: Audit publication readiness
+
+Check acquisition provenance, exclusions, model identity, split design, native/derived wording, evidence status, archive identity, and reproducible reporting before freezing manuscript claims.
+
+[Open publication readiness →](publication-readiness.md)
+
+</div>
+
+</div>
+
+<p class="gf-preview-note">The worked study uses synthetic/demo data only and does not establish consumer effects, empirical validation, native-device validity, native 60 Hz validity, Gazepoint validity, or GP3 validity.</p>
 
 ## See the workflow before you run it
 
