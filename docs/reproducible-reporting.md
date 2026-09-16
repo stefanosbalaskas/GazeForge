@@ -2,6 +2,8 @@
 
 A GazeForge analysis should be reproducible at two levels: **software identity** and **scientific evidence identity**. Reporting only a package name is not enough when the result depends on sampling-rate transformations, held-out grouping, source provenance, or frozen benchmark artifacts.
 
+If you are still designing the study, begin with the [Study lifecycle](study-lifecycle.md). If the analysis is approaching submission or archive freeze, use [Publication readiness](publication-readiness.md) as the final audit. The [Research terminology](research-terminology.md) guide keeps acquisition, split, validation, QC, and evidence-status wording consistent, while the [worked advertising/interface study](worked-advertising-study.md) shows the reporting artifacts in a concrete synthetic example.
+
 ## Minimum methods checklist
 
 | Item | Record |
@@ -115,3 +117,7 @@ Confirm that:
 - figures repeat critical evidence qualifiers in the caption or adjacent text;
 - the manuscript does not upgrade derived, opaque-identity, or unresolved-source evidence into a stronger category;
 - any external benchmark redistribution is consistent with the verified source/reuse status rather than inferred from the article licence.
+
+Then run the broader [Publication readiness](publication-readiness.md) audit, which also checks preregistration alignment, source/data identity, exclusions, AOI review state, software/archive identity, and the boundary between software demonstrations and empirical evidence.
+
+[Study lifecycle →](study-lifecycle.md) · [Publication readiness →](publication-readiness.md) · [Research terminology →](research-terminology.md) · [Worked study →](worked-advertising-study.md)
