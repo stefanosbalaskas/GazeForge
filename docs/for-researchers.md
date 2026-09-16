@@ -4,6 +4,8 @@ GazeForge is a methods toolkit rather than a domain-specific inference engine. T
 
 Use this page to enter the documentation from your **research question** rather than from a software module.
 
+If you want to inspect one complete executable path first, run the [practical end-to-end workflow](practical-workflow.md), then return here to adapt the layers to your domain question.
+
 <div class="gf-path-grid" markdown>
 
 <div class="gf-path-card" markdown>
@@ -52,7 +54,7 @@ Start with: [Learning paths](learning-paths.md) · [Scanpath workflows](research
 
 Use transparent event baselines, participant-disjoint validation, semantic AOIs, scanpaths, and uncertainty-aware model outputs for task-neutral experimental paradigms.
 
-Start with: [I-VT tutorial](tutorial-ivt-baseline.md) · [Validation status](validation-status.md)
+Start with: [Practical workflow](practical-workflow.md) · [I-VT tutorial](tutorial-ivt-baseline.md) · [Validation status](validation-status.md)
 
 </div>
 

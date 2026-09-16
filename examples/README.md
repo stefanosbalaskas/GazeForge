@@ -35,6 +35,27 @@ The script demonstrates QC flags, event probabilities, calibration, semantic AOI
 
 Guide: [Visual diagnostics](../docs/visual-diagnostics.md)
 
+## 4. End-to-end research workflow
+
+Run a complete reviewable composition of the public workflow layers:
+
+```bash
+python examples/end_to_end_research_workflow.py \
+  --output-dir end-to-end-research-demo
+```
+
+The example writes source/canonical/QC/event/fixation/AOI/scanpath tables, operation provenance, a workflow manifest, fingerprints, and optional diagnostic figures. It verifies that the original source table remains unchanged and records the bundle as `synthetic_demo_not_empirical_evidence`.
+
+For the analysis/export path without Matplotlib figures:
+
+```bash
+python examples/end_to_end_research_workflow.py \
+  --output-dir end-to-end-research-demo \
+  --no-figures
+```
+
+Guide: [Practical end-to-end research workflow](../docs/practical-workflow.md)
+
 ## Reproducibility notes
 
 The examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence.

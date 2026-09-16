@@ -63,6 +63,7 @@ nav:
       - Brand & sharing: brand-assets.md
   - Learn:
       - Learning paths: learning-paths.md
+      - Practical end-to-end workflow: practical-workflow.md
       - Synthetic QC tutorial: tutorial-synthetic-qc.md
       - I-VT baseline tutorial: tutorial-ivt-baseline.md
       - Visual diagnostics: visual-diagnostics.md
