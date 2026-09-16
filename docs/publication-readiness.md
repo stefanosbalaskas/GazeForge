@@ -52,6 +52,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ Sample-level metrics are not substituted for event-level temporal performance when boundary fidelity matters.
 - ☐ Calibration metrics are reported for probabilistic confidence claims where relevant.
 - ☐ Matched model comparisons use the same held-out rows/folds when the comparison requires paired evidence.
+- ☐ **Native versus derived** sampling-rate status is stated explicitly wherever acquisition and analysis rates differ.
 - ☐ Native and derived sampling-rate conditions are labelled separately.
 - ☐ Sensitivity analyses preserve the derivation rule and source provenance.
 
