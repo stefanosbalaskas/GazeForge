@@ -157,12 +157,12 @@ It writes these ten tables:
 01_source_gaze.csv
 02_canonical_gaze.csv
 03_qc_samples.csv
-04_ivt_samples.csv
-05_event_intervals.csv
-06_trial_quality.csv
-07_fixations.csv
-08_fixation_aoi_assignments.csv
-09_aoi_attention_summary.csv
+04_trial_quality.csv
+05_event_samples.csv
+06_event_intervals.csv
+07_fixation_centroids.csv
+08_aoi_definitions.csv
+09_fixation_aoi_assignments.csv
 10_semantic_scanpaths.csv
 ```
 
@@ -172,7 +172,7 @@ It also writes:
 - `provenance.json`, recording the analysis operations; and
 - `workflow_manifest.json`, recording software identity, source/output fingerprints, evidence classification, and source immutability.
 
-The script verifies that the source table remains unchanged and requires the synthetic demonstration to visit all four AOIs. The resulting AOI summaries and scanpaths are descriptive software-demo outputs—not estimates of real consumer attention effects, persuasion, comprehension, liking, or purchase intention. The manifest uses `synthetic_demo_not_empirical_evidence`.
+The script verifies that the source table remains unchanged and requires the synthetic demonstration to visit all four AOIs. The resulting AOI assignments and scanpaths are descriptive software-demo outputs—not estimates of real consumer attention effects, persuasion, comprehension, liking, or purchase intention. The manifest uses `synthetic_demo_not_empirical_evidence`.
 
 [Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/04_worked_advertising_study.py) · [Read the worked-study guide](worked-advertising-study.md) · [Follow the study lifecycle](study-lifecycle.md)
 
