@@ -62,7 +62,7 @@ Start with: [I-VT tutorial](tutorial-ivt-baseline.md) · [Validation status](val
 
 Compare deterministic and learned event models, inspect probability calibration, evaluate boundary timing, test sampling-rate sensitivity, and freeze evidence with explicit source and split provenance.
 
-Start with: [Benchmarking](benchmarking.md) · [Results gallery](results-gallery.md) · [Frozen evidence](frozen-evidence.md)
+Start with: [Validation guide](validation-evidence-guide.md) · [Benchmark guide](benchmark-guide.md) · [Results gallery](results-gallery.md)
 
 </div>
 
