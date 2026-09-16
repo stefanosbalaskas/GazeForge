@@ -5,6 +5,9 @@ The repository contains four deterministic examples that move from a small first
 !!! warning "Demo output is not validation evidence"
     Every example on this page uses synthetic/demo inputs. The scripts demonstrate software behaviour, composition, plotting, and provenance. They are **not empirical validation evidence** and do not establish native-device, native 60 Hz, Gazepoint, or GP3 validity.
 
+!!! tip "Already have a tracker export?"
+    Use the [Real-data import clinic](data-import-clinic.md) before substituting your study data into an example. It makes identity, units, screen geometry, timestamp cadence, duplicate keys, and source fingerprints explicit before QC or modelling.
+
 ## At a glance
 
 | Example | Install | Run | Main output |
@@ -149,12 +152,12 @@ Need a complete reviewable output bundle? → end_to_end_research_workflow.py
 
 The examples intentionally avoid pretending that synthetic behaviour validates a tracker or analysis method. For a real study:
 
-1. replace the simulated source with an explicit tracker adapter or canonical table;
-2. record actual acquisition hardware, native sampling rate, units, screen geometry, and participant/trial identity;
+1. start with the [Real-data import clinic](data-import-clinic.md), then replace the simulated source with an explicit tracker adapter or canonical table;
+2. record actual acquisition hardware, native sampling rate, observed timestamp cadence, units, screen geometry, and participant/trial identity;
 3. keep QC flags and AI-assisted outputs reviewable rather than silently rewriting source samples;
 4. justify thresholds and model choices for the study population and task;
 5. validate event models with an appropriate labelled corpus and leakage-safe split design;
 6. preserve whether lower-rate data are native or derived; and
 7. freeze software identity, provenance, fingerprints, and evidence boundaries with the reported result.
 
-Continue with [Methods overview](methods-overview.md), [Practical end-to-end workflow](practical-workflow.md), [Validation guide](validation-evidence-guide.md), and [Reproducible reporting](reproducible-reporting.md).
+Continue with [Real-data import clinic](data-import-clinic.md), [Methods overview](methods-overview.md), [Practical end-to-end workflow](practical-workflow.md), [Validation guide](validation-evidence-guide.md), and [Reproducible reporting](reproducible-reporting.md).

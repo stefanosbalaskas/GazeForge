@@ -32,6 +32,9 @@ pytest
 
     Prefer to choose among smaller scripts first? Browse the [runnable examples](runnable-examples.md) for exact commands, dependencies, and expected outputs.
 
+!!! tip "Bringing real tracker data?"
+    Start with the [Real-data import clinic](data-import-clinic.md) before copying a synthetic example. It walks through Gazepoint / GP3 exports, generic processed tables, already-canonical data, unit/rate checks, duplicate timestamps, screen geometry, source fingerprints, and the QC handoff.
+
 ## 1. Canonicalise gaze samples
 
 GazeForge works around a vendor-neutral sample table. The core required columns are participant, trial, timestamp, and gaze coordinates.
@@ -56,6 +59,8 @@ gaze = adapt_gazepoint_samples(
     screen_size_px=(1920, 1080),
 )
 ```
+
+For real exports, verify the source units, observed timestamp cadence, duplicate sample keys, and screen geometry in the [Real-data import clinic](data-import-clinic.md). Adapter compatibility does not by itself establish tracker or event-model validity.
 
 ## 2. Add QC without deleting the record
 
@@ -180,4 +185,4 @@ At minimum, report:
 
 For the public alpha, cite the exact version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013) and record `0.1.0a1` in the analysis environment.
 
-Continue with the [practical end-to-end workflow](practical-workflow.md), [Scientific governance](scientific-governance.md), and [Validation status](validation-status.md).
+Continue with the [Real-data import clinic](data-import-clinic.md), [practical end-to-end workflow](practical-workflow.md), [Scientific governance](scientific-governance.md), and [Validation status](validation-status.md).

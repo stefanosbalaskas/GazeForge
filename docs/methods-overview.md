@@ -15,8 +15,8 @@ GazeForge has a broad technical surface, but most studies only need a subset of 
 
 Use explicit adapters, canonical units, participant/trial identity, and non-destructive quality signals before modelling.
 
-**Start:** [Adapters & validation](adapters-validation.md)  
-**Then:** [Motion-quality gating](motion-quality-gating.md) · [Synthetic QC tutorial](tutorial-synthetic-qc.md)
+**Start:** [Real-data import clinic](data-import-clinic.md)  
+**Then:** [Adapters & validation](adapters-validation.md) · [Motion-quality gating](motion-quality-gating.md) · [Synthetic QC tutorial](tutorial-synthetic-qc.md)
 
 </div>
 
@@ -81,7 +81,7 @@ Keep split design, sampling-rate handling, calibration, benchmark provenance, fr
 
 | Research question | Primary method pages | Typical reviewable output |
 | --- | --- | --- |
-| How should tracker data enter GazeForge? | [Adapters & validation](adapters-validation.md) | canonical gaze table with declared units/rate |
+| How should tracker data enter GazeForge? | [Real-data import clinic](data-import-clinic.md), [Adapters & validation](adapters-validation.md) | canonical gaze table with declared units/rate and source provenance |
 | Which samples or trials need review? | [Motion-quality gating](motion-quality-gating.md), [Synthetic QC tutorial](tutorial-synthetic-qc.md) | flags, weights, quality summaries; source rows retained |
 | How should gaze samples become event labels? | [Temporal models](temporal-models.md), [Model comparison](model-comparison.md) | labels/probabilities with model and threshold provenance |
 | How should event performance be evaluated? | [Event-level evaluation](event-level-evaluation.md), [Stratified performance](stratified-event-performance.md), [Matched-fold differences](paired-model-differences.md), [Calibration](calibration.md) | participant-disjoint metrics, matched differences, calibration tables |
@@ -152,4 +152,4 @@ In particular:
 
 ## Run instead of browse
 
-If you want executable examples before reading individual method pages, open the [Runnable examples gallery](runnable-examples.md). For one composed workflow that writes tables, figures, fingerprints, provenance, and a manifest, use the [Practical end-to-end workflow](practical-workflow.md).
+If you are starting from a real tracker or processed export, use the [Real-data import clinic](data-import-clinic.md) first. If you want executable examples before reading individual method pages, open the [Runnable examples gallery](runnable-examples.md). For one composed workflow that writes tables, figures, fingerprints, provenance, and a manifest, use the [Practical end-to-end workflow](practical-workflow.md).

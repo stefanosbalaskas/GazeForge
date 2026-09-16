@@ -65,6 +65,7 @@ nav:
       - Brand & sharing: brand-assets.md
   - Learn:
       - Learning paths: learning-paths.md
+      - Real-data import clinic: data-import-clinic.md
       - Runnable examples: runnable-examples.md
       - Practical end-to-end workflow: practical-workflow.md
       - Synthetic QC tutorial: tutorial-synthetic-qc.md
