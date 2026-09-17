@@ -62,7 +62,7 @@ def _synthetic_labelled_events() -> pd.DataFrame:
             current = targets[0].copy()
 
             for transition_index in range(4):
-                for _ in range(24):
+                for _ in range(18):
                     jitter = rng.normal(0.0, 2.0, size=2)
                     point = current + jitter
                     rows.append(
@@ -98,7 +98,7 @@ def _synthetic_labelled_events() -> pd.DataFrame:
                     sample += 1
                 current = next_target.copy()
 
-            for _ in range(24):
+            for _ in range(18):
                 jitter = rng.normal(0.0, 2.0, size=2)
                 point = current + jitter
                 rows.append(
@@ -127,11 +127,17 @@ def _split_ledger(data: pd.DataFrame) -> pd.DataFrame:
         splitter.split(data, y=data["event_label"], groups=groups),
         start=1,
     ):
-        train_ids = sorted(data.iloc[train_idx]["participant_id"].astype(str).unique())
-        test_ids = sorted(data.iloc[test_idx]["participant_id"].astype(str).unique())
+        train_ids = sorted(
+            data.iloc[train_idx]["participant_id"].astype(str).unique()
+        )
+        test_ids = sorted(
+            data.iloc[test_idx]["participant_id"].astype(str).unique()
+        )
         overlap = sorted(set(train_ids) & set(test_ids))
         if overlap:
-            raise RuntimeError(f"Participant leakage detected in fold {fold}: {overlap}")
+            raise RuntimeError(
+                f"Participant leakage detected in fold {fold}: {overlap}"
+            )
         for participant_id in train_ids:
             rows.append(
                 {
@@ -318,12 +324,12 @@ def main() -> None:
         ivt_velocity_threshold_px_s=1000.0,
         min_confidence=0.0,
         random_state=RANDOM_STATE,
-        n_estimators=80,
+        n_estimators=48,
         context_radius_ms=50.0,
         rolling_window_ms=80.0,
-        hidden_layer_sizes=(24,),
+        hidden_layer_sizes=(16,),
         temporal_solver="lbfgs",
-        temporal_max_iter=120,
+        temporal_max_iter=100,
         calibration_bins=8,
         include_event_level_metrics=True,
         event_group_cols=("participant_id", "trial_id"),
@@ -373,7 +379,10 @@ def main() -> None:
         output_data=comparison.predictions,
         parameters=comparison.design,
         warnings=[
-            "Synthetic/demo validation only; do not generalize model ordering to a real device, task, or population."
+            (
+                "Synthetic/demo validation only; do not generalize model ordering "
+                "to a real device, task, or population."
+            )
         ],
     )
 
@@ -423,7 +432,8 @@ def main() -> None:
         ],
         "illustrative_abstention_threshold": ABSTENTION_THRESHOLD,
         "abstention_boundary": (
-            "The 0.80 threshold is a teaching policy for this deterministic demo, not a universal cutoff."
+            "The 0.80 threshold is a teaching policy for this deterministic demo, "
+            "not a universal cutoff."
         ),
         "scientific_boundary": (
             "Synthetic model ordering is not evidence that one method is generally superior. "
