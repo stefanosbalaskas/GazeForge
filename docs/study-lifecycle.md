@@ -25,9 +25,9 @@ Specify what the gaze data can directly represent, the unit of analysis, acquisi
 
 ### :material-database-arrow-right-outline: Preserve and canonicalise
 
-Keep the source immutable, fingerprint the analysed table, document time/coordinate semantics, and create a vendor-neutral canonical derivative.
+Keep the source immutable, fingerprint the analysed table, document time/coordinate semantics, compare nominal/native rate with observed timestamp cadence, and create a vendor-neutral canonical derivative.
 
-[Import real data →](data-import-clinic.md)
+[Run the worked tracker import →](worked-tracker-import.md)
 
 </div>
 
@@ -61,7 +61,7 @@ Name the held-out unit, reference labels, acquisition provenance, rate status, c
 
 ### :material-snowflake: Freeze identity and provenance
 
-Archive the exact software/environment identity, source and output fingerprints, manifests, certificates, figures, tables, split ledgers, and unresolved evidence boundaries.
+Archive the exact software/environment identity, source and output fingerprints, import contract, manifests, certificates, figures, tables, split ledgers, and unresolved evidence boundaries.
 
 [Publication readiness →](publication-readiness.md)
 
@@ -86,15 +86,32 @@ Translate acquisition, preprocessing, QC, model, split, rate, metric, calibratio
 | Stage | Input | Action | Reviewable output | Continue with | Do not infer |
 | --- | --- | --- | --- | --- | --- |
 | **1. Define the question** | substantive theory + task | define observable gaze construct and unit of analysis | analysis/preregistration plan | [Study templates](study-design-templates.md) | latent states from gaze alone |
-| **2. Record acquisition facts** | tracker/stimulus setup | record hardware, native rate, geometry, participant/trial identity | acquisition/source record | [Import clinic](data-import-clinic.md) | undocumented acquisition facts |
-| **3. Preserve source identity** | original export/table | retain immutable source and fingerprint analysed source table | source snapshot + checksum/fingerprint | [Import clinic](data-import-clinic.md) | fingerprint = independent validation |
-| **4. Canonicalise explicitly** | source semantics | map time, coordinates, identity, optional fields | canonical gaze table | [Adapters & validation](adapters-validation.md) | successful import = device validity |
+| **2. Record acquisition facts** | tracker/stimulus setup | record hardware, native/nominal rate, geometry, participant/trial identity | acquisition/source record | [Worked tracker import](worked-tracker-import.md) | undocumented acquisition facts |
+| **3. Preserve source identity** | original export/table | retain immutable source and fingerprint analysed source table | source snapshot + checksum/fingerprint | [Worked tracker import](worked-tracker-import.md) | fingerprint = independent validation |
+| **4. Canonicalise explicitly** | source semantics | map time, coordinates, identity, optional fields; inspect duplicates/cadence/bounds/row counts | import contract + canonical gaze table | [Adapters & validation](adapters-validation.md) | successful import = device validity |
 | **5. Add QC evidence** | canonical samples | flag anomalies and score trial quality without silent deletion | QC columns + trial summaries | [Research recipes](research-recipes.md) | QC flag = invalid observation |
 | **6. Build measurement outputs** | reviewed samples | apply event baseline/model; define/review static or dynamic AOIs; derive scanpaths if needed | event/AOI/sequence tables | [Methods overview](methods-overview.md) | complex model = superior model |
 | **7. Validate the estimand** | reference labels + split policy | evaluate on leakage-safe held-out data with matching metrics | split ledger + held-out predictions + sample/event/calibration metrics | [Event-model validation clinic](event-model-validation-clinic.md) | sample accuracy = temporal event quality |
-| **8. Audit rate and provenance** | acquisition + analysis-rate history | distinguish native from derived rates and preserve source lineage | rate/sensitivity record | [Sampling sensitivity](sampling-sensitivity.md) | derived 60 Hz = native 60 Hz validity |
+| **8. Audit rate and provenance** | acquisition + analysis-rate history | distinguish native/nominal, observed cadence, and derived analysis rates | rate/sensitivity record | [Sampling sensitivity](sampling-sensitivity.md) | derived 60 Hz = native 60 Hz validity; observed cadence = native hardware proof |
 | **9. Freeze the evidence bundle** | final analysis outputs | freeze manifests, fingerprints, certificates, code/environment, figures/tables | reconstructable archive | [Publication readiness](publication-readiness.md) | archive completeness = stronger evidence |
 | **10. Report qualified claims** | frozen bundle | write methods/results with explicit evidence boundary | manuscript-ready record | [Validation reporting cookbook](validation-reporting-cookbook.md) | broader claims than the design supports |
+
+## Worked route: tracker export → canonical samples → QC
+
+Before a downstream event/AOI analysis, run the import/QC contract itself:
+
+```bash
+python examples/07_worked_tracker_import_qc.py \
+  --output-dir worked-tracker-import-qc-demo
+```
+
+The deterministic Gazepoint-shaped source uses `USER_FILE`, `MEDIA_ID`, `TIME`, `BPOGX`, and `BPOGY`. The script explicitly declares seconds→milliseconds and normalized→pixel conversion, fingerprints and snapshots the source, checks identity, duplicate keys, observed cadence, coordinate bounds, and row-count preservation, then adds non-destructive anomaly flags and trial-quality summaries.
+
+The teaching source deliberately retains a duplicate sample key, off-screen gaze, and a missing coordinate. Those observations are **not silently deduplicated, clipped, filled, or deleted**. The nominal 60 Hz-shaped source and timestamp-derived observed cadence are reported separately; agreement in the demo is not evidence of native GP3 acquisition.
+
+The output bundle contains five CSVs plus `import_contract.json`, `analysis_plan.json`, `provenance.json`, and `workflow_manifest.json`. It is classified `synthetic_demo_not_empirical_evidence` and creates no Gazepoint/GP3, native-60-Hz, event-model, or measurement-validity claim.
+
+[Open the worked tracker import →](worked-tracker-import.md) · [Use the import clinic →](data-import-clinic.md)
 
 ## Worked route: a static advertising/interface study
 
@@ -151,7 +168,8 @@ The example is deliberately classified `synthetic_demo_not_empirical_evidence`. 
 Before you treat the workflow as confirmatory, record at least:
 
 - the participant/trial/stimulus identifiers that define independent units;
-- the native acquisition rate and any derived analysis rate;
+- the native/nominal acquisition rate, observed timestamp cadence, and any derived analysis rate;
+- the exact import mapping, timestamp unit, coordinate basis, screen geometry, source fingerprint, and duplicate/bounds diagnostics;
 - the source of AOIs and whether AI proposals were human-reviewed;
 - for dynamic AOIs, keyframe timestamps, review state, maximum interpolation gap, overlap rule, and the no-extrapolation policy;
 - the QC review/exclusion rule and whether it was prespecified;
@@ -178,4 +196,4 @@ substantive interpretation is established
 
 That separation is the central reason to keep source data, transformations, predictions, review decisions, validation artifacts, and manuscript claims as distinct records.
 
-Continue with [Research recipes](research-recipes.md), [Study-design templates](study-design-templates.md), the [Event-model validation clinic](event-model-validation-clinic.md), [Validation reporting cookbook](validation-reporting-cookbook.md), [Publication-readiness checklist](publication-readiness.md), [Research terminology](research-terminology.md), and [Reproducible reporting](reproducible-reporting.md).
+Continue with [Worked tracker import](worked-tracker-import.md), [Research recipes](research-recipes.md), [Study-design templates](study-design-templates.md), the [Event-model validation clinic](event-model-validation-clinic.md), [Validation reporting cookbook](validation-reporting-cookbook.md), [Publication-readiness checklist](publication-readiness.md), [Research terminology](research-terminology.md), and [Reproducible reporting](reproducible-reporting.md).

@@ -8,6 +8,17 @@ Choose the path that matches your immediate research question. If you are planni
 
 <div class="gf-path-card" markdown>
 
+### :material-database-arrow-right-outline: I have a real tracker export
+
+Start with the executable import/QC route before event modelling. Preserve the source, declare identity/time/coordinate semantics, compare nominal rate with observed timestamp cadence, inspect duplicate keys and bounds, then add non-destructive QC.
+
+**Next:** [Worked tracker import and QC](worked-tracker-import.md)  
+**Deep guide:** [Real-data import clinic](data-import-clinic.md)
+
+</div>
+
+<div class="gf-path-card" markdown>
+
 ### :material-rocket-launch-outline: I want a first result
 
 Start with a deterministic synthetic dataset, canonicalise it, add QC flags, and inspect trial-level quality.
@@ -83,12 +94,13 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for seven deterministic scripts with exact commands, dependencies, expected outputs, and links to the underlying repository files. The [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design, the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks, and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs. For a task-first map, start with [Research recipes](research-recipes.md); for the deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for **eight deterministic scripts/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract, the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design, the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks, and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs. For a task-first map, start with [Research recipes](research-recipes.md); for the deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
 | Stage | Learn | Produce | Do not claim yet |
 | --- | --- | --- | --- |
+| **0. Import** | source identity, units, geometry, nominal rate vs observed cadence | immutable source + import contract + preflight | adapter compatibility = device validity |
 | **1. Canonicalise** | schema, rate, units, participant/trial boundaries | one vendor-neutral gaze table | comparability across datasets |
 | **2. QC** | missingness, gaps, off-screen samples, anomaly flags | reviewable QC columns and trial summaries | automatic exclusion validity |
 | **3. Baseline** | deterministic I-VT or angular I-VT | inspectable event labels | learned-model superiority |
@@ -97,6 +109,26 @@ Open the [Runnable examples gallery](runnable-examples.md) for seven determinist
 | **6. Freeze** | manifests, fingerprints, certificates, source resolution | auditable evidence bundle | stronger provenance than the source supports |
 
 For a more complete research route, the [Study lifecycle](study-lifecycle.md) expands this progression into ten stages and ties every stage to a reviewable artifact and explicit claim boundary. The [Study-design templates](study-design-templates.md) make the corresponding records copy-ready.
+
+## Which import workflow should I use?
+
+```text
+Do you have authoritative source metadata?
+│
+├─ No → stop; recover units/identity/geometry from acquisition or export records
+│
+└─ Yes
+   ├─ Gazepoint-style fields + known semantics? → adapt_gazepoint_samples()
+   ├─ Other known processed columns?            → adapt_processed_table()
+   ├─ Already canonical ms + pixels?            → canonicalize_gaze()
+   └─ Then inspect:
+        identity · duplicate keys · cadence · bounds · row counts
+                              │
+                              ▼
+                    non-destructive QC
+```
+
+Run the [worked tracker-import example](worked-tracker-import.md) for the executable path. Successful import is a transformation result, not device/model validation.
 
 ## Which event workflow should I use?
 

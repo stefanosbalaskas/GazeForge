@@ -121,6 +121,23 @@ With figures enabled it additionally writes `figures/01_calibration.png` and `fi
 
 Guide: [Event-model validation clinic](../docs/event-model-validation-clinic.md) · [Validation reporting cookbook](../docs/validation-reporting-cookbook.md)
 
+## 8. Worked tracker import + QC
+
+Run the import/QC example when you want to see a Gazepoint-style source table transformed into canonical milliseconds/pixels without hiding review cases:
+
+```bash
+python examples/07_worked_tracker_import_qc.py \
+  --output-dir worked-tracker-import-qc-demo
+```
+
+The example uses explicit `USER_FILE`, `MEDIA_ID`, `TIME`, `BPOGX`, and `BPOGY` mappings, declares `TIME` as seconds and gaze coordinates as normalized screen fractions, and converts them to canonical milliseconds and pixels with a declared 1920 × 1080 screen. It deliberately retains a duplicate sample key, off-screen rows, and a missing gaze coordinate so the preflight/QC path demonstrates review rather than silent repair.
+
+It writes five CSV tables—source export, canonical gaze, import preflight, QC samples, and trial quality—plus `import_contract.json`, `analysis_plan.json`, `provenance.json`, and `workflow_manifest.json`. The script verifies that the source table is unchanged and row counts are preserved through QC.
+
+The nominal 60 Hz value and observed timestamp cadence are stored separately. Their agreement in this deterministic teaching example is not proof of native hardware cadence. The bundle is `synthetic_demo_not_empirical_evidence`; successful adapter execution is not Gazepoint/GP3, native-60-Hz, event-model, or measurement validation.
+
+Guide: [Worked tracker import and QC](../docs/worked-tracker-import.md) · [Real-data import clinic](../docs/data-import-clinic.md)
+
 ## Reproducibility notes
 
-The seven examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence. Use the [Study-design templates](../docs/study-design-templates.md) while planning, the [Event-model validation clinic](../docs/event-model-validation-clinic.md) for learned event evaluation, and the [Publication readiness](../docs/publication-readiness.md) checklist before freezing a study bundle.
+The eight examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence. Use the [Study-design templates](../docs/study-design-templates.md) while planning, the [Worked tracker import](../docs/worked-tracker-import.md) for import/QC handoff, the [Event-model validation clinic](../docs/event-model-validation-clinic.md) for learned event evaluation, and the [Publication readiness](../docs/publication-readiness.md) checklist before freezing a study bundle.
