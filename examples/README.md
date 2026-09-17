@@ -95,6 +95,32 @@ With figures enabled it also writes a dynamic-AOI snapshot and semantic scanpath
 
 Guide: [Worked dynamic-AOI study](../docs/worked-dynamic-aoi-study.md) · [Study-design templates](../docs/study-design-templates.md)
 
+## 7. Worked event-model validation study
+
+Run a participant-held-out model-comparison example that keeps split identity, sample/event metrics, probabilities, calibration, and confidence/coverage visible:
+
+```bash
+python -m pip install -e ".[plot]"
+python examples/06_worked_event_model_validation.py \
+  --output-dir worked-event-model-validation-demo
+```
+
+For the tables/provenance path without Matplotlib:
+
+```bash
+python examples/06_worked_event_model_validation.py \
+  --output-dir worked-event-model-validation-demo \
+  --no-figures
+```
+
+The script compares I-VT, Random Forest, and ContextMLP on identical four-fold **participant-disjoint** test rows. It writes the synthetic labelled source, participant split ledger, matched held-out predictions, separate sample-level and event-level metric tables, model summary, calibration bins, confidence/coverage diagnostics, an illustrative abstention-policy table, `analysis_plan.json`, `provenance.json`, and `workflow_manifest.json`.
+
+It mechanically verifies zero participant overlap between training and test sets, checks that each model sees the same held-out rows, preserves probabilities/model identity, checks source immutability, and labels the bundle `synthetic_demo_not_empirical_evidence`. The 0.80 abstention threshold is an explicit teaching policy for the demo—not a universal confidence cutoff. Synthetic model ordering is not evidence of general model superiority, benchmark performance, native 60 Hz validity, Gazepoint validity, or GP3 validity.
+
+With figures enabled it additionally writes `figures/01_calibration.png` and `figures/02_confidence_coverage.png`.
+
+Guide: [Event-model validation clinic](../docs/event-model-validation-clinic.md) · [Validation reporting cookbook](../docs/validation-reporting-cookbook.md)
+
 ## Reproducibility notes
 
-The six examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence. Use the [Study-design templates](../docs/study-design-templates.md) while planning and the [Publication readiness](../docs/publication-readiness.md) checklist before freezing a study bundle.
+The seven examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence. Use the [Study-design templates](../docs/study-design-templates.md) while planning, the [Event-model validation clinic](../docs/event-model-validation-clinic.md) for learned event evaluation, and the [Publication readiness](../docs/publication-readiness.md) checklist before freezing a study bundle.
