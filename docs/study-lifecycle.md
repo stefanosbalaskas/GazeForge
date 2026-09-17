@@ -49,9 +49,9 @@ Add non-destructive QC, start from inspectable event rules, preserve AOI provena
 
 ### :material-shield-check-outline: Match evidence to the claim
 
-Name the held-out unit, reference labels, acquisition provenance, rate status, calibration, and event-level metrics that actually support the intended claim.
+Name the held-out unit, reference labels, acquisition provenance, rate status, calibration, confidence/coverage, and event-level metrics that actually support the intended claim. For learned event models, make participant/split identity and matched held-out rows explicit.
 
-[Inspect evidence →](validation-evidence-guide.md)
+[Open the event-model validation clinic →](event-model-validation-clinic.md)
 
 </div>
 
@@ -61,7 +61,7 @@ Name the held-out unit, reference labels, acquisition provenance, rate status, c
 
 ### :material-snowflake: Freeze identity and provenance
 
-Archive the exact software/environment identity, source and output fingerprints, manifests, certificates, figures, tables, and unresolved evidence boundaries.
+Archive the exact software/environment identity, source and output fingerprints, manifests, certificates, figures, tables, split ledgers, and unresolved evidence boundaries.
 
 [Publication readiness →](publication-readiness.md)
 
@@ -73,9 +73,9 @@ Archive the exact software/environment identity, source and output fingerprints,
 
 ### :material-text-box-check-outline: Write what was actually done
 
-Translate acquisition, preprocessing, QC, model, split, rate, metric, and evidence identity into manuscript methods language that another team can reconstruct.
+Translate acquisition, preprocessing, QC, model, split, rate, metric, calibration, and evidence identity into manuscript methods language that another team can reconstruct.
 
-[Reproducible reporting →](reproducible-reporting.md)
+[Use the validation reporting cookbook →](validation-reporting-cookbook.md)
 
 </div>
 
@@ -91,10 +91,10 @@ Translate acquisition, preprocessing, QC, model, split, rate, metric, and eviden
 | **4. Canonicalise explicitly** | source semantics | map time, coordinates, identity, optional fields | canonical gaze table | [Adapters & validation](adapters-validation.md) | successful import = device validity |
 | **5. Add QC evidence** | canonical samples | flag anomalies and score trial quality without silent deletion | QC columns + trial summaries | [Research recipes](research-recipes.md) | QC flag = invalid observation |
 | **6. Build measurement outputs** | reviewed samples | apply event baseline/model; define/review static or dynamic AOIs; derive scanpaths if needed | event/AOI/sequence tables | [Methods overview](methods-overview.md) | complex model = superior model |
-| **7. Validate the estimand** | reference labels + split policy | evaluate on leakage-safe held-out data with matching metrics | held-out predictions + metrics | [Validation guide](validation-evidence-guide.md) | sample accuracy = temporal event quality |
+| **7. Validate the estimand** | reference labels + split policy | evaluate on leakage-safe held-out data with matching metrics | split ledger + held-out predictions + sample/event/calibration metrics | [Event-model validation clinic](event-model-validation-clinic.md) | sample accuracy = temporal event quality |
 | **8. Audit rate and provenance** | acquisition + analysis-rate history | distinguish native from derived rates and preserve source lineage | rate/sensitivity record | [Sampling sensitivity](sampling-sensitivity.md) | derived 60 Hz = native 60 Hz validity |
 | **9. Freeze the evidence bundle** | final analysis outputs | freeze manifests, fingerprints, certificates, code/environment, figures/tables | reconstructable archive | [Publication readiness](publication-readiness.md) | archive completeness = stronger evidence |
-| **10. Report qualified claims** | frozen bundle | write methods/results with explicit evidence boundary | manuscript-ready record | [Reproducible reporting](reproducible-reporting.md) | broader claims than the design supports |
+| **10. Report qualified claims** | frozen bundle | write methods/results with explicit evidence boundary | manuscript-ready record | [Validation reporting cookbook](validation-reporting-cookbook.md) | broader claims than the design supports |
 
 ## Worked route: a static advertising/interface study
 
@@ -130,6 +130,22 @@ The output bundle includes the raw fixation table, dynamic keyframes, assignment
 
 [Open the dynamic worked study →](worked-dynamic-aoi-study.md) · [Browse all runnable examples →](runnable-examples.md)
 
+## Worked route: participant-held-out event-model validation
+
+When the study uses learned event classifiers, run the validation contract separately from downstream substantive analyses:
+
+```bash
+python examples/06_worked_event_model_validation.py \
+  --output-dir worked-event-model-validation-demo \
+  --no-figures
+```
+
+The demonstration constructs explicit participant-labelled synthetic events, creates four participant-disjoint folds, verifies zero train/test participant overlap, and evaluates I-VT, Random Forest, and ContextMLP on matched held-out rows. It writes separate sample-level and event-level metric tables, calibration bins, confidence/coverage diagnostics, an illustrative abstention policy, split ledger, predictions, fingerprints, provenance, and a manifest.
+
+The example is deliberately classified `synthetic_demo_not_empirical_evidence`. A model that leads on one synthetic metric is not thereby superior for another device, task, population, or benchmark, and the demonstration does not establish native 60 Hz or Gazepoint/GP3 validity.
+
+[Open the validation clinic →](event-model-validation-clinic.md) · [Run the worked validation study →](runnable-examples.md#7-worked-event-model-validation-study) · [Use the reporting cookbook →](validation-reporting-cookbook.md)
+
 ## Decision points worth freezing before analysis
 
 Before you treat the workflow as confirmatory, record at least:
@@ -140,8 +156,9 @@ Before you treat the workflow as confirmatory, record at least:
 - for dynamic AOIs, keyframe timestamps, review state, maximum interpolation gap, overlap rule, and the no-extrapolation policy;
 - the QC review/exclusion rule and whether it was prespecified;
 - the event method, thresholds, model identity, confidence/abstention rule, and training regime;
-- the held-out unit and leakage controls;
-- the primary metric family that matches the estimand;
+- the held-out unit, split ledger, leakage controls, and whether compared models use identical held-out rows;
+- whether model/threshold selection is separated from final confirmatory evaluation;
+- the primary sample-, event-, and calibration-metric families that match the estimand;
 - the software version or exact commit SHA; and
 - the explicit statement of what the design does **not** establish.
 
@@ -161,4 +178,4 @@ substantive interpretation is established
 
 That separation is the central reason to keep source data, transformations, predictions, review decisions, validation artifacts, and manuscript claims as distinct records.
 
-Continue with [Research recipes](research-recipes.md), [Study-design templates](study-design-templates.md), the [Publication-readiness checklist](publication-readiness.md), [Research terminology](research-terminology.md), and [Reproducible reporting](reproducible-reporting.md).
+Continue with [Research recipes](research-recipes.md), [Study-design templates](study-design-templates.md), the [Event-model validation clinic](event-model-validation-clinic.md), [Validation reporting cookbook](validation-reporting-cookbook.md), [Publication-readiness checklist](publication-readiness.md), [Research terminology](research-terminology.md), and [Reproducible reporting](reproducible-reporting.md).
