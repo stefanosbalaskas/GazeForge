@@ -14,7 +14,8 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ The event method and any threshold or learned-model plan are named.
 - ☐ The AOI source is defined as researcher/manual, AI-proposed + reviewed, or another traceable source.
 - ☐ Primary gaze outcomes are separated from exploratory process measures.
-- ☐ The intended validation split unit is explicit: participant, stimulus, dataset, or another defensible unit.
+- ☐ The intended validation split unit is explicit: participant, stimulus, dataset, source token, or another defensible unit.
+- ☐ Planned model/threshold selection is separated from final confirmatory evaluation where required.
 - ☐ Planned sampling-rate transformations are distinguished from native acquisition conditions.
 - ☐ The planned archive includes software/environment identity and provenance artifacts.
 
@@ -40,6 +41,9 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 
 - ☐ Event model/algorithm identity, version, threshold, training rate, and confidence/abstention rule are recorded where applicable.
 - ☐ Learned-model evaluation uses an explicit leakage-safe held-out design.
+- ☐ A split ledger or equivalent record identifies which participants/stimuli/tokens/datasets were train versus test in every fold.
+- ☐ Compared models use the same held-out rows/folds when the comparison is intended to be matched.
+- ☐ Model or threshold selection is separated from the final confirmatory test set, or the resulting choice is explicitly labelled exploratory.
 - ☐ Reference labels and annotator provenance are recorded where validation depends on them.
 - ☐ AI-proposed AOIs retain model/confidence provenance and explicit review decisions.
 - ☐ Final AOI geometry is frozen before manuscript-facing aggregation when the design requires fixed AOIs.
@@ -51,6 +55,8 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ Participant-disjoint, stimulus-disjoint, source-token-disjoint, and dataset-held-out claims are not treated as interchangeable.
 - ☐ Sample-level metrics are not substituted for event-level temporal performance when boundary fidelity matters.
 - ☐ Calibration metrics are reported for probabilistic confidence claims where relevant.
+- ☐ Selective accuracy or abstention results are reported together with coverage.
+- ☐ Confidence thresholds are described as study-specific unless independently justified for broader use.
 - ☐ Matched model comparisons use the same held-out rows/folds when the comparison requires paired evidence.
 - ☐ **Native versus derived** sampling-rate status is stated explicitly wherever acquisition and analysis rates differ.
 - ☐ Native and derived sampling-rate conditions are labelled separately.
@@ -67,6 +73,9 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ Derived lower-rate evidence is not described as native-device validation.
 - ☐ Synthetic/demo output is not cited as empirical validation evidence.
 - ☐ Import compatibility is not described as device validity.
+- ☐ A model that leads on one dataset/metric is not described as universally superior without evidence supporting that broader claim.
+- ☐ Calibration is not described as proof that individual predictions are correct.
+- ☐ Confidence-based abstention is not reported without the corresponding retained coverage.
 - ☐ Unsupported latent-state claims are not inferred directly from gaze patterns.
 - ☐ The current [Evidence status](evidence-status.md) has been checked for the benchmark/device claim being made.
 
@@ -76,6 +85,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ Sensitive or restricted source data are not redistributed merely because derived outputs can be shared.
 - ☐ The archive records source identity without overstating access or redistribution rights.
 - ☐ Final tables, figures, manifests, certificates, fingerprints, and analysis code share a consistent analysis identity.
+- ☐ Validation archives include the split ledger, held-out predictions, probability columns where applicable, sample/event metric tables, calibration/coverage diagnostics, and model-selection/threshold policy.
 - ☐ Random seeds and non-default parameters are recorded.
 - ☐ The archive contains a short **evidence boundary** statement.
 
@@ -108,10 +118,11 @@ evidence_boundary: <what this design does not establish>
 | QC | anomaly method, thresholds, review/exclusion rule |
 | Events | algorithm/model, version, threshold, training rate, confidence rule |
 | AOIs | source, geometry, model provenance if AI-assisted, human review state |
-| Validation | held-out unit, folds, leakage controls, reference labels |
+| Validation | held-out unit, folds, split ledger/leakage controls, reference labels, matched-row status |
+| Model selection | selection/tuning data versus final confirmatory evaluation; exploratory choices labelled |
 | Rate | native vs derived status and derivation/sensitivity rule |
-| Metrics | sample/event/calibration metrics matched to the question |
+| Metrics | sample/event/calibration metrics matched to the question; coverage with selective accuracy |
 | Provenance | package version/SHA, environment, source/output fingerprints |
 | Boundary | explicit statement of unsupported/generalisation claims |
 
-For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
+For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).

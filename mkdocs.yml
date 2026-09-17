@@ -67,6 +67,7 @@ nav:
       - Learning paths: learning-paths.md
       - Research recipes: research-recipes.md
       - Real-data import clinic: data-import-clinic.md
+      - Event-model validation clinic: event-model-validation-clinic.md
       - Study lifecycle: study-lifecycle.md
       - Study-design templates: study-design-templates.md
       - Runnable examples: runnable-examples.md
@@ -78,6 +79,7 @@ nav:
       - Visual diagnostics: visual-diagnostics.md
       - Results gallery: results-gallery.md
       - Reproducible reporting: reproducible-reporting.md
+      - Validation reporting cookbook: validation-reporting-cookbook.md
       - Publication readiness: publication-readiness.md
       - Research terminology: research-terminology.md
   - Methods:

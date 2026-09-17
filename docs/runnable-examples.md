@@ -1,6 +1,6 @@
 # Runnable examples
 
-The repository contains six deterministic examples that move from a small first result to complete reviewable workflows and domain-shaped static/dynamic worked studies. Use this page to choose a script, see what it produces, and open the corresponding guide.
+The repository contains seven deterministic examples that move from a small first result to complete reviewable workflows, domain-shaped static/dynamic studies, and a leakage-safe event-model validation demonstration. Use this page to choose a script, see what it produces, and open the corresponding guide.
 
 !!! warning "Demo output is not validation evidence"
     Every example on this page uses synthetic/demo inputs. The scripts demonstrate software behaviour, composition, plotting, provenance, and reporting structure. They are **not empirical validation evidence** and do not establish native-device, native 60 Hz, Gazepoint, or GP3 validity.
@@ -18,6 +18,7 @@ The repository contains six deterministic examples that move from a small first 
 | **End-to-end workflow** | `.[plot]` by default; base path with `--no-figures` | `python examples/end_to_end_research_workflow.py --output-dir end-to-end-research-demo` | ten CSV tables, provenance, manifest, optional figures |
 | **Worked advertising/interface study** | base package | `python examples/04_worked_advertising_study.py --output-dir worked-advertising-demo` | ten study-shaped CSV tables, analysis plan, provenance, manifest |
 | **Worked dynamic-AOI study** | `.[plot]` by default; base path with `--no-figures` | `python examples/05_worked_dynamic_aoi_study.py --output-dir worked-dynamic-aoi-demo` | six CSV tables, analysis plan, provenance, manifest, optional figures |
+| **Worked event-model validation study** | `.[plot]` by default; base path with `--no-figures` | `python examples/06_worked_event_model_validation.py --output-dir worked-event-model-validation-demo` | nine CSV tables, analysis plan, provenance, manifest, optional calibration figures |
 
 ## 1 · Synthetic QC
 
@@ -208,15 +209,58 @@ The manifest records `synthetic_demo_not_empirical_evidence`, source/keyframe fi
 
 [Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/05_worked_dynamic_aoi_study.py) · [Read the worked dynamic-AOI guide](worked-dynamic-aoi-study.md) · [Open research recipes](research-recipes.md)
 
+## 7 · Worked event-model validation study
+
+Use this example when the research task is **learned event-model evaluation**, not merely model fitting.
+
+```bash
+python -m pip install -e ".[plot]"
+python examples/06_worked_event_model_validation.py \
+  --output-dir worked-event-model-validation-demo
+```
+
+For the table/provenance path without Matplotlib:
+
+```bash
+python examples/06_worked_event_model_validation.py \
+  --output-dir worked-event-model-validation-demo \
+  --no-figures
+```
+
+The deterministic source contains eight synthetic participants × two trials with explicit fixation/saccade reference labels. The script reconstructs four participant-disjoint GroupKFold splits, verifies **zero train/test participant overlap**, and compares I-VT, Random Forest, and ContextMLP on the **same held-out rows**.
+
+It writes exactly nine tables:
+
+```text
+01_source_event_samples.csv
+02_participant_split_ledger.csv
+03_matched_heldout_predictions.csv
+04_sample_level_metrics.csv
+05_event_level_metrics.csv
+06_model_summary.csv
+07_calibration_bins.csv
+08_confidence_coverage.csv
+09_illustrative_abstention_policy.csv
+```
+
+It also writes `analysis_plan.json`, `provenance.json`, and `workflow_manifest.json`; with figures enabled it adds `figures/01_calibration.png` and `figures/02_confidence_coverage.png`.
+
+The design deliberately keeps **sample-level metrics**, **event-level temporal metrics**, and **probability calibration** separate. Calibration and confidence/coverage are produced only for probabilistic learned models; deterministic I-VT is not given fabricated probability scores. The illustrative `0.80` abstention threshold is labelled `illustrative_not_universal`, and the manifest records `participant_disjoint_verified`, `matched_test_rows_across_models`, source fingerprint, software identity, and `synthetic_demo_not_empirical_evidence`.
+
+Any model ordering in this synthetic study is a property of the demonstration construction and chosen metrics—not evidence that one model is generally superior. The bundle does not establish empirical benchmark performance, native-device validity, native 60 Hz validity, Gazepoint validity, or GP3 validity.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/06_worked_event_model_validation.py) · [Open the validation clinic](event-model-validation-clinic.md) · [Use the reporting cookbook](validation-reporting-cookbook.md)
+
 ## Which example should I run first?
 
 ```text
-Need to verify installation / QC?          → 01_synthetic_qc.py
-Need an inspectable event baseline?         → 02_ivt_baseline.py
-Need figure-generation patterns?            → 03_visual_diagnostics.py
-Need a complete reviewable output bundle?   → end_to_end_research_workflow.py
-Need a static domain-shaped worked study?   → 04_worked_advertising_study.py
-Need moving AOIs + interpolation auditing?  → 05_worked_dynamic_aoi_study.py
+Need to verify installation / QC?           → 01_synthetic_qc.py
+Need an inspectable event baseline?          → 02_ivt_baseline.py
+Need figure-generation patterns?             → 03_visual_diagnostics.py
+Need a complete reviewable output bundle?    → end_to_end_research_workflow.py
+Need a static domain-shaped worked study?    → 04_worked_advertising_study.py
+Need moving AOIs + interpolation auditing?   → 05_worked_dynamic_aoi_study.py
+Need participant-held-out event validation?  → 06_worked_event_model_validation.py
 ```
 
 ## Move from demo data to a study
@@ -227,8 +271,9 @@ The examples intentionally avoid pretending that synthetic behaviour validates a
 2. record actual acquisition hardware, native sampling rate, observed timestamp cadence, units, screen geometry, and participant/trial identity;
 3. keep QC flags and AI-assisted outputs reviewable rather than silently rewriting source samples;
 4. justify thresholds and model choices for the study population and task;
-5. validate event or dynamic-AOI models with an appropriate labelled corpus and leakage-safe split design;
-6. preserve whether lower-rate data are native or derived and, for dynamic AOIs, preserve keyframe/review/interpolation provenance without extrapolation; and
-7. freeze software identity, provenance, fingerprints, evidence boundaries, and the study records in the [Study-design templates](study-design-templates.md).
+5. for learned events, use the [Event-model validation clinic](event-model-validation-clinic.md) to preserve participant/split identity, matched held-out rows, probabilities, calibration, confidence/coverage, and separate sample/event estimands;
+6. validate event or dynamic-AOI models with an appropriate labelled corpus and leakage-safe split design;
+7. preserve whether lower-rate data are native or derived and, for dynamic AOIs, preserve keyframe/review/interpolation provenance without extrapolation; and
+8. freeze software identity, provenance, fingerprints, evidence boundaries, and the study records in the [Study-design templates](study-design-templates.md).
 
-Continue with [Research recipes](research-recipes.md), [Study lifecycle](study-lifecycle.md), [Study-design templates](study-design-templates.md), [Real-data import clinic](data-import-clinic.md), [Methods overview](methods-overview.md), [Publication readiness](publication-readiness.md), [Validation guide](validation-evidence-guide.md), and [Reproducible reporting](reproducible-reporting.md).
+Continue with [Research recipes](research-recipes.md), [Study lifecycle](study-lifecycle.md), [Study-design templates](study-design-templates.md), [Real-data import clinic](data-import-clinic.md), [Event-model validation clinic](event-model-validation-clinic.md), [Validation reporting cookbook](validation-reporting-cookbook.md), [Methods overview](methods-overview.md), [Publication readiness](publication-readiness.md), [Validation guide](validation-evidence-guide.md), and [Reproducible reporting](reproducible-reporting.md).

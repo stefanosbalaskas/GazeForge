@@ -24,6 +24,7 @@ def test_methods_overview_is_first_methods_route_and_groups_real_pages() -> None
         "adapters-validation.md",
         "motion-quality-gating.md",
         "temporal-models.md",
+        "event-model-validation-clinic.md",
         "event-level-evaluation.md",
         "dynamic-aois.md",
         "grounded-sam2-backend.md",
@@ -31,6 +32,7 @@ def test_methods_overview_is_first_methods_route_and_groups_real_pages() -> None
         "hierarchical-location-scale.md",
         "full-covariance-location-random-slope-scale.md",
         "validation-evidence-guide.md",
+        "validation-reporting-cookbook.md",
         "reproducible-reporting.md",
     ):
         assert target in methods
@@ -46,12 +48,13 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "end_to_end_research_workflow.py",
         "04_worked_advertising_study.py",
         "05_worked_dynamic_aoi_study.py",
+        "06_worked_event_model_validation.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
-    assert "six deterministic examples" in page
+    assert "seven deterministic examples" in page
     assert "python examples/01_synthetic_qc.py" in page
     assert "python examples/02_ivt_baseline.py" in page
     assert "python examples/03_visual_diagnostics.py --output-dir visual-demo" in page
@@ -61,6 +64,8 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     assert "--output-dir worked-advertising-demo" in page
     assert "python examples/05_worked_dynamic_aoi_study.py" in page
     assert "--output-dir worked-dynamic-aoi-demo" in page
+    assert "python examples/06_worked_event_model_validation.py" in page
+    assert "--output-dir worked-event-model-validation-demo" in page
 
 
 def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> None:
@@ -74,10 +79,20 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "01_source_fixations.csv",
         "06_assignment_summary.csv",
         "05_interpolation_audit.csv",
+        "01_source_event_samples.csv",
+        "02_participant_split_ledger.csv",
+        "03_matched_heldout_predictions.csv",
+        "04_sample_level_metrics.csv",
+        "05_event_level_metrics.csv",
+        "07_calibration_bins.csv",
+        "08_confidence_coverage.csv",
+        "09_illustrative_abstention_policy.csv",
         "analysis_plan.json",
         "provenance.json",
         "workflow_manifest.json",
         "figures/03_scanpath.png",
+        "figures/01_calibration.png",
+        "figures/02_confidence_coverage.png",
     ):
         assert output in page
 
@@ -92,6 +107,8 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
     assert "gp3" in lower
     assert "source table remains unchanged" in lower
     assert "no extrapolation" in lower
+    assert "participant-disjoint" in lower
+    assert "matched held-out rows" in lower
     assert "synthetic_demo_not_empirical_evidence" in page
 
 
@@ -103,16 +120,21 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     examples_readme = _read("examples/README.md")
 
     assert "      - Runnable examples: runnable-examples.md" in mkdocs
+    assert "event-model-validation-clinic.md" in mkdocs
+    assert "validation-reporting-cookbook.md" in mkdocs
     assert "methods-overview.md" in homepage
     assert "runnable-examples.md" in homepage
     assert "study-lifecycle.md" in homepage
     assert "worked-advertising-study.md" in homepage
     assert "publication-readiness.md" in homepage
+    assert "event-model-validation-clinic.md" in homepage
     assert "runnable-examples.md" in getting_started
     assert "runnable-examples.md" in learning_paths
+    assert "event-model-validation-clinic.md" in learning_paths
     assert "../docs/runnable-examples.md" in examples_readme
     assert "04_worked_advertising_study.py" in examples_readme
     assert "05_worked_dynamic_aoi_study.py" in examples_readme
+    assert "06_worked_event_model_validation.py" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

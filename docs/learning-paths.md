@@ -30,6 +30,17 @@ Begin with the transparent I-VT baseline before fitting a learned classifier. Th
 
 <div class="gf-path-card" markdown>
 
+### :material-chart-box-outline: I need to validate a learned event model
+
+Keep participant identity, held-out folds, probabilities, sample/event metrics, calibration, confidence/coverage, and model-selection boundaries explicit.
+
+**Next:** [Event-model validation clinic](event-model-validation-clinic.md)  
+**Run it:** [Worked validation study](runnable-examples.md#7-worked-event-model-validation-study)
+
+</div>
+
+<div class="gf-path-card" markdown>
+
 ### :material-vector-rectangle: I have a video or moving interface
 
 Use timestamped dynamic AOI keyframes, bounded interpolation, explicit review, and fixation assignment without extrapolating geometry outside the observed track.
@@ -40,11 +51,11 @@ Use timestamped dynamic AOI keyframes, bounded interpolation, explicit review, a
 
 <div class="gf-path-card" markdown>
 
-### :material-chart-box-outline: I need defensible validation
+### :material-shield-check-outline: I need defensible empirical evidence
 
-Move directly to participant-disjoint folds, matched model comparisons, calibration, event-level temporal metrics, and sampling-rate sensitivity.
+Use the benchmark/evidence layer only after the split, labels, sampling condition, and source provenance match the claim you intend to make.
 
-**Next:** [Research workflow patterns](research-workflows.md)
+**Next:** [Validation guide](validation-evidence-guide.md)
 
 </div>
 
@@ -72,7 +83,7 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for six deterministic scripts with exact commands, dependencies, expected outputs, and links to the underlying repository files. The [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design, while the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks. For a task-first map, start with [Research recipes](research-recipes.md); for the deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for seven deterministic scripts with exact commands, dependencies, expected outputs, and links to the underlying repository files. The [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design, the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks, and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs. For a task-first map, start with [Research recipes](research-recipes.md); for the deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
@@ -81,7 +92,7 @@ Open the [Runnable examples gallery](runnable-examples.md) for six deterministic
 | **1. Canonicalise** | schema, rate, units, participant/trial boundaries | one vendor-neutral gaze table | comparability across datasets |
 | **2. QC** | missingness, gaps, off-screen samples, anomaly flags | reviewable QC columns and trial summaries | automatic exclusion validity |
 | **3. Baseline** | deterministic I-VT or angular I-VT | inspectable event labels | learned-model superiority |
-| **4. Validate** | participant-disjoint folds, calibration, event matching | out-of-sample performance | native-device validity from resampled data |
+| **4. Validate** | participant-disjoint folds, matched rows, sample/event metrics, calibration/coverage | split ledger + held-out predictions + validation tables | native-device validity from resampled or synthetic data |
 | **5. Extend** | semantic/dynamic AOIs, scanpaths, hierarchical models | task-specific analytic structures | unsupported psychological inference |
 | **6. Freeze** | manifests, fingerprints, certificates, source resolution | auditable evidence bundle | stronger provenance than the source supports |
 
@@ -98,10 +109,14 @@ Do you already have expert-labelled event data?
 │
 └─ Yes
    ├─ Same participants in train and test?       → stop; use participant-disjoint splitting
+   ├─ Only opaque source tokens available?       → report source-token-disjoint, not participant-disjoint
    ├─ Compatible sampling regime?                → fit + validate model
    ├─ Need boundary-sensitive performance?       → add event-F1 / temporal IoU / boundary error
-   └─ Need lower-rate claims?                    → add rate × label-purity sensitivity
+   ├─ Need probability claims?                   → add Brier / ECE / confidence-coverage
+   └─ Need lower-rate claims?                    → preserve native vs derived status + sensitivity
 ```
+
+Use the [Event-model validation clinic](event-model-validation-clinic.md) for the full leakage-safe route and the [Validation reporting cookbook](validation-reporting-cookbook.md) when converting the final design into manuscript wording.
 
 ## Which AOI workflow should I use?
 
@@ -123,4 +138,4 @@ The [results gallery](results-gallery.md) puts the current reviewed benchmark su
 
 ## Report the analysis so somebody else can reconstruct it
 
-When an analysis becomes manuscript-facing, continue with the [Publication-readiness checklist](publication-readiness.md) and [Reproducible reporting](reproducible-reporting.md). The reporting guide now includes claim-safe wording pairs for import compatibility versus device validity, QC flags versus invalidity, demos versus empirical validation, split identity, sample/event metrics, and calibration. Use [Study-design templates](study-design-templates.md) to keep the required metadata explicit from preregistration onward.
+When an analysis becomes manuscript-facing, continue with the [Publication-readiness checklist](publication-readiness.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md). The reporting surfaces keep import compatibility versus device validity, QC flags versus invalidity, demos versus empirical validation, split identity, sample/event metrics, calibration, confidence/coverage, native/derived rate, and model-selection versus confirmatory evaluation explicit. Use [Study-design templates](study-design-templates.md) to keep the required metadata explicit from preregistration onward.
