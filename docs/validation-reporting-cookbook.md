@@ -111,7 +111,7 @@ Do not tune a threshold on the final test set and then describe that same test p
 
 ### Boundary
 
-> The threshold is study-specific and should not be interpreted as a universal confidence cutoff.
+> The threshold is study-specific and is not a universal confidence cutoff.
 
 Never report selective accuracy without the corresponding coverage.
 
