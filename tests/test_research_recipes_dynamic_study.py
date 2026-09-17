@@ -171,4 +171,4 @@ def test_new_site_surfaces_are_discoverable_without_expanding_hero() -> None:
     assert "validation-evidence-guide.md" in index
 
     hero = index.split('<div class="gf-hero-actions" markdown>', 1)[1].split("</div>", 1)[0]
-    assert hero.count(".md-button") == 3
+    assert hero.count("{ .md-button") == 3
