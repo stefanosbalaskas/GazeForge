@@ -22,12 +22,13 @@ Use explicit adapters, canonical units, participant/trial identity, and non-dest
 
 <div class="gf-path-card" markdown>
 
-### :material-eye-outline: Model eye events
+### :material-eye-outline: Model & validate eye events
 
-Begin with transparent event rules when appropriate, then add temporal models, matched comparisons, calibration, and event-level evaluation when labelled data support them.
+Begin with transparent event rules when appropriate, then add learned classifiers only with a leakage-safe held-out design, matched comparisons, calibration, confidence/coverage, and event-level evaluation.
 
-**Start:** [Temporal models](temporal-models.md)  
-**Then:** [Model comparison](model-comparison.md) · [Event-level evaluation](event-level-evaluation.md) · [Calibration & dataset holdouts](calibration.md)
+**Start:** [Event-model validation clinic](event-model-validation-clinic.md)  
+**Run it:** [Worked validation study](runnable-examples.md#7-worked-event-model-validation-study)  
+**Then:** [Temporal models](temporal-models.md) · [Model comparison](model-comparison.md) · [Event-level evaluation](event-level-evaluation.md) · [Calibration & dataset holdouts](calibration.md)
 
 </div>
 
@@ -72,7 +73,8 @@ Use the location-scale family when the scientific question concerns both conditi
 Keep split design, sampling-rate handling, calibration, benchmark provenance, frozen evidence, and manuscript-facing software identity visible.
 
 **Start:** [Validation guide](validation-evidence-guide.md)  
-**Plan/report:** [Study-design templates](study-design-templates.md) · [Reproducible reporting](reproducible-reporting.md)
+**Do event validation:** [Event-model validation clinic](event-model-validation-clinic.md)  
+**Plan/report:** [Study-design templates](study-design-templates.md) · [Validation reporting cookbook](validation-reporting-cookbook.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 
@@ -84,8 +86,9 @@ Keep split design, sampling-rate handling, calibration, benchmark provenance, fr
 | --- | --- | --- |
 | How should tracker data enter GazeForge? | [Real-data import clinic](data-import-clinic.md), [Adapters & validation](adapters-validation.md) | canonical gaze table with declared units/rate and source provenance |
 | Which samples or trials need review? | [Motion-quality gating](motion-quality-gating.md), [Synthetic QC tutorial](tutorial-synthetic-qc.md) | flags, weights, quality summaries; source rows retained |
-| How should gaze samples become event labels? | [Temporal models](temporal-models.md), [Model comparison](model-comparison.md) | labels/probabilities with model and threshold provenance |
-| How should event performance be evaluated? | [Event-level evaluation](event-level-evaluation.md), [Stratified performance](stratified-event-performance.md), [Matched-fold differences](paired-model-differences.md), [Calibration](calibration.md) | participant-disjoint metrics, matched differences, calibration tables |
+| How should gaze samples become event labels? | [I-VT tutorial](tutorial-ivt-baseline.md), [Temporal models](temporal-models.md) | labels/probabilities with model and threshold provenance |
+| How should a learned event model be validated? | [Event-model validation clinic](event-model-validation-clinic.md), [Model comparison](model-comparison.md), [Calibration](calibration.md) | participant/split ledger, matched held-out predictions, probabilities, sample/event metrics, calibration and coverage |
+| How should event performance be evaluated? | [Event-level evaluation](event-level-evaluation.md), [Stratified performance](stratified-event-performance.md), [Matched-fold differences](paired-model-differences.md), [Calibration](calibration.md) | held-out metrics, matched differences, calibration tables with the split unit named |
 | How should moving semantic regions be represented? | [Dynamic AOIs](dynamic-aois.md), [Worked dynamic-AOI study](worked-dynamic-aoi-study.md), [Video-frame derivation](video-frame-derivation.md), [Dynamic AOI evaluation](dynamic-aoi-evaluation.md) | reviewed keyframes, bounded interpolation, no-extrapolation audit, fixation assignments |
 | How can AI propose visual regions without becoming the empirical record? | [Grounding DINO + SAM 2 backend](grounded-sam2-backend.md), [Dynamic AOIs](dynamic-aois.md) | proposals plus confidence and review decisions |
 | How should sequence/process structure be represented? | [Research workflows](research-workflows.md), [Practical workflow](practical-workflow.md) | semantic scanpaths and provenance-bound exports |
@@ -118,9 +121,9 @@ The order is deliberately review-first. AI-generated anomaly flags, event probab
 
 ## Event modelling: baseline before complexity
 
-For a new dataset, a transparent baseline can make model behaviour easier to inspect before a learned classifier is introduced. The [I-VT tutorial](tutorial-ivt-baseline.md) shows a deterministic pixel-velocity baseline. When expert-labelled events are available, continue with [model comparison](model-comparison.md), [matched-fold differences](paired-model-differences.md), [event-level evaluation](event-level-evaluation.md), [stratified performance](stratified-event-performance.md), and [calibration](calibration.md).
+For a new dataset, a transparent baseline can make model behaviour easier to inspect before a learned classifier is introduced. The [I-VT tutorial](tutorial-ivt-baseline.md) shows a deterministic pixel-velocity baseline. When expert-labelled events are available, use the [Event-model validation clinic](event-model-validation-clinic.md) to preserve participant identity, leakage checks, matched held-out rows, probabilities, calibration, confidence/coverage, and separate sample/event estimands. Then use [model comparison](model-comparison.md), [matched-fold differences](paired-model-differences.md), [event-level evaluation](event-level-evaluation.md), [stratified performance](stratified-event-performance.md), and [calibration](calibration.md) for the required detail.
 
-A method being available in the package does not establish that it is superior for a new population, device, sampling regime, or task. Those are empirical questions that require an appropriate validation design.
+A method being available in the package does not establish that it is superior for a new population, device, sampling regime, or task. Those are empirical questions that require an appropriate validation design. Likewise, a confidence threshold chosen for one validation design is not a universal abstention cutoff.
 
 ## AOIs and scanpaths: observable structure, not latent state
 
@@ -154,4 +157,4 @@ In particular:
 
 ## Run instead of browse
 
-If you are starting from a real tracker or processed export, use the [Real-data import clinic](data-import-clinic.md) first. If you know the task but not the API, open [Research recipes](research-recipes.md). If you want executable examples, open the [Runnable examples gallery](runnable-examples.md): static studies can start from the [worked advertising/interface study](worked-advertising-study.md), while moving stimuli can start from the [worked dynamic-AOI study](worked-dynamic-aoi-study.md). Use the [Study-design templates](study-design-templates.md) to freeze the corresponding preregistration, acquisition, QC, AOI, split, native/derived, and archive records.
+If you are starting from a real tracker or processed export, use the [Real-data import clinic](data-import-clinic.md) first. If you are validating a learned event classifier, continue with the [Event-model validation clinic](event-model-validation-clinic.md) and run `examples/06_worked_event_model_validation.py` before adapting the structure to real labelled data. If you know the task but not the API, open [Research recipes](research-recipes.md). If you want executable examples, open the [Runnable examples gallery](runnable-examples.md): static studies can start from the [worked advertising/interface study](worked-advertising-study.md), moving stimuli can start from the [worked dynamic-AOI study](worked-dynamic-aoi-study.md), and learned event validation can start from the [worked validation study](runnable-examples.md#7-worked-event-model-validation-study). Use the [Study-design templates](study-design-templates.md) to freeze the corresponding preregistration, acquisition, QC, AOI, split, native/derived, and archive records, and the [Validation reporting cookbook](validation-reporting-cookbook.md) to keep manuscript wording proportional to the design.
