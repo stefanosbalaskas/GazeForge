@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import io
 import json
 import pathlib
 import runpy
 import sys
+from contextlib import redirect_stdout
 
 import pandas as pd
+import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -16,28 +19,30 @@ def _read(relative: str) -> str:
     return (ROOT / relative).read_text(encoding="utf-8")
 
 
-def test_worked_event_validation_example_runs_without_figures(
-    tmp_path,
-    monkeypatch,
-    capsys,
-) -> None:
-    output_dir = tmp_path / "worked-event-model-validation-demo"
-    monkeypatch.setattr(
-        sys,
-        "argv",
-        [
+@pytest.fixture(scope="module")
+def validation_demo(tmp_path_factory: pytest.TempPathFactory) -> tuple[pathlib.Path, str]:
+    output_dir = tmp_path_factory.mktemp("event-validation") / "demo"
+    old_argv = sys.argv
+    captured = io.StringIO()
+    try:
+        sys.argv = [
             "06_worked_event_model_validation.py",
             "--output-dir",
             str(output_dir),
             "--no-figures",
-        ],
-    )
-    runpy.run_path(
-        str(ROOT / "examples" / "06_worked_event_model_validation.py"),
-        run_name="__main__",
-    )
-    captured = capsys.readouterr()
+        ]
+        with redirect_stdout(captured):
+            runpy.run_path(
+                str(ROOT / "examples" / "06_worked_event_model_validation.py"),
+                run_name="__main__",
+            )
+    finally:
+        sys.argv = old_argv
+    return output_dir, captured.getvalue()
 
+
+def test_worked_event_validation_example_runs_without_figures(validation_demo) -> None:
+    output_dir, captured = validation_demo
     expected_tables = {
         "01_source_event_samples.csv",
         "02_participant_split_ledger.csv",
@@ -61,29 +66,16 @@ def test_worked_event_validation_example_runs_without_figures(
     assert manifest["figure_outputs"] == []
     assert manifest["source_unchanged"] is True
 
-    assert "Participant-disjoint folds verified: yes" in captured.out
-    assert "Matched held-out rows across models: yes" in captured.out
-    assert "Sample-level and event-level metrics exported separately: yes" in captured.out
-    assert "Source table unchanged: yes" in captured.out
+    assert "Participant-disjoint folds verified: yes" in captured
+    assert "Matched held-out rows across models: yes" in captured
+    assert "Sample-level and event-level metrics exported separately: yes" in captured
+    assert "Source table unchanged: yes" in captured
 
 
-def test_worked_event_validation_has_zero_participant_overlap_and_matched_rows(tmp_path, monkeypatch) -> None:
-    output_dir = tmp_path / "validation"
-    monkeypatch.setattr(
-        sys,
-        "argv",
-        [
-            "06_worked_event_model_validation.py",
-            "--output-dir",
-            str(output_dir),
-            "--no-figures",
-        ],
-    )
-    runpy.run_path(
-        str(ROOT / "examples" / "06_worked_event_model_validation.py"),
-        run_name="__main__",
-    )
-
+def test_worked_event_validation_has_zero_participant_overlap_and_matched_rows(
+    validation_demo,
+) -> None:
+    output_dir, _ = validation_demo
     ledger = pd.read_csv(output_dir / "02_participant_split_ledger.csv")
     predictions = pd.read_csv(output_dir / "03_matched_heldout_predictions.csv")
     for fold in sorted(ledger["fold"].unique()):
@@ -100,7 +92,12 @@ def test_worked_event_validation_has_zero_participant_overlap_and_matched_rows(t
             ]
         )
         assert train_ids.isdisjoint(test_ids)
-        observed = set(predictions.loc[predictions["validation_fold"] == fold, "participant_id"])
+        observed = set(
+            predictions.loc[
+                predictions["validation_fold"] == fold,
+                "participant_id",
+            ]
+        )
         assert observed == test_ids
 
         counts = (
@@ -111,23 +108,10 @@ def test_worked_event_validation_has_zero_participant_overlap_and_matched_rows(t
         assert counts.nunique() == 1
 
 
-def test_validation_outputs_keep_estimands_and_probability_policy_separate(tmp_path, monkeypatch) -> None:
-    output_dir = tmp_path / "validation"
-    monkeypatch.setattr(
-        sys,
-        "argv",
-        [
-            "06_worked_event_model_validation.py",
-            "--output-dir",
-            str(output_dir),
-            "--no-figures",
-        ],
-    )
-    runpy.run_path(
-        str(ROOT / "examples" / "06_worked_event_model_validation.py"),
-        run_name="__main__",
-    )
-
+def test_validation_outputs_keep_estimands_and_probability_policy_separate(
+    validation_demo,
+) -> None:
+    output_dir, _ = validation_demo
     sample = pd.read_csv(output_dir / "04_sample_level_metrics.csv")
     events = pd.read_csv(output_dir / "05_event_level_metrics.csv")
     calibration = pd.read_csv(output_dir / "07_calibration_bins.csv")
