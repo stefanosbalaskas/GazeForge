@@ -175,7 +175,7 @@ nav:
           - Model prediction intake: visus-prediction-intake.md
           - Pre-execution protocol: visus-preexecution-protocol.md
           - Protocol-bound model batch: visus-protocol-bound-batch.md
-          - Protocol-bound validation: visus-protocol-validation.md
+          - Protocol-bound validation: visus-protocol-bound-validation.md
           - Protocol authority transition: visus-protocol-authority-transition.md
           - Model validation: visus-model-validation.md
           - Human agreement: visus-human-agreement.md
