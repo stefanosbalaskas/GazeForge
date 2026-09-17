@@ -5,11 +5,14 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 !!! note "Checklist ≠ certification"
     Completing this page is a reporting and audit aid. It does not independently validate a tracker, dataset, model, or scientific conclusion.
 
+For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md).
+
 ## Before preregistration or data collection
 
 - ☐ The observable gaze construct and unit of analysis are defined.
 - ☐ Participant, trial, stimulus, and repeated-measure identifiers are specified.
-- ☐ Tracker/model, native acquisition rate, screen/stimulus geometry, and required viewing-distance assumptions are recorded.
+- ☐ Tracker/model, native/nominal acquisition rate, screen/stimulus geometry, and required viewing-distance assumptions are recorded.
+- ☐ The plan distinguishes acquisition/native rate, observed timestamp cadence, and any derived analysis rate.
 - ☐ The primary QC review/exclusion rule is specified separately from anomaly detection.
 - ☐ The event method and any threshold or learned-model plan are named.
 - ☐ The AOI source is defined as researcher/manual, AI-proposed + reviewed, or another traceable source.
@@ -29,6 +32,12 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ Screen/stimulus geometry is recorded where coordinate conversion or bounds QC depends on it.
 - ☐ Participant/trial identity mapping has not been guessed or silently reconstructed.
 - ☐ Duplicate or non-increasing sample keys have been reviewed explicitly rather than silently collapsed.
+- ☐ Source, canonical, and pre-exclusion QC row counts have been reconciled and any differences explained.
+- ☐ Nominal/native acquisition rate is reported separately from observed timestamp cadence.
+- ☐ Off-screen coordinates are reviewed rather than silently clipped.
+- ☐ Import compatibility is not treated as evidence of tracker/device validity.
+
+The [Worked tracker import](worked-tracker-import.md) demonstrates this preflight with explicit Gazepoint-style columns, seconds→milliseconds conversion, normalized→pixel conversion, duplicate/bounds diagnostics, and row-count preservation.
 
 ### QC and exclusions
 
@@ -70,6 +79,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ Figure captions repeat evidence qualifiers when a visual could otherwise be overread.
 - ☐ Model, AOI, split, rate, and metric terminology is consistent throughout methods, results, tables, and supplement.
 - ☐ The manuscript does not promote a source token to participant identity without authoritative mapping.
+- ☐ Observed timestamp cadence is not described as proof of native hardware sampling rate.
 - ☐ Derived lower-rate evidence is not described as native-device validation.
 - ☐ Synthetic/demo output is not cited as empirical validation evidence.
 - ☐ Import compatibility is not described as device validity.
@@ -85,6 +95,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 - ☐ Sensitive or restricted source data are not redistributed merely because derived outputs can be shared.
 - ☐ The archive records source identity without overstating access or redistribution rights.
 - ☐ Final tables, figures, manifests, certificates, fingerprints, and analysis code share a consistent analysis identity.
+- ☐ The archive includes the import contract/preflight when source columns or units were transformed.
 - ☐ Validation archives include the split ledger, held-out predictions, probability columns where applicable, sample/event metric tables, calibration/coverage diagnostics, and model-selection/threshold policy.
 - ☐ Random seeds and non-default parameters are recorded.
 - ☐ The archive contains a short **evidence boundary** statement.
@@ -99,8 +110,12 @@ analysis_commit: <full SHA if development checkout>
 python: <version>
 tracker: <model>
 native_rate_hz: <rate>
+observed_cadence_hz: <rate from analysed timestamps>
 analysis_rate_hz: <rate>
 analysis_rate_status: native | derived
+source_mapping: <participant/trial/time/x/y fields>
+source_units: <time + coordinate basis>
+screen_geometry: <width × height>
 split_unit: participant | stimulus | source_token | dataset | other
 reference_labels: <source / annotator provenance>
 primary_metrics: <metrics matching the estimand>
@@ -113,16 +128,16 @@ evidence_boundary: <what this design does not establish>
 
 | Area | Minimum record |
 | --- | --- |
-| Acquisition | tracker/model, native rate, geometry, study identity structure |
-| Canonicalisation | timestamp unit, coordinate basis, mapping/adaptation rule |
+| Acquisition | tracker/model, native/nominal rate, observed cadence, geometry, study identity structure |
+| Canonicalisation | timestamp unit, coordinate basis, mapping/adaptation rule, row-count/duplicate/bounds preflight |
 | QC | anomaly method, thresholds, review/exclusion rule |
 | Events | algorithm/model, version, threshold, training rate, confidence rule |
 | AOIs | source, geometry, model provenance if AI-assisted, human review state |
 | Validation | held-out unit, folds, split ledger/leakage controls, reference labels, matched-row status |
 | Model selection | selection/tuning data versus final confirmatory evaluation; exploratory choices labelled |
-| Rate | native vs derived status and derivation/sensitivity rule |
+| Rate | native/nominal vs observed cadence vs derived analysis status and derivation/sensitivity rule |
 | Metrics | sample/event/calibration metrics matched to the question; coverage with selective accuracy |
 | Provenance | package version/SHA, environment, source/output fingerprints |
 | Boundary | explicit statement of unsupported/generalisation claims |
 
-For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
+For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).

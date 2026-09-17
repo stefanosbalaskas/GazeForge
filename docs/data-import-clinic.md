@@ -2,6 +2,9 @@
 
 Moving from a tracker export to analysis is where small assumptions about time, coordinates, identity, and sampling cadence can become large scientific errors. This clinic gives you a review-first path from **real source data** to GazeForge's canonical gaze table without pretending that successful import is evidence of tracker or model validity.
 
+!!! tip "Prefer an executable worked example?"
+    Run the [Worked tracker import and QC](worked-tracker-import.md). It uses a deterministic Gazepoint-style export, explicit seconds→milliseconds and normalized→pixel conversion, duplicate/missing/bounds/cadence preflight, source immutability, row-count preservation, non-destructive QC, provenance, and a manifest.
+
 !!! warning "Import compatibility is not validation"
     A table that can be adapted, canonicalised, or quality-scored is **not thereby validated** for a device, population, task, sampling regime, or eye-event model. In particular, a successful Gazepoint / GP3 import does not establish native 60 Hz or GP3 event validity. Use the [Validation guide](validation-evidence-guide.md) for empirical evidence claims.
 
@@ -17,7 +20,7 @@ Moving from a tracker export to analysis is where small assumptions about time, 
 
 Use `adapt_gazepoint_samples()` when your export has Gazepoint-style participant, media/trial, time, and point-of-gaze fields. Declare whether time is in seconds or milliseconds and whether coordinates are normalized or pixels.
 
-[Jump to Gazepoint / GP3 →](#path-a-gazepoint-gp3-export)
+[Run the worked import →](worked-tracker-import.md)
 
 </div>
 
@@ -60,7 +63,7 @@ For each recording or source family, write down the facts you actually know befo
 | What was the screen geometry? | width × height in pixels | required for normalized→pixel conversion and useful for bounds QC |
 | What rate was configured at acquisition? | tracker/native nominal rate | provenance; do not confuse it with observed timestamp cadence |
 | Are pupil/validity fields present? | source column names and semantics | optional fields should not be guessed |
-| What exact file/table was used? | immutable source copy + fingerprint | makes downstream transformations auditable |
+| What exact file/table was used? | immutable source copy + fingerprint/checksum | makes downstream transformations auditable |
 
 If one of these facts is unknown, preserve that uncertainty. Do not convert a guess into metadata merely because a function accepts a parameter.
 
@@ -80,7 +83,7 @@ print(source.shape)
 print(source_fingerprint)
 ```
 
-GazeForge adapters build a new canonical frame; they do not require you to overwrite the source table. A simple equality check can make that contract explicit in your workflow:
+GazeForge adapters build a new canonical frame; they do not require you to overwrite the source table.
 
 ```python
 assert source.equals(source_snapshot)
@@ -107,7 +110,6 @@ from gazeforge import adapt_gazepoint_samples, fingerprint_frame
 source = pd.read_csv("gazepoint_export.csv")
 source_fingerprint = fingerprint_frame(source)
 
-# Use the actual stimulus/display geometry from the study.
 screen_size_px = (1920, 1080)
 
 gaze = adapt_gazepoint_samples(
@@ -120,7 +122,7 @@ gaze = adapt_gazepoint_samples(
     y_col="BPOGY",
     time_unit="seconds",
     coordinates="normalized",
-    sampling_rate_hz=None,  # infer from positive within-trial timestamp intervals
+    sampling_rate_hz=None,
 )
 
 print(gaze.data.head())
@@ -141,6 +143,8 @@ gaze = adapt_gazepoint_samples(
 
 !!! note "Gazepoint adapter ≠ Gazepoint validity"
     The adapter establishes an explicit transformation into the software's canonical schema. It does **not establish device validity**, native 60 Hz eye-event accuracy, calibration quality, or equivalence between different Gazepoint export fields.
+
+The [worked tracker-import example](worked-tracker-import.md) executes this path and deliberately keeps duplicate/off-screen/missing-gaze review cases visible.
 
 ## Path B: generic processed table
 
@@ -174,21 +178,7 @@ gaze = adapt_processed_table(
 
 `adapt_processed_table()` deliberately does not guess columns or units. `timestamp_scale_to_ms` and `coordinate_scale` are direct multiplicative transformations, so choose them from the source specification—not from values that merely “look right.”
 
-For a table already expressed in milliseconds and pixels, both scales are `1.0`:
-
-```python
-gaze = adapt_processed_table(
-    source,
-    participant_col="participant",
-    trial_col="trial",
-    timestamp_col="time_ms",
-    x_col="x_pixels",
-    y_col="y_pixels",
-    timestamp_scale_to_ms=1.0,
-    coordinate_scale=(1.0, 1.0),
-    screen_size_px=(1920, 1080),
-)
-```
+For a table already expressed in milliseconds and pixels, both scales are `1.0`.
 
 ## Path C: already-canonical table
 
@@ -217,23 +207,7 @@ gaze = canonicalize_gaze(
 )
 ```
 
-You can also rename known source columns with `column_map`:
-
-```python
-gaze = canonicalize_gaze(
-    source,
-    column_map={
-        "participant_id": "subject",
-        "trial_id": "trial",
-        "timestamp_ms": "time_ms",
-        "x_px": "x_pixels",
-        "y_px": "y_pixels",
-    },
-    screen_size_px=(1920, 1080),
-)
-```
-
-`column_map` renames columns; it does **not** convert seconds to milliseconds or normalized coordinates to pixels. Use an adapter or transform units explicitly before canonicalisation when scaling is required.
+You can also rename known source columns with `column_map`. `column_map` renames columns; it does **not** convert seconds to milliseconds or normalized coordinates to pixels. Use an adapter or transform units explicitly before canonicalisation when scaling is required.
 
 ## Preflight the data you received
 
@@ -250,22 +224,17 @@ Investigate missing identity from the source. Whether such rows can be recovered
 
 ### 2. Inspect duplicate sample keys
 
-A useful first diagnostic is whether participant/trial/timestamp keys repeat:
-
 ```python
 sample_key = ["participant_id", "trial_id", "timestamp_ms"]
 duplicate_key = gaze.data.duplicated(sample_key, keep=False)
 print("rows in duplicated sample keys:", int(duplicate_key.sum()))
-
-if duplicate_key.any():
-    print(gaze.data.loc[duplicate_key, sample_key + ["x_px", "y_px"]].head(20))
 ```
 
 `canonicalize_gaze()` sorts by participant, trial, and timestamp by default. It **does not silently repair, collapse, or delete duplicate timestamps**. `infer_sampling_rate_hz()` uses positive timestamp differences, so zero-difference duplicates are not evidence that the duplicate rows are harmless. Resolve their meaning from the acquisition/export process before modelling.
 
 ### 3. Compare nominal rate with observed timestamp cadence
 
-When `sampling_rate_hz=None`, GazeForge infers a rate from the median **positive within-trial timestamp interval**. You can inspect the same diagnostic directly:
+When `sampling_rate_hz=None`, GazeForge infers a rate from the median **positive within-trial timestamp interval**.
 
 ```python
 from gazeforge import infer_sampling_rate_hz
@@ -289,8 +258,6 @@ A discrepancy can reflect dropped samples, duplicated timestamps, quantized cloc
 
 ### 4. Inspect coordinate bounds
 
-Canonicalisation validates schema and metadata shape; it does not reject off-screen gaze values. Use the known screen geometry to review them:
-
 ```python
 width_px, height_px = gaze.screen_size_px or (1920, 1080)
 valid_xy = gaze.data["x_px"].notna() & gaze.data["y_px"].notna()
@@ -305,9 +272,19 @@ print("off-screen rows:", int(offscreen.sum()))
 
 Off-screen values can be meaningful invalid/missing gaze encodings, genuine excursions, or evidence of a coordinate-conversion mistake. Do not clip them merely to make a plot look plausible.
 
+### 5. Reconcile row counts
+
+At the import/QC handoff, make row preservation explicit:
+
+```python
+assert len(source) == len(gaze.data)
+```
+
+If row counts differ, explain exactly which operation changed them. Do not let filtering happen implicitly inside “cleaning.”
+
 ## Move into non-destructive QC
 
-Once identity, units, cadence, and geometry are reviewable, continue with anomaly flags and trial summaries without deleting source rows:
+Once identity, units, cadence, geometry, and row counts are reviewable, continue with anomaly flags and trial summaries without deleting source rows:
 
 ```python
 from gazeforge import ai_flag_anomalies, score_trial_quality
@@ -327,7 +304,7 @@ print(quality.sort_values("quality_score").head())
 
 `ai_flag_anomalies()` adds model-derived QC fields to a copy. `score_trial_quality()` summarizes missingness, screen bounds, anomaly rate, and large temporal gaps. Neither function turns a quality score into a universal exclusion rule.
 
-Continue with [Motion-quality gating](motion-quality-gating.md) before event modelling.
+Run the exact handoff in [Worked tracker import and QC](worked-tracker-import.md), then continue with [Motion-quality gating](motion-quality-gating.md) before event modelling.
 
 ## What canonicalisation does—and does not do
 
@@ -361,11 +338,11 @@ Continue with [Motion-quality gating](motion-quality-gating.md) before event mod
 
 ```text
 immutable tracker/source table
-        ↓  fingerprint + source contract
+        ↓  checksum/fingerprint + source contract
 explicit adapter / unit conversion
         ↓
 canonical participant · trial · ms · pixels table
-        ↓  inspect identity + duplicates + observed cadence + bounds
+        ↓  inspect identity + duplicates + observed cadence + bounds + row counts
 non-destructive QC
         ↓
 reviewed analysis-ready derivative
@@ -379,10 +356,10 @@ The import stage should make uncertainty more visible, not less. A clean canonic
 
 ## Where to go next
 
+- [Worked tracker import and QC](worked-tracker-import.md) for the executable source→preflight→QC bundle.
 - [Getting started](getting-started.md) for the shortest package walkthrough.
 - [Adapters & validation](adapters-validation.md) for API-level adapter details.
 - [Motion-quality gating](motion-quality-gating.md) for non-destructive QC policy.
 - [Runnable examples](runnable-examples.md) for deterministic demo scripts.
 - [Practical end-to-end workflow](practical-workflow.md) for a complete reviewable output bundle.
-- [Validation guide](validation-evidence-guide.md) before making empirical performance claims.
-- [Reproducible reporting](reproducible-reporting.md) when freezing the study record.
+- [Validation guide](validation-evidence-guide.md) before making device/model-validity claims.

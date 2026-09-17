@@ -11,7 +11,7 @@ Start here when you have a **study task**, not a module name. Each recipe points
 | --- | --- | --- | --- |
 | Static-stimulus AOI study | [`AOI`](api-reference.md), `map_fixations_to_aois()` | frozen AOI table, review record, fixation assignments, scanpaths | AOI membership is not a psychological state |
 | Dynamic/video AOI study | `DynamicAOIKeyframe`, `map_fixations_to_dynamic_aois()` | keyframes, interpolation policy, assignments, review record | bounded interpolation only; no silent extrapolation |
-| Real tracker → canonical table → QC | [Real-data import clinic](data-import-clinic.md) | untouched source, canonical table, metadata, QC table | import compatibility is not device validation |
+| Real tracker → canonical table → QC | [Worked tracker import](worked-tracker-import.md) + [Real-data import clinic](data-import-clinic.md) | untouched source, import contract, canonical table, metadata, QC table | import compatibility is not device validation |
 | Transparent event baseline | `ivt_classify_events()` or angular I-VT | explicit threshold, sample labels, event intervals | example thresholds are not universal cutoffs |
 | Learned event validation | [Event-model validation clinic](event-model-validation-clinic.md) | fold ledger, matched predictions, sample/event metrics, calibration/coverage | name the held-out unit and native/derived rate |
 | Scanpath / transition analysis | `to_semantic_scanpaths()` | ordered fixation assignments, sequences, motifs/embeddings | sequence structure does not establish motive or intent |
@@ -69,22 +69,46 @@ GazeForge interpolates only between observed keyframes whose gap is within the e
 
 ## Recipe 3 · Real tracker import → canonical schema → QC
 
-Start with the [Real-data import clinic](data-import-clinic.md). Preserve the raw export and make these values explicit before analysis:
+Start with the executable [Worked tracker import and QC](worked-tracker-import.md), then use the [Real-data import clinic](data-import-clinic.md) for deeper source variants and troubleshooting.
+
+Preserve the raw export and make these values explicit before analysis:
 
 - participant and trial identity columns;
 - timestamp column and unit;
 - coordinate columns and coordinate basis;
 - screen width and height when normalized coordinates must be converted;
-- native acquisition rate and separately observed timestamp cadence;
-- pupil/validity fields if used.
+- native/nominal acquisition rate and separately **observed timestamp cadence**;
+- pupil/validity fields if used; and
+- exact analysed file/table identity.
 
-Then canonicalise and add non-destructive quality flags. Do not silently guess units, rate, geometry, or identity, and do not treat anomaly flags as automatic invalidity labels.
+A Gazepoint-style contract can be explicit:
 
-**Retain:** untouched source file/table, canonical table, import mapping, fingerprints, acquisition metadata, QC sample table, trial-quality summary, and any reviewed exclusion decisions.
+```python
+from gazeforge import adapt_gazepoint_samples
 
-**Boundary:** successful import or adapter compatibility does **not** establish native-device, Gazepoint, GP3, or measurement validity.
+gaze = adapt_gazepoint_samples(
+    source,
+    screen_size_px=(1920, 1080),
+    participant_col="USER_FILE",
+    trial_col="MEDIA_ID",
+    timestamp_col="TIME",
+    x_col="BPOGX",
+    y_col="BPOGY",
+    time_unit="seconds",
+    coordinates="normalized",
+    sampling_rate_hz=None,
+)
+```
 
-[Import clinic →](data-import-clinic.md) · [Adapters & validation →](adapters-validation.md)
+Then inspect identity, duplicate sample keys, observed cadence, coordinate bounds, and row-count preservation **before** anomaly scoring. Do not silently guess units, rate, geometry, or identity, and do not treat anomaly flags as automatic invalidity labels.
+
+The worked import script deliberately retains duplicate keys, off-screen coordinates, and a missing gaze coordinate. That is the intended behavior: review cases remain visible in the source, canonical, and QC records.
+
+**Retain:** untouched source file/table, checksum/fingerprint, import contract, canonical table, acquisition metadata, preflight diagnostics, QC sample table, trial-quality summary, and any reviewed exclusion decisions.
+
+**Boundary:** successful import or adapter compatibility does **not** establish native-device, Gazepoint, GP3, native-60-Hz, event-model, or measurement validity. Observed timestamp cadence is a diagnostic of the analysed stream, not proof of native hardware rate.
+
+[Run the worked import →](worked-tracker-import.md) · [Import clinic →](data-import-clinic.md) · [Adapters & validation →](adapters-validation.md)
 
 ## Recipe 4 · Transparent event baseline
 
@@ -162,19 +186,21 @@ If you add learned embeddings or clustering, record vectorizer/reducer settings,
 Before writing a headline result, freeze the research identity of the analysis:
 
 1. package version and exact commit when using a development checkout;
-2. acquisition hardware, native rate, observed cadence, units, geometry, and participant/trial identity;
-3. QC/exclusion decisions and their review provenance;
-4. event/AOI/scanpath model identity and parameters;
-5. validation split unit and leakage checks;
-6. native-versus-derived sampling status;
-7. source and output fingerprints; and
-8. the explicit **evidence boundary**—what the study does not establish.
+2. acquisition hardware, native/nominal rate, observed cadence, units, geometry, and participant/trial identity;
+3. source fingerprint/checksum, import mapping, duplicate/bounds preflight, and row-count preservation;
+4. QC/exclusion decisions and their review provenance;
+5. event/AOI/scanpath model identity and parameters;
+6. validation split unit and leakage checks;
+7. native-versus-derived sampling status;
+8. source and output fingerprints; and
+9. the explicit **evidence boundary**—what the study does not establish.
 
-Use the [Study-design templates](study-design-templates.md) to make those values copy-ready, the [Validation reporting cookbook](validation-reporting-cookbook.md) to keep validation language proportional to the design, then run the [Publication-readiness checklist](publication-readiness.md).
+Use the [Study-design templates](study-design-templates.md) to make those values copy-ready, the [Worked tracker import](worked-tracker-import.md) to freeze the real-data handoff, the [Validation reporting cookbook](validation-reporting-cookbook.md) to keep validation language proportional to the design, then run the [Publication-readiness checklist](publication-readiness.md).
 
 ## From a recipe to code
 
-- [Runnable examples](runnable-examples.md) gives exact commands and output inventories, including the participant-held-out event-model validation study.
+- [Runnable examples](runnable-examples.md) gives exact commands and output inventories, including the worked tracker-import/QC and participant-held-out event-model validation studies.
+- [Worked tracker import and QC](worked-tracker-import.md) covers explicit source mapping, unit conversion, preflight, nominal-versus-observed cadence, non-destructive QC, and provenance.
 - [Event-model validation clinic](event-model-validation-clinic.md) covers leakage-safe learned event evaluation, calibration, abstention, and sample/event estimands.
 - [Study lifecycle](study-lifecycle.md) connects design, acquisition, QC, modelling, validation, freeze, and publication.
 - [Reproducible reporting](reproducible-reporting.md) and the [Validation reporting cookbook](validation-reporting-cookbook.md) provide manuscript-facing wording and claim-safe contrasts.

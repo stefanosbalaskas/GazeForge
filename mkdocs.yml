@@ -67,6 +67,7 @@ nav:
       - Learning paths: learning-paths.md
       - Research recipes: research-recipes.md
       - Real-data import clinic: data-import-clinic.md
+      - Worked tracker import & QC: worked-tracker-import.md
       - Event-model validation clinic: event-model-validation-clinic.md
       - Study lifecycle: study-lifecycle.md
       - Study-design templates: study-design-templates.md

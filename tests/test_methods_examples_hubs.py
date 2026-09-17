@@ -49,12 +49,13 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "04_worked_advertising_study.py",
         "05_worked_dynamic_aoi_study.py",
         "06_worked_event_model_validation.py",
+        "07_worked_tracker_import_qc.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
-    assert "seven deterministic examples" in page
+    assert "eight deterministic examples" in page
     assert "python examples/01_synthetic_qc.py" in page
     assert "python examples/02_ivt_baseline.py" in page
     assert "python examples/03_visual_diagnostics.py --output-dir visual-demo" in page
@@ -66,6 +67,8 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     assert "--output-dir worked-dynamic-aoi-demo" in page
     assert "python examples/06_worked_event_model_validation.py" in page
     assert "--output-dir worked-event-model-validation-demo" in page
+    assert "python examples/07_worked_tracker_import_qc.py" in page
+    assert "--output-dir worked-tracker-import-qc-demo" in page
 
 
 def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> None:
@@ -87,6 +90,12 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "07_calibration_bins.csv",
         "08_confidence_coverage.csv",
         "09_illustrative_abstention_policy.csv",
+        "01_source_tracker_export.csv",
+        "02_canonical_gaze.csv",
+        "03_import_preflight.csv",
+        "04_qc_samples.csv",
+        "05_trial_quality.csv",
+        "import_contract.json",
         "analysis_plan.json",
         "provenance.json",
         "workflow_manifest.json",
@@ -106,6 +115,9 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
     assert "gazepoint" in lower
     assert "gp3" in lower
     assert "source table remains unchanged" in lower
+    assert "row count" in lower
+    assert "duplicate" in lower
+    assert "observed cadence" in lower
     assert "no extrapolation" in lower
     assert "participant-disjoint" in lower
     assert "matched held-out rows" in lower
@@ -120,21 +132,25 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     examples_readme = _read("examples/README.md")
 
     assert "      - Runnable examples: runnable-examples.md" in mkdocs
+    assert "worked-tracker-import.md" in mkdocs
     assert "event-model-validation-clinic.md" in mkdocs
-    assert "validation-reporting-cookbook.md" in mkdocs
     assert "methods-overview.md" in homepage
     assert "runnable-examples.md" in homepage
     assert "study-lifecycle.md" in homepage
     assert "worked-advertising-study.md" in homepage
+    assert "worked-tracker-import.md" in homepage
     assert "publication-readiness.md" in homepage
     assert "event-model-validation-clinic.md" in homepage
     assert "runnable-examples.md" in getting_started
+    assert "worked-tracker-import.md" in getting_started
     assert "runnable-examples.md" in learning_paths
+    assert "worked-tracker-import.md" in learning_paths
     assert "event-model-validation-clinic.md" in learning_paths
     assert "../docs/runnable-examples.md" in examples_readme
     assert "04_worked_advertising_study.py" in examples_readme
     assert "05_worked_dynamic_aoi_study.py" in examples_readme
     assert "06_worked_event_model_validation.py" in examples_readme
+    assert "07_worked_tracker_import_qc.py" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

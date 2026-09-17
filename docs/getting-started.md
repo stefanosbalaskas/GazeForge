@@ -27,13 +27,20 @@ python -m pip install -e ".[dev]"
 pytest
 ```
 
+!!! tip "Have a tracker export?"
+    Run the [worked tracker-import/QC example](worked-tracker-import.md) first. It shows an explicit Gazepoint-style `USER_FILE`/`MEDIA_ID`/`TIME`/`BPOGX`/`BPOGY` contract, seconds→milliseconds and normalized→pixel conversion, duplicate/missing/bounds/cadence preflight, source immutability, row-count preservation, and non-destructive QC.
+
+    ```bash
+    python examples/07_worked_tracker_import_qc.py \
+      --output-dir worked-tracker-import-qc-demo
+    ```
+
+    Then use the [Real-data import clinic](data-import-clinic.md) for source variants and troubleshooting. Adapter compatibility is not tracker/device validation.
+
 !!! tip "Run one complete workflow"
     Want to see the layers composed before adapting your own tracker export? Run the [practical end-to-end workflow](practical-workflow.md), which writes reviewable source/canonical/QC/event/AOI/scanpath/provenance artifacts and keeps the demo explicitly separate from empirical validation.
 
     Prefer to choose among smaller scripts first? Browse the [runnable examples](runnable-examples.md) for exact commands, dependencies, and expected outputs.
-
-!!! tip "Bringing real tracker data?"
-    Start with the [Real-data import clinic](data-import-clinic.md) before copying a synthetic example. It walks through Gazepoint / GP3 exports, generic processed tables, already-canonical data, unit/rate checks, duplicate timestamps, screen geometry, source fingerprints, and the QC handoff.
 
 ## 1. Canonicalise gaze samples
 
@@ -57,10 +64,12 @@ from gazeforge import adapt_gazepoint_samples
 gaze = adapt_gazepoint_samples(
     gazepoint_export,
     screen_size_px=(1920, 1080),
+    time_unit="seconds",
+    coordinates="normalized",
 )
 ```
 
-For real exports, verify the source units, observed timestamp cadence, duplicate sample keys, and screen geometry in the [Real-data import clinic](data-import-clinic.md). Adapter compatibility does not by itself establish tracker or event-model validity.
+For real exports, verify the source units, **nominal/native acquisition rate**, separately **observed timestamp cadence**, duplicate sample keys, and screen geometry in the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). Adapter compatibility does not by itself establish tracker or event-model validity.
 
 ## 2. Add QC without deleting the record
 
@@ -71,10 +80,13 @@ flagged = ai_flag_anomalies(
     gaze.data,
     sampling_rate_hz=gaze.sampling_rate_hz,
 )
-quality = score_trial_quality(flagged)
+quality = score_trial_quality(
+    flagged,
+    screen_size_px=gaze.screen_size_px,
+)
 ```
 
-The original rows remain present. GazeForge adds anomaly scores and flags so exclusions can be reviewed and documented later.
+The original rows remain present. GazeForge adds anomaly scores and flags so exclusions can be reviewed and documented later. QC flags are not automatic invalidity labels.
 
 ## 3. Train an eye-event model
 
@@ -127,6 +139,8 @@ result = grouped_event_cross_validate(
 
 A fresh model is fitted inside every fold. GazeForge also provides matched-model comparisons, leave-one-dataset-out validation, calibration diagnostics, and event-level temporal evaluation.
 
+Use the [Event-model validation clinic](event-model-validation-clinic.md) before turning model predictions into manuscript-facing validation claims.
+
 ## 5. Add semantic AOIs when needed
 
 Static and dynamic AOIs are separate from the event-modelling layer. AI-generated boxes are proposals until reviewed.
@@ -174,15 +188,18 @@ Frozen benchmark JSON includes a deterministic SHA-256 fingerprint and the evide
 At minimum, report:
 
 - GazeForge version or commit SHA;
-- tracker and native sampling rate;
+- tracker and native/nominal sampling rate;
+- observed timestamp cadence separately from the nominal/native rate;
+- exact source-column mapping, timestamp unit, coordinate basis, and screen/stimulus geometry;
+- source fingerprint/checksum plus duplicate/missing/bounds preflight;
 - any resampling target and label-purity rule;
 - event/AOI model and version;
 - participant/stimulus split policy;
 - excluded labels and QC rules;
 - calibration/event-level metrics where applicable;
-- human-human reference agreement when available;
+- human-human reference agreement when available; and
 - whether evidence is native or derived.
 
 For the public alpha, cite the exact version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013) and record `0.1.0a1` in the analysis environment.
 
-Continue with the [Real-data import clinic](data-import-clinic.md), [practical end-to-end workflow](practical-workflow.md), [Scientific governance](scientific-governance.md), and [Validation status](validation-status.md).
+Continue with the [Worked tracker import](worked-tracker-import.md), [Real-data import clinic](data-import-clinic.md), [practical end-to-end workflow](practical-workflow.md), [Scientific governance](scientific-governance.md), and [Validation status](validation-status.md).
