@@ -1,6 +1,6 @@
 # Study lifecycle
 
-Use this page when you want to move from a research question to a manuscript-facing, auditable GazeForge analysis without treating the package as a collection of disconnected functions.
+Use this page when you want to move from a research question to a manuscript-facing, auditable GazeForge analysis without treating the package as a collection of disconnected functions. If you already know the practical task, use [Research recipes](research-recipes.md); if you are preregistering or freezing study metadata, use the [Study-design templates](study-design-templates.md).
 
 !!! warning "A complete workflow is not the same thing as validated evidence"
     Completing every stage below does **not** automatically validate a tracker, event model, AOI method, population, task, or sampling regime. The lifecycle keeps assumptions and evidence boundaries visible; empirical claims still depend on the relevant validation design. Use the [Validation guide](validation-evidence-guide.md) and generated [Evidence status](evidence-status.md) for current evidence claims.
@@ -15,7 +15,7 @@ Use this page when you want to move from a research question to a manuscript-fac
 
 Specify what the gaze data can directly represent, the unit of analysis, acquisition requirements, AOI source, QC rule, and validation plan before fitting models.
 
-[Researcher guidance →](for-researchers.md)
+[Open study templates →](study-design-templates.md)
 
 </div>
 
@@ -39,7 +39,7 @@ Keep the source immutable, fingerprint the analysed table, document time/coordin
 
 Add non-destructive QC, start from inspectable event rules, preserve AOI provenance, and retain reviewable semantic sequence outputs.
 
-[Run a complete workflow →](practical-workflow.md)
+[Choose a research recipe →](research-recipes.md)
 
 </div>
 
@@ -85,12 +85,12 @@ Translate acquisition, preprocessing, QC, model, split, rate, metric, and eviden
 
 | Stage | Input | Action | Reviewable output | Continue with | Do not infer |
 | --- | --- | --- | --- | --- | --- |
-| **1. Define the question** | substantive theory + task | define observable gaze construct and unit of analysis | analysis/preregistration plan | [For researchers](for-researchers.md) | latent states from gaze alone |
+| **1. Define the question** | substantive theory + task | define observable gaze construct and unit of analysis | analysis/preregistration plan | [Study templates](study-design-templates.md) | latent states from gaze alone |
 | **2. Record acquisition facts** | tracker/stimulus setup | record hardware, native rate, geometry, participant/trial identity | acquisition/source record | [Import clinic](data-import-clinic.md) | undocumented acquisition facts |
 | **3. Preserve source identity** | original export/table | retain immutable source and fingerprint analysed source table | source snapshot + checksum/fingerprint | [Import clinic](data-import-clinic.md) | fingerprint = independent validation |
 | **4. Canonicalise explicitly** | source semantics | map time, coordinates, identity, optional fields | canonical gaze table | [Adapters & validation](adapters-validation.md) | successful import = device validity |
-| **5. Add QC evidence** | canonical samples | flag anomalies and score trial quality without silent deletion | QC columns + trial summaries | [Practical workflow](practical-workflow.md) | QC flag = invalid observation |
-| **6. Build measurement outputs** | reviewed samples | apply event baseline/model; define/review AOIs; derive scanpaths if needed | event/AOI/sequence tables | [Methods overview](methods-overview.md) | complex model = superior model |
+| **5. Add QC evidence** | canonical samples | flag anomalies and score trial quality without silent deletion | QC columns + trial summaries | [Research recipes](research-recipes.md) | QC flag = invalid observation |
+| **6. Build measurement outputs** | reviewed samples | apply event baseline/model; define/review static or dynamic AOIs; derive scanpaths if needed | event/AOI/sequence tables | [Methods overview](methods-overview.md) | complex model = superior model |
 | **7. Validate the estimand** | reference labels + split policy | evaluate on leakage-safe held-out data with matching metrics | held-out predictions + metrics | [Validation guide](validation-evidence-guide.md) | sample accuracy = temporal event quality |
 | **8. Audit rate and provenance** | acquisition + analysis-rate history | distinguish native from derived rates and preserve source lineage | rate/sensitivity record | [Sampling sensitivity](sampling-sensitivity.md) | derived 60 Hz = native 60 Hz validity |
 | **9. Freeze the evidence bundle** | final analysis outputs | freeze manifests, fingerprints, certificates, code/environment, figures/tables | reconstructable archive | [Publication readiness](publication-readiness.md) | archive completeness = stronger evidence |
@@ -113,7 +113,22 @@ python examples/04_worked_advertising_study.py \
 
 The example contains **no empirical advertising effect and no model-performance claim**. It exists to show how a domain study can be structured without turning software output into unsupported evidence.
 
-[Open the worked study →](worked-advertising-study.md) · [Browse runnable examples →](runnable-examples.md)
+[Open the static worked study →](worked-advertising-study.md)
+
+## Worked route: a moving stimulus with dynamic AOIs
+
+For video or moving interfaces, the second worked study makes the geometry-over-time contract explicit:
+
+```bash
+python examples/05_worked_dynamic_aoi_study.py \
+  --output-dir worked-dynamic-aoi-demo
+```
+
+It uses deterministic synthetic fixation rows plus reviewed `product`, `claim`, and `cta` keyframes. Within the observed track range, geometry can be resolved by exact keyframes or bounded interpolation. Deliberate probes before and after the observed range must remain unassigned, so the example mechanically demonstrates **no temporal extrapolation**.
+
+The output bundle includes the raw fixation table, dynamic keyframes, assignments, semantic scanpaths, interpolation audit, assignment summary, analysis plan, provenance, manifest, and optional figures. It is classified `synthetic_demo_not_empirical_evidence`: it does not validate a detector/tracker, a device, native 60 Hz acquisition, Gazepoint/GP3, or a substantive psychological effect.
+
+[Open the dynamic worked study →](worked-dynamic-aoi-study.md) · [Browse all runnable examples →](runnable-examples.md)
 
 ## Decision points worth freezing before analysis
 
@@ -122,6 +137,7 @@ Before you treat the workflow as confirmatory, record at least:
 - the participant/trial/stimulus identifiers that define independent units;
 - the native acquisition rate and any derived analysis rate;
 - the source of AOIs and whether AI proposals were human-reviewed;
+- for dynamic AOIs, keyframe timestamps, review state, maximum interpolation gap, overlap rule, and the no-extrapolation policy;
 - the QC review/exclusion rule and whether it was prespecified;
 - the event method, thresholds, model identity, confidence/abstention rule, and training regime;
 - the held-out unit and leakage controls;
@@ -129,7 +145,7 @@ Before you treat the workflow as confirmatory, record at least:
 - the software version or exact commit SHA; and
 - the explicit statement of what the design does **not** establish.
 
-If those decisions are not yet fixed, label them exploratory rather than backfilling certainty after seeing the outputs.
+If those decisions are not yet fixed, label them exploratory rather than backfilling certainty after seeing the outputs. The [Study-design templates](study-design-templates.md) provide copy-ready records for each of these decisions.
 
 ## Keep the layers separate
 
@@ -145,4 +161,4 @@ substantive interpretation is established
 
 That separation is the central reason to keep source data, transformations, predictions, review decisions, validation artifacts, and manuscript claims as distinct records.
 
-Continue with the [Publication-readiness checklist](publication-readiness.md), [Research terminology](research-terminology.md), and [Reproducible reporting](reproducible-reporting.md).
+Continue with [Research recipes](research-recipes.md), [Study-design templates](study-design-templates.md), the [Publication-readiness checklist](publication-readiness.md), [Research terminology](research-terminology.md), and [Reproducible reporting](reproducible-reporting.md).
