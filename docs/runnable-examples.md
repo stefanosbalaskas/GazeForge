@@ -1,6 +1,6 @@
 # Runnable examples
 
-The repository contains five deterministic examples that move from a small first result to a complete reviewable workflow and a domain-shaped worked study. Use this page to choose a script, see what it produces, and open the corresponding guide.
+The repository contains six deterministic examples that move from a small first result to complete reviewable workflows and domain-shaped static/dynamic worked studies. Use this page to choose a script, see what it produces, and open the corresponding guide.
 
 !!! warning "Demo output is not validation evidence"
     Every example on this page uses synthetic/demo inputs. The scripts demonstrate software behaviour, composition, plotting, provenance, and reporting structure. They are **not empirical validation evidence** and do not establish native-device, native 60 Hz, Gazepoint, or GP3 validity.
@@ -17,6 +17,7 @@ The repository contains five deterministic examples that move from a small first
 | **Visual diagnostics** | `.[plot]` | `python examples/03_visual_diagnostics.py --output-dir visual-demo` | six PNG diagnostics |
 | **End-to-end workflow** | `.[plot]` by default; base path with `--no-figures` | `python examples/end_to_end_research_workflow.py --output-dir end-to-end-research-demo` | ten CSV tables, provenance, manifest, optional figures |
 | **Worked advertising/interface study** | base package | `python examples/04_worked_advertising_study.py --output-dir worked-advertising-demo` | ten study-shaped CSV tables, analysis plan, provenance, manifest |
+| **Worked dynamic-AOI study** | `.[plot]` by default; base path with `--no-figures` | `python examples/05_worked_dynamic_aoi_study.py --output-dir worked-dynamic-aoi-demo` | six CSV tables, analysis plan, provenance, manifest, optional figures |
 
 ## 1 · Synthetic QC
 
@@ -166,24 +167,56 @@ It writes these ten tables:
 10_semantic_scanpaths.csv
 ```
 
-It also writes:
-
-- `analysis_plan.json`, making the illustrative study decisions explicit;
-- `provenance.json`, recording the analysis operations; and
-- `workflow_manifest.json`, recording software identity, source/output fingerprints, evidence classification, and source immutability.
-
-The script verifies that the source table remains unchanged and requires the synthetic demonstration to visit all four AOIs. The resulting AOI assignments and scanpaths are descriptive software-demo outputs—not estimates of real consumer attention effects, persuasion, comprehension, liking, or purchase intention. The manifest uses `synthetic_demo_not_empirical_evidence`.
+It also writes `analysis_plan.json`, `provenance.json`, and `workflow_manifest.json`. The script verifies that the source table remains unchanged and requires the synthetic demonstration to visit all four AOIs. The resulting AOI assignments and scanpaths are descriptive software-demo outputs—not estimates of real consumer attention effects, persuasion, comprehension, liking, or purchase intention. The manifest uses `synthetic_demo_not_empirical_evidence`.
 
 [Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/04_worked_advertising_study.py) · [Read the worked-study guide](worked-advertising-study.md) · [Follow the study lifecycle](study-lifecycle.md)
+
+## 6 · Worked dynamic-AOI study
+
+Use this example when semantic regions move over time and you want the temporal geometry policy itself to remain reviewable.
+
+```bash
+python -m pip install -e ".[plot]"
+python examples/05_worked_dynamic_aoi_study.py \
+  --output-dir worked-dynamic-aoi-demo
+```
+
+For the tables/provenance path without Matplotlib:
+
+```bash
+python examples/05_worked_dynamic_aoi_study.py \
+  --output-dir worked-dynamic-aoi-demo \
+  --no-figures
+```
+
+The study uses deterministic `product`, `claim`, and `cta` tracks with reviewed keyframes at 0, 1000, and 2000 ms. It exercises exact keyframes and bounded interpolation and deliberately includes fixation probes before and after the track range to verify **no temporal extrapolation**.
+
+It writes exactly six tables:
+
+```text
+01_source_fixations.csv
+02_dynamic_aoi_keyframes.csv
+03_fixation_dynamic_aoi_assignments.csv
+04_semantic_scanpaths.csv
+05_interpolation_audit.csv
+06_assignment_summary.csv
+```
+
+It also writes `analysis_plan.json`, `provenance.json`, and `workflow_manifest.json`; with figures enabled it adds `figures/01_dynamic_aoi_snapshot.png` and `figures/02_dynamic_scanpath.png`.
+
+The manifest records `synthetic_demo_not_empirical_evidence`, source/keyframe fingerprints, the interpolation-gap rule, and `no_extrapolation_verified`. These artifacts demonstrate software composition and auditability; they do not validate a learned detector/tracker, a device, native 60 Hz acquisition, Gazepoint/GP3, or any substantive psychological effect.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/05_worked_dynamic_aoi_study.py) · [Read the worked dynamic-AOI guide](worked-dynamic-aoi-study.md) · [Open research recipes](research-recipes.md)
 
 ## Which example should I run first?
 
 ```text
-Need to verify installation / QC?         → 01_synthetic_qc.py
-Need an inspectable event baseline?        → 02_ivt_baseline.py
-Need figure-generation patterns?           → 03_visual_diagnostics.py
-Need a complete reviewable output bundle?  → end_to_end_research_workflow.py
-Need a domain-shaped worked study?         → 04_worked_advertising_study.py
+Need to verify installation / QC?          → 01_synthetic_qc.py
+Need an inspectable event baseline?         → 02_ivt_baseline.py
+Need figure-generation patterns?            → 03_visual_diagnostics.py
+Need a complete reviewable output bundle?   → end_to_end_research_workflow.py
+Need a static domain-shaped worked study?   → 04_worked_advertising_study.py
+Need moving AOIs + interpolation auditing?  → 05_worked_dynamic_aoi_study.py
 ```
 
 ## Move from demo data to a study
@@ -194,8 +227,8 @@ The examples intentionally avoid pretending that synthetic behaviour validates a
 2. record actual acquisition hardware, native sampling rate, observed timestamp cadence, units, screen geometry, and participant/trial identity;
 3. keep QC flags and AI-assisted outputs reviewable rather than silently rewriting source samples;
 4. justify thresholds and model choices for the study population and task;
-5. validate event models with an appropriate labelled corpus and leakage-safe split design;
-6. preserve whether lower-rate data are native or derived; and
-7. freeze software identity, provenance, fingerprints, and evidence boundaries with the reported result.
+5. validate event or dynamic-AOI models with an appropriate labelled corpus and leakage-safe split design;
+6. preserve whether lower-rate data are native or derived and, for dynamic AOIs, preserve keyframe/review/interpolation provenance without extrapolation; and
+7. freeze software identity, provenance, fingerprints, evidence boundaries, and the study records in the [Study-design templates](study-design-templates.md).
 
-Continue with [Study lifecycle](study-lifecycle.md), [Real-data import clinic](data-import-clinic.md), [Methods overview](methods-overview.md), [Publication readiness](publication-readiness.md), [Validation guide](validation-evidence-guide.md), and [Reproducible reporting](reproducible-reporting.md).
+Continue with [Research recipes](research-recipes.md), [Study lifecycle](study-lifecycle.md), [Study-design templates](study-design-templates.md), [Real-data import clinic](data-import-clinic.md), [Methods overview](methods-overview.md), [Publication readiness](publication-readiness.md), [Validation guide](validation-evidence-guide.md), and [Reproducible reporting](reproducible-reporting.md).
