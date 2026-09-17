@@ -105,7 +105,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
+**Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 
@@ -164,11 +164,11 @@ The previews below use **synthetic/demo data only**. They illustrate software be
     <strong>Non-destructive QC</strong>
     <span>Flag suspicious samples and review trial quality without silently deleting observations.</span>
   </a>
-  <a class="gf-preview-card" href="visual-diagnostics/">
+  <a class="gf-preview-card" href="event-model-validation-clinic/">
     <img src="assets/figures/synthetic-event-diagnostics.svg" alt="Synthetic demo event probability and calibration diagnostics with line-style and point annotations." loading="lazy">
-    <span class="gf-preview-kicker">2 · Inspect predictions</span>
+    <span class="gf-preview-kicker">2 · Validate predictions</span>
     <strong>Events &amp; calibration</strong>
-    <span>Keep probabilities, thresholds, calibration, and uncertainty visible instead of reducing the pipeline to one opaque label.</span>
+    <span>Keep held-out identity, probabilities, sample/event metrics, calibration, and confidence/coverage visible.</span>
   </a>
   <a class="gf-preview-card" href="visual-diagnostics/">
     <img src="assets/figures/synthetic-aoi-scanpath.svg" alt="Synthetic demo semantic AOI rectangles with a numbered fixation scanpath." loading="lazy">
@@ -190,7 +190,7 @@ The previews below use **synthetic/demo data only**. They illustrate software be
 
     Transparent I-VT and angular I-VT baselines, Random Forest classification, temporal-context MLPs, calibrated probabilities, confidence/coverage analysis, and event-level temporal matching.
 
-    [Event modelling →](model-comparison.md)
+    [Event-model validation clinic →](event-model-validation-clinic.md)
 
 -   :material-vector-rectangle:{ .lg .middle } **Semantic AOIs**
 
@@ -313,7 +313,7 @@ gaze = canonicalize_gaze(raw, sampling_rate_hz=60)
 flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 ```
 
-[Import real study data →](data-import-clinic.md) · [Continue with the getting-started guide →](getting-started.md) · [Run the practical end-to-end workflow →](practical-workflow.md) · [Run the guided QC tutorial →](tutorial-synthetic-qc.md)
+[Import real study data →](data-import-clinic.md) · [Validate a learned event model →](event-model-validation-clinic.md) · [Run the worked validation study →](runnable-examples.md#7-worked-event-model-validation-study) · [Continue with the getting-started guide →](getting-started.md) · [Run the practical end-to-end workflow →](practical-workflow.md)
 
 ## Current project phase
 
