@@ -189,7 +189,7 @@ python examples/05_worked_dynamic_aoi_study.py \
   --no-figures
 ```
 
-The study uses deterministic `product`, `claim`, and `cta` tracks with reviewed keyframes at 0, 1000, and 2000 ms. It exercises exact keyframes and bounded interpolation and deliberately includes fixation probes before and after the track range to verify **no temporal extrapolation**.
+The study uses deterministic `product`, `claim`, and `cta` tracks with reviewed keyframes at 0, 1000, and 2000 ms. It exercises exact keyframes and bounded interpolation and deliberately includes fixation probes before and after the track range to verify **no extrapolation beyond the reviewed time range**.
 
 It writes exactly six tables:
 
