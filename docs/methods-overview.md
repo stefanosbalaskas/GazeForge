@@ -1,6 +1,6 @@
 # Methods overview
 
-GazeForge has a broad technical surface, but most studies only need a subset of it. Start from the research task below, then move to the detailed method page that matches the analysis you actually need.
+GazeForge has a broad technical surface, but most studies only need a subset of it. Start from the research task below, then move to the detailed method page that matches the analysis you actually need. For a shorter task-first route with expected artifacts and claim boundaries, use [Research recipes](research-recipes.md).
 
 !!! note "Methods are not evidence claims"
     This page organizes software methods and analysis choices. It does not change the generated [Evidence status](evidence-status.md), promote a benchmark, or turn synthetic/demo output into empirical validation. Device adapters likewise do not establish device-specific validity.
@@ -38,6 +38,7 @@ Begin with transparent event rules when appropriate, then add temporal models, m
 Represent static regions directly or use reviewable proposals and time-bounded geometry for moving stimuli.
 
 **Start:** [Dynamic AOIs](dynamic-aois.md)  
+**Run it:** [Worked dynamic-AOI study](worked-dynamic-aoi-study.md)  
 **Then:** [Grounding DINO + SAM 2](grounded-sam2-backend.md) · [Verified video-frame derivation](video-frame-derivation.md) · [Dynamic AOI evaluation](dynamic-aoi-evaluation.md)
 
 </div>
@@ -71,7 +72,7 @@ Use the location-scale family when the scientific question concerns both conditi
 Keep split design, sampling-rate handling, calibration, benchmark provenance, frozen evidence, and manuscript-facing software identity visible.
 
 **Start:** [Validation guide](validation-evidence-guide.md)  
-**Then:** [Evidence status](evidence-status.md) · [Validation scope certificates](validation-scope-certificates.md) · [Reproducible reporting](reproducible-reporting.md)
+**Plan/report:** [Study-design templates](study-design-templates.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 
@@ -85,9 +86,10 @@ Keep split design, sampling-rate handling, calibration, benchmark provenance, fr
 | Which samples or trials need review? | [Motion-quality gating](motion-quality-gating.md), [Synthetic QC tutorial](tutorial-synthetic-qc.md) | flags, weights, quality summaries; source rows retained |
 | How should gaze samples become event labels? | [Temporal models](temporal-models.md), [Model comparison](model-comparison.md) | labels/probabilities with model and threshold provenance |
 | How should event performance be evaluated? | [Event-level evaluation](event-level-evaluation.md), [Stratified performance](stratified-event-performance.md), [Matched-fold differences](paired-model-differences.md), [Calibration](calibration.md) | participant-disjoint metrics, matched differences, calibration tables |
-| How should moving semantic regions be represented? | [Dynamic AOIs](dynamic-aois.md), [Video-frame derivation](video-frame-derivation.md), [Dynamic AOI evaluation](dynamic-aoi-evaluation.md) | reviewed keyframes, bounded interpolation, fixation assignments |
+| How should moving semantic regions be represented? | [Dynamic AOIs](dynamic-aois.md), [Worked dynamic-AOI study](worked-dynamic-aoi-study.md), [Video-frame derivation](video-frame-derivation.md), [Dynamic AOI evaluation](dynamic-aoi-evaluation.md) | reviewed keyframes, bounded interpolation, no-extrapolation audit, fixation assignments |
 | How can AI propose visual regions without becoming the empirical record? | [Grounding DINO + SAM 2 backend](grounded-sam2-backend.md), [Dynamic AOIs](dynamic-aois.md) | proposals plus confidence and review decisions |
 | How should sequence/process structure be represented? | [Research workflows](research-workflows.md), [Practical workflow](practical-workflow.md) | semantic scanpaths and provenance-bound exports |
+| How should a study be preregistered and archived? | [Study-design templates](study-design-templates.md), [Study lifecycle](study-lifecycle.md), [Publication readiness](publication-readiness.md) | explicit acquisition/QC/AOI/split/rate/archive records |
 | How can conditional variability be modelled? | [Hierarchical location-scale](hierarchical-location-scale.md), [Correlated location-scale](correlated-location-scale.md) | location/scale effects with explicit model assumptions |
 | How can random slopes and covariance be represented? | [Location random-slope scale](location-random-slope-scale.md), [Correlated random-slope scale](correlated-location-random-slope-scale.md), [Full-covariance random-slope scale](full-covariance-location-random-slope-scale.md) | random-effect/covariance estimates and diagnostics |
 | How should location-scale uncertainty and calibration be checked? | [Residual calibration](location-scale-residual-calibration.md), [Conditional refit calibration](location-scale-refit-residual-calibration.md), [Hierarchical bootstrap](location-scale-hierarchical-bootstrap.md), [Bootstrap Monte Carlo precision](location-scale-bootstrap-monte-carlo.md) | calibration diagnostics and uncertainty summaries |
@@ -103,9 +105,9 @@ non-destructive QC / reliability evidence
         ↓
 transparent or learned event model
         ↓
-participant-disjoint evaluation + calibration
+leakage-safe evaluation + calibration
         ↓
-reviewed AOIs / fixation assignments / scanpaths
+reviewed static/dynamic AOIs / fixation assignments / scanpaths
         ↓
 statistics or hierarchical models
         ↓
@@ -124,7 +126,7 @@ A method being available in the package does not establish that it is superior f
 
 Semantic and dynamic AOIs describe where reviewed regions are located. Scanpaths describe observable fixation order across those regions. Neither surface, by itself, establishes emotion, persuasion, comprehension, intent, diagnosis, or another latent psychological state.
 
-For video or moving interfaces, use [Dynamic AOIs](dynamic-aois.md) with bounded interpolation and explicit review. For end-to-end composition from events to AOI assignments and scanpaths, use the [practical workflow](practical-workflow.md).
+For video or moving interfaces, use [Dynamic AOIs](dynamic-aois.md) with bounded interpolation and explicit review. The [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates exact keyframes, interpolation within a declared maximum gap, fixation assignment, semantic sequences, and explicit **no extrapolation** before/after the observed track. For end-to-end static composition from events to AOI assignments and scanpaths, use the [practical workflow](practical-workflow.md).
 
 ## Distributional modelling
 
@@ -152,4 +154,4 @@ In particular:
 
 ## Run instead of browse
 
-If you are starting from a real tracker or processed export, use the [Real-data import clinic](data-import-clinic.md) first. If you want executable examples before reading individual method pages, open the [Runnable examples gallery](runnable-examples.md). For one composed workflow that writes tables, figures, fingerprints, provenance, and a manifest, use the [Practical end-to-end workflow](practical-workflow.md).
+If you are starting from a real tracker or processed export, use the [Real-data import clinic](data-import-clinic.md) first. If you know the task but not the API, open [Research recipes](research-recipes.md). If you want executable examples, open the [Runnable examples gallery](runnable-examples.md): static studies can start from the [worked advertising/interface study](worked-advertising-study.md), while moving stimuli can start from the [worked dynamic-AOI study](worked-dynamic-aoi-study.md). Use the [Study-design templates](study-design-templates.md) to freeze the corresponding preregistration, acquisition, QC, AOI, split, native/derived, and archive records.

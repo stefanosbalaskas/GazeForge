@@ -2,7 +2,7 @@
 
 A GazeForge analysis should be reproducible at two levels: **software identity** and **scientific evidence identity**. Reporting only a package name is not enough when the result depends on sampling-rate transformations, held-out grouping, source provenance, or frozen benchmark artifacts.
 
-If you are still designing the study, begin with the [Study lifecycle](study-lifecycle.md). If the analysis is approaching submission or archive freeze, use [Publication readiness](publication-readiness.md) as the final audit. The [Research terminology](research-terminology.md) guide keeps acquisition, split, validation, QC, and evidence-status wording consistent, while the [worked advertising/interface study](worked-advertising-study.md) shows the reporting artifacts in a concrete synthetic example.
+If you are still designing the study, begin with the [Study lifecycle](study-lifecycle.md). If the analysis is approaching submission or archive freeze, use [Publication readiness](publication-readiness.md) as the final audit. The [Research terminology](research-terminology.md) guide keeps acquisition, split, validation, QC, and evidence-status wording consistent, while the [worked advertising/interface study](worked-advertising-study.md) and [worked dynamic-AOI study](worked-dynamic-aoi-study.md) show the reporting artifacts in concrete synthetic examples.
 
 ## Minimum methods checklist
 
@@ -47,6 +47,80 @@ Prefer one of:
 - matched folds when multiple models are evaluated on exactly the same held-out rows.
 
 A source-token split must not be relabelled as participant-disjoint unless the token→participant mapping is authoritatively established.
+
+## Claim-safe wording pairs
+
+### Import compatibility versus device validity
+
+**Appropriate:**
+
+> The Gazepoint export was successfully adapted to the canonical GazeForge schema using explicit timestamp, coordinate, participant, trial, and display-geometry mappings.
+
+**Overstated:**
+
+> Successful import validated the eye tracker.
+
+Import compatibility shows that the software can interpret the declared fields. It does not establish measurement validity, calibration quality, native-rate fidelity, or device-specific event validity.
+
+### QC flags versus invalid samples
+
+**Appropriate:**
+
+> Samples were flagged for review using the prespecified QC rule; exclusions were made only under the separately reported review protocol.
+
+**Overstated:**
+
+> The QC algorithm removed invalid samples.
+
+A QC flag is evidence for review. Unless the study separately validates the rule, it is not an oracle label for invalidity.
+
+### Software demo versus empirical validation
+
+**Appropriate:**
+
+> The synthetic example demonstrates the software workflow and output contract; it is not empirical validation evidence.
+
+**Overstated:**
+
+> The example validates GazeForge on dynamic AOIs.
+
+Synthetic/demo output can test deterministic software behavior, but it does not establish detector accuracy, tracker validity, native 60 Hz validity, Gazepoint/GP3 validity, or substantive effects.
+
+### Participant-disjoint versus source-token-disjoint
+
+**Appropriate:**
+
+> Evaluation was source-token-disjoint; an authoritative token→participant mapping was unavailable, so participant-disjointness was not claimed.
+
+**Overstated:**
+
+> The model was participant-held-out.
+
+Identity strength must follow the source evidence. An opaque token cannot be promoted to a participant identifier by assumption.
+
+### Sample-level versus event-level performance
+
+**Appropriate:**
+
+> The model achieved the reported sample-level macro-F1, while event segmentation was evaluated separately with event-F1 and temporal overlap metrics.
+
+**Overstated:**
+
+> High sample-level accuracy demonstrates accurate event boundaries.
+
+Sample discrimination and contiguous event segmentation are different estimands and can rank models differently.
+
+### Calibration versus correctness
+
+**Appropriate:**
+
+> Predicted probabilities showed the reported calibration error across held-out observations.
+
+**Overstated:**
+
+> The model was calibrated, so its individual predictions were correct.
+
+Calibration is a distributional property of probabilities. It does not guarantee correctness for any specific prediction.
 
 ## Report multiple estimands when the scientific question requires them
 
@@ -118,6 +192,6 @@ Confirm that:
 - the manuscript does not upgrade derived, opaque-identity, or unresolved-source evidence into a stronger category;
 - any external benchmark redistribution is consistent with the verified source/reuse status rather than inferred from the article licence.
 
-Then run the broader [Publication readiness](publication-readiness.md) audit, which also checks preregistration alignment, source/data identity, exclusions, AOI review state, software/archive identity, and the boundary between software demonstrations and empirical evidence.
+Then run the broader [Publication readiness](publication-readiness.md) audit, which also checks preregistration alignment, source/data identity, exclusions, AOI review state, software/archive identity, and the boundary between software demonstrations and empirical evidence. The [Study-design templates](study-design-templates.md) provide copy-ready records for those inputs.
 
-[Study lifecycle →](study-lifecycle.md) · [Publication readiness →](publication-readiness.md) · [Research terminology →](research-terminology.md) · [Worked study →](worked-advertising-study.md)
+[Research recipes →](research-recipes.md) · [Study-design templates →](study-design-templates.md) · [Study lifecycle →](study-lifecycle.md) · [Publication readiness →](publication-readiness.md) · [Research terminology →](research-terminology.md) · [Worked static study →](worked-advertising-study.md) · [Worked dynamic study →](worked-dynamic-aoi-study.md)

@@ -2,7 +2,7 @@
 
 These scripts are intentionally small and deterministic. They are learning and smoke-test examples, not empirical validation artifacts.
 
-Website gallery: [Runnable examples](../docs/runnable-examples.md)
+Website gallery: [Runnable examples](../docs/runnable-examples.md) · Task-first routes: [Research recipes](../docs/research-recipes.md)
 
 ## 1. Synthetic QC
 
@@ -71,6 +71,30 @@ The script writes ten study-shaped CSV tables plus `analysis_plan.json`, `proven
 
 Guide: [Worked advertising / interface study](../docs/worked-advertising-study.md) · [Study lifecycle](../docs/study-lifecycle.md)
 
+## 6. Worked dynamic-AOI study
+
+Run a moving-stimulus example that makes temporal AOI geometry and interpolation policy explicit:
+
+```bash
+python -m pip install -e ".[plot]"
+python examples/05_worked_dynamic_aoi_study.py \
+  --output-dir worked-dynamic-aoi-demo
+```
+
+For the table/provenance path without Matplotlib:
+
+```bash
+python examples/05_worked_dynamic_aoi_study.py \
+  --output-dir worked-dynamic-aoi-demo \
+  --no-figures
+```
+
+The script writes six CSV tables plus `analysis_plan.json`, `provenance.json`, and `workflow_manifest.json`. It exercises exact keyframes and bounded interpolation, deliberately includes pre/post-track fixation probes, verifies that geometry is **not extrapolated** outside the observed track range, checks source immutability, and labels the bundle `synthetic_demo_not_empirical_evidence`.
+
+With figures enabled it also writes a dynamic-AOI snapshot and semantic scanpath figure. The outputs demonstrate software workflow and audit structure; they do not validate detector accuracy, tracker validity, native 60 Hz acquisition, Gazepoint/GP3, or substantive psychological effects.
+
+Guide: [Worked dynamic-AOI study](../docs/worked-dynamic-aoi-study.md) · [Study-design templates](../docs/study-design-templates.md)
+
 ## Reproducibility notes
 
-The five examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence. Use the [Publication readiness](../docs/publication-readiness.md) checklist before freezing a study bundle.
+The six examples use fixed or explicitly constructed synthetic/demo inputs. For manuscript-facing work, record the GazeForge version or exact commit SHA and do not treat synthetic output as tracker validation or empirical evidence. Use the [Study-design templates](../docs/study-design-templates.md) while planning and the [Publication readiness](../docs/publication-readiness.md) checklist before freezing a study bundle.
