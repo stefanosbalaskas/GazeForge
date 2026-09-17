@@ -227,7 +227,7 @@ python examples/06_worked_event_model_validation.py \
   --no-figures
 ```
 
-The deterministic source contains eight synthetic participants × two trials with explicit fixation/saccade reference labels. The script reconstructs four GroupKFold participant splits, verifies **zero train/test participant overlap**, and compares I-VT, Random Forest, and ContextMLP on the **same held-out rows**.
+The deterministic source contains eight synthetic participants × two trials with explicit fixation/saccade reference labels. The script reconstructs four participant-disjoint GroupKFold splits, verifies **zero train/test participant overlap**, and compares I-VT, Random Forest, and ContextMLP on the **same held-out rows**.
 
 It writes exactly nine tables:
 
