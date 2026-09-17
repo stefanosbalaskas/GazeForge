@@ -13,7 +13,7 @@ Start here when you have a **study task**, not a module name. Each recipe points
 | Dynamic/video AOI study | `DynamicAOIKeyframe`, `map_fixations_to_dynamic_aois()` | keyframes, interpolation policy, assignments, review record | bounded interpolation only; no silent extrapolation |
 | Real tracker → canonical table → QC | [Real-data import clinic](data-import-clinic.md) | untouched source, canonical table, metadata, QC table | import compatibility is not device validation |
 | Transparent event baseline | `ivt_classify_events()` or angular I-VT | explicit threshold, sample labels, event intervals | example thresholds are not universal cutoffs |
-| Learned event validation | grouped validation + calibration + event metrics | fold assignments, predictions, calibration/event tables | name the held-out unit and native/derived rate |
+| Learned event validation | [Event-model validation clinic](event-model-validation-clinic.md) | fold ledger, matched predictions, sample/event metrics, calibration/coverage | name the held-out unit and native/derived rate |
 | Scanpath / transition analysis | `to_semantic_scanpaths()` | ordered fixation assignments, sequences, motifs/embeddings | sequence structure does not establish motive or intent |
 | Manuscript / archive handoff | [Publication readiness](publication-readiness.md) | software identity, manifest, fingerprints, evidence boundary | report only what the design and evidence support |
 
@@ -113,15 +113,30 @@ intervals = samples_to_event_intervals(
 
 ## Recipe 5 · Learned event-model validation and calibration
 
-A publishable learned-model result needs more than fitted predictions. Predeclare the held-out unit, prevent leakage, retain fold identity, evaluate both sample- and event-level estimands, and inspect probability calibration where probabilities are interpreted.
+Start with the [Event-model validation clinic](event-model-validation-clinic.md). A publishable learned-model result needs more than fitted predictions: predeclare the held-out unit, prevent leakage, retain fold identity, evaluate both sample- and event-level estimands, and inspect probability calibration where probabilities are interpreted.
 
-Use the grouped validation functions appropriate to the model and preserve whether the analysed rate is **native** or **derived**. If identity is only a source token, report a source-token-disjoint split; do not promote it to participant-disjoint.
+For a matched three-model reference workflow, GazeForge can evaluate I-VT, Random Forest, and ContextMLP on identical group-held-out rows:
 
-**Retain:** reference-label provenance, fold assignments, participant/stimulus/dataset identity fields, predictions/probabilities, calibration tables, event-matching results, software/model identity, and sampling-rate provenance.
+```python
+from gazeforge import compare_event_models_grouped
 
-**Boundary:** good sample-level discrimination does not imply good event segmentation; good calibration does not imply every prediction is correct; derived 60 Hz evidence does not become native 60 Hz evidence.
+comparison = compare_event_models_grouped(
+    labelled_gaze,
+    label_col="event_label",
+    group_col="participant_id",
+    n_splits=5,
+    sampling_rate_hz=60.0,
+    include_event_level_metrics=True,
+)
+```
 
-[Research workflow patterns →](research-workflows.md) · [Calibration →](calibration.md) · [Validation guide →](validation-evidence-guide.md)
+Use the grouped validation functions appropriate to the model and preserve whether the analysed rate is **native** or **derived**. If identity is only a source token, report a source-token-disjoint split; do not promote it to participant-disjoint. If confidence thresholds or models are selected from validation results, separate selection from final confirmatory evaluation or label the choice exploratory.
+
+**Retain:** reference-label provenance, explicit participant/split ledger, predictions/probabilities, matched held-out row identity, separate sample/event metric tables, calibration bins, confidence/coverage, abstention rule, software/model identity, and sampling-rate provenance.
+
+**Boundary:** good sample-level discrimination does not imply good event segmentation; good calibration does not imply every prediction is correct; selective accuracy must travel with coverage; derived 60 Hz evidence does not become native 60 Hz evidence; and a synthetic model ordering is not a universal ranking.
+
+[Validation clinic →](event-model-validation-clinic.md) · [Worked validation example →](runnable-examples.md#7-worked-event-model-validation-study) · [Reporting cookbook →](validation-reporting-cookbook.md) · [Calibration →](calibration.md) · [Validation guide →](validation-evidence-guide.md)
 
 ## Recipe 6 · Scanpaths, transitions, and motifs
 
@@ -155,11 +170,12 @@ Before writing a headline result, freeze the research identity of the analysis:
 7. source and output fingerprints; and
 8. the explicit **evidence boundary**—what the study does not establish.
 
-Use the [Study-design templates](study-design-templates.md) to make those values copy-ready, then run the [Publication-readiness checklist](publication-readiness.md).
+Use the [Study-design templates](study-design-templates.md) to make those values copy-ready, the [Validation reporting cookbook](validation-reporting-cookbook.md) to keep validation language proportional to the design, then run the [Publication-readiness checklist](publication-readiness.md).
 
 ## From a recipe to code
 
-- [Runnable examples](runnable-examples.md) gives exact commands and output inventories.
+- [Runnable examples](runnable-examples.md) gives exact commands and output inventories, including the participant-held-out event-model validation study.
+- [Event-model validation clinic](event-model-validation-clinic.md) covers leakage-safe learned event evaluation, calibration, abstention, and sample/event estimands.
 - [Study lifecycle](study-lifecycle.md) connects design, acquisition, QC, modelling, validation, freeze, and publication.
-- [Reproducible reporting](reproducible-reporting.md) provides manuscript-facing wording and claim-safe contrasts.
+- [Reproducible reporting](reproducible-reporting.md) and the [Validation reporting cookbook](validation-reporting-cookbook.md) provide manuscript-facing wording and claim-safe contrasts.
 - [Evidence status](evidence-status.md) and the [Benchmark guide](benchmark-guide.md) define the current empirical boundaries.
