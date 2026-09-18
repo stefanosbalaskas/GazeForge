@@ -92,6 +92,7 @@ Keep split design, sampling-rate handling, calibration, benchmark provenance, fr
 | How should moving semantic regions be represented? | [Dynamic AOIs](dynamic-aois.md), [Worked dynamic-AOI study](worked-dynamic-aoi-study.md), [Video-frame derivation](video-frame-derivation.md), [Dynamic AOI evaluation](dynamic-aoi-evaluation.md) | reviewed keyframes, bounded interpolation, no-extrapolation audit, fixation assignments |
 | How can AI propose visual regions without becoming the empirical record? | [Grounding DINO + SAM 2 backend](grounded-sam2-backend.md), [Dynamic AOIs](dynamic-aois.md) | proposals plus confidence and review decisions |
 | How should sequence/process structure be represented? | [Research workflows](research-workflows.md), [Practical workflow](practical-workflow.md) | semantic scanpaths and provenance-bound exports |
+| What does a gaze-derived measure support me saying? | [Measurement & interpretation clinic](measurement-interpretation.md), [Research terminology](research-terminology.md) | observable/construct bridge + threats + sensitivity/reporting limits |
 | How should a study be preregistered and archived? | [Study-design templates](study-design-templates.md), [Study lifecycle](study-lifecycle.md), [Publication readiness](publication-readiness.md) | explicit acquisition/QC/AOI/split/rate/archive records |
 | How can conditional variability be modelled? | [Hierarchical location-scale](hierarchical-location-scale.md), [Correlated location-scale](correlated-location-scale.md) | location/scale effects with explicit model assumptions |
 | How can random slopes and covariance be represented? | [Location random-slope scale](location-random-slope-scale.md), [Correlated random-slope scale](correlated-location-random-slope-scale.md), [Full-covariance random-slope scale](full-covariance-location-random-slope-scale.md) | random-effect/covariance estimates and diagnostics |
@@ -124,6 +125,10 @@ The order is deliberately review-first. AI-generated anomaly flags, event probab
 For a new dataset, a transparent baseline can make model behaviour easier to inspect before a learned classifier is introduced. The [I-VT tutorial](tutorial-ivt-baseline.md) shows a deterministic pixel-velocity baseline. When expert-labelled events are available, use the [Event-model validation clinic](event-model-validation-clinic.md) to preserve participant identity, leakage checks, matched held-out rows, probabilities, calibration, confidence/coverage, and separate sample/event estimands. Then use [model comparison](model-comparison.md), [matched-fold differences](paired-model-differences.md), [event-level evaluation](event-level-evaluation.md), [stratified performance](stratified-event-performance.md), and [calibration](calibration.md) for the required detail.
 
 A method being available in the package does not establish that it is superior for a new population, device, sampling regime, or task. Those are empirical questions that require an appropriate validation design. Likewise, a confidence threshold chosen for one validation design is not a universal abstention cutoff.
+
+## Measurement interpretation: observable before construct
+
+When a result moves from “where/when/how long” to a statement about trust, interest, comprehension, persuasion, memory, emotion, or another latent construct, use the [Measurement & interpretation clinic](measurement-interpretation.md). It records the observable, construct bridge, external evidence, validity threats, sensitivity checks, and reporting boundary before the substantive interpretation is frozen.
 
 ## AOIs and scanpaths: observable structure, not latent state
 

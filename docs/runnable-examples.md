@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **thirteen deterministic examples** that move from a small
+The repository contains **fourteen deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -42,6 +42,7 @@ artifacts, and continue to the corresponding research guide.
 | **Research evidence bundle** | base | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | archive-shaped source/QC/review/analysis/provenance bundle |
 | **Statistical analysis handoff** | base with `--no-figures` | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | trial × AOI/event tables + handoff metadata + optional diagnostics |
 | **Manuscript/reporting bundle** | base | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | reporting-only Methods/Results/boundary/citation derivatives |
+| **Measurement/interpretation audit** | base | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + measure/validity/sensitivity/reporting audit |
 
 ## 0 · GazeForge tour
 
@@ -463,6 +464,21 @@ No p-values, effect sizes, inferential statistics, device-validity claims, or ps
 · [Read the reporting clinic](reporting-clinic.md)
 · [Run publication readiness](publication-readiness.md)
 
+## 13 · Measurement/interpretation audit
+
+Use this after gaze-derived measures exist but before treating them as trust, persuasion, interest, comprehension, emotion, intent, diagnosis, preference, cognitive effort, prediction correctness, or scientific invalidity.
+
+```bash
+python examples/12_worked_measurement_interpretation_audit.py \
+  --output-dir worked-measurement-interpretation-audit
+```
+
+The deterministic teaching bundle writes a claim registry, measurement/interpretation matrix, validity-threat register, sensitivity plan, reporting-language table, audit manifest, and README. It preserves no-fixation latency as right-censored rather than zero, never assigns `valid`/`invalid` truth-label statuses, performs no inferential statistics, and never infers a latent state from gaze alone.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/12_worked_measurement_interpretation_audit.py)
+· [Read the measurement & interpretation clinic](measurement-interpretation.md)
+· [Continue to reporting](reporting-clinic.md)
+
 ## Which example should I run first?
 
 ```text
@@ -479,6 +495,7 @@ Need participant-held-out event validation?  → 06_worked_event_model_validatio
 Need a manuscript/archive evidence bundle?    → 09_worked_research_evidence_bundle.py
 Need model-ready trial/AOI/event tables?       → 10_worked_analysis_handoff.py
 Need manuscript/reporting derivatives?         → 11_worked_manuscript_reporting_bundle.py
+Need to audit what a gaze metric supports?      → 12_worked_measurement_interpretation_audit.py
 ```
 
 ## Move from demo data to a study
@@ -495,7 +512,8 @@ A practical research sequence is:
 8. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping, exposure, missing-versus-zero semantics, and censoring;
 9. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
 10. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct; and
-11. freeze software identity, figures, tables, and evidence boundaries before reporting.
+11. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks;
+12. freeze software identity, figures, tables, and evidence boundaries before reporting.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into

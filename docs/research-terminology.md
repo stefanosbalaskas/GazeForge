@@ -105,4 +105,4 @@ Those observations do not, by themselves, establish emotion, liking, persuasion,
 | “the model was 90% confident, therefore correct” | “the model emitted 0.90 confidence; calibration/correctness were evaluated separately” |
 | “the example validates GP3” | “the example demonstrates the software workflow on synthetic/demo data” |
 
-Continue with the [Study lifecycle](study-lifecycle.md), [Publication-readiness checklist](publication-readiness.md), and [Validation guide](validation-evidence-guide.md).
+Before promoting an observable gaze measure into a substantive construct, use the [Measurement & interpretation clinic](measurement-interpretation.md). Continue with the [Study lifecycle](study-lifecycle.md), [Publication-readiness checklist](publication-readiness.md), and [Validation guide](validation-evidence-guide.md).

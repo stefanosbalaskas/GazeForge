@@ -42,7 +42,8 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Validate learned event models | labelled event data + valid grouping unit | [Event-model validation clinic](event-model-validation-clinic.md) | grouped CV / calibration / event metrics | split ledger + matched held-out predictions + metrics | held-out design must match the intended claim | [Validation reporting cookbook](validation-reporting-cookbook.md) |
 | Define static or dynamic AOIs | stimulus geometry or reviewed tracks | [Research recipes](research-recipes.md) | AOI mapping / dynamic AOI assignment | AOI definitions + assignments + review/audit | AI proposal ≠ ground truth; no silent extrapolation | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) |
 | Build semantic scanpaths | reviewed fixation/AOI assignments | [Practical workflow](practical-workflow.md) | `to_semantic_scanpaths()` | semantic sequence table | sequence representation ≠ latent-state inference | [Methods overview](methods-overview.md) |
-| Build statistical model inputs | reviewed event/AOI outputs + preserved design/coverage | [Analysis handoff](analysis-handoff.md) | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | participant × trial × AOI/event tables + denominators + censoring | missing ≠ zero; samples/fixations are not independent participants | specialist statistical software |
+| Build statistical model inputs | reviewed event/AOI outputs + preserved design/coverage | [Analysis handoff](analysis-handoff.md) | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | participant × trial × AOI/event tables + denominators + censoring | missing ≠ zero; samples/fixations are not independent participants | [Measurement clinic](measurement-interpretation.md) |
+| Audit what a gaze-derived measure supports | frozen measurement definitions + intended claims | [Measurement & interpretation clinic](measurement-interpretation.md) | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + interpretation matrix + threats + sensitivity/reporting tables | observable ≠ latent construct; audit status ≠ truth label | [Reporting clinic](reporting-clinic.md) |
 | Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
 | Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Reporting clinic](reporting-clinic.md) |
 | Translate frozen evidence into manuscript language | frozen bundle + reconciled denominators | [Reporting & interpretation clinic](reporting-clinic.md) | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | Methods/results examples + citation table + boundaries + reporting manifest | reporting prose cannot strengthen evidence | [Publication readiness](publication-readiness.md) |
@@ -106,7 +107,19 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 
 **Stop rather than guess:** never use `fillna(0)` as a convenience repair, never aggregate away the inferential unit without changing the estimand explicitly, and never interpret a failed-convergence model as a valid result.
 
-### Route F · I have frozen evidence and need manuscript/supplement wording
+### Route F · I have gaze-derived measures and need to audit interpretation
+
+1. Start with the [Measurement & interpretation clinic](measurement-interpretation.md).
+2. Name the observable separately from the proposed construct.
+3. Preserve missing, zero, exposure, and censoring semantics.
+4. Review event/AOI/sampling/QC and generalisation threats.
+5. Prespecify scientifically justified sensitivity checks rather than selecting favourable variants.
+6. Record what external outcome or construct-validation evidence is required.
+7. Route only the supported wording into manuscript reporting.
+
+**Stop rather than guess:** dwell, fixation count, latency, scanpaths, confidence, and QC flags do not automatically establish trust, persuasion, interest, comprehension, emotion, intent, diagnosis, correctness, or scientific invalidity.
+
+### Route G · I have frozen evidence and need manuscript/supplement wording
 
 1. Start with the [Reporting & interpretation clinic](reporting-clinic.md).
 2. Keep import compatibility separate from device validity.

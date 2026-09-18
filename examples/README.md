@@ -210,9 +210,20 @@ No inferential statistics or substantive effects are invented. The reporting bun
 
 Guide: [Reporting & interpretation clinic](../docs/reporting-clinic.md)
 
+## 13. Measurement/interpretation audit
+
+```bash
+python examples/12_worked_measurement_interpretation_audit.py \
+  --output-dir worked-measurement-interpretation-audit
+```
+
+Builds a deterministic claim registry plus measurement, validity-threat, sensitivity, and reporting-language tables. Statuses are workflow prompts rather than scientific truth labels; no-fixation latency remains right-censored, no missing value is silently converted to zero, and no latent construct is inferred automatically.
+
+Guide: [Measurement & interpretation clinic](../docs/measurement-interpretation.md)
+
 ## Reproducibility notes
 
-The thirteen examples use fixed or explicitly constructed synthetic/demo inputs.
+The fourteen examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -230,5 +241,5 @@ planning, [Worked tracker import](../docs/worked-tracker-import.md) for the
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
 for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
-for archive assembly, and [Publication readiness](../docs/publication-readiness.md)
+for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, and [Publication readiness](../docs/publication-readiness.md)
 before freezing a study bundle.

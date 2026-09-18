@@ -18,7 +18,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 !!! note "Checklist ≠ certification"
     Completing this page is a reporting and audit aid. It does not independently validate a tracker, dataset, model, or scientific conclusion.
 
-For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. After the archive is frozen, use the [Reporting & interpretation clinic](reporting-clinic.md) for claim-safe Methods, Results, captions, and reporting derivatives. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
+For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. Before promoting a gaze-derived variable into a substantive construct, use the [Measurement & interpretation clinic](measurement-interpretation.md) to record the construct bridge, validity threats, sensitivity checks, and unsupported inferences. After the archive is frozen, use the [Reporting & interpretation clinic](reporting-clinic.md) for claim-safe Methods, Results, captions, and reporting derivatives. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
 
 ## Before preregistration or data collection
 
@@ -84,6 +84,18 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 - ☐ Handoff tables preserve event/AOI/QC/source provenance and exact software identity.
 
 [Open the statistical analysis handoff →](analysis-handoff.md)
+
+### Measurement interpretation
+
+- ☐ Every substantive gaze interpretation names the underlying observable and unit.
+- ☐ Proposed latent constructs have an explicit theoretical/empirical bridge rather than a package rule.
+- ☐ No-fixation latency is retained as censoring rather than converted to zero or silently dropped.
+- ☐ Event, AOI, sampling, quality, exclusion, and coverage threats have been reviewed where material.
+- ☐ Sensitivity analyses are scientifically justified and not selected for favourable results.
+- ☐ Confidence/probability is not treated as individual correctness without held-out calibration/validation evidence.
+- ☐ Dwell, counts, latency, and scanpaths are not promoted automatically to trust, persuasion, interest, comprehension, emotion, intent, diagnosis, preference, or cognitive effort.
+
+[Open the measurement & interpretation clinic →](measurement-interpretation.md)
 
 ### Validation and metrics
 
