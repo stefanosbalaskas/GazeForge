@@ -189,5 +189,6 @@ GazeForge therefore remains a **measurement/process-data and provenance layer**.
 - [Analysis handoff](analysis-handoff.md) — preserve inferential units, denominators, missingness, and censoring.
 - [Reporting & interpretation clinic](reporting-clinic.md) — translate frozen evidence into claim-safe Methods, Results, and captions.
 - [Research terminology](research-terminology.md) — keep evidence labels consistent.
+- [Reviewer & replication handoff](reviewer-replication-handoff.md) — declare claim-artifact traceability, rerun access class, software identity, and limitations for external inspection.
 - [Publication readiness](publication-readiness.md) — final manuscript/archive audit.
 - [API reference](api-reference.md) — exact public interfaces behind the measurement pipeline.
