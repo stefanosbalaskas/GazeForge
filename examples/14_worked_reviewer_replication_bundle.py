@@ -47,6 +47,9 @@ def _claims() -> pd.DataFrame:
             "03_pre_review_qc_samples.csv; 06_trial_review_ledger.csv",
             "rerunnable_with_private_input",
             "api-reference.md#quality-control",
+            EVIDENCE,
+            "study_archive_required",
+            False,
             "reproducible review rule != validated review rule",
         ),
         (
@@ -55,6 +58,9 @@ def _claims() -> pd.DataFrame:
             "12_fixation_aoi_assignments.csv; 13_semantic_scanpaths.csv",
             "rerunnable_with_private_input",
             "api-reference.md#semantic-aois; api-reference.md#scanpaths",
+            EVIDENCE,
+            "study_archive_required",
+            False,
             "observable gaze != trust, persuasion, comprehension, or intent",
         ),
         (
@@ -63,6 +69,9 @@ def _claims() -> pd.DataFrame:
             "artifact_citation_table.csv; reporting_manifest.json",
             "fully_rerunnable_demo",
             "reporting-clinic.md",
+            EVIDENCE,
+            "bundled_teaching_derivative",
+            True,
             "clearer prose or hashes do not strengthen the evidence class",
         ),
         (
@@ -71,6 +80,9 @@ def _claims() -> pd.DataFrame:
             "artifact_hash_ledger.csv; replication_manifest.json",
             "fully_rerunnable_demo",
             "reviewer-replication-handoff.md",
+            EVIDENCE,
+            "bundled_teaching_derivative",
+            True,
             "reproducible software behaviour is not empirical validation evidence",
         ),
     ]
@@ -82,10 +94,12 @@ def _claims() -> pd.DataFrame:
             "supporting_artifact",
             "reproducibility_class",
             "api_or_guide_route",
+            "evidence_classification",
+            "artifact_access",
+            "bundled_by_default",
             "interpretation_boundary",
         ],
     )
-
 
 def _rerun_plan() -> pd.DataFrame:
     rows = [
@@ -173,16 +187,17 @@ def _limitations() -> pd.DataFrame:
 
 def _api_routes() -> pd.DataFrame:
     rows = [
+        ("schema", "api-reference.md#schema"),
         ("quality control", "api-reference.md#quality-control"),
         ("eye events", "api-reference.md#eye-events"),
         ("semantic AOIs", "api-reference.md#semantic-aois"),
         ("dynamic AOIs", "api-reference.md#dynamic-aois"),
         ("scanpaths", "api-reference.md#scanpaths"),
+        ("visual diagnostics", "api-reference.md#visual-diagnostics"),
         ("structural validation", "api-reference.md#structural-validation-scope"),
         ("sampling sensitivity", "api-reference.md#sampling-sensitivity"),
     ]
     return pd.DataFrame(rows, columns=["layer", "api_route"])
-
 
 def _readme() -> str:
     return """# Reviewer / replicator start here
@@ -235,6 +250,13 @@ def run(output_dir: Path) -> None:
     private = rerun.loc[rerun["purpose"] == "private study rerun"].iloc[0]
     if not bool(private["external_or_private_input_required"]):
         raise RuntimeError("Private study rerun must require authorized external input.")
+    if claims["evidence_classification"].ne(EVIDENCE).any():
+        raise RuntimeError("Every claim row must retain the demo evidence classification.")
+    if claims["interpretation_boundary"].astype(str).str.strip().eq("").any():
+        raise RuntimeError("Every claim row must retain an interpretation boundary.")
+    private_claims = claims["artifact_access"] == "study_archive_required"
+    if claims.loc[private_claims, "bundled_by_default"].astype(bool).any():
+        raise RuntimeError("Study/private artifacts must not be bundled by default.")
 
     targets = [output_dir / name for name in OUTPUTS if name != "artifact_hash_ledger.csv"]
     ledger = pd.DataFrame(
@@ -258,12 +280,18 @@ def run(output_dir: Path) -> None:
         "bundle_file_hashes_sha256": {p.name: _sha256(p) for p in manifest_targets},
         "scientific_analysis_performed": False,
         "private_or_restricted_source_bundled": False,
+        "source_artifact_modified": False,
+        "qc_artifact_modified": False,
+        "review_artifact_modified": False,
+        "analysis_artifact_modified": False,
+        "missing_converted_to_zero": False,
         "empirical_validation_claim_created": False,
         "device_validity_claim_created": False,
         "native_rate_validity_claim_created": False,
         "model_validity_claim_created": False,
         "measurement_or_construct_validity_claim_created": False,
         "causal_claim_created": False,
+        "external_validity_claim_created": False,
         "psychological_state_claim_created": False,
         "reproducibility_equals_validity_claim_created": False,
     }

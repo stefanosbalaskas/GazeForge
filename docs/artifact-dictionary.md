@@ -133,11 +133,13 @@ artifacts.
 
 | Artifact | Unit | Role | Answers | Boundary |
 | --- | --- | --- | --- | --- |
-| `01_claim_artifact_matrix.csv` | claim | Traceability map | Which artifact/API route supports each material statement? | mapping ≠ truth or validity |
+| `01_claim_artifact_matrix.csv` | claim | Traceability map | Which artifact/API route, evidence class, and access/bundling status supports each material statement? | mapping ≠ truth or validity |
 | `02_rerun_plan.csv` | rerun step | Reproducibility plan | Which commands/actions are possible and which inputs require access? | specified rerun ≠ public data availability |
 | `03_reproducibility_checklist.csv` | check | Audit checklist | Which reproducibility requirements are demonstrated versus study-specific? | checklist completion ≠ scientific validity |
 | `04_limitations_register.csv` | limitation | Reporting/governance | Which evidence, access, interpretation, and sampling limitations must travel with the archive? | limitation record does not resolve the limitation |
 | `05_api_route_map.csv` | workflow layer | API map | Which public API/reference route underlies each layer? | API availability ≠ method suitability |
+
+The reviewer API map includes Schema and Visual Diagnostics alongside QC, events, AOIs, scanpaths, structural validation, and sampling sensitivity. Claim rows retain `evidence_classification`, `artifact_access`, and `bundled_by_default` so private/restricted study artifacts cannot be mistaken for files shipped in the public teaching bundle.
 | `software_environment.json` | environment | Software identity | Which version/commit/environment facts must a real study record? | teaching identity ≠ the real study environment |
 | `artifact_hash_ledger.csv` | file | File-identity ledger | Do reviewer-bundle bytes match their recorded SHA-256 identities? | hash identity ≠ scientific truth |
 | `reviewer_start_here.md` | bundle | Reading order | How should an external reader inspect the archive? | readable archive ≠ complete independent rerun |

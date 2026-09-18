@@ -82,15 +82,19 @@ For every material manuscript statement, keep the route reconstructable:
 
 | Statement type | Supporting artifact | Public route | Boundary |
 | --- | --- | --- | --- |
+| canonical/source schema identity | source contract + canonical table | [Schema API](api-reference.md#schema) | reconstructable schema ≠ correct source semantics |
 | QC was reviewed rather than applied automatically | pre-review QC + review ledger | [Quality-control API](api-reference.md#quality-control) | reproducible rule ≠ validated rule |
 | event outputs used a declared detector/model | event samples/intervals + method identity | [Eye-events API](api-reference.md#eye-events) | algorithm output ≠ physiological ground truth |
 | fixations were assigned to declared AOIs | AOI definitions + fixation assignments | [Semantic AOI API](api-reference.md#semantic-aois) | AOI membership ≠ trust/interest/comprehension |
 | moving AOIs were evaluated only within reviewed temporal support | keyframes/tracks + interpolation audit | [Dynamic AOI API](api-reference.md#dynamic-aois) | do not extrapolate outside reviewed support |
 | scanpaths summarize observable sequence structure | semantic scanpaths/transition tables | [Scanpath API](api-reference.md#scanpaths) | sequence ≠ latent strategy/diagnosis |
+| reviewer-facing plots/diagnostics are traceable to frozen derivatives | figure/diagnostic inventory | [Visual diagnostics API](api-reference.md#visual-diagnostics) | reproducible figure ≠ empirical validity |
 | held-out structure matches the stated generalisation unit | split ledger/certificate | [Structural validation API](api-reference.md#structural-validation-scope) | structural split integrity ≠ empirical validity |
 | rate sensitivity was evaluated under declared derivation rules | sampling-sensitivity outputs | [Sampling-sensitivity API](api-reference.md#sampling-sensitivity) | derived rate ≠ native-device validity |
 
 A hash identifies bytes. It does not make the scientific interpretation correct.
+
+The worked claim-artifact matrix also retains explicit `evidence_classification`, `artifact_access`, and `bundled_by_default` fields for every claim row. Private or study-specific artifacts are therefore represented as required inputs/identities rather than being implied to be bundled with the public teaching archive.
 
 ## Rerun plan by access scenario
 
