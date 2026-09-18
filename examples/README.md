@@ -232,9 +232,20 @@ Builds deterministic outcome, estimand, contrast, sensitivity, deviation, and re
 
 Guide: [Outcome & estimand preregistration clinic](../docs/estimand-preregistration.md)
 
+## 15. Reviewer/replication handoff
+
+```bash
+python examples/14_worked_reviewer_replication_bundle.py \\
+  --output-dir worked-reviewer-replication-bundle
+```
+
+Builds a deterministic reviewer-facing claim/artifact matrix, rerun/access plan, reproducibility checklist, limitations register, API route map, SHA-256 ledger, software/environment record, start-here guide, and replication manifest. Private/restricted study inputs are not bundled by default, and deterministic reruns/hashes are never treated as scientific validity.
+
+Guide: [Reviewer & replication handoff](../docs/reviewer-replication.md)
+
 ## Reproducibility notes
 
-The fifteen examples use fixed or explicitly constructed synthetic/demo inputs.
+The sixteen examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -252,5 +263,5 @@ planning, the [Outcome & estimand preregistration clinic](../docs/estimand-prere
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
 for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
-for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, and [Publication readiness](../docs/publication-readiness.md)
-before freezing a study bundle.
+for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, [Publication readiness](../docs/publication-readiness.md)
+before freezing a study bundle, and the [Reviewer & replication handoff](../docs/reviewer-replication.md) for an external-reader audit package.

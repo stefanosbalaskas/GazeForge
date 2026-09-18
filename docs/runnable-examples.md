@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **fifteen deterministic examples** that move from a small
+The repository contains **sixteen deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -44,6 +44,7 @@ artifacts, and continue to the corresponding research guide.
 | **Manuscript/reporting bundle** | base | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | reporting-only Methods/Results/boundary/citation derivatives |
 | **Measurement/interpretation audit** | base | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + measure/validity/sensitivity/reporting audit |
 | **Outcome/estimand preregistration** | base | `python examples/13_worked_estimand_preregistration.py --output-dir worked-estimand-preregistration` | outcome + estimand + contrast + sensitivity + deviation registries |
+| **Reviewer/replication handoff** | base | `python examples/14_worked_reviewer_replication_bundle.py --output-dir worked-reviewer-replication-bundle` | claim/artifact map + rerun/access plan + hashes + limitations/API routes |
 
 ## 0 · GazeForge tour
 
@@ -497,6 +498,23 @@ It fits no model, selects no estimator/model family, creates no p-values/effect 
 · [Read the preregistration clinic](estimand-preregistration.md)
 · [Continue to the analysis handoff](analysis-handoff.md)
 
+## 15 · Reviewer/replication handoff
+
+Use this after the manuscript/archive evidence is frozen and you need an external reader to trace reported statements to exact artifacts, hashes, rerun prerequisites, software identity, data-access constraints, API routes, and limitations.
+
+```bash
+python examples/14_worked_reviewer_replication_bundle.py \\
+  --output-dir worked-reviewer-replication-bundle
+```
+
+The deterministic bundle writes `01_claim_artifact_matrix.csv`, `02_rerun_plan.csv`, `03_reproducibility_checklist.csv`, `04_limitations_register.csv`, `05_api_route_map.csv`, `artifact_hash_ledger.csv`, `software_environment.json`, `reviewer_start_here.md`, and `replication_manifest.json`.
+
+Reproducibility classes are restricted to `fully_rerunnable`, `rerunnable_with_private_input`, and `inspectable_only`. Private/restricted study inputs are never bundled by default. Matching hashes and deterministic reruns are treated as auditability evidence, **not** device, measurement, model, construct, causal, external, or psychological-state validity.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/14_worked_reviewer_replication_bundle.py)
+· [Read the reviewer handoff](reviewer-replication.md)
+· [Run publication readiness](publication-readiness.md)
+
 ## Which example should I run first?
 
 ```text
@@ -515,6 +533,7 @@ Need model-ready trial/AOI/event tables?       → 10_worked_analysis_handoff.py
 Need manuscript/reporting derivatives?         → 11_worked_manuscript_reporting_bundle.py
 Need to audit what a gaze metric supports?      → 12_worked_measurement_interpretation_audit.py
 Need to freeze outcomes/estimands first?         → 13_worked_estimand_preregistration.py
+Need a reviewer/replicator handoff?               → 14_worked_reviewer_replication_bundle.py
 ```
 
 ## Move from demo data to a study
@@ -533,7 +552,8 @@ A practical research sequence is:
 10. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
 11. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct;
 12. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks; and
-13. freeze software identity, figures, tables, and evidence boundaries before reporting.
+13. freeze software identity, figures, tables, and evidence boundaries before reporting; and
+14. use the [Reviewer & replication handoff](reviewer-replication.md) to map claims to artifacts/hashes, classify rerunnability/access, and carry limitations into the external archive.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into

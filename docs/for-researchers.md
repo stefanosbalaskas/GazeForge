@@ -82,6 +82,7 @@ Start with: [Validation guide](validation-evidence-guide.md) · [Benchmark guide
 | Can a probabilistic event model be trusted at its confidence values? | calibration | ECE, Brier, calibration table | calibration requires held-out predictions |
 | Does a result survive different acquisition/derivation assumptions? | sensitivity | rate × purity/retention summaries | derived rate ≠ native-device validation |
 | Can somebody reconstruct the analysis? | provenance | fingerprints, manifests, certificates | preserve exact source/software identity |
+| Can a reviewer reproduce or audit the archive? | reviewer/replication handoff | claim-artifact map, rerun/access classes, hash ledger, limitations | reproducibility/inspectability ≠ scientific validity |
 
 ## A domain workflow that remains auditable
 
@@ -140,4 +141,4 @@ Decide in advance:
 8. how uncertainty, missingness, and abstention will be represented;
 9. which evidence artifacts and software identity will be archived.
 
-Then follow the [Study lifecycle](study-lifecycle.md), use the [Measurement & interpretation clinic](measurement-interpretation.md) before promoting gaze observables into substantive constructs, use the [Publication-readiness checklist](publication-readiness.md) before freezing a manuscript-facing analysis, and use [Reproducible reporting](reproducible-reporting.md) for the final methods record.
+Then follow the [Study lifecycle](study-lifecycle.md), use the [Measurement & interpretation clinic](measurement-interpretation.md) before promoting gaze observables into substantive constructs, use the [Publication-readiness checklist](publication-readiness.md) before freezing a manuscript-facing analysis, use [Reproducible reporting](reproducible-reporting.md) for the final methods record, and finish with the [Reviewer & replication handoff](reviewer-replication.md) when preparing an external audit/replication package.

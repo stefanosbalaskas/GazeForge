@@ -149,6 +149,13 @@ Use the [Reporting & interpretation clinic](reporting-clinic.md) before finalizi
 - ☐ The archive contains a short **evidence boundary** statement.
 - ☐ An artifact index or equivalent table of contents identifies source, QC, review, analysis, validation, provenance, and reporting files.
 - ☐ A human-readable README explains the intended reading order and any files that cannot be redistributed.
+- ☐ Every manuscript-facing claim can be mapped to a concrete artifact, table, figure, or archived decision record.
+- ☐ Bundled immutable derivatives have deterministic hashes; non-bundled restricted sources have the strongest lawful identity record available.
+- ☐ Each rerun route is classified honestly as fully rerunnable, rerunnable with private input, or inspectable only.
+- ☐ Data/privacy/licensing restrictions are described independently from technical ability to rerun or package the workflow.
+- ☐ Reproducibility/inspectability is not presented as device, measurement, model, construct, causal, or external validity.
+
+Use the [Reviewer & replication handoff](reviewer-replication.md) to assemble this external-reader layer.
 
 ## Compact evidence boundary record
 

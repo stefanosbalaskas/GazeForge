@@ -71,8 +71,8 @@ def test_estimand_preregistration_route_is_integrated_without_hero_growth() -> N
 
     assert "13_worked_estimand_preregistration.py" in runnable
     assert "13_worked_estimand_preregistration.py" in examples_readme
-    assert "fifteen deterministic examples" in runnable
-    assert "fifteen deterministic examples/workflows" in learning
+    assert "sixteen deterministic examples" in runnable
+    assert "sixteen deterministic examples/workflows" in learning
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

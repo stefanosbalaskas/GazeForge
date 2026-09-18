@@ -71,8 +71,8 @@ def test_measurement_interpretation_route_is_discoverable() -> None:
         assert "measurement-interpretation" in page
 
     assert "12_worked_measurement_interpretation_audit.py" in runnable
-    assert "fifteen deterministic examples" in runnable
-    assert "fifteen deterministic examples/workflows" in learning
+    assert "sixteen deterministic examples" in runnable
+    assert "sixteen deterministic examples/workflows" in learning
     assert "estimand-preregistration.md" in _read("docs/measurement-interpretation.md")
 
     start = homepage.index('<div class="gf-hero-actions"')

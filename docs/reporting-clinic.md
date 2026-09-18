@@ -21,7 +21,7 @@ search:
 Use this clinic after reviewed measurement outputs and the statistical handoff are frozen. Primary/secondary/exploratory outcome status and planned contrasts should trace back to the [Outcome & estimand preregistration clinic](estimand-preregistration.md) when that registry is part of the study. If the unresolved question is whether a gaze-derived observable supports a substantive construct, use the [Measurement & interpretation clinic](measurement-interpretation.md) first.
 For model-ready participant × trial tables, start with the
 [Analysis handoff](analysis-handoff.md). For source/QC/review/analysis/provenance
-packaging, use the [Research evidence bundle](research-evidence-bundle.md).
+packaging, use the [Research evidence bundle](research-evidence-bundle.md). After manuscript-facing wording is frozen, use the [Reviewer & replication handoff](reviewer-replication.md) to map claims to exact artifacts/hashes, rerun prerequisites, API routes, access constraints, and limitations.
 
 !!! warning "Reporting cannot strengthen the evidence"
     Better prose, a complete archive, a deterministic demo, or passing software tests
@@ -39,7 +39,7 @@ packaging, use the [Research evidence bundle](research-evidence-bundle.md).
 
 ## Publication path
 
-<div class="gf-flow" aria-label="Seven-stage publication path">
+<div class="gf-flow" aria-label="Eight-stage publication path">
 <div><strong>01</strong><span>Task</span><small>Define the observable question and unit.</small></div>
 <div><strong>02</strong><span>Method</span><small>Choose from the question and evidence, not convenience.</small></div>
 <div><strong>03</strong><span>Artifacts</span><small>Review source, QC, events, AOIs, and sequences.</small></div>
@@ -47,6 +47,7 @@ packaging, use the [Research evidence bundle](research-evidence-bundle.md).
 <div><strong>05</strong><span>Bundle</span><small>Freeze source, review, analysis, and provenance identity.</small></div>
 <div><strong>06</strong><span>Report</span><small>Translate evidence into claim-safe prose and captions.</small></div>
 <div><strong>07</strong><span>Readiness</span><small>Audit the manuscript and archive before release.</small></div>
+<div><strong>08</strong><span>Reviewer handoff</span><small>Expose claim/artifact identity, rerun classes, access constraints, and limitations.</small></div>
 </div>
 
 ## Import and canonicalisation
@@ -322,3 +323,6 @@ manifests, and evidence boundaries still match the frozen analysis.
 [Measurement & interpretation →](measurement-interpretation.md) ·
 [Reproducible reporting →](reproducible-reporting.md) ·
 [Publication readiness →](publication-readiness.md)
+
+
+[Reviewer & replication handoff →](reviewer-replication.md)

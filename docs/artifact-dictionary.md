@@ -123,6 +123,22 @@ The [Reporting & interpretation clinic](reporting-clinic.md) and worked reportin
 | `methods_example.md` / `results_example.md` | prose | Teaching derivative | What does claim-safe example wording look like? | synthetic prose is not a real manuscript result |
 | `reporting_manifest.json` | bundle | Reporting manifest | Were upstream artifacts unchanged and which reporting files were emitted? | deterministic reporting ≠ empirical evidence |
 
+## Reviewer/replication handoff derivatives
+
+The [Reviewer & replication handoff](reviewer-replication.md) adds an external-reader layer **without rewriting study artifacts**. Its deterministic example writes `01_claim_artifact_matrix.csv`, `02_rerun_plan.csv`, `03_reproducibility_checklist.csv`, `04_limitations_register.csv`, `05_api_route_map.csv`, `artifact_hash_ledger.csv`, `software_environment.json`, `reviewer_start_here.md`, and `replication_manifest.json`.
+
+| Artifact | Unit | Role | Answers | Boundary |
+| --- | --- | --- | --- | --- |
+| `01_claim_artifact_matrix.csv` | reported statement | claim→artifact map | Which exact study artifact/evidence class supports each statement? | traceability ≠ validity |
+| `02_rerun_plan.csv` | workflow stage | rerun/access plan | Can this stage be fully rerun, rerun with private input, or inspected only? | rerunnability depends on lawful source access |
+| `03_reproducibility_checklist.csv` | reviewer question | audit checklist | Which archive requirements are satisfied or still study-specific? | checklist completion ≠ scientific validation |
+| `04_limitations_register.csv` | limitation | boundary register | Which scientific/access/licensing limitations must travel with the archive? | documenting a limitation does not resolve it |
+| `05_api_route_map.csv` | API route | public interface map | Which documented GazeForge surface underlies each artifact family? | API existence ≠ scientific justification |
+| `artifact_hash_ledger.csv` | bundled file | SHA-256 identity ledger | Do bundled reviewer derivatives match the frozen bytes? | hash match ≠ measurement/model validity |
+| `software_environment.json` | software environment | reproducibility identity | Which release/commit and environment record should a replicator use? | `latest` is not a reproducible identity |
+| `reviewer_start_here.md` | handoff | reading order | What should the reviewer read first and why? | summary does not replace underlying artifacts |
+| `replication_manifest.json` | bundle | safeguard/manifest record | Were scientific/access boundaries preserved? | deterministic manifest ≠ empirical evidence |
+
 ## Provenance and archive metadata
 
 | Artifact | Unit | Role | Archive? | Answers |

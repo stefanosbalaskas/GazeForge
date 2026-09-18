@@ -47,7 +47,8 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Audit what a gaze-derived measure supports | frozen measurement definitions + intended claims | [Measurement & interpretation clinic](measurement-interpretation.md) | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + interpretation matrix + threats + sensitivity/reporting tables | observable ≠ latent construct; audit status ≠ truth label | [Reporting clinic](reporting-clinic.md) |
 | Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
 | Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Reporting clinic](reporting-clinic.md) |
-| Translate frozen evidence into manuscript language | frozen bundle + reconciled denominators | [Reporting & interpretation clinic](reporting-clinic.md) | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | Methods/results examples + citation table + boundaries + reporting manifest | reporting prose cannot strengthen evidence | [Publication readiness](publication-readiness.md) |
+| Translate frozen evidence into manuscript language | frozen bundle + reconciled denominators | [Reporting & interpretation clinic](reporting-clinic.md) | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | Methods/results examples + citation table + boundaries + reporting manifest | reporting prose cannot strengthen evidence | [Reviewer handoff](reviewer-replication.md) |
+| Prepare reviewer/replicator handoff | frozen manuscript/archive evidence + software identity | [Reviewer & replication handoff](reviewer-replication.md) | `python examples/14_worked_reviewer_replication_bundle.py --output-dir worked-reviewer-replication-bundle` | claim/artifact map + rerun plan + hash ledger + limitations + API routes | reproducibility/inspectability ≠ scientific validity; access rights remain separate | [Publication readiness](publication-readiness.md) |
 | Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
 
 ## Worked routes
@@ -106,6 +107,8 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 6. Run the [Publication readiness](publication-readiness.md) checklist before sharing or citing the archive.
 
 **Stop rather than guess:** a complete archive proves neither measurement validity nor external validity. Archive only the evidence class the study actually supports, and respect participant privacy and source licensing.
+
+After the archive and manuscript-facing derivatives are frozen, continue to the [Reviewer & replication handoff](reviewer-replication.md) to classify rerunnability, map claims to artifacts/hashes, record access prerequisites, and expose limitations/API routes to external readers.
 
 ### Route E · I have reviewed gaze outputs and need statistical model inputs
 

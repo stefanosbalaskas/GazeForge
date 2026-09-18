@@ -32,6 +32,7 @@ def test_documentation_map_routes_research_tasks_to_real_pages() -> None:
         "reporting-clinic.md",
         "measurement-interpretation.md",
         "estimand-preregistration.md",
+        "reviewer-replication.md",
         "getting-started.md",
         "worked-tracker-import.md",
         "tutorial-synthetic-qc.md",
@@ -79,6 +80,7 @@ def test_consistent_help_order_is_present_on_entry_pages() -> None:
         "docs/reporting-clinic.md",
         "docs/measurement-interpretation.md",
         "docs/estimand-preregistration.md",
+        "docs/reviewer-replication.md",
         "docs/troubleshooting.md",
         "docs/getting-started.md",
         "docs/learning-paths.md",
@@ -105,6 +107,7 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
     assert "Reporting & interpretation clinic: reporting-clinic.md" in mkdocs
     assert "Measurement & interpretation clinic: measurement-interpretation.md" in mkdocs
     assert "Outcome & estimand preregistration: estimand-preregistration.md" in mkdocs
+    assert "Reviewer & replication handoff: reviewer-replication.md" in mkdocs
     assert "assets/python-suite-logo.png" in mkdocs
 
     for target in (
@@ -118,6 +121,7 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
         "reporting-clinic.md",
         "measurement-interpretation.md",
         "estimand-preregistration.md",
+        "reviewer-replication.md",
         "worked-tracker-import.md",
         "qc-review-exclusion-ledger.md",
         "event-model-validation-clinic.md",

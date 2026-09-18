@@ -188,6 +188,7 @@ GazeForge therefore remains a **measurement/process-data and provenance layer**.
 - [Outcome & estimand preregistration](estimand-preregistration.md) — freeze outcome status, estimands, contrasts, exposure/censoring rules, sensitivity checks, and deviations before modelling.
 - [Analysis handoff](analysis-handoff.md) — preserve inferential units, denominators, missingness, and censoring.
 - [Reporting & interpretation clinic](reporting-clinic.md) — translate frozen evidence into claim-safe Methods, Results, and captions.
+- [Reviewer & replication handoff](reviewer-replication.md) — let an external reader trace claims to artifacts, hashes, rerun/access classes, API routes, and limitations.
 - [Research terminology](research-terminology.md) — keep evidence labels consistent.
 - [Publication readiness](publication-readiness.md) — final manuscript/archive audit.
 - [API reference](api-reference.md) — exact public interfaces behind the measurement pipeline.
