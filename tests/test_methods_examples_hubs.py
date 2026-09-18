@@ -52,12 +52,13 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "06_worked_event_model_validation.py",
         "07_worked_tracker_import_qc.py",
         "08_worked_qc_review_ledger.py",
+        "09_worked_research_evidence_bundle.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
-    assert "ten deterministic examples" in page
+    assert "eleven deterministic examples" in page
     assert "python examples/00_gazeforge_tour.py" in page
     assert "--output-dir gazeforge-tour-demo" in page
     assert "python examples/01_synthetic_qc.py" in page
@@ -75,6 +76,8 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     assert "--output-dir worked-tracker-import-qc-demo" in page
     assert "python examples/08_worked_qc_review_ledger.py" in page
     assert "--output-dir worked-qc-review-ledger-demo" in page
+    assert "python examples/09_worked_research_evidence_bundle.py" in page
+    assert "--output-dir worked-research-evidence-bundle" in page
 
 
 def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> None:
@@ -115,6 +118,10 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "analysis_plan.json",
         "provenance.json",
         "workflow_manifest.json",
+        "source_contract.json",
+        "artifact_index.csv",
+        "07_primary_analysis_rows.csv",
+        "13_semantic_scanpaths.csv",
         "figures/03_scanpath.png",
         "figures/01_calibration.png",
         "figures/02_confidence_coverage.png",
@@ -178,6 +185,7 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "06_worked_event_model_validation.py" in examples_readme
     assert "07_worked_tracker_import_qc.py" in examples_readme
     assert "08_worked_qc_review_ledger.py" in examples_readme
+    assert "09_worked_research_evidence_bundle.py" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)
