@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **twelve deterministic examples** that move from a small
+The repository contains **thirteen deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -41,6 +41,7 @@ artifacts, and continue to the corresponding research guide.
 | **QC review + exclusion ledger** | base | `python examples/08_worked_qc_review_ledger.py --output-dir worked-qc-review-ledger-demo` | criteria + review/exclusion ledgers |
 | **Research evidence bundle** | base | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | archive-shaped source/QC/review/analysis/provenance bundle |
 | **Statistical analysis handoff** | base with `--no-figures` | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | trial × AOI/event tables + handoff metadata + optional diagnostics |
+| **Manuscript/reporting bundle** | base | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | reporting-only Methods/Results/archive derivatives |
 
 ## 0 · GazeForge tour
 
@@ -433,6 +434,47 @@ native-rate, event-model, AOI-construct, causal, or psychological-state validity
 · [Read the analysis-handoff guide](analysis-handoff.md)
 · [Use the artifact dictionary](artifact-dictionary.md)
 
+
+## 12 · Worked manuscript/reporting bundle
+
+Use this after the evidence and statistical-analysis outputs are frozen and the next
+question is **what can I write, cite, and archive without changing the upstream
+analysis or upgrading the evidence?**
+
+```bash
+python examples/11_worked_manuscript_reporting_bundle.py \
+  --output-dir worked-manuscript-reporting-bundle \
+  --analysis-commit DEMO_UNSPECIFIED_COMMIT
+```
+
+The example reuses the worked research evidence bundle and writes only
+reporting-facing derivatives:
+
+```text
+methods_record.json
+denominator_flow.csv
+artifact_citation_table.csv
+reporting_boundaries.json
+software_identity.json
+methods_example.md
+results_example.md
+archive_readme.md
+reporting_manifest.json
+```
+
+Every upstream evidence file is SHA-256 fingerprinted before and after reporting.
+The example fails if the upstream bundle changes. It performs no new scientific
+analysis, changes no QC/review/exclusion/event/AOI decision, creates no inferential
+statistics, and remains `synthetic_demo_not_empirical_evidence`.
+
+Use the separate [Analysis handoff](analysis-handoff.md) first when you still need
+model-ready participant × trial × AOI/event tables. The reporting bundle starts
+after those scientific decisions and outputs are frozen.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/11_worked_manuscript_reporting_bundle.py)
+· [Read the reporting clinic](reporting-interpretation-clinic.md)
+· [Run publication readiness](publication-readiness.md)
+
 ## Which example should I run first?
 
 ```text
@@ -448,6 +490,7 @@ Need moving AOIs + interpolation auditing?   → 05_worked_dynamic_aoi_study.py
 Need participant-held-out event validation?  → 06_worked_event_model_validation.py
 Need a manuscript/archive evidence bundle?    → 09_worked_research_evidence_bundle.py
 Need model-ready trial/AOI/event tables?       → 10_worked_analysis_handoff.py
+Need Methods/Results/reporting derivatives?    → 11_worked_manuscript_reporting_bundle.py
 ```
 
 ## Move from demo data to a study
@@ -463,8 +506,9 @@ A practical research sequence is:
 7. continue to event/AOI/scanpath analysis;
 8. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping, exposure, missing-versus-zero semantics, and censoring;
 9. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
-10. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct; and
-11. freeze software identity, figures, tables, and evidence boundaries before reporting.
+10. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct;
+11. use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md) and worked reporting bundle to translate frozen evidence into Methods, Results, captions, and archive metadata without changing the analysis; and
+12. run [Publication readiness](publication-readiness.md) before submission.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into
