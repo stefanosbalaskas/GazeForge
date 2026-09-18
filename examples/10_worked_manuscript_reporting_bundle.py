@@ -194,8 +194,9 @@ pixels. The nominal demonstration rate was {source_contract["nominal_rate_hz"]:.
 Hz. The observed timestamp cadence was retained as a stream diagnostic and was not
 treated as proof of native hardware sampling rate.
 
-Quality-control outputs were preserved before review. **QC flags were not automatic
-exclusions.** Trial-level review used the explicitly recorded demonstration
+Quality-control outputs were preserved before review.
+**QC flags were not automatic exclusions.**
+Trial-level review used the explicitly recorded demonstration
 criteria in 04_decision_criteria.csv; {manifest["excluded_trials"]} of
 {manifest["trial_denominator"]} trials were excluded after review, leaving
 {manifest["retained_trials"]} retained trials. Reviewed decisions were applied to a
