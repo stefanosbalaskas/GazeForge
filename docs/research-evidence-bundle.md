@@ -164,4 +164,4 @@ Adapt that wording to the actual study; do not copy the demonstration thresholds
 
 ## Evidence boundary
 
-The worked evidence bundle is `synthetic_demo_not_empirical_evidence`. It is intentionally useful for learning archive structure while being scientifically weak as evidence. A clean archive can show **what happened in the software**; empirical validity still requires evidence appropriate to the tracker, task, labels, sampling condition, population, and scientific claim.
+The worked evidence bundle is `synthetic_demo_not_empirical_evidence`. It is **not empirical validation evidence**. It is intentionally useful for learning archive structure while being scientifically weak as evidence. A clean archive can show **what happened in the software**; empirical validity still requires evidence appropriate to the tracker, task, labels, sampling condition, population, and scientific claim.
