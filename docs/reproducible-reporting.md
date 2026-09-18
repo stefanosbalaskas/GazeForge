@@ -2,7 +2,7 @@
 
 A GazeForge analysis should be reproducible at two levels: **software identity** and **scientific evidence identity**. Reporting only a package name is not enough when the result depends on sampling-rate transformations, held-out grouping, source provenance, or frozen benchmark artifacts.
 
-If you are still designing the study, begin with the [Study lifecycle](study-lifecycle.md). If the analysis is approaching submission or archive freeze, use [Publication readiness](publication-readiness.md) as the final audit. The [Research terminology](research-terminology.md) guide keeps acquisition, split, validation, QC, and evidence-status wording consistent, while the [worked advertising/interface study](worked-advertising-study.md) and [worked dynamic-AOI study](worked-dynamic-aoi-study.md) show the reporting artifacts in concrete synthetic examples.
+If you are still designing the study, begin with the [Study lifecycle](study-lifecycle.md). If you already have frozen artifacts and need task-first guidance on what to interpret, report, avoid saying, and archive, use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md). If the analysis is approaching submission or archive freeze, use [Publication readiness](publication-readiness.md) as the final audit. The [Research terminology](research-terminology.md) guide keeps acquisition, split, validation, QC, and evidence-status wording consistent, while the [worked advertising/interface study](worked-advertising-study.md) and [worked dynamic-AOI study](worked-dynamic-aoi-study.md) show the reporting artifacts in concrete synthetic examples.
 
 ## Minimum methods checklist
 
