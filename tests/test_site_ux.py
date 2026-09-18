@@ -31,6 +31,7 @@ def test_secondary_resources_remain_available_without_competing_as_primary_actio
 
     for target in (
         "release-install.md",
+        "reporting-interpretation-clinic.md",
         "https://pypi.org/project/gazeforge/",
         "citation-attribution.md",
         "https://doi.org/10.5281/zenodo.22650013",
@@ -77,6 +78,8 @@ def test_site_ux_css_is_responsive_keyboard_visible_and_motion_safe() -> None:
         ".gf-task-grid",
         ".gf-preview-grid",
         ".gf-preview-card:focus-visible",
+        ".gf-study-path",
+        ".gf-study-path a:focus-visible",
     ):
         assert selector in css
 
