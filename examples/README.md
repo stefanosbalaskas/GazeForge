@@ -174,9 +174,29 @@ psychological-state validity claim.
 Guide: [Research evidence bundle](../docs/research-evidence-bundle.md) ·
 [Artifact & output dictionary](../docs/artifact-dictionary.md)
 
+
+## 11. Worked manuscript/reporting bundle
+
+~~~bash
+python examples/10_worked_manuscript_reporting_bundle.py \
+  --output-dir worked-manuscript-reporting-bundle \
+  --analysis-commit DEMO_UNSPECIFIED_COMMIT
+~~~
+
+Reuses the deterministic research evidence bundle and generates only
+reporting-facing derivatives: structured Methods facts, denominator flow, artifact
+citation mapping, evidence boundaries, software identity, worked Methods/Results
+text, archive guidance, and a reporting manifest.
+
+The script fingerprints the complete upstream evidence directory before and after
+reporting and refuses any mutation. It performs no new scientific analysis and
+remains synthetic_demo_not_empirical_evidence.
+
+Guide: [Reporting & interpretation clinic](../docs/reporting-interpretation-clinic.md)
+
 ## Reproducibility notes
 
-The eleven examples use fixed or explicitly constructed synthetic/demo inputs.
+The twelve examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -194,5 +214,6 @@ planning, [Worked tracker import](../docs/worked-tracker-import.md) for the
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
 for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
-for archive assembly, and [Publication readiness](../docs/publication-readiness.md)
+for archive assembly, the [Reporting & interpretation clinic](../docs/reporting-interpretation-clinic.md)
+for manuscript-facing wording, and [Publication readiness](../docs/publication-readiness.md)
 before freezing a study bundle.
