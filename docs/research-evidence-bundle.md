@@ -77,7 +77,7 @@ That separation makes three questions independently answerable:
 2. **What did the reviewer decide?**
 3. **What rows actually entered downstream analysis?**
 
-A `qc_flag=True` sample can still be retained. Conversely, a reviewed trial can be excluded because a prespecified criterion was met even when not every sample in that trial is individually anomalous.
+**QC flags are not automatic exclusions.** A `qc_flag=True` sample can still be retained. Conversely, a reviewed trial can be excluded because a prespecified criterion was met even when not every sample in that trial is individually anomalous.
 
 ## Use the artifact index as the archive table of contents
 
