@@ -313,7 +313,7 @@ The bundle remains `synthetic_demo_not_empirical_evidence`.
 
 ## Final next step
 
-Run [Publication readiness](publication-readiness.md) after the reporting draft is
+After the reporting draft is frozen, build the [Reviewer & replication handoff](reviewer-replication-handoff.md) so an external reader can trace claims to artifacts, understand access requirements, and distinguish fully rerunnable, authorized-input rerunnable, and inspectable-only cases. Run [Publication readiness](publication-readiness.md) after the reporting draft is
 assembled. That is the final audit that wording, denominators, identities, figures,
 manifests, and evidence boundaries still match the frozen analysis.
 
@@ -321,4 +321,5 @@ manifests, and evidence boundaries still match the frozen analysis.
 [Analysis handoff →](analysis-handoff.md) ·
 [Measurement & interpretation →](measurement-interpretation.md) ·
 [Reproducible reporting →](reproducible-reporting.md) ·
+[Reviewer & replication handoff →](reviewer-replication-handoff.md) ·
 [Publication readiness →](publication-readiness.md)
