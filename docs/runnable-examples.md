@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **eleven deterministic examples** that move from a small
+The repository contains **twelve deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, and leakage-safe
 event-model validation. Use this page to choose a script, inspect its exact
@@ -40,6 +40,7 @@ artifacts, and continue to the corresponding research guide.
 | **Worked tracker import + QC** | base | `python examples/07_worked_tracker_import_qc.py --output-dir worked-tracker-import-qc-demo` | import/QC evidence bundle |
 | **QC review + exclusion ledger** | base | `python examples/08_worked_qc_review_ledger.py --output-dir worked-qc-review-ledger-demo` | criteria + review/exclusion ledgers |
 | **Research evidence bundle** | base | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | archive-shaped source/QC/review/analysis/provenance bundle |
+| **Manuscript/reporting bundle** | base | `python examples/10_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | reporting-only Methods/Results/archive derivatives |
 
 ## 0 · GazeForge tour
 
@@ -375,6 +376,42 @@ QC table remain unchanged while reviewed exclusions create a **new**
 · [Read the evidence-bundle guide](research-evidence-bundle.md)
 · [Use the artifact dictionary](artifact-dictionary.md)
 
+
+## 11 · Worked manuscript/reporting bundle
+
+Use this after the evidence bundle is frozen and the next question is **what can I
+write, cite, and archive without changing the analysis or upgrading the evidence?**
+
+~~~bash
+python examples/10_worked_manuscript_reporting_bundle.py \
+  --output-dir worked-manuscript-reporting-bundle \
+  --analysis-commit DEMO_UNSPECIFIED_COMMIT
+~~~
+
+The example reuses the worked evidence bundle and writes only reporting
+derivatives:
+
+~~~text
+methods_record.json
+denominator_flow.csv
+artifact_citation_table.csv
+reporting_boundaries.json
+software_identity.json
+methods_example.md
+results_example.md
+archive_readme.md
+reporting_manifest.json
+~~~
+
+Every upstream evidence file is SHA-256 fingerprinted before and after reporting.
+The example fails if the upstream bundle changes. It performs no new scientific
+analysis, changes no review/exclusion/AOI/event decision, creates no inferential
+statistics, and remains synthetic_demo_not_empirical_evidence.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/10_worked_manuscript_reporting_bundle.py)
+· [Read the reporting clinic](reporting-interpretation-clinic.md)
+· [Run publication readiness](publication-readiness.md)
+
 ## Which example should I run first?
 
 ```text
@@ -389,6 +426,7 @@ Need a static domain-shaped worked study?    → 04_worked_advertising_study.py
 Need moving AOIs + interpolation auditing?   → 05_worked_dynamic_aoi_study.py
 Need participant-held-out event validation?  → 06_worked_event_model_validation.py
 Need a manuscript/archive evidence bundle?    → 09_worked_research_evidence_bundle.py
+Need Methods/Results/reporting derivatives?    → 10_worked_manuscript_reporting_bundle.py
 ```
 
 ## Move from demo data to a study
@@ -404,7 +442,8 @@ A practical research sequence is:
 7. continue to event/AOI/scanpath analysis;
 8. use participant-disjoint or dataset-held-out validation where the intended claim requires it; and
 9. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct; and
-10. freeze software identity, figures, tables, and evidence boundaries before reporting.
+10. use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md) and worked reporting bundle to translate frozen evidence into Methods/Results/captions without changing the analysis; and
+11. run [Publication readiness](publication-readiness.md) before submission.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into
