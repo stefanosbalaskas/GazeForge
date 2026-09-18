@@ -18,6 +18,15 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
+<nav class="gf-study-path" aria-label="Research workflow path">
+<a href="documentation-map.md" aria-current="step"><strong>1</strong><span>Task</span></a>
+<a href="method-chooser.md"><strong>2</strong><span>Method</span></a>
+<a href="artifact-dictionary.md"><strong>3</strong><span>Artifacts</span></a>
+<a href="research-evidence-bundle.md"><strong>4</strong><span>Evidence bundle</span></a>
+<a href="reporting-interpretation-clinic.md"><strong>5</strong><span>Report</span></a>
+<a href="publication-readiness.md"><strong>6</strong><span>Submit</span></a>
+</nav>
+
 GazeForge has deep method, validation, benchmark, and workflow documentation. You do not need to read it in navigation order. Start from the task you need to complete, use the shortest runnable route, inspect the artifacts it produces, and only then move into explanation or reference pages.
 
 !!! info "How this map is organized"
@@ -44,10 +53,11 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Build semantic scanpaths | reviewed fixation/AOI assignments | [Practical workflow](practical-workflow.md) | `to_semantic_scanpaths()` | semantic sequence table | sequence representation ≠ latent-state inference | [Methods overview](methods-overview.md) |
 | Build statistical model inputs | reviewed event/AOI outputs + preserved design/coverage | [Analysis handoff](analysis-handoff.md) | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | participant × trial × AOI/event tables + denominators + censoring | missing ≠ zero; samples/fixations are not independent participants | specialist statistical software |
 | Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
-| Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Publication readiness](publication-readiness.md) |
+| Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Reporting clinic](reporting-interpretation-clinic.md) |
+| Turn frozen evidence into Methods/Results | frozen evidence bundle + final analysis outputs | [Reporting & interpretation clinic](reporting-interpretation-clinic.md) | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | methods record + denominator flow + artifact citation map + reporting manifest | wording quality ≠ stronger evidence | [Publication readiness](publication-readiness.md) |
 | Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
 
-## Four worked routes
+## Six worked routes
 
 ### Route A · I have a Gazepoint-style export and need an analysis table
 
@@ -89,7 +99,8 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 3. Preserve source identity and pre-review QC separately from review decisions.
 4. Build the primary-analysis derivative from the reviewed ledger rather than editing QC in place.
 5. Freeze an artifact index, analysis plan, provenance, workflow manifest, software identity, and reviewer-facing README.
-6. Run the [Publication readiness](publication-readiness.md) checklist before sharing or citing the archive.
+6. Use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md) to translate the frozen archive into manuscript-facing Methods, Results, captions, denominator flow, and software identity without changing the analysis.
+7. Run the [Publication readiness](publication-readiness.md) checklist before sharing or citing the archive.
 
 **Stop rather than guess:** a complete archive proves neither measurement validity nor external validity. Archive only the evidence class the study actually supports, and respect participant privacy and source licensing.
 
@@ -104,6 +115,19 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 7. Fit the prespecified inferential model in specialist statistical software; do not let the handoff choose an estimator.
 
 **Stop rather than guess:** never use `fillna(0)` as a convenience repair, never aggregate away the inferential unit without changing the estimand explicitly, and never interpret a failed-convergence model as a valid result.
+
+
+### Route F · I have frozen outputs and need manuscript wording
+
+1. Confirm source, QC, review, analysis, validation, and provenance layers are frozen.
+2. Open the [Reporting & interpretation clinic](reporting-interpretation-clinic.md).
+3. Run `examples/11_worked_manuscript_reporting_bundle.py` to generate reporting-only derivatives.
+4. Reconcile sample/trial denominators in `denominator_flow.csv`.
+5. Use `artifact_citation_table.csv` to tie manuscript statements to exact upstream artifacts and evidence classes.
+6. Replace demo placeholders with the real software version, full development commit, acquisition facts, study-specific methods, and actual results.
+7. Finish with [Publication readiness](publication-readiness.md).
+
+**Stop rather than upgrade:** cleaner wording or a complete archive cannot convert synthetic/demo evidence, derived-rate evidence, opaque source-token identity, unvalidated event outputs, or AOI membership into a stronger scientific claim.
 
 ## Documentation types
 
