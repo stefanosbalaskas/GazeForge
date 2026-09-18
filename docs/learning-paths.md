@@ -15,7 +15,7 @@
 
 GazeForge spans data preparation, quality control, human review, eye-event modelling, semantic AOIs, scanpaths, benchmark validation, and scientific provenance. You do not need to learn every layer before starting.
 
-If you are not yet sure what the package does, begin with the [GazeForge Tour](gazeforge-tour.md). It is the canonical orientation route: one gaze table goes through the main layers and produces ordinary CSV/JSON artifacts you can inspect. If you understand the package but need to turn a research question into a complete study workflow, continue with the [First study blueprint](first-study-blueprint.md).
+If you are not yet sure what the package does, begin with the [GazeForge Tour](gazeforge-tour.md). It is the canonical orientation route: one gaze table goes through the main layers and produces ordinary CSV/JSON artifacts you can inspect. If you understand the package but need to turn a research question into a complete study workflow, continue with the [First study blueprint](first-study-blueprint.md). If the task is already clear but the method is not, use the [Method chooser](method-chooser.md); if the files are unfamiliar, use the [Artifact & output dictionary](artifact-dictionary.md).
 
 Choose the path that matches your immediate research question. If you are planning an entire study rather than learning one method, use the [Study lifecycle](study-lifecycle.md) as the orchestration layer from acquisition through publication. If you already know the task you need to perform, the [Research recipes](research-recipes.md) page gives the shortest defensible route and the artifacts to retain.
 
@@ -99,6 +99,17 @@ Use timestamped dynamic AOI keyframes, bounded interpolation, explicit review, a
 
 <div class="gf-path-card" markdown>
 
+### :material-archive-check-outline: I need a reviewable manuscript/archive bundle
+
+Keep source identity, pre-review QC, reviewed decisions, primary-analysis rows, downstream derivatives, provenance, fingerprints, and reporting metadata as distinct evidence layers.
+
+**Next:** [Research evidence bundle](research-evidence-bundle.md)  
+**Run it:** `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle`
+
+</div>
+
+<div class="gf-path-card" markdown>
+
 ### :material-shield-check-outline: I need defensible empirical evidence
 
 Use the benchmark/evidence layer only after the split, labels, sampling condition, and source provenance match the claim you intend to make.
@@ -131,7 +142,7 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for **ten deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for **eleven deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
@@ -144,7 +155,7 @@ Open the [Runnable examples gallery](runnable-examples.md) for **ten determinist
 | **4. Baseline** | deterministic I-VT or angular I-VT | inspectable event labels | learned-model superiority |
 | **5. Validate** | participant-disjoint folds, matched rows, sample/event metrics, calibration/coverage | split ledger + held-out predictions + validation tables | native-device validity from resampled or synthetic data |
 | **6. Extend** | semantic/dynamic AOIs, scanpaths, hierarchical models | task-specific analytic structures | unsupported psychological inference |
-| **7. Freeze** | manifests, fingerprints, certificates, source resolution | auditable evidence bundle | stronger provenance than the source supports |
+| **7. Freeze** | manifests, fingerprints, certificates, source resolution | artifact index + auditable evidence bundle + reviewer README | stronger provenance than the source supports |
 
 For a more complete research route, the [Study lifecycle](study-lifecycle.md) ties every stage to a reviewable artifact and explicit claim boundary. The [Study-design templates](study-design-templates.md) make the corresponding records copy-ready.
 
