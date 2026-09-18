@@ -13,12 +13,22 @@
 </nav>
 
 
+<nav class="gf-study-path" aria-label="Research workflow path">
+<a href="documentation-map.md"><strong>1</strong><span>Task</span></a>
+<a href="method-chooser.md"><strong>2</strong><span>Method</span></a>
+<a href="artifact-dictionary.md"><strong>3</strong><span>Artifacts</span></a>
+<a href="research-evidence-bundle.md"><strong>4</strong><span>Evidence bundle</span></a>
+<a href="reporting-interpretation-clinic.md"><strong>5</strong><span>Report</span></a>
+<a href="publication-readiness.md" aria-current="step"><strong>6</strong><span>Submit</span></a>
+</nav>
+
+
 Use this checklist before preregistration, analysis freeze, manuscript submission, or release of a supplementary archive. It is designed to catch evidence inflation and reproducibility gaps before they become manuscript claims.
 
 !!! note "Checklist ≠ certification"
     Completing this page is a reporting and audit aid. It does not independently validate a tracker, dataset, model, or scientific conclusion.
 
-For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
+For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). Once the analysis is frozen, use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md) to build Methods/Results/captions and reporting-only derivatives without changing the upstream evidence.
 
 ## Before preregistration or data collection
 
@@ -169,4 +179,4 @@ evidence_boundary: <what this design does not establish>
 | Provenance | package version/SHA, environment, source/output fingerprints |
 | Boundary | explicit statement of unsupported/generalisation claims |
 
-For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For model-ready trial/AOI/event tables, use the [Analysis handoff](analysis-handoff.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
+For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For model-ready trial/AOI/event tables, use the [Analysis handoff](analysis-handoff.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For manuscript-facing interpretation and wording, use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
