@@ -109,6 +109,23 @@ The worked [Analysis handoff](analysis-handoff.md) adds a deliberately separate 
 
 The [Measurement & interpretation clinic](measurement-interpretation.md) adds a claim-audit layer without altering the scientific data. Its worked example writes `01_claim_registry.csv`, `02_measurement_interpretation_matrix.csv`, `03_validity_threats.csv`, `04_sensitivity_plan.csv`, `05_reporting_language.csv`, and `interpretation_audit.json`. These files document interpretation requirements and limitations; they do not label claims scientifically valid/invalid or create new inferential results.
 
+
+## Sensitivity/robustness audit derivatives
+
+The [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) adds a
+post-analysis audit layer that compares the complete registered sensitivity set
+without rewriting the primary result.
+
+| Artifact | Unit | Role | Answers | Boundary |
+| --- | --- | --- | --- | --- |
+| `01_sensitivity_registry.csv` | sensitivity condition | Frozen registry | Which primary/prespecified/exploratory variants were declared? | registration does not validate a specification |
+| `02_executed_conditions.csv` | executed condition | Execution ledger | Which conditions completed, were not evaluable, or did not converge? | failed conditions must not be silently dropped |
+| `03_result_comparison.csv` | condition comparison | Same-estimand audit | How did denominator/exposure/result summaries differ from the primary reference? | comparison does not create a robustness truth label |
+| `04_deviation_ledger.csv` | deviation | History | Which post-registration changes occurred and did they alter the estimand? | changed-estimand deviations are not direct robustness checks |
+| `05_interpretation_matrix.csv` | sensitivity dimension | Method/API map | What does each sensitivity dimension test and what does it not establish? | stability ≠ construct/device/model validity |
+| `06_reporting_language.csv` | reporting pattern | Manuscript guidance | Which wording avoids cherry-picking and validity inflation? | wording cannot strengthen evidence |
+| `sensitivity_manifest.json` | bundle | Audit manifest | Was the full registered set represented and were claim boundaries preserved? | deterministic audit ≠ empirical evidence |
+
 ## Manuscript/reporting derivatives
 
 The [Reporting & interpretation clinic](reporting-clinic.md) and worked reporting example create a final layer that **references** frozen upstream artifacts rather than rewriting them.

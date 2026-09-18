@@ -44,7 +44,8 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Define static or dynamic AOIs | stimulus geometry or reviewed tracks | [Research recipes](research-recipes.md) | AOI mapping / dynamic AOI assignment | AOI definitions + assignments + review/audit | AI proposal ≠ ground truth; no silent extrapolation | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) |
 | Build semantic scanpaths | reviewed fixation/AOI assignments | [Practical workflow](practical-workflow.md) | `to_semantic_scanpaths()` | semantic sequence table | sequence representation ≠ latent-state inference | [Methods overview](methods-overview.md) |
 | Build statistical model inputs | reviewed event/AOI outputs + preserved design/coverage | [Analysis handoff](analysis-handoff.md) | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | participant × trial × AOI/event tables + denominators + censoring | missing ≠ zero; samples/fixations are not independent participants | [Measurement clinic](measurement-interpretation.md) |
-| Audit what a gaze-derived measure supports | frozen measurement definitions + intended claims | [Measurement & interpretation clinic](measurement-interpretation.md) | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + interpretation matrix + threats + sensitivity/reporting tables | observable ≠ latent construct; audit status ≠ truth label | [Reporting clinic](reporting-clinic.md) |
+| Audit what a gaze-derived measure supports | frozen measurement definitions + intended claims | [Measurement & interpretation clinic](measurement-interpretation.md) | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + interpretation matrix + threats + sensitivity/reporting tables | observable ≠ latent construct; audit status ≠ truth label | [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) |
+| Audit sensitivity/robustness after analysis | frozen primary estimand + registered/executed variants | [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) | `python examples/15_worked_sensitivity_robustness_audit.py --output-dir worked-sensitivity-robustness-audit` | complete sensitivity registry + execution status + denominator/result comparison + deviations | consistency ≠ validity; changed estimand ≠ direct robustness check | [Reporting clinic](reporting-clinic.md) |
 | Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
 | Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Reporting clinic](reporting-clinic.md) |
 | Translate frozen evidence into manuscript language | frozen bundle + reconciled denominators | [Reporting & interpretation clinic](reporting-clinic.md) | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | Methods/results examples + citation table + boundaries + reporting manifest | reporting prose cannot strengthen evidence | [Publication readiness](publication-readiness.md) |
@@ -158,6 +159,20 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 8. Run [Publication readiness](publication-readiness.md) before release.
 
 **Stop rather than guess:** matching hashes, deterministic reruns, or reviewer inspectability do not establish device, model, measurement/construct, causal, external, or latent-state validity.
+
+
+### Route I · I have executed sensitivity variants and need a complete robustness audit
+
+1. Start with the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md).
+2. Keep the registered primary specification as the reference.
+3. Separate prespecified sensitivity, exploratory sensitivity, and post-registration deviations.
+4. Verify whether each variant retains the same estimand before comparing it directly with the primary result.
+5. Report denominator/exposure changes alongside result changes.
+6. Keep `not_evaluable` and `non_converged` conditions in the audit record.
+7. Report the full registered set rather than selecting favourable variants.
+8. Continue to the [Reporting clinic](reporting-clinic.md) only after the complete sensitivity record is frozen.
+
+**Stop rather than guess:** do not replace the primary result with a favourable variant, convert a changed-estimand deviation into a direct robustness claim, drop failed variants, or infer scientific validity from specification consistency.
 
 ## Documentation types
 

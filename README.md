@@ -87,6 +87,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I need to freeze outcomes/estimands before modelling | [Outcome & estimand preregistration clinic](docs/estimand-preregistration.md) |
 | I have reviewed gaze outputs and need model-ready statistical tables | [Analysis handoff](docs/analysis-handoff.md) |
 | I have a gaze metric and need to know what it supports saying | [Measurement & interpretation clinic](docs/measurement-interpretation.md) |
+| I need to audit sensitivity/robustness without cherry-picking | [Sensitivity & robustness clinic](docs/sensitivity-robustness-clinic.md) |
 | I need a study from acquisition to publication | [Study lifecycle](docs/study-lifecycle.md) |
 | I need a reviewable manuscript/archive bundle | [Research evidence bundle](docs/research-evidence-bundle.md) |
 | I need claim-safe Methods/Results/archive wording | [Reporting & interpretation clinic](docs/reporting-clinic.md) |
@@ -177,6 +178,7 @@ The repository now has a task-oriented learning sequence:
 12  measurement/interpretation claim audit
 13  outcome & estimand preregistration registry
 14  reviewer/replication handoff
+15  sensitivity/robustness audit
 +   complete end-to-end research workflow
 ```
 
@@ -256,6 +258,7 @@ Recommended entry points:
 - [Outcome & estimand preregistration clinic](docs/estimand-preregistration.md)
 - [Analysis handoff](docs/analysis-handoff.md)
 - [Measurement & interpretation clinic](docs/measurement-interpretation.md)
+- [Sensitivity & robustness clinic](docs/sensitivity-robustness-clinic.md)
 - [Reporting & interpretation clinic](docs/reporting-clinic.md)
 - [Reviewer & replication handoff](docs/reviewer-replication-handoff.md)
 - [Research recipes](docs/research-recipes.md)

@@ -58,12 +58,13 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "12_worked_measurement_interpretation_audit.py",
         "13_worked_estimand_preregistration.py",
         "14_worked_reviewer_replication_bundle.py",
+        "15_worked_sensitivity_robustness_audit.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
-    assert "sixteen deterministic examples" in page
+    assert "seventeen deterministic examples" in page
     assert "python examples/00_gazeforge_tour.py" in page
     assert "--output-dir gazeforge-tour-demo" in page
     assert "python examples/01_synthetic_qc.py" in page
@@ -93,6 +94,8 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     assert "--output-dir worked-estimand-preregistration" in page
     assert "python examples/14_worked_reviewer_replication_bundle.py" in page
     assert "--output-dir worked-reviewer-replication-bundle" in page
+    assert "python examples/15_worked_sensitivity_robustness_audit.py" in page
+    assert "--output-dir worked-sensitivity-robustness-audit" in page
 
 
 def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> None:
@@ -177,6 +180,13 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "05_api_route_map.csv",
         "artifact_hash_ledger.csv",
         "replication_manifest.json",
+        "01_sensitivity_registry.csv",
+        "02_executed_conditions.csv",
+        "03_result_comparison.csv",
+        "04_deviation_ledger.csv",
+        "05_interpretation_matrix.csv",
+        "06_reporting_language.csv",
+        "sensitivity_manifest.json",
     ):
         assert output in page
 
@@ -223,6 +233,7 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "worked-tracker-import.md" in homepage
     assert "publication-readiness.md" in homepage
     assert "reviewer-replication-handoff.md" in homepage
+    assert "sensitivity-robustness-clinic.md" in homepage
     assert "event-model-validation-clinic.md" in homepage
     assert "gazeforge-tour.md" in getting_started
     assert "runnable-examples.md" in getting_started
@@ -249,6 +260,8 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "../docs/estimand-preregistration.md" in examples_readme
     assert "14_worked_reviewer_replication_bundle.py" in examples_readme
     assert "../docs/reviewer-replication-handoff.md" in examples_readme
+    assert "15_worked_sensitivity_robustness_audit.py" in examples_readme
+    assert "../docs/sensitivity-robustness-clinic.md" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

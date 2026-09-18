@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **sixteen deterministic examples** that move from a small
+The repository contains **seventeen deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -45,6 +45,7 @@ artifacts, and continue to the corresponding research guide.
 | **Measurement/interpretation audit** | base | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + measure/validity/sensitivity/reporting audit |
 | **Outcome/estimand preregistration** | base | `python examples/13_worked_estimand_preregistration.py --output-dir worked-estimand-preregistration` | outcome + estimand + contrast + sensitivity + deviation registries |
 | **Reviewer/replication handoff** | base | `python examples/14_worked_reviewer_replication_bundle.py --output-dir worked-reviewer-replication-bundle` | claim-artifact + rerun + limitations + API + hash audit bundle |
+| **Sensitivity/robustness audit** | base | `python examples/15_worked_sensitivity_robustness_audit.py --output-dir worked-sensitivity-robustness-audit` | registered/executed variants + denominator/result comparison + deviations + reporting guidance |
 
 ## 0 · GazeForge tour
 
@@ -535,6 +536,39 @@ psychological validity.
 · [Inspect the API reference](api-reference.md)
 · [Run publication readiness](publication-readiness.md)
 
+
+## 16 · Sensitivity/robustness audit
+
+Use this after the primary outcome/estimand and sensitivity registry are frozen and
+the relevant analysis variants have been executed.
+
+```bash
+python examples/15_worked_sensitivity_robustness_audit.py \
+  --output-dir worked-sensitivity-robustness-audit
+```
+
+The deterministic teaching bundle writes:
+
+```text
+01_sensitivity_registry.csv
+02_executed_conditions.csv
+03_result_comparison.csv
+04_deviation_ledger.csv
+05_interpretation_matrix.csv
+06_reporting_language.csv
+README.md
+sensitivity_manifest.json
+```
+
+The example preserves the primary estimand as the reference, reports all registered
+variants, retains one `non_converged` and one `not_evaluable` condition, separates
+an exploratory AOI variant from a post-registration changed-estimand deviation, and
+never creates a p-value, significance decision, or automatic robustness verdict.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/15_worked_sensitivity_robustness_audit.py)
+· [Read the sensitivity & robustness clinic](sensitivity-robustness-clinic.md)
+· [Continue to reporting](reporting-clinic.md)
+
 ## Which example should I run first?
 
 ```text
@@ -554,6 +588,7 @@ Need manuscript/reporting derivatives?         → 11_worked_manuscript_reportin
 Need to audit what a gaze metric supports?      → 12_worked_measurement_interpretation_audit.py
 Need to freeze outcomes/estimands first?         → 13_worked_estimand_preregistration.py
 Need a reviewer/replication handoff?             → 14_worked_reviewer_replication_bundle.py
+Need to audit sensitivity/robustness?             → 15_worked_sensitivity_robustness_audit.py
 ```
 
 ## Move from demo data to a study
@@ -571,8 +606,9 @@ A practical research sequence is:
 9. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping, exposure, missing-versus-zero semantics, and censoring;
 10. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
 11. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct;
-12. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks; and
-13. freeze software identity, figures, tables, and evidence boundaries before reporting.
+12. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks;
+13. use the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) to execute/report the complete registered sensitivity set without replacing the primary estimand; and
+14. freeze software identity, figures, tables, and evidence boundaries before reporting.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into
