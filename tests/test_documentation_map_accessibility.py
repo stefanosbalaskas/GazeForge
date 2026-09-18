@@ -31,6 +31,7 @@ def test_documentation_map_routes_research_tasks_to_real_pages() -> None:
         "research-evidence-bundle.md",
         "reporting-clinic.md",
         "measurement-interpretation.md",
+        "sensitivity-robustness-clinic.md",
         "estimand-preregistration.md",
         "reviewer-replication-handoff.md",
         "getting-started.md",
@@ -79,6 +80,7 @@ def test_consistent_help_order_is_present_on_entry_pages() -> None:
         "docs/research-evidence-bundle.md",
         "docs/reporting-clinic.md",
         "docs/measurement-interpretation.md",
+        "docs/sensitivity-robustness-clinic.md",
         "docs/estimand-preregistration.md",
         "docs/reviewer-replication-handoff.md",
         "docs/troubleshooting.md",
@@ -106,6 +108,7 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
     assert "Research evidence bundle: research-evidence-bundle.md" in mkdocs
     assert "Reporting & interpretation clinic: reporting-clinic.md" in mkdocs
     assert "Measurement & interpretation clinic: measurement-interpretation.md" in mkdocs
+    assert "Sensitivity & robustness clinic: sensitivity-robustness-clinic.md" in mkdocs
     assert "Outcome & estimand preregistration: estimand-preregistration.md" in mkdocs
     assert "Reviewer & replication handoff: reviewer-replication-handoff.md" in mkdocs
     assert "assets/python-suite-logo.png" in mkdocs
@@ -120,6 +123,7 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
         "research-evidence-bundle.md",
         "reporting-clinic.md",
         "measurement-interpretation.md",
+        "sensitivity-robustness-clinic.md",
         "estimand-preregistration.md",
         "reviewer-replication-handoff.md",
         "worked-tracker-import.md",
