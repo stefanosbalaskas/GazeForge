@@ -108,3 +108,39 @@ def test_sensitivity_audit_is_deterministic_and_preserves_primary_contract(
     assert "favourable sensitivity result never replaces" in readme
     assert "not native-device validation" in readme
     assert "not empirical" in readme
+
+
+def test_sensitivity_clinic_is_discoverable_and_claim_safe() -> None:
+    guide = (ROOT / "docs/sensitivity-robustness-clinic.md").read_text(encoding="utf-8")
+    mkdocs = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+    homepage = (ROOT / "docs/index.md").read_text(encoding="utf-8")
+    gallery = (ROOT / "docs/runnable-examples.md").read_text(encoding="utf-8")
+
+    lower = guide.lower()
+    assert "# Sensitivity & robustness clinic" in guide
+    assert "15_worked_sensitivity_robustness_audit.py" in guide
+    assert "not_evaluable" in guide
+    assert "non_converged" in guide
+    assert "changed_estimand_not_comparable" in guide
+    assert "robust = TRUE/FALSE" in guide
+    assert "not empirical validation evidence" in lower
+    assert "do not generate a large specification search" in lower
+    assert "do not use visual emphasis to hide" in lower
+    for route in (
+        "api-reference.md#quality-control",
+        "api-reference.md#eye-events",
+        "api-reference.md#semantic-aois",
+        "api-reference.md#dynamic-aois",
+        "api-reference.md#scanpaths",
+        "api-reference.md#sampling-sensitivity",
+        "api-reference.md#model-comparison",
+        "api-reference.md#matched-fold-model-differences",
+    ):
+        assert route in guide
+    assert "Sensitivity & robustness clinic: sensitivity-robustness-clinic.md" in mkdocs
+    assert "sensitivity-robustness-clinic.md" in homepage
+    assert "seventeen deterministic examples" in gallery
+
+    start = homepage.index('<div class="gf-hero-actions"')
+    end = homepage.index("</div>", start)
+    assert homepage[start:end].count("{ .md-button") == 3
