@@ -18,6 +18,15 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
+<nav class="gf-study-path" aria-label="Research workflow path">
+<a href="documentation-map.md" aria-current="step"><strong>1</strong><span>Task</span></a>
+<a href="method-chooser.md"><strong>2</strong><span>Method</span></a>
+<a href="artifact-dictionary.md"><strong>3</strong><span>Artifacts</span></a>
+<a href="research-evidence-bundle.md"><strong>4</strong><span>Evidence bundle</span></a>
+<a href="reporting-interpretation-clinic.md"><strong>5</strong><span>Report</span></a>
+<a href="publication-readiness.md"><strong>6</strong><span>Submit</span></a>
+</nav>
+
 GazeForge has deep method, validation, benchmark, and workflow documentation. You do not need to read it in navigation order. Start from the task you need to complete, use the shortest runnable route, inspect the artifacts it produces, and only then move into explanation or reference pages.
 
 !!! info "How this map is organized"
@@ -47,7 +56,7 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Turn frozen outputs into Methods/Results | frozen evidence bundle | [Reporting & interpretation clinic](reporting-interpretation-clinic.md) | `python examples/10_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | methods record + denominator flow + reporting boundaries + manifest | wording quality ≠ stronger evidence | [Publication readiness](publication-readiness.md) |
 | Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
 
-## Four worked routes
+## Five worked routes
 
 ### Route A · I have a Gazepoint-style export and need an analysis table
 
@@ -92,6 +101,19 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 6. Run the [Publication readiness](publication-readiness.md) checklist before sharing or citing the archive.
 
 **Stop rather than guess:** a complete archive proves neither measurement validity nor external validity. Archive only the evidence class the study actually supports, and respect participant privacy and source licensing.
+
+
+### Route E · I have frozen outputs and need manuscript wording
+
+1. Confirm source, QC, review, analysis, and provenance layers are already frozen.
+2. Open the [Reporting & interpretation clinic](reporting-interpretation-clinic.md).
+3. Run `examples/10_worked_manuscript_reporting_bundle.py` to generate reporting-only derivatives.
+4. Reconcile sample/trial denominators in `denominator_flow.csv`.
+5. Use `artifact_citation_table.csv` to keep each manuscript statement tied to an exact upstream artifact and evidence class.
+6. Replace demo placeholders with the real software version, full development commit, acquisition details, study-specific methods, and actual results.
+7. Finish with [Publication readiness](publication-readiness.md).
+
+**Stop rather than upgrade:** better prose, cleaner tables, or a complete archive cannot convert synthetic/demo evidence, derived-rate evidence, opaque source-token identity, or unvalidated AOI/event outputs into a stronger scientific claim.
 
 ## Documentation types
 
