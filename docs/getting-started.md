@@ -2,6 +2,15 @@
 
 GazeForge is currently alpha research software. The first public alpha release is available from PyPI, while editable development checkouts remain the preferred path when an analysis must be tied to an exact commit.
 
+!!! tip "Not sure what GazeForge actually does?"
+    Start with the [GazeForge Tour](gazeforge-tour.md) before reading the API reference. It follows one deterministic gaze table through canonicalisation, non-destructive QC, transparent eye events, AOIs, scanpaths, and provenance, then shows the CSV/JSON artifacts each layer produces.
+
+    ```bash
+    python examples/00_gazeforge_tour.py --output-dir gazeforge-tour-demo
+    ```
+
+    The tour uses synthetic/demo data. It is a software walkthrough, not empirical tracker, event-model, or measurement validation.
+
 ## Install the public alpha
 
 ```bash
@@ -36,6 +45,14 @@ pytest
     ```
 
     Then use the [Real-data import clinic](data-import-clinic.md) for source variants and troubleshooting. Adapter compatibility is not tracker/device validation.
+
+!!! tip "QC found problems? Review before excluding"
+    Continue with the [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md). It separates flags, review-required cases, retained observations, reviewed exclusions, and exploratory sensitivity rules instead of turning anomaly flags directly into data deletion.
+
+    ```bash
+    python examples/08_worked_qc_review_ledger.py \
+      --output-dir worked-qc-review-ledger-demo
+    ```
 
 !!! tip "Run one complete workflow"
     Want to see the layers composed before adapting your own tracker export? Run the [practical end-to-end workflow](practical-workflow.md), which writes reviewable source/canonical/QC/event/AOI/scanpath/provenance artifacts and keeps the demo explicitly separate from empirical validation.
@@ -88,7 +105,13 @@ quality = score_trial_quality(
 
 The original rows remain present. GazeForge adds anomaly scores and flags so exclusions can be reviewed and documented later. QC flags are not automatic invalidity labels.
 
-## 3. Train an eye-event model
+## 3. Review QC and freeze exclusion decisions
+
+Before modelling, preserve the pre-review QC table and record any sample-, trial-, or participant-level decision separately. Keep the criterion ID, scope, rationale, prespecified/exploratory status, decision, denominator, and affected row count visible.
+
+Use the [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md) for the executable pattern. A reproducible exclusion rule is not automatically a validated rule, and an anomaly flag is not itself an exclusion decision.
+
+## 4. Train an eye-event model
 
 ```python
 from gazeforge import ai_classify_events, train_event_classifier
@@ -123,7 +146,7 @@ classified = ai_classify_events_context(new_samples, model, sampling_rate_hz=60)
 
 Temporal windows never cross participant/trial boundaries.
 
-## 4. Validate before interpreting
+## 5. Validate before interpreting
 
 ```python
 from gazeforge import grouped_event_cross_validate
@@ -141,7 +164,7 @@ A fresh model is fitted inside every fold. GazeForge also provides matched-model
 
 Use the [Event-model validation clinic](event-model-validation-clinic.md) before turning model predictions into manuscript-facing validation claims.
 
-## 5. Add semantic AOIs when needed
+## 6. Add semantic AOIs when needed
 
 Static and dynamic AOIs are separate from the event-modelling layer. AI-generated boxes are proposals until reviewed.
 
@@ -159,7 +182,7 @@ aois = detect_semantic_aois(
 
 See [Dynamic AOIs](dynamic-aois.md) for time-varying stimuli.
 
-## 6. Freeze benchmark evidence
+## 7. Freeze benchmark evidence
 
 For Lund2013:
 
@@ -192,14 +215,15 @@ At minimum, report:
 - observed timestamp cadence separately from the nominal/native rate;
 - exact source-column mapping, timestamp unit, coordinate basis, and screen/stimulus geometry;
 - source fingerprint/checksum plus duplicate/missing/bounds preflight;
+- pre-review QC fingerprint and explicit review/exclusion ledger;
+- prespecified versus exploratory exclusion/sensitivity criteria and denominator flow;
 - any resampling target and label-purity rule;
 - event/AOI model and version;
 - participant/stimulus split policy;
-- excluded labels and QC rules;
 - calibration/event-level metrics where applicable;
 - human-human reference agreement when available; and
 - whether evidence is native or derived.
 
 For the public alpha, cite the exact version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013) and record `0.1.0a1` in the analysis environment.
 
-Continue with the [Worked tracker import](worked-tracker-import.md), [Real-data import clinic](data-import-clinic.md), [practical end-to-end workflow](practical-workflow.md), [Scientific governance](scientific-governance.md), and [Validation status](validation-status.md).
+Continue with the [GazeForge Tour](gazeforge-tour.md), [Worked tracker import](worked-tracker-import.md), [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md), [Real-data import clinic](data-import-clinic.md), [practical end-to-end workflow](practical-workflow.md), [Scientific governance](scientific-governance.md), and [Validation status](validation-status.md).

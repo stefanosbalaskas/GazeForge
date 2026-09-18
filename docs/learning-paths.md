@@ -1,10 +1,23 @@
 # Learning paths
 
-GazeForge spans data preparation, quality control, eye-event modelling, semantic AOIs, scanpaths, benchmark validation, and scientific provenance. You do not need to learn every layer before starting.
+GazeForge spans data preparation, quality control, human review, eye-event modelling, semantic AOIs, scanpaths, benchmark validation, and scientific provenance. You do not need to learn every layer before starting.
+
+If you are not yet sure what the package does, begin with the [GazeForge Tour](gazeforge-tour.md). It is the canonical orientation route: one gaze table goes through the main layers and produces ordinary CSV/JSON artifacts you can inspect.
 
 Choose the path that matches your immediate research question. If you are planning an entire study rather than learning one method, use the [Study lifecycle](study-lifecycle.md) as the orchestration layer from acquisition through publication. If you already know the task you need to perform, the [Research recipes](research-recipes.md) page gives the shortest defensible route and the artifacts to retain.
 
 <div class="gf-path-grid" markdown>
+
+<div class="gf-path-card" markdown>
+
+### :material-map-search-outline: I am new — what does GazeForge do?
+
+Run the smallest package-wide walkthrough before choosing a specialist method. See canonicalisation, QC, transparent events, AOIs, scanpaths, provenance, and the resulting output bundle in one place.
+
+**Next:** [GazeForge Tour](gazeforge-tour.md)  
+**Run it:** `python examples/00_gazeforge_tour.py --output-dir gazeforge-tour-demo`
+
+</div>
 
 <div class="gf-path-card" markdown>
 
@@ -14,6 +27,17 @@ Start with the executable import/QC route before event modelling. Preserve the s
 
 **Next:** [Worked tracker import and QC](worked-tracker-import.md)  
 **Deep guide:** [Real-data import clinic](data-import-clinic.md)
+
+</div>
+
+<div class="gf-path-card" markdown>
+
+### :material-clipboard-text-search-outline: QC found problems; what do I exclude?
+
+Do not map anomaly flags directly to deletion. Keep pre-review QC immutable, record criteria and denominators, distinguish prespecified from exploratory rules, and create a separate reviewed analysis derivative.
+
+**Next:** [QC review and exclusion ledger](qc-review-exclusion-ledger.md)  
+**Run it:** `python examples/08_worked_qc_review_ledger.py --output-dir worked-qc-review-ledger-demo`
 
 </div>
 
@@ -94,7 +118,7 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for **eight deterministic scripts/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract, the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design, the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks, and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs. For a task-first map, start with [Research recipes](research-recipes.md); for the deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for **ten deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
@@ -103,14 +127,15 @@ Open the [Runnable examples gallery](runnable-examples.md) for **eight determini
 | **0. Import** | source identity, units, geometry, nominal rate vs observed cadence | immutable source + import contract + preflight | adapter compatibility = device validity |
 | **1. Canonicalise** | schema, rate, units, participant/trial boundaries | one vendor-neutral gaze table | comparability across datasets |
 | **2. QC** | missingness, gaps, off-screen samples, anomaly flags | reviewable QC columns and trial summaries | automatic exclusion validity |
-| **3. Baseline** | deterministic I-VT or angular I-VT | inspectable event labels | learned-model superiority |
-| **4. Validate** | participant-disjoint folds, matched rows, sample/event metrics, calibration/coverage | split ledger + held-out predictions + validation tables | native-device validity from resampled or synthetic data |
-| **5. Extend** | semantic/dynamic AOIs, scanpaths, hierarchical models | task-specific analytic structures | unsupported psychological inference |
-| **6. Freeze** | manifests, fingerprints, certificates, source resolution | auditable evidence bundle | stronger provenance than the source supports |
+| **3. Review** | criteria, scope, decisions, denominators, prespecified vs exploratory status | immutable pre-review QC + review/exclusion ledger + reviewed derivative | reproducible exclusion rule = validated rule |
+| **4. Baseline** | deterministic I-VT or angular I-VT | inspectable event labels | learned-model superiority |
+| **5. Validate** | participant-disjoint folds, matched rows, sample/event metrics, calibration/coverage | split ledger + held-out predictions + validation tables | native-device validity from resampled or synthetic data |
+| **6. Extend** | semantic/dynamic AOIs, scanpaths, hierarchical models | task-specific analytic structures | unsupported psychological inference |
+| **7. Freeze** | manifests, fingerprints, certificates, source resolution | auditable evidence bundle | stronger provenance than the source supports |
 
-For a more complete research route, the [Study lifecycle](study-lifecycle.md) expands this progression into ten stages and ties every stage to a reviewable artifact and explicit claim boundary. The [Study-design templates](study-design-templates.md) make the corresponding records copy-ready.
+For a more complete research route, the [Study lifecycle](study-lifecycle.md) ties every stage to a reviewable artifact and explicit claim boundary. The [Study-design templates](study-design-templates.md) make the corresponding records copy-ready.
 
-## Which import workflow should I use?
+## Which import and QC workflow should I use?
 
 ```text
 Do you have authoritative source metadata?
@@ -126,9 +151,12 @@ Do you have authoritative source metadata?
                               │
                               ▼
                     non-destructive QC
+                              │
+                              ▼
+              review + exclusion ledger
 ```
 
-Run the [worked tracker-import example](worked-tracker-import.md) for the executable path. Successful import is a transformation result, not device/model validation.
+Run the [worked tracker-import example](worked-tracker-import.md) for the import path, then the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) before dropping observations. Successful import is a transformation result, not device/model validation; a QC flag is review evidence, not an automatic exclusion.
 
 ## Which event workflow should I use?
 
@@ -170,4 +198,4 @@ The [results gallery](results-gallery.md) puts the current reviewed benchmark su
 
 ## Report the analysis so somebody else can reconstruct it
 
-When an analysis becomes manuscript-facing, continue with the [Publication-readiness checklist](publication-readiness.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md). The reporting surfaces keep import compatibility versus device validity, QC flags versus invalidity, demos versus empirical validation, split identity, sample/event metrics, calibration, confidence/coverage, native/derived rate, and model-selection versus confirmatory evaluation explicit. Use [Study-design templates](study-design-templates.md) to keep the required metadata explicit from preregistration onward.
+When an analysis becomes manuscript-facing, continue with the [Publication-readiness checklist](publication-readiness.md), [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md). The reporting surfaces keep import compatibility versus device validity, QC flags versus review/exclusion decisions, demos versus empirical validation, split identity, sample/event metrics, calibration, confidence/coverage, native/derived rate, and model-selection versus confirmatory evaluation explicit. Use [Study-design templates](study-design-templates.md) to keep the required metadata explicit from preregistration onward.

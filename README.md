@@ -1,138 +1,119 @@
-<div align="center">
+<p align="center">
+  <img src="https://raw.githubusercontent.com/stefanosbalaskas/gpbiometricspy/main/docs/assets/python-suite-logo.png" width="240" alt="Python Suite research-software logo">
+</p>
 
-<img src="docs/assets/brand/gazeforge-lockup.svg" alt="GazeForge — Auditable AI for eye-tracking research" width="680">
+<h1 align="center">GazeForge</h1>
 
-# GazeForge
+<p align="center"><strong>Auditable AI for eye-tracking research.</strong></p>
+<p align="center">Import · QC · eye events · AOIs · scanpaths · validation · provenance · reproducible reporting</p>
 
-### Auditable AI for eye-tracking research
+<p align="center">
+  <a href="https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml"><img alt="Documentation" src="https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml/badge.svg"></a>
+  <a href="https://pypi.org/project/gazeforge/0.1.0a1/"><img alt="PyPI" src="https://img.shields.io/badge/PyPI-0.1.0a1-blue"></a>
+  <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.10%20%7C%203.12%20%7C%203.14-blue"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg"></a>
+  <a href="https://doi.org/10.5281/zenodo.22650012"><img alt="DOI" src="https://zenodo.org/badge/1355235505.svg"></a>
+  <a href="CHANGELOG.md"><img alt="Status" src="https://img.shields.io/badge/status-alpha-orange"></a>
+</p>
 
-**Machine learning, computer vision, event modelling, semantic AOIs, scanpaths, validation, and provenance — without turning eye-tracking analysis into a black box.**
-
-[![CI](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml/badge.svg)](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml)
-[![Docs](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml/badge.svg)](https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml)
-[![PyPI](https://img.shields.io/badge/PyPI-0.1.0a1-blue)](https://pypi.org/project/gazeforge/0.1.0a1/)
-[![DOI](https://zenodo.org/badge/1355235505.svg)](https://doi.org/10.5281/zenodo.22650012)
-[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.12%20%7C%203.14-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-alpha-orange)](CHANGELOG.md)
-
-[Website](https://stefanosbalaskas.github.io/GazeForge/) · [PyPI](https://pypi.org/project/gazeforge/) · [Zenodo](https://doi.org/10.5281/zenodo.22650013) · [Evidence status](docs/evidence-status.md) · [Frozen evidence](docs/frozen-evidence.md) · [Validation status](docs/validation-status.md) · [For Gazepoint / GP3](docs/gazepoint-gp3.md) · [Roadmap](https://github.com/stefanosbalaskas/GazeForge/issues)
-
-</div>
+<p align="center">
+  <a href="https://stefanosbalaskas.github.io/GazeForge/"><strong>Website</strong></a> ·
+  <a href="docs/gazeforge-tour.md"><strong>Start here</strong></a> ·
+  <a href="docs/runnable-examples.md"><strong>Examples</strong></a> ·
+  <a href="docs/learning-paths.md"><strong>Learning paths</strong></a> ·
+  <a href="docs/evidence-status.md"><strong>Evidence status</strong></a> ·
+  <a href="docs/api-reference.md"><strong>API</strong></a>
+</p>
 
 ---
 
-GazeForge is a vendor-neutral Python research-software package for integrating **AI into the analysis of eye-tracking data**. It supports machine-learning-assisted quality control, event classification, semantic AOIs, sequence analysis, and benchmark validation while keeping transformations, uncertainty, model identity, sampling assumptions, and human review visible.
+## New to GazeForge? Start with the tour
+
+If you are asking **“What does GazeForge actually do?”**, do not start with the API reference.
+
+Read the **[GazeForge Tour](docs/gazeforge-tour.md)** and run the smallest package-wide example:
+
+```bash
+python examples/00_gazeforge_tour.py --output-dir gazeforge-tour-demo
+```
+
+The tour shows one gaze table moving through:
+
+```text
+source gaze
+   ↓
+canonical gaze
+   ↓
+non-destructive QC
+   ↓
+transparent eye events
+   ↓
+researcher-defined AOIs
+   ↓
+semantic scanpaths
+   ↓
+provenance + reviewable output bundle
+```
+
+It creates ordinary CSV/JSON files you can inspect side-by-side. It also verifies that the source table is unchanged and that sample rows are preserved through non-destructive sample-level stages.
+
+> **Tour boundary:** the tour uses deterministic synthetic/demo data. It is not empirical validation evidence, a tracker-validity result, or a claim that QC flags should automatically become exclusions.
+
+## What GazeForge is
+
+GazeForge is a vendor-neutral Python research-software package for integrating **auditable AI and reproducible workflows into eye-tracking analysis**.
+
+It is not one detector or one classifier. It connects the analysis stages that researchers normally have to manage separately while keeping transformations, uncertainty, model identity, sampling assumptions, human review, and provenance visible.
 
 > **Scientific contract:** AI may propose, score, classify, embed, or flag. It must not silently alter the empirical record.
 
 GazeForge does **not** infer diagnoses, emotions, personality, protected traits, or unsupported latent mental states from gaze.
 
-## Start here
+## Choose the path you need
 
-| Goal | Best starting point |
+| Your task | Start here |
 | --- | --- |
-| Install and run a first analysis | [Getting started](docs/getting-started.md) |
-| Work with Gazepoint / GP3 exports | [Gazepoint / GP3 guide](docs/gazepoint-gp3.md) |
-| Understand what is empirically supported | [Evidence status](docs/evidence-status.md) and [Frozen evidence](docs/frozen-evidence.md) |
-| Inspect methods, certificates, and scientific boundaries | [Documentation site](https://stefanosbalaskas.github.io/GazeForge/) |
-| Contribute or reproduce a repository workflow | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| Cite the public alpha | [CITATION.cff](CITATION.cff) and [Zenodo](https://doi.org/10.5281/zenodo.22650013) |
+| I do not yet understand the package | **[GazeForge Tour](docs/gazeforge-tour.md)** |
+| I have a tracker export | [Worked tracker import + QC](docs/worked-tracker-import.md) |
+| QC found problems and I need defensible exclusions | [QC review + exclusion ledger](docs/qc-review-exclusion-ledger.md) |
+| I need an inspectable eye-event baseline | [I-VT tutorial](docs/tutorial-ivt-baseline.md) |
+| I want to train or compare learned event models | [Event-model validation clinic](docs/event-model-validation-clinic.md) |
+| I need static or moving AOIs | [Research recipes](docs/research-recipes.md) / [Dynamic AOI study](docs/worked-dynamic-aoi-study.md) |
+| I need a study from acquisition to publication | [Study lifecycle](docs/study-lifecycle.md) |
+| I am preparing a manuscript | [Publication readiness](docs/publication-readiness.md) |
+| I need to know what is empirically supported | [Evidence status](docs/evidence-status.md) |
 
-## Public alpha release
+Browse all exact commands and output inventories in the **[Runnable examples gallery](docs/runnable-examples.md)**.
 
-**GazeForge 0.1.0a1** is the first public alpha release. It is published on [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) through GitHub OIDC Trusted Publishing and archived on Zenodo as [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The release is intentionally alpha: APIs may change while native 60 Hz/GP3-class validation, broader external benchmark qualification, and remaining dynamic-detection validation are completed.
+## What GazeForge adds to eye-tracking analysis
 
-The exact GitHub Release distributions are identity-matched to the PyPI publication:
+| Layer | What it provides | What it does not silently do |
+| --- | --- | --- |
+| **Import & canonicalisation** | vendor-neutral schema, Gazepoint adapters, rate/cadence diagnostics | guess unknown source semantics |
+| **QC** | anomaly flags, missingness/bounds/gap diagnostics, trial quality | delete flagged observations |
+| **Review & exclusions** | explicit sample/trial/participant decision ledgers and denominators | convert flags directly into exclusions |
+| **Eye events** | transparent I-VT/angular I-VT, Random Forest, temporal-context models | imply one model is universally superior |
+| **AOIs** | researcher-defined and AI-proposed static/dynamic AOIs, review history | treat proposals as ground truth |
+| **Scanpaths** | semantic sequences, motifs, embeddings, similarity, clustering | infer unsupported mental states |
+| **Validation** | participant-held-out/dataset-held-out workflows, calibration, event metrics | hide the split or native/derived distinction |
+| **Auditability** | fingerprints, provenance, manifests, benchmark/evidence records | overwrite the empirical record |
+
+## Installation and immutable release identity
+
+Install the exact public alpha:
+
+```bash
+python -m pip install "gazeforge==0.1.0a1"
+```
+
+The immutable `0.1.0a1` release is published at [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) and archived on Zenodo with version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The Zenodo concept/latest-release DOI is [`10.5281/zenodo.22650012`](https://doi.org/10.5281/zenodo.22650012).
+
+The exact GitHub Release distributions are identity-matched to the published alpha:
 
 ```text
 gazeforge-0.1.0a1-py3-none-any.whl  sha256:3e409fbfc3c194db30ba25fefdf7f6459a3a003aefa0ab4303555d96982fbb46
 gazeforge-0.1.0a1.tar.gz            sha256:cee4e061a90d74b3a354a0fb4aa5c7bd00d53577e17167f75342cd476a5c25fa
-```
-
-[Release & install guidance →](docs/release-install.md)
-
-## First frozen external empirical evidence
-
-The first audited external benchmark tranche is now frozen from the public **Lund2013** expert-labelled corpus. GazeForge verifies the exact upstream source files at a pinned commit, derives lower-rate human-reference data with explicit boundary-purity rules, evaluates all models on identical participant-held-out folds, and stores only fingerprinted JSON evidence in this repository.
-
-Primary RA-labelled **derived 60 Hz** results:
-
-| Model | Accuracy | Balanced accuracy | Macro-F1 | Event-F1 | Event IoU |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| **I-VT** | 0.637 | 0.388 | 0.287 | **0.626** | **0.921** |
-| **RandomForest** | 0.676 | 0.670 | 0.595 | 0.440 | 0.892 |
-| **ContextMLP** | **0.694** | **0.679** | **0.649** | 0.535 | 0.900 |
-
-The result is deliberately **not** summarized as “AI beats I-VT.” Learned models are substantially stronger for sample-level multiclass classification, whereas transparent I-VT is stronger for contiguous event segmentation and boundary timing. The MN annotator sensitivity analysis reproduces this broad pattern.
-
-Human MN–RA agreement is also strong: native 500 Hz κ = **0.815** with exact agreement **0.893**; independently derived 60 Hz κ = **0.799** with exact agreement **0.880**. Video has the lowest agreement among the benchmark stimulus families.
-
-The frozen suite fingerprint is:
-
-```text
-5dc6d6336b505b0a2283fe64d478a27b0394c9568a86fc4eb4d2771b8d600f93
-```
-
-**Important limitation:** Lund2013 is natively 500 Hz. The 60 Hz analyses are derived lower-rate evidence and are **not native GP3/60 Hz device validation**. A genuinely native 60 Hz/GP3-class manually labelled event corpus remains a major evidence requirement.
-
-[Inspect the frozen evidence →](docs/frozen-evidence.md) · [See the full validation matrix →](docs/validation-status.md)
-
-## What GazeForge adds to eye-tracking analysis
-
-| Layer | Capabilities |
-| --- | --- |
-| **Data & QC** | Canonical gaze schema, Gazepoint adapters, sampling-rate inference, anomaly flags, trial-quality scores, calibration-drift diagnostics |
-| **Eye events** | Transparent I-VT and angular I-VT, Random Forest classification, temporal-context MLP, calibrated probabilities, abstention metadata |
-| **Semantic AOIs** | Human-defined AOIs, optional OWL-ViT proposals, review/correction logs, dynamic AOI keyframes, guarded interpolation |
-| **Sequences** | Semantic scanpaths, motifs, TF-IDF/SVD embeddings, cosine similarity, clustering |
-| **Validation** | Participant-held-out folds, leave-one-dataset-out validation, calibration, event-level temporal matching, sampling/purity sensitivity |
-| **Auditability** | Data fingerprints, model cards, benchmark cards, provenance records, verified source manifests, deterministic frozen benchmark reports |
-
-## Why this is different
-
-Many AI-assisted workflows collapse prediction and analysis into a single opaque step. GazeForge separates them.
-
-```text
-raw eye-tracking data
-        │
-        ▼
-canonical gaze table
-        │
-        ├── QC / anomaly scores ─────────────┐
-        ├── eye-event probabilities ─────────┤
-        ├── semantic AOI proposals ── review ┤
-        └── scanpath representations ────────┤
-                                             ▼
-                                  reviewed analytic table
-                                             │
-                                             ▼
-                              statistics / modelling / report
-```
-
-AI outputs remain ordinary data structures with confidence, source, model, sampling-rate, and review metadata. Researchers can inspect or correct them before downstream statistics.
-
-## Validation matrix
-
-The canonical public status class for each benchmark is generated from `validation/evidence-status-manifest.json`; the descriptions below preserve the corresponding scientific boundary.
-
-| Benchmark | Reference | Native rate | GazeForge status |
-| --- | --- | ---: | --- |
-| **Lund2013** | paired expert manual event labels | 500 Hz | **Frozen empirical evidence**: native/derived human agreement, derived 60 Hz matched-fold modelling, MN sensitivity, stimulus-family results, sampling×purity sensitivity |
-| **Hollywood2EM** | sequential student labels with expert-corrected final labels | 500 Hz | **Frozen empirical evidence**: aggregate derived-60-Hz source-token-held-out evidence; the split is opaque-token-disjoint, not participant-disjoint; exact annotation-repository licence text/identifier and token→participant mapping remain unresolved |
-| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz hardware acquisition; exact ProcessData nominal 300 Hz | **Reviewed empirical evidence**: exact-distribution participant-disjoint evidence on a derived 60-Hz task-agnostic grid; the complete authoritative numeric `TrIdx`→task mapping, task-stratified validation, native-60-Hz/GP3 validity, acquisition-hardware cadence verification, and quarantine exit remain open |
-| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **Bounded empirical evidence**: verified partial public-derivative Tobii 60 Hz observations; the full 25-participant × 11-stimulus benchmark is not recovered, original source licensing remains unresolved, and no full-dataset model-validation, human-human-agreement, Frozen Evidence, or native-GP3 claim is created |
-
-GazeForge never upgrades derived evidence into a stronger evidence category. Hollywood2EM remains explicitly source-token-disjoint rather than participant-disjoint. The reviewed Gaze-in-the-Wild participant-disjoint result remains explicitly **task-agnostic**: first-party structural provenance and secondary numeric corroboration do not substitute for a complete authoritative `TrIdx`→task lookup, and `TrIdx 4 → Tea_Making` is not inferred by elimination. Resampled or derived 60 Hz results do not establish native GP3/60 Hz validity, and cross-dataset results remain blocked when identity or coordinate evidence is unresolved. For VISUS specifically, the current public derivative supports bounded empirical observations only; it does not recover the original full benchmark or establish model validity, independent human-human agreement, Frozen Evidence, unrestricted source redistribution, or native GP3 validity.
-
-[Evidence status →](docs/evidence-status.md) · [Hollywood2EM evidence boundary →](docs/hollywood2-benchmark.md) · [Gaze-in-the-Wild task-mapping evidence →](docs/gaze-in-wild-task-mapping-corroboration.md) · [Full validation status →](docs/validation-status.md)
-
-## Installation
-
-GazeForge is alpha research software. Install the exact first public alpha from PyPI with:
-
-```bash
-python -m pip install "gazeforge==0.1.0a1"
 ```
 
 Optional open-vocabulary semantic AOI detection:
@@ -141,7 +122,7 @@ Optional open-vocabulary semantic AOI detection:
 python -m pip install "gazeforge[vision]==0.1.0a1"
 ```
 
-For development, validation work, or analyses that should be tied to an exact repository commit:
+For development or commit-pinned research work:
 
 ```bash
 git clone https://github.com/stefanosbalaskas/GazeForge.git
@@ -150,167 +131,128 @@ python -m pip install -e ".[dev]"
 pytest
 ```
 
-## Minimal workflow
+[Release & install guidance →](docs/release-install.md)
+
+## Minimal Python workflow
 
 ```python
-from gazeforge import ai_flag_anomalies, canonicalize_gaze, simulate_gaze, score_trial_quality
+from gazeforge import ai_flag_anomalies, canonicalize_gaze, simulate_gaze
 
 raw = simulate_gaze(n_participants=3, n_trials=2, samples_per_trial=180)
 gaze = canonicalize_gaze(raw, sampling_rate_hz=60)
 flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=gaze.sampling_rate_hz)
-quality = score_trial_quality(flagged)
-
-print(quality)
 ```
 
-The input samples remain intact. QC adds scores and flags rather than deleting observations.
+The input rows remain present. QC adds review evidence rather than deleting observations.
 
-## Probabilistic eye-event modelling
+For a more informative first run, use `examples/00_gazeforge_tour.py` instead of stopping at this snippet.
 
-```python
-from gazeforge import ai_classify_events, train_event_classifier
+## Example progression
 
-model = train_event_classifier(
-    labelled_samples,
-    label_col="event_label",
-    sampling_rate_hz=60,
-)
-classified = ai_classify_events(new_samples, model, sampling_rate_hz=60)
+The repository now has a task-oriented learning sequence:
+
+```text
+00  package-wide GazeForge tour
+01  synthetic non-destructive QC
+02  transparent I-VT baseline
+03  visual diagnostics
+04  worked static advertising/interface study
+05  worked dynamic-AOI study
+06  participant-held-out event-model validation
+07  tracker import + QC
+08  QC review + exclusion ledger
++   complete end-to-end research workflow
 ```
 
-A model trained at one sampling rate is not silently applied at an incompatible rate. Temporal-context models build context windows separately inside each participant/trial boundary.
+Every learning example uses deterministic synthetic/demo inputs and carries an explicit evidence boundary.
 
-## Semantic and dynamic AOIs
+## Validation is visible, not implied
 
-```python
-from gazeforge.aoi import HuggingFaceZeroShotAOIProvider, detect_semantic_aois
+GazeForge separates software capability from empirical support. The canonical public status is generated from versioned evidence policy and integrity-checked artifacts.
 
-provider = HuggingFaceZeroShotAOIProvider()
-aois = detect_semantic_aois(
-    "stimulus.png",
-    labels=["logo", "price", "sustainability claim", "product"],
-    provider=provider,
-    min_confidence=0.10,
-)
+| Benchmark | Reference | Native rate | Current role and boundary |
+| --- | --- | ---: | --- |
+| **Lund2013** | paired expert manual event labels | 500 Hz | **Frozen empirical evidence**: native/derived human agreement and derived-60-Hz modelling; derived results are not native GP3 validation |
+| **Hollywood2EM** | sequential student labels with expert-corrected final labels | ≈500 Hz | **Frozen empirical evidence**: aggregate derived-60-Hz source-token-held-out evidence; source-token-disjoint, not participant-disjoint; identity/licence boundaries remain |
+| **Gaze-in-the-Wild** | distributed trained human labellers | published 120 Hz acquisition; exact ProcessData nominal 300 Hz | **Reviewed empirical evidence**: exact-distribution participant-disjoint evidence on a derived 60-Hz task-agnostic grid; complete authoritative numeric task mapping and native-60-Hz/GP3 validity remain open |
+| **VISUS** | one published curated dynamic-AOI annotation process involving two contributors | 60 Hz | **Bounded empirical evidence**: verified partial public-derivative Tobii 60 Hz observations; the full 25-participant × 11-stimulus benchmark is not recovered, original source licensing remains unresolved, and no full-dataset model-validation, human-human-agreement, Frozen Evidence, or native-GP3 claim is created |
+
+GazeForge never silently upgrades derived or partial evidence into a stronger category. For VISUS specifically, the current public derivative supports bounded empirical observations only; it does not recover the original full benchmark or establish model validity, independent human-human agreement, Frozen Evidence, unrestricted source redistribution, or native GP3 validity.
+
+[Evidence status →](docs/evidence-status.md) · [Frozen evidence →](docs/frozen-evidence.md) · [Validation matrix →](docs/validation-status.md)
+
+## First frozen Lund2013 checkpoint
+
+The first audited external benchmark tranche uses the public Lund2013 expert-labelled corpus with exact source verification and participant-held-out evaluation. The primary RA-labelled **derived 60 Hz** comparison is intentionally multi-criterion: learned models are stronger on sample-level multiclass classification in this checkpoint, while transparent I-VT is stronger on contiguous event segmentation/boundary fidelity.
+
+Human MN–RA agreement remains strong from native 500 Hz to the derived 60 Hz condition. These results are **not native GP3/60 Hz device validation**; a genuinely native 60 Hz/GP3-class manually labelled event corpus remains an open evidence requirement.
+
+[Inspect the complete frozen reports →](docs/frozen-evidence.md)
+
+## Research workflow
+
+```text
+tracker / raw export
+        │
+        ▼
+explicit source contract
+        │
+        ▼
+canonical gaze table
+        │
+        ├── non-destructive QC ── review/exclusion ledger
+        ├── eye-event labels/probabilities ── validation
+        ├── static/dynamic AOIs ── human review
+        └── semantic scanpaths
+                         │
+                         ▼
+               reviewed analytic derivative
+                         │
+                         ▼
+              statistics / models / report
+                         │
+                         ▼
+          provenance + fingerprints + archive
 ```
 
-AI AOIs can be accepted, rejected, relabelled, or geometrically corrected while retaining the review history. Dynamic AOIs use timestamped keyframes, bounded interpolation, and no silent temporal extrapolation.
-
-## Leakage-safe validation
-
-```python
-from gazeforge import grouped_event_cross_validate
-
-validation = grouped_event_cross_validate(
-    labelled_samples,
-    label_col="event_label",
-    group_col="participant_id",
-    n_splits=5,
-    sampling_rate_hz=60,
-)
-```
-
-Learned models are refitted inside every fold. GazeForge also provides leave-one-dataset-out validation, calibration diagnostics, matched-model comparisons, stimulus-family summaries, and event-level temporal IoU / boundary-error metrics. Cross-validation folds are not treated as independent replicates for naive significance tests.
-
-## Reproducible Lund2013 workflows
-
-Acquire the exact pinned external labelled-data checkout without bundling it into GazeForge:
-
-```bash
-gazeforge lund2013-fetch ./external/lund2013
-```
-
-The fetcher verifies every expected MATLAB file against the upstream Git blob SHA and byte size and writes a fingerprinted local source manifest.
-
-Run and freeze the complete evidence suite:
-
-```bash
-gazeforge lund2013-suite \
-  ./external/lund2013 \
-  validation/evidence/lund2013 \
-  --target-rate 60 \
-  --min-label-purity 0.75 \
-  --target-rates 120,90,60,30 \
-  --purities 0.60,0.75,0.90 \
-  --n-splits 5 \
-  --n-estimators 200 \
-  --ivt-threshold-deg-s 45 \
-  --context-radius-ms 50 \
-  --hidden-layers 64,32
-```
-
-Revalidate the frozen suite and every child report:
-
-```bash
-gazeforge lund2013-suite-validate validation/evidence/lund2013
-```
-
-Every frozen report carries a deterministic SHA-256 fingerprint. Ambiguous event-boundary samples are counted before exclusion, all sensitivity settings remain visible, and the website displays only reports whose fingerprints revalidate successfully.
-
-## Project status
-
-GazeForge is under active public alpha development. Version `0.1.0a1` is published on PyPI through Trusted Publishing and archived on Zenodo, while external empirical evidence is publicly rendered under explicit Frozen, Reviewed, Bounded, and pending status classes. This does not establish mature performance across trackers or tasks.
-
-### Implemented and evidenced
-
-- vendor-neutral gaze schema and Gazepoint interoperability
-- auditable QC and anomaly scoring
-- classical, probabilistic, and temporal eye-event models
-- calibration and confidence/coverage diagnostics
-- static and dynamic semantic AOIs with human review
-- semantic scanpaths, motifs, embeddings, and clustering
-- participant-held-out and dataset-held-out validation
-- sample-level and event-level benchmark metrics
-- evidence-aware benchmark taxonomy and deterministic provenance
-- pinned and integrity-checked Lund2013 acquisition
-- **five-report Lund2013 external empirical suite with verified fingerprints**
-- native/derived MN–RA human agreement
-- derived 60 Hz RA primary model comparison and MN annotator sensitivity
-- stimulus-family and sampling-rate × annotation-purity sensitivity analyses
-- **Hollywood2EM derived-60-Hz four-fold source-token-held-out aggregate evidence with opaque-token, licence, and participant-identity boundaries preserved**
-- **Gaze-in-the-Wild exact-distribution task-agnostic participant-disjoint model-validation evidence with event-class sensitivity**
-- **first-party RIT GIW task-separated extraction-structure corroboration with the complete numeric task mapping still fail-closed**
-- **bounded empirical VISUS public-derivative evidence from verified partial Tobii 60 Hz exports, without promoting it to full-dataset model validation or Frozen Evidence**
-- generated fail-closed public evidence-status Markdown/JSON bound to exact repository evidence artifacts
-- integrity-checked frozen-evidence website generation
-- CI across Python 3.10/3.12/3.14 on Linux, Windows, and macOS
-
-### Still required before a stable scientific release
-
-- **native 60 Hz/GP3-class expert-labelled event validation**
-- Hollywood2EM annotation-repository licence resolution and token→participant mapping before participant-held-out or Lund↔Hollywood2 claims
-- complete authoritative Gaze-in-the-Wild `TrIdx`→task mapping before task-stratified claims
-- recovery/authorization of stronger VISUS source material before full-dataset model-validation or Frozen Evidence claims
-- authoritative audits and frozen cross-dataset results for additional external benchmarks
-- validated dynamic object-detection/tracking backend results
-- broader cross-dataset validation after coordinate and identity audits
-- final API stability beyond the public alpha series
-
-The active benchmark plan is tracked in [Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1).
-
-## Relationship to the wider research-software ecosystem
-
-GazeForge complements rather than replaces deterministic eye-tracking and psychophysiology tooling. Its role is the **auditable AI layer**: prediction, semantic interpretation, representation learning, validation, and provenance around ordinary research tables.
+For a manuscript-facing study, record acquisition hardware, nominal/native rate, observed timestamp cadence, source mapping/units, source fingerprints, QC and exclusion decisions, event/AOI model identity, split design, native/derived status, and the exact GazeForge version/commit.
 
 ## Scientific governance
 
-Confirmatory workflows should lock model/version information, sampling rates, analysis exclusions, validation splits, and human review decisions before final inference. External benchmark files remain external unless their reuse terms clearly permit redistribution.
+Confirmatory workflows should lock model/version information, sampling rates, exclusions, validation splits, and human review decisions before final inference. External benchmark files remain external unless their reuse terms clearly permit redistribution.
 
-See [Scientific governance](docs/scientific-governance.md).
+[Scientific governance →](docs/scientific-governance.md) · [Publication readiness →](docs/publication-readiness.md)
 
 ## Documentation
 
-The documentation source lives under `docs/`, is strict-built with MkDocs Material, and deploys to GitHub Pages after successful builds. Public evidence status is generated from versioned policy plus integrity-checked evidence and is available in both human-readable and machine-readable form:
+The strict-built MkDocs Material site is the primary long-form documentation surface:
 
 **https://stefanosbalaskas.github.io/GazeForge/**
 
+Recommended entry points:
+
+- [GazeForge Tour](docs/gazeforge-tour.md)
+- [Getting started](docs/getting-started.md)
+- [Learning paths](docs/learning-paths.md)
+- [Research recipes](docs/research-recipes.md)
+- [Runnable examples](docs/runnable-examples.md)
+- [Evidence status](docs/evidence-status.md)
+
+## Project status
+
+GazeForge is active public-alpha research software. The package has broad implemented workflow coverage and audited external evidence, while important scientific gates remain explicit rather than being hidden behind the software feature set.
+
+Before a stable scientific release, key open requirements include native 60 Hz/GP3-class expert-labelled event validation, resolution of remaining benchmark identity/licensing boundaries, stronger full-source VISUS recovery/authorization, broader cross-dataset validation, validated dynamic-detection/tracking results, and final API stability beyond the alpha series.
+
+The active benchmark plan is tracked in [Issue #1](https://github.com/stefanosbalaskas/GazeForge/issues/1).
+
 ## Citation
 
-For work using the first public alpha, cite the archived software release:
+For work using the first public alpha:
 
 > Balaskas, S. (2026). *GazeForge: Auditable AI for Eye-Tracking Analysis* (Version 0.1.0a1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22650013
 
-Use the exact GazeForge version or commit SHA in reproducible methods. The version DOI for `0.1.0a1` is [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013); the Zenodo concept/latest-release DOI is [`10.5281/zenodo.22650012`](https://doi.org/10.5281/zenodo.22650012). Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff).
+Use the exact GazeForge version or full commit SHA in reproducible methods. Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff).
 
 ## License
 
