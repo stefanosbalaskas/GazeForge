@@ -21,6 +21,7 @@
   <a href="https://stefanosbalaskas.github.io/GazeForge/"><strong>Website</strong></a> ·
   <a href="docs/gazeforge-tour.md"><strong>Start here</strong></a> ·
   <a href="docs/documentation-map.md"><strong>Task map</strong></a> ·
+  <a href="docs/method-chooser.md"><strong>Method chooser</strong></a> ·
   <a href="docs/runnable-examples.md"><strong>Examples</strong></a> ·
   <a href="docs/learning-paths.md"><strong>Learning paths</strong></a> ·
   <a href="docs/evidence-status.md"><strong>Evidence status</strong></a> ·
@@ -81,7 +82,10 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I need an inspectable eye-event baseline | [I-VT tutorial](docs/tutorial-ivt-baseline.md) |
 | I want to train or compare learned event models | [Event-model validation clinic](docs/event-model-validation-clinic.md) |
 | I need static or moving AOIs | [Research recipes](docs/research-recipes.md) / [Dynamic AOI study](docs/worked-dynamic-aoi-study.md) |
+| I know the task but need to choose the method | [Method chooser](docs/method-chooser.md) |
+| I need to understand a CSV/JSON output | [Artifact & output dictionary](docs/artifact-dictionary.md) |
 | I need a study from acquisition to publication | [Study lifecycle](docs/study-lifecycle.md) |
+| I need a reviewable manuscript/archive bundle | [Research evidence bundle](docs/research-evidence-bundle.md) |
 | I am preparing a manuscript | [Publication readiness](docs/publication-readiness.md) |
 | I need to know what is empirically supported | [Evidence status](docs/evidence-status.md) |
 
@@ -162,6 +166,7 @@ The repository now has a task-oriented learning sequence:
 06  participant-held-out event-model validation
 07  tracker import + QC
 08  QC review + exclusion ledger
+09  archive-facing research evidence bundle
 +   complete end-to-end research workflow
 ```
 
@@ -216,7 +221,7 @@ canonical gaze table
           provenance + fingerprints + archive
 ```
 
-For a manuscript-facing study, record acquisition hardware, nominal/native rate, observed timestamp cadence, source mapping/units, source fingerprints, QC and exclusion decisions, event/AOI model identity, split design, native/derived status, and the exact GazeForge version/commit.
+For a manuscript-facing study, record acquisition hardware, nominal/native rate, observed timestamp cadence, source mapping/units, source fingerprints, QC and exclusion decisions, event/AOI model identity, split design, native/derived status, and the exact GazeForge version/commit. The [Research evidence bundle](docs/research-evidence-bundle.md) shows how to freeze those layers without collapsing source, QC, review decisions, and analysis derivatives into one table.
 
 ## Scientific governance
 
@@ -235,6 +240,9 @@ Recommended entry points:
 - [GazeForge Tour](docs/gazeforge-tour.md)
 - [Getting started](docs/getting-started.md)
 - [Learning paths](docs/learning-paths.md)
+- [Method chooser](docs/method-chooser.md)
+- [Artifact & output dictionary](docs/artifact-dictionary.md)
+- [Research evidence bundle](docs/research-evidence-bundle.md)
 - [Research recipes](docs/research-recipes.md)
 - [Runnable examples](docs/runnable-examples.md)
 - [Evidence status](docs/evidence-status.md)

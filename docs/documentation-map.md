@@ -32,6 +32,8 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | --- | --- | --- | --- | --- | --- | --- |
 | Understand GazeForge | none | [GazeForge Tour](gazeforge-tour.md) | `python examples/00_gazeforge_tour.py --output-dir gazeforge-tour-demo` | source→QC→events→AOIs→scanpaths bundle | synthetic demo ≠ empirical validation | [Learning paths](learning-paths.md) |
 | Plan a first study | clear research question + acquisition plan | [First study blueprint](first-study-blueprint.md) | existing worked static-study route | analysis contract + artifact plan | auditable workflow ≠ construct validity | [Study lifecycle](study-lifecycle.md) |
+| Choose a method for a known task | explicit research question + available evidence | [Method chooser](method-chooser.md) | question/evidence/generalisation decision table | defensible workflow route | software availability ≠ scientific justification | [Artifact dictionary](artifact-dictionary.md) |
+| Understand output files | one or more GazeForge artifacts | [Artifact & output dictionary](artifact-dictionary.md) | artifact role/unit/boundary reference | source/QC/review/analysis/validation/provenance classification | filename order ≠ evidence strength | [Research evidence bundle](research-evidence-bundle.md) |
 | Install or check the environment | supported Python | [Getting started](getting-started.md) | `python -m pip install "gazeforge==0.1.0a1"` | importable environment | installation success ≠ measurement validity | [Runnable examples](runnable-examples.md) |
 | Import a tracker export | known source columns/units | [Worked tracker import + QC](worked-tracker-import.md) | `adapt_gazepoint_samples()` / canonical schema | source, canonical, preflight, QC tables | adapter compatibility ≠ device validity | [Real-data import clinic](data-import-clinic.md) |
 | Inspect QC without deleting data | canonical gaze table | [Synthetic QC tutorial](tutorial-synthetic-qc.md) | `ai_flag_anomalies()`, `score_trial_quality()` | anomaly flags + trial-quality table | flag ≠ invalid sample | [QC review & exclusion ledger](qc-review-exclusion-ledger.md) |
@@ -41,10 +43,10 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Define static or dynamic AOIs | stimulus geometry or reviewed tracks | [Research recipes](research-recipes.md) | AOI mapping / dynamic AOI assignment | AOI definitions + assignments + review/audit | AI proposal ≠ ground truth; no silent extrapolation | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) |
 | Build semantic scanpaths | reviewed fixation/AOI assignments | [Practical workflow](practical-workflow.md) | `to_semantic_scanpaths()` | semantic sequence table | sequence representation ≠ latent-state inference | [Methods overview](methods-overview.md) |
 | Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
-| Prepare manuscript/archive evidence | finalized results and denominators | [Publication readiness](publication-readiness.md) | reporting bundle / versioned evidence records | exact methods, figures, tables, fingerprints | report only evidence class actually supported | [Reproducible reporting](reproducible-reporting.md) |
+| Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Publication readiness](publication-readiness.md) |
 | Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
 
-## Three worked routes
+## Four worked routes
 
 ### Route A · I have a Gazepoint-style export and need an analysis table
 
@@ -54,6 +56,7 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 4. Preserve the pre-review QC table.
 5. Use the [QC review & exclusion ledger](qc-review-exclusion-ledger.md) before creating the primary-analysis derivative.
 6. Continue to an event/AOI/scanpath route only after denominators and exclusion decisions reconcile.
+7. When the analysis is frozen, use the [Research evidence bundle](research-evidence-bundle.md) pattern to package source identity, decisions, derivatives, and provenance separately.
 
 **Stop rather than guess:** unknown units, unknown participant/trial identity, unexplained duplicate keys, or an unverified timestamp basis are source-contract problems. Do not repair them by silently coercing the table until it “looks right.”
 
@@ -77,6 +80,18 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 
 **Stop rather than guess:** a detected object, track, or semantic label is not automatically a scientifically valid AOI for the study construct.
 
+
+### Route D · I need a manuscript/archive bundle a reviewer can understand
+
+1. Start with the [Research evidence bundle](research-evidence-bundle.md).
+2. Open the [Artifact & output dictionary](artifact-dictionary.md) when a CSV/JSON role is unclear.
+3. Preserve source identity and pre-review QC separately from review decisions.
+4. Build the primary-analysis derivative from the reviewed ledger rather than editing QC in place.
+5. Freeze an artifact index, analysis plan, provenance, workflow manifest, software identity, and reviewer-facing README.
+6. Run the [Publication readiness](publication-readiness.md) checklist before sharing or citing the archive.
+
+**Stop rather than guess:** a complete archive proves neither measurement validity nor external validity. Archive only the evidence class the study actually supports, and respect participant privacy and source licensing.
+
 ## Documentation types
 
 ### Tutorial · first success
@@ -85,7 +100,7 @@ Use tutorials when you are learning the package and want a controlled path that 
 
 ### How-to guide · complete a task
 
-Use how-to guides when you already know the outcome you need: import a real export, review exclusions, validate a model, audit dynamic AOIs, freeze a study, or prepare a manuscript.
+Use how-to guides when you already know the outcome you need: import a real export, review exclusions, validate a model, audit dynamic AOIs, freeze a study, build an evidence bundle, or prepare a manuscript.
 
 ### Explanation · understand a method or boundary
 

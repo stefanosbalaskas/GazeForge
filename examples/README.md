@@ -151,9 +151,32 @@ source and pre-review QC table remain unchanged and records
 Guide:
 [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 
+
+## 10. Worked research evidence bundle
+
+```bash
+python examples/09_worked_research_evidence_bundle.py \
+  --output-dir worked-research-evidence-bundle
+```
+
+Composes the existing import, QC, review, transparent-event, AOI, scanpath, and
+provenance APIs into one archive-facing directory. It keeps the immutable
+tracker-shaped source, canonical pre-review table, pre-review QC evidence,
+reviewed trial ledger, and primary-analysis derivative distinct, then adds an
+`artifact_index.csv`, `source_contract.json`, analysis plan, provenance,
+workflow manifest, file hashes, and reviewer-facing README.
+
+The demonstration thresholds are teaching values only. The complete bundle is
+`synthetic_demo_not_empirical_evidence` and creates no tracker/device,
+native-60-Hz, Gazepoint/GP3, event-model, AOI-construct, measurement, or
+psychological-state validity claim.
+
+Guide: [Research evidence bundle](../docs/research-evidence-bundle.md) ·
+[Artifact & output dictionary](../docs/artifact-dictionary.md)
+
 ## Reproducibility notes
 
-The ten examples use fixed or explicitly constructed synthetic/demo inputs.
+The eleven examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -170,6 +193,6 @@ Use the [Study-design templates](../docs/study-design-templates.md) while
 planning, [Worked tracker import](../docs/worked-tracker-import.md) for the
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
-for learned event evaluation, and
-[Publication readiness](../docs/publication-readiness.md) before freezing a
-study bundle.
+for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
+for archive assembly, and [Publication readiness](../docs/publication-readiness.md)
+before freezing a study bundle.

@@ -95,7 +95,7 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
 <p>Keep flags, human review, denominators, prespecified criteria, exploratory sensitivity rules, and the primary-analysis derivative distinct.</p>
 </a>
 
-<a class="gf-route-card" data-onboarding-step="analyze" href="documentation-map/">
+<a class="gf-route-card" data-onboarding-step="analyze" href="method-chooser/">
 <span class="gf-route-label">4 · Analyze</span>
 <h3>Choose the method that matches the research task</h3>
 <p>Route to transparent events, learned-model validation, static/dynamic AOIs, scanpaths, study freeze, reporting, or empirical-evidence review.</p>
@@ -139,11 +139,11 @@ Follow one executable path from source gaze through canonicalisation, QC, transp
 
 <span class="gf-task-kicker">Understand the methods</span>
 
-### :material-flask-outline: Explore methods
+### :material-flask-outline: Choose a method
 
-Choose a learning route for event modelling, AOIs, scanpaths, validation, calibration, reporting, or tracker adaptation before dropping into API details.
+Match the scientific question, available evidence, grouping/generalisation unit, validation requirement, and intended claim before dropping into API details.
 
-[Choose a learning path →](learning-paths.md)
+[Open the method chooser →](method-chooser.md)
 
 </div>
 
@@ -163,7 +163,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · [Follow a first study](first-study-blueprint.md) · [Choose from the Documentation Map](documentation-map.md) · [Troubleshoot a workflow](troubleshooting.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
+**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · [Follow a first study](first-study-blueprint.md) · [Choose from the Documentation Map](documentation-map.md) · [Choose a method](method-chooser.md) · [Understand outputs](artifact-dictionary.md) · [Build an evidence bundle](research-evidence-bundle.md) · [Troubleshoot a workflow](troubleshooting.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 
@@ -204,6 +204,18 @@ Use a deterministic static advertising/interface demonstration with explicit `br
 Check acquisition provenance, exclusions, model identity, split design, native/derived wording, evidence status, archive identity, and reproducible reporting before freezing manuscript claims.
 
 [Open publication readiness →](publication-readiness.md)
+
+</div>
+
+<div class="gf-task-card" markdown>
+
+<span class="gf-task-kicker">Freeze the archive</span>
+
+### :material-archive-check-outline: Build the evidence bundle
+
+Assemble source identity, pre-review QC, reviewed decisions, the primary-analysis derivative, event/AOI/scanpath outputs, provenance, fingerprints, and a human-readable archive map.
+
+[Open the evidence-bundle guide →](research-evidence-bundle.md)
 
 </div>
 

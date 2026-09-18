@@ -219,11 +219,20 @@ study-freeze/
 
 Record the exact GazeForge version or full commit SHA, Python version, key parameters, source fingerprints, and the native/derived status of any validation evidence used to justify the workflow.
 
-Use [Publication readiness](publication-readiness.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md) before manuscript submission.
+Use the [Research evidence bundle](research-evidence-bundle.md) to see this separation implemented as one runnable archive, the [Artifact & output dictionary](artifact-dictionary.md) to interpret each file, then [Publication readiness](publication-readiness.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md) before manuscript submission.
 
-## Run the closest existing worked example
+## Run the archive-facing worked example
 
-The bundled static-study demonstration already implements much of this pattern:
+The evidence-bundle example composes import, QC, reviewed decisions, a separate primary-analysis derivative, transparent events, AOIs, scanpaths, provenance, an artifact index, and a reviewer-facing README:
+
+```bash
+python examples/09_worked_research_evidence_bundle.py \
+  --output-dir worked-research-evidence-bundle
+```
+
+Read [Research evidence bundle](research-evidence-bundle.md) for the exact archive logic.
+
+The bundled static-study demonstration remains useful when the scientific focus is the static AOI workflow itself:
 
 ```bash
 python examples/04_worked_advertising_study.py \
