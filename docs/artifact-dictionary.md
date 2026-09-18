@@ -22,6 +22,8 @@ A GazeForge workflow deliberately produces multiple artifacts instead of collaps
 
 The filename number in a worked example indicates workflow order only. **Scientific meaning comes from the artifact role and unit of observation.**
 
+For the archive-facing composition of these artifacts, use the [Research evidence bundle](research-evidence-bundle.md). It shows the reading order, source/QC/review/analysis separation, and the minimum reporting metadata that should travel with a manuscript-facing bundle.
+
 ## Artifact classes
 
 | Class | Meaning | Typical handling |
@@ -123,6 +125,6 @@ python examples/09_worked_research_evidence_bundle.py \
   --output-dir worked-research-evidence-bundle-demo
 ```
 
-Then open `17_artifact_index.csv`, `workflow_manifest.json`, and the generated `README.md` first. They explain how the bundle is organized and which files are source, QC, review, analysis, or reporting evidence.
+Then open `artifact_index.csv`, `workflow_manifest.json`, and the generated `README.md` first. They explain how the bundle is organized and which files are source, QC, review, analysis, or reporting evidence. Continue with the [Research evidence bundle](research-evidence-bundle.md) for manuscript/archive guidance.
 
 The bundle is deterministic synthetic/demo material and is **not empirical validation evidence**.
