@@ -169,8 +169,9 @@ Adapt that wording to the actual study; do not copy the demonstration thresholds
 - [Artifact & output dictionary](artifact-dictionary.md) — understand common CSV/JSON outputs in more detail.
 - [First study blueprint](first-study-blueprint.md) — plan from research question through acquisition and publication.
 - [QC review & exclusion ledger](qc-review-exclusion-ledger.md) — separate automated QC from decisions.
+- [Reporting & interpretation clinic](reporting-interpretation-clinic.md) — translate frozen artifacts into Methods, Results, captions, denominator flow, and reporting-only derivatives without changing the analysis.
 - [Publication readiness](publication-readiness.md) — audit what must be reported before submission.
-- [Reproducible reporting](reproducible-reporting.md) — translate the frozen workflow into methods and archive documentation.
+- [Reproducible reporting](reproducible-reporting.md) — understand software/evidence identity and broader manuscript structure.
 
 ## Evidence boundary
 
