@@ -134,7 +134,7 @@ This clinic deliberately does **not** prescribe one correction procedure for eve
 
 ## Sensitivity analysis is not outcome shopping
 
-A prespecified sensitivity analysis asks whether a scientifically defensible alternative measurement decision changes the conclusion.
+A prespecified sensitivity analysis asks whether a scientifically defensible alternative measurement decision changes the conclusion. After model fitting, execute and report that frozen set through the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) rather than selecting favourable variants.
 
 Examples include:
 
@@ -230,6 +230,7 @@ Continue with:
 - [Analysis handoff](analysis-handoff.md) for model-ready tables;
 - [Measurement & interpretation clinic](measurement-interpretation.md) for construct-bridge boundaries;
 - [Reporting & interpretation clinic](reporting-clinic.md) for manuscript wording;
+- [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) to reconcile the registered sensitivity set with executed, non-evaluable, non-converged, exploratory, and deviation analyses;
 - [Publication readiness](publication-readiness.md) for the final audit;
 - [Quality-control API](api-reference.md#quality-control), [Eye-events API](api-reference.md#eye-events), [Semantic AOI API](api-reference.md#semantic-aois), [Scanpath API](api-reference.md#scanpaths), and [Sampling-sensitivity API](api-reference.md#sampling-sensitivity) for the underlying measurement interfaces.
 
