@@ -84,6 +84,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I need static or moving AOIs | [Research recipes](docs/research-recipes.md) / [Dynamic AOI study](docs/worked-dynamic-aoi-study.md) |
 | I know the task but need to choose the method | [Method chooser](docs/method-chooser.md) |
 | I need to understand a CSV/JSON output | [Artifact & output dictionary](docs/artifact-dictionary.md) |
+| I need to freeze outcomes/estimands before modelling | [Outcome & estimand preregistration clinic](docs/estimand-preregistration.md) |
 | I have reviewed gaze outputs and need model-ready statistical tables | [Analysis handoff](docs/analysis-handoff.md) |
 | I have a gaze metric and need to know what it supports saying | [Measurement & interpretation clinic](docs/measurement-interpretation.md) |
 | I need a study from acquisition to publication | [Study lifecycle](docs/study-lifecycle.md) |
@@ -172,6 +173,8 @@ The repository now has a task-oriented learning sequence:
 09  archive-facing research evidence bundle
 10  statistical analysis handoff + diagnostic figures
 11  manuscript/reporting derivatives + claim boundaries
+12  measurement/interpretation claim audit
+13  outcome & estimand preregistration registry
 +   complete end-to-end research workflow
 ```
 
@@ -248,6 +251,7 @@ Recommended entry points:
 - [Method chooser](docs/method-chooser.md)
 - [Artifact & output dictionary](docs/artifact-dictionary.md)
 - [Research evidence bundle](docs/research-evidence-bundle.md)
+- [Outcome & estimand preregistration clinic](docs/estimand-preregistration.md)
 - [Analysis handoff](docs/analysis-handoff.md)
 - [Measurement & interpretation clinic](docs/measurement-interpretation.md)
 - [Reporting & interpretation clinic](docs/reporting-clinic.md)

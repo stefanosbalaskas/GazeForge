@@ -166,7 +166,7 @@ The example is deliberately classified `synthetic_demo_not_empirical_evidence`. 
 
 ## Decision points worth freezing before analysis
 
-Before you treat the workflow as confirmatory, record at least:
+Before you treat the workflow as confirmatory, freeze the outcome/estimand registry with the [Outcome & estimand preregistration clinic](estimand-preregistration.md), then record at least:
 
 - the participant/trial/stimulus identifiers that define independent units;
 - the native/nominal acquisition rate, observed timestamp cadence, and any derived analysis rate;
@@ -177,6 +177,7 @@ Before you treat the workflow as confirmatory, record at least:
 - the event method, thresholds, model identity, confidence/abstention rule, and training regime;
 - the held-out unit, split ledger, leakage controls, and whether compared models use identical held-out rows;
 - whether model/threshold selection is separated from final confirmatory evaluation;
+- the primary, secondary, and exploratory outcome status, target estimand/contrast, inferential unit, exposure/denominator, missing/zero/censoring policy, and prespecified sensitivity analyses;
 - the primary sample-, event-, and calibration-metric families that match the estimand;
 - the software version or exact commit SHA; and
 - the explicit statement of what the design does **not** establish.
@@ -197,4 +198,4 @@ substantive interpretation is established
 
 That separation is the central reason to keep source data, transformations, predictions, review decisions, validation artifacts, and manuscript claims as distinct records.
 
-Continue with [Worked tracker import](worked-tracker-import.md), [Research recipes](research-recipes.md), [Study-design templates](study-design-templates.md), the [Event-model validation clinic](event-model-validation-clinic.md), [Validation reporting cookbook](validation-reporting-cookbook.md), [Publication-readiness checklist](publication-readiness.md), [Research terminology](research-terminology.md), and [Reproducible reporting](reproducible-reporting.md).
+Continue with the [Outcome & estimand preregistration clinic](estimand-preregistration.md), [Worked tracker import](worked-tracker-import.md), [Research recipes](research-recipes.md), [Study-design templates](study-design-templates.md), the [Event-model validation clinic](event-model-validation-clinic.md), [Validation reporting cookbook](validation-reporting-cookbook.md), [Publication-readiness checklist](publication-readiness.md), [Research terminology](research-terminology.md), and [Reproducible reporting](reproducible-reporting.md).

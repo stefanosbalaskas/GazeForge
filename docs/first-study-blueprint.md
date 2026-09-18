@@ -56,6 +56,15 @@ Record at least:
 
 If an exclusion or AOI rule is invented only after seeing the final statistical result, label it exploratory rather than rewriting the analysis history.
 
+Before model fitting, turn this compact contract into a reviewable outcome/estimand registry with the [Outcome & estimand preregistration clinic](estimand-preregistration.md):
+
+```bash
+python examples/13_worked_estimand_preregistration.py \\
+  --output-dir worked-estimand-preregistration
+```
+
+Freeze primary/secondary/exploratory status, the exact observable, row/inferential unit, exposure/denominator, missing/zero/censoring policy, condition contrast, and prespecified sensitivity checks. Leave the statistical estimator unselected until the design and outcome support are assessed in specialist statistical software.
+
 ## 2 · Preserve acquisition/source identity
 
 Keep the original tracker export unchanged. Record:
@@ -219,7 +228,7 @@ study-freeze/
 
 Record the exact GazeForge version or full commit SHA, Python version, key parameters, source fingerprints, and the native/derived status of any validation evidence used to justify the workflow.
 
-Use the [Research evidence bundle](research-evidence-bundle.md) to see this separation implemented as one runnable archive, the [Artifact & output dictionary](artifact-dictionary.md) to interpret each file, then the [Reporting & interpretation clinic](reporting-clinic.md), [Publication readiness](publication-readiness.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md) before manuscript submission.
+Use the [Outcome & estimand preregistration clinic](estimand-preregistration.md) to preserve the registered measurement/estimand identity, the [Research evidence bundle](research-evidence-bundle.md) to see this separation implemented as one runnable archive, the [Artifact & output dictionary](artifact-dictionary.md) to interpret each file, then the [Reporting & interpretation clinic](reporting-clinic.md), [Publication readiness](publication-readiness.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md) before manuscript submission.
 
 ## Run the archive-facing worked example
 

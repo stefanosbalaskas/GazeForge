@@ -22,6 +22,8 @@ For a runnable real-data handoff before using this checklist, see the [Worked tr
 
 ## Before preregistration or data collection
 
+Use the [Outcome & estimand preregistration clinic](estimand-preregistration.md) when the study has multiple gaze outcomes, contrasts, sensitivity analyses, or no-event latency outcomes. The registry should exist before confirmatory model fitting and should be amended through a deviation ledger rather than rewritten after results are known.
+
 - ☐ The observable gaze construct and unit of analysis are defined.
 - ☐ Participant, trial, stimulus, and repeated-measure identifiers are specified.
 - ☐ Tracker/model, native/nominal acquisition rate, screen/stimulus geometry, and required viewing-distance assumptions are recorded.
@@ -29,6 +31,11 @@ For a runnable real-data handoff before using this checklist, see the [Worked tr
 - ☐ The primary QC review/exclusion rule is specified separately from anomaly detection.
 - ☐ The event method and any threshold or learned-model plan are named.
 - ☐ The AOI source is defined as researcher/manual, AI-proposed + reviewed, or another traceable source.
+- ☐ Primary, secondary, and exploratory gaze outcomes are separated explicitly.
+- ☐ Every registered outcome has a stable observable definition, unit, time window, and exposure/denominator policy.
+- ☐ Planned condition contrasts and inferential units are explicit before model fitting.
+- ☐ Missing, observed zero, absent-by-design, undefined, and censored states have declared semantics.
+- ☐ Prespecified sensitivity analyses are separated from later exploratory deviations.
 - ☐ Primary gaze outcomes are separated from exploratory process measures.
 - ☐ The intended validation split unit is explicit: participant, stimulus, dataset, source token, or another defensible unit.
 - ☐ Planned model/threshold selection is separated from final confirmatory evaluation where required.
