@@ -120,7 +120,7 @@ def test_tour_is_primary_discovery_route_and_branding_is_shared() -> None:
 
     assert "00_gazeforge_tour.py" in gallery
     assert "00_gazeforge_tour.py" in examples_readme
-    assert "ten deterministic examples" in gallery
+    assert "eleven deterministic examples" in gallery
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)
