@@ -51,7 +51,13 @@ def test_bundle_is_deterministic_and_claim_safe(tmp_path: Path) -> None:
         "native_rate_validity_claim_created",
         "model_validity_claim_created",
         "measurement_or_construct_validity_claim_created",
+        "source_artifact_modified",
+        "qc_artifact_modified",
+        "review_artifact_modified",
+        "analysis_artifact_modified",
+        "missing_converted_to_zero",
         "causal_claim_created",
+        "external_validity_claim_created",
         "psychological_state_claim_created",
         "reproducibility_equals_validity_claim_created",
     ):
@@ -65,6 +71,12 @@ def test_bundle_is_deterministic_and_claim_safe(tmp_path: Path) -> None:
     claim_matrix = pd.read_csv(out / "01_claim_artifact_matrix.csv")
     rerun = pd.read_csv(out / "02_rerun_plan.csv")
     assert set(claim_matrix["reproducibility_class"]) <= classes
+    assert claim_matrix["evidence_classification"].eq(
+        "synthetic_demo_not_empirical_evidence"
+    ).all()
+    assert claim_matrix["interpretation_boundary"].notna().all()
+    private_claims = claim_matrix["artifact_access"] == "study_archive_required"
+    assert not claim_matrix.loc[private_claims, "bundled_by_default"].astype(bool).any()
     assert set(rerun["reproducibility_class"]) == classes
     private_row = rerun.loc[rerun["purpose"] == "private study rerun"].iloc[0]
     assert bool(private_row["external_or_private_input_required"]) is True
@@ -76,11 +88,13 @@ def test_bundle_is_deterministic_and_claim_safe(tmp_path: Path) -> None:
 
     api = pd.read_csv(out / "05_api_route_map.csv")
     assert {
+        "api-reference.md#schema",
         "api-reference.md#quality-control",
         "api-reference.md#eye-events",
         "api-reference.md#semantic-aois",
         "api-reference.md#dynamic-aois",
         "api-reference.md#scanpaths",
+        "api-reference.md#visual-diagnostics",
         "api-reference.md#structural-validation-scope",
         "api-reference.md#sampling-sensitivity",
     } <= set(api["api_route"])
@@ -108,11 +122,13 @@ def test_reviewer_handoff_is_discoverable_and_claim_safe() -> None:
     assert "privacy and licensing" in lower
     assert "fillna(0)" in guide
     assert "full git commit sha" in lower
+    assert "api-reference.md#schema" in guide
     assert "api-reference.md#quality-control" in guide
     assert "api-reference.md#eye-events" in guide
     assert "api-reference.md#semantic-aois" in guide
     assert "api-reference.md#dynamic-aois" in guide
     assert "api-reference.md#scanpaths" in guide
+    assert "api-reference.md#visual-diagnostics" in guide
     assert "api-reference.md#structural-validation-scope" in guide
     assert "api-reference.md#sampling-sensitivity" in guide
     assert "Reviewer & replication handoff: reviewer-replication-handoff.md" in mkdocs
