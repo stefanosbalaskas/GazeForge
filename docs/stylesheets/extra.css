@@ -28,16 +28,6 @@
     linear-gradient(180deg, rgba(88, 101, 242, 0.06), transparent);
 }
 
-.gf-hero::before {
-  content: "";
-  display: block;
-  width: 5.25rem;
-  height: 5.25rem;
-  margin: 0 auto 0.9rem;
-  background: url("../assets/brand/gazeforge-mark.svg") center / contain no-repeat;
-  filter: drop-shadow(0 10px 22px rgba(20, 28, 45, 0.16));
-}
-
 .gf-hero h1 {
   margin-bottom: 0.25rem;
   font-size: clamp(2.7rem, 7vw, 5rem);
@@ -508,12 +498,6 @@
     padding: 2.4rem 0.9rem 2.2rem;
   }
 
-  .gf-hero::before {
-    width: 4.5rem;
-    height: 4.5rem;
-    margin-bottom: 0.75rem;
-  }
-
   .gf-hero h1 {
     font-size: 3rem;
   }
@@ -557,5 +541,253 @@
   .gf-figure-card,
   .gf-evidence-card {
     padding: 1rem;
+  }
+}
+
+
+/* Task-first documentation UX layer.
+   Mirrors the strongest patterns used across the Python Suite sites while
+   keeping GazeForge's scientific evidence surfaces unchanged. */
+
+.gf-suite-logo {
+  display: block;
+  width: clamp(7.25rem, 18vw, 10rem);
+  height: auto;
+  margin: 0 auto 0.75rem;
+}
+
+.gf-hero-kicker,
+.gf-route-label {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.gf-hero-kicker {
+  margin: 0 auto 0.55rem;
+  padding: 0.26rem 0.58rem;
+  background: var(--gf-accent-soft);
+  color: var(--md-accent-fg-color);
+}
+
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  scroll-margin-top: 6rem;
+}
+
+.gf-help {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.9rem 0 1.6rem;
+  padding: 0.65rem;
+  border: 1px solid var(--gf-border);
+  border-radius: 0.9rem;
+  background: var(--gf-surface);
+}
+
+.gf-help-home {
+  justify-content: center;
+  margin-top: -0.8rem;
+}
+
+.gf-help a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.72rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--md-default-fg-color) !important;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+
+.gf-help a:hover,
+.gf-help a[aria-current="page"] {
+  border-color: var(--gf-border);
+  background: var(--gf-accent-soft);
+}
+
+.gf-doc-kind {
+  margin: -0.25rem 0 0.8rem;
+  padding: 0.7rem 0.85rem;
+  border-left: 0.22rem solid var(--gf-accent);
+  border-radius: 0 0.7rem 0.7rem 0;
+  background: var(--gf-accent-soft);
+  color: var(--md-default-fg-color--light);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.gf-onboarding-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.2rem;
+}
+
+.gf-route-card {
+  position: relative;
+  display: block;
+  min-width: 0;
+  min-height: 10rem;
+  overflow: hidden;
+  padding: 1.15rem 1.2rem 1.1rem;
+  border: 1px solid var(--gf-border);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, var(--gf-surface), var(--md-default-bg-color));
+  box-shadow: 0 10px 28px rgba(20, 28, 45, 0.05);
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.gf-route-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.22rem;
+  background: linear-gradient(180deg, var(--gf-accent), rgba(0, 188, 212, 0.72));
+}
+
+.gf-route-label {
+  padding: 0.24rem 0.5rem;
+  background: var(--gf-accent-soft);
+  color: var(--md-accent-fg-color);
+}
+
+.gf-route-card h3 {
+  margin: 0.6rem 0 0.4rem;
+}
+
+.gf-route-card p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.gf-decision {
+  margin: 1rem 0 1.8rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--gf-border);
+  border-radius: 0.9rem;
+  background: linear-gradient(135deg, var(--gf-accent-soft), transparent);
+}
+
+.gf-flow {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 1rem 0 2.2rem;
+}
+
+.gf-flow > div {
+  min-width: 0;
+  padding: 0.85rem 0.75rem;
+  border: 1px solid var(--gf-border);
+  border-radius: 0.8rem;
+  background: var(--gf-surface);
+}
+
+.gf-flow strong,
+.gf-flow span,
+.gf-flow small {
+  display: block;
+}
+
+.gf-flow strong {
+  margin-bottom: 0.25rem;
+  color: var(--md-accent-fg-color);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.gf-flow span {
+  margin-bottom: 0.3rem;
+  font-weight: 750;
+}
+
+.gf-flow small {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.md-typeset .md-button {
+  min-height: 2.75rem;
+}
+
+.md-typeset a:focus-visible,
+.md-typeset button:focus-visible,
+.md-typeset .md-button:focus-visible,
+.gf-preview-card:focus-visible,
+.gf-route-card:focus-visible,
+.gf-help a:focus-visible {
+  outline: 3px solid var(--gf-accent);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .gf-route-card {
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
+
+  .gf-route-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--gf-accent) 50%, var(--gf-border));
+    box-shadow: var(--gf-shadow);
+  }
+}
+
+@media screen and (max-width: 72em) {
+  .gf-flow {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 60em) {
+  .gf-onboarding-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gf-flow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 44.9844em) {
+  .gf-suite-logo {
+    width: 7rem;
+  }
+
+  .gf-help {
+    gap: 0.4rem;
+    padding: 0.55rem;
+  }
+
+  .gf-help a {
+    flex: 1 1 calc(50% - 0.4rem);
+    text-align: center;
+  }
+
+  .gf-route-card {
+    min-height: 0;
+  }
+
+  .gf-flow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 26.25em) {
+  .gf-help a {
+    flex-basis: 100%;
   }
 }

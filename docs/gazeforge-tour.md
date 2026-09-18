@@ -1,5 +1,18 @@
 # GazeForge tour: what it does and how to use it
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>Tutorial</strong> · First-success package overview: understand the input → GazeForge → output workflow before choosing a specialist method.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 If you are unsure what GazeForge is for, start here.
 
 **GazeForge is not one eye-tracking algorithm.** It is a Python research workflow that helps you turn gaze samples into reviewable analysis artifacts while keeping automated decisions, uncertainty, provenance, and human review visible.

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/stefanosbalaskas/gpbiometricspy/main/docs/assets/python-suite-logo.png" width="240" alt="Python Suite research-software logo">
+  <img src="docs/assets/python-suite-logo.png" width="240" alt="Python Suite research packages logo">
 </p>
 
 <h1 align="center">GazeForge</h1>
@@ -20,6 +20,7 @@
 <p align="center">
   <a href="https://stefanosbalaskas.github.io/GazeForge/"><strong>Website</strong></a> ·
   <a href="docs/gazeforge-tour.md"><strong>Start here</strong></a> ·
+  <a href="docs/documentation-map.md"><strong>Task map</strong></a> ·
   <a href="docs/runnable-examples.md"><strong>Examples</strong></a> ·
   <a href="docs/learning-paths.md"><strong>Learning paths</strong></a> ·
   <a href="docs/evidence-status.md"><strong>Evidence status</strong></a> ·

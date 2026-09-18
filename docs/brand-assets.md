@@ -1,22 +1,26 @@
 # Brand assets and sharing
 
-GazeForge uses a compact geometric identity built around **gaze + auditability + analysis**. Branding is a presentation layer only: it does not change, summarize, or strengthen empirical evidence.
+GazeForge is part of the shared **Python Suite research packages** family. Repository and documentation surfaces therefore use the **official Python Suite logo** as the primary package-family identity, while the GazeForge name and scientific scope remain explicit in text.
 
-## Asset set
+Branding is a presentation layer only. It does not summarize, strengthen, or replace the package's scientific evidence.
+
+## Primary asset
 
 | Asset | Purpose |
 | --- | --- |
-| `assets/brand/gazeforge-mark.svg` | Primary compact mark for the documentation header and compact project surfaces |
-| `assets/brand/gazeforge-favicon.svg` | Browser favicon; decorative version of the compact mark |
-| `assets/brand/gazeforge-lockup.svg` | Horizontal wordmark and tagline for repository/documentation presentation |
-| `assets/brand/gazeforge-social-preview.svg` | Editable vector source for the repository social preview |
-| `assets/brand/gazeforge-social-preview.png` | 1280×640 upload-ready social preview |
+| `assets/python-suite-logo.png` | Official Python Suite shared package identity for the repository README, documentation header, favicon, and homepage |
 
-The mark combines a gaze aperture, a sample point, and a review/check trace. It is intentionally geometric rather than anatomical: it should not be interpreted as surveillance, diagnosis, emotion detection, or eye-health inference.
+The file is copied into this repository from the same canonical asset used by the other Python package site rather than hot-linked at runtime. Keeping a local copy makes the documentation build self-contained and prevents branding from changing if another repository is reorganized.
+
+## GazeForge within Python Suite
+
+The shared identity tells users that GazeForge belongs to the same research-software family as the other Python packages. The product-specific name remains **GazeForge**, and the site continues to describe its scope as auditable eye-tracking analysis: import, QC, review, events, AOIs, scanpaths, validation, provenance, and reporting.
+
+The previous GazeForge-specific mark is no longer the primary website or repository logo. Historical vector/social-preview files may remain in the source tree for archival continuity, but user-facing package identity should use the official Python Suite asset.
 
 ## Scientific boundary
 
-The identity does **not** imply benchmark validation, tracker-specific validity, or autonomous AI decision-making. In particular:
+The Python Suite identity does **not** imply benchmark validation, tracker-specific validity, or autonomous AI decision-making. In particular:
 
 - derived 60 Hz evidence remains derived and is not native Gazepoint GP3 validation;
 - synthetic/demo visuals remain software demonstrations rather than empirical evidence;
@@ -25,19 +29,14 @@ The identity does **not** imply benchmark validation, tracker-specific validity,
 
 ## Accessibility and motion
 
-Informative vector assets carry a `<title>` and `<desc>`. Decorative favicon/hero use is deliberately hidden from assistive technology because the adjacent text already names the project. Critical meaning is carried by text as well as shape; it is not encoded by colour alone.
+The official logo is accompanied by text naming both **Python Suite** and **GazeForge**, so scientific meaning does not depend on interpreting the image. Interactive website components retain visible `:focus-visible` treatment, adequate target height, sticky-header scroll clearance, and a reduced-motion path.
 
-The website keeps non-essential hover motion behind `prefers-reduced-motion: no-preference` and disables it when reduced motion is requested.
+Automated checks protect those implementation invariants, but they are not proof of complete WCAG conformance or complete usability. Manual keyboard, screen-reader, zoom, contrast, and mobile review remain separate activities.
 
-## Repository social preview
+## Sharing
 
-The repository includes `assets/brand/gazeforge-social-preview.png` at **1280×640 px** with a solid background for reliable rendering across sharing clients.
+When sharing the repository or documentation, prefer the package name plus the official family identity:
 
-The GitHub repository setting still requires a manual UI action because the current repository connector does not expose social-preview upload:
+> **GazeForge — a Python Suite research package for auditable eye-tracking analysis.**
 
-1. Open **Settings → General** for the GazeForge repository.
-2. Find **Social preview**.
-3. Upload `docs/assets/brand/gazeforge-social-preview.png`.
-4. Save the repository setting.
-
-Uploading that image changes presentation only; it does not alter documentation evidence or release state.
+Use the exact release/version and evidence-status pages when the context is scientific rather than promotional.

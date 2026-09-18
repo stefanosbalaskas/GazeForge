@@ -6,6 +6,10 @@ hide:
 
 <div class="gf-hero" markdown>
 
+<img class="gf-suite-logo" src="assets/python-suite-logo.png" alt="Python Suite research packages logo">
+
+<span class="gf-hero-kicker">Python Suite research package</span>
+
 # GazeForge
 
 ## Auditable AI for eye-tracking research
@@ -14,19 +18,27 @@ Machine learning, computer vision, temporal event modelling, semantic AOIs, scan
 
 <div class="gf-hero-actions" markdown>
 
-[Run a workflow](practical-workflow.md){ .md-button .md-button--primary }
-[Explore methods](learning-paths.md){ .md-button }
+[Take the tour](gazeforge-tour.md){ .md-button .md-button--primary }
+[Choose a task](documentation-map.md){ .md-button }
 [Inspect evidence](validation-evidence-guide.md){ .md-button }
 
 </div>
 
 <div class="gf-resource-rail" markdown>
 
-[Install](release-install.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation & attribution](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650013) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
+[Install](release-install.md) · [Task map](documentation-map.md) · [Troubleshooting](troubleshooting.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation & attribution](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650013) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
 
 </div>
 
 </div>
+
+<nav class="gf-help gf-help-home" aria-label="GazeForge help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
 
 <div class="gf-contract" markdown>
 
@@ -59,6 +71,52 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
     <strong>3 Python × 3 OS</strong>
     <span>Python 3.10, 3.12, and 3.14 on Linux, macOS, and Windows.</span>
   </div>
+</div>
+
+## Start safely with research data
+
+<div class="gf-onboarding-grid" data-research-onboarding-path>
+
+<a class="gf-route-card" data-onboarding-step="understand" href="gazeforge-tour/">
+<span class="gf-route-label">1 · Understand</span>
+<h3>See what GazeForge actually does</h3>
+<p>Run one deterministic source → QC → events → AOIs → scanpaths → provenance workflow before choosing a specialist method.</p>
+</a>
+
+<a class="gf-route-card" data-onboarding-step="import" href="worked-tracker-import/">
+<span class="gf-route-label">2 · Import</span>
+<h3>Bring a tracker export in without guessing</h3>
+<p>Freeze participant/trial identity, timestamp units, coordinate basis, geometry, nominal rate, observed cadence, duplicates, and source fingerprints.</p>
+</a>
+
+<a class="gf-route-card" data-onboarding-step="review" href="qc-review-exclusion-ledger/">
+<span class="gf-route-label">3 · Review</span>
+<h3>Separate QC evidence from exclusions</h3>
+<p>Keep flags, human review, denominators, prespecified criteria, exploratory sensitivity rules, and the primary-analysis derivative distinct.</p>
+</a>
+
+<a class="gf-route-card" data-onboarding-step="analyze" href="documentation-map/">
+<span class="gf-route-label">4 · Analyze</span>
+<h3>Choose the method that matches the research task</h3>
+<p>Route to transparent events, learned-model validation, static/dynamic AOIs, scanpaths, study freeze, reporting, or empirical-evidence review.</p>
+</a>
+
+</div>
+
+<div class="gf-decision">
+<strong>Do not collapse the stages.</strong> A parsed export is not a validated measurement, a QC flag is not an exclusion, a learned prediction is not ground truth, and a reproducible workflow is not evidence of external validity.
+</div>
+
+## The GazeForge research path
+
+<div class="gf-flow" aria-label="Seven-stage GazeForge research journey">
+<div><strong>01</strong><span>Source</span><small>Preserve the original export and acquisition identity.</small></div>
+<div><strong>02</strong><span>Import</span><small>Make units, geometry, grouping, cadence, and transformations explicit.</small></div>
+<div><strong>03</strong><span>Quality</span><small>Add non-destructive diagnostics and trial-quality evidence.</small></div>
+<div><strong>04</strong><span>Review</span><small>Record retained/excluded decisions and denominators separately.</small></div>
+<div><strong>05</strong><span>Analyze</span><small>Derive events, AOIs, assignments, scanpaths, and study structures.</small></div>
+<div><strong>06</strong><span>Validate</span><small>Match held-out units, metrics, calibration, and evidence class to the claim.</small></div>
+<div><strong>07</strong><span>Report</span><small>Freeze versions, fingerprints, provenance, figures, tables, and boundaries.</small></div>
 </div>
 
 ## Start from your task
@@ -105,7 +163,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
+**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · [Follow a first study](first-study-blueprint.md) · [Choose from the Documentation Map](documentation-map.md) · [Troubleshoot a workflow](troubleshooting.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 

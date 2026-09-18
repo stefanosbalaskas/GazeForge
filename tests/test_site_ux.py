@@ -18,8 +18,8 @@ def test_homepage_has_three_primary_task_routes() -> None:
     actions = homepage[start:end]
 
     assert actions.count("{ .md-button") == 3
-    assert "[Run a workflow](practical-workflow.md)" in actions
-    assert "[Explore methods](learning-paths.md)" in actions
+    assert "[Take the tour](gazeforge-tour.md)" in actions
+    assert "[Choose a task](documentation-map.md)" in actions
     assert "[Inspect evidence](validation-evidence-guide.md)" in actions
 
 

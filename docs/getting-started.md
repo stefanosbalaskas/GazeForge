@@ -1,5 +1,18 @@
 # Getting started
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>Tutorial</strong> · Install GazeForge, run a first workflow, and learn the minimum source/QC/validation contract.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 GazeForge is currently alpha research software. The first public alpha release is available from PyPI, while editable development checkouts remain the preferred path when an analysis must be tied to an exact commit.
 
 !!! tip "Not sure what GazeForge actually does?"

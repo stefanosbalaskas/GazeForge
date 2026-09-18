@@ -12,8 +12,8 @@ hooks:
 theme:
   name: material
   language: en
-  logo: assets/brand/gazeforge-mark.svg
-  favicon: assets/brand/gazeforge-favicon.svg
+  logo: assets/python-suite-logo.png
+  favicon: assets/python-suite-logo.png
   icon:
     repo: fontawesome/brands/github
   features:
@@ -54,6 +54,8 @@ nav:
   - Home: index.md
   - Start:
       - Getting started: getting-started.md
+      - Documentation map: documentation-map.md
+      - Troubleshooting & diagnostics: troubleshooting.md
       - Release & install: release-install.md
       - Citation & attribution: citation-attribution.md
       - Changelog & releases: changelog.md
@@ -65,6 +67,7 @@ nav:
       - Brand & sharing: brand-assets.md
   - Learn:
       - GazeForge tour: gazeforge-tour.md
+      - First study blueprint: first-study-blueprint.md
       - Learning paths: learning-paths.md
       - Research recipes: research-recipes.md
       - Real-data import clinic: data-import-clinic.md
