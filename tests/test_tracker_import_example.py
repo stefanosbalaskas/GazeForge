@@ -145,7 +145,7 @@ def test_tracker_import_learning_path_is_discoverable_and_claim_safe() -> None:
     assert "does not establish gazepoint validity" in lower
     assert "does not establish" in lower and "gp3" in lower
 
-    assert "twelve deterministic examples" in gallery
+    assert "thirteen deterministic examples" in gallery
     assert "07_worked_tracker_import_qc.py" in gallery
     assert "worked-tracker-import.md" in gallery
     assert "07_worked_tracker_import_qc.py" in examples_readme

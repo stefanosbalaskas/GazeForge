@@ -101,6 +101,20 @@ The worked [Analysis handoff](analysis-handoff.md) adds a deliberately separate 
 | `08_confidence_coverage.csv` | model × threshold | Decision diagnostic | What accuracy/coverage trade-off occurs at confidence thresholds? | threshold is not universal policy |
 | `09_illustrative_abstention_policy.csv` | illustrative policy row | Demo/reporting | How can abstention be represented explicitly? | not a validated deployment cutoff |
 
+## Manuscript/reporting derivatives
+
+The [Reporting & interpretation clinic](reporting-clinic.md) and worked reporting example create a final layer that **references** frozen upstream artifacts rather than rewriting them.
+
+| Artifact | Unit | Role | Answers | Boundary |
+| --- | --- | --- | --- | --- |
+| `methods_record.json` | reporting record | Methods facts | Which frozen workflow facts should Methods retain? | not a substitute for the actual study record |
+| `denominator_flow.csv` | reporting stage | Denominator summary | How do source/QC/review/analysis counts reconcile? | counts are not substantive effects |
+| `artifact_citation_table.csv` | upstream artifact | Citation/identity map | Which exact upstream file/hash supports a statement? | hash ≠ scientific validity |
+| `reporting_boundaries.json` | claim boundary | Reporting governance | Which empirical/device/causal/psychological claims were explicitly not created? | boundary record ≠ external validation |
+| `software_identity.json` | software | Reporting identity | Which GazeForge/example identity underlies the reporting bundle? | real studies still need exact development SHA when applicable |
+| `methods_example.md` / `results_example.md` | prose | Teaching derivative | What does claim-safe example wording look like? | synthetic prose is not a real manuscript result |
+| `reporting_manifest.json` | bundle | Reporting manifest | Were upstream artifacts unchanged and which reporting files were emitted? | deterministic reporting ≠ empirical evidence |
+
 ## Provenance and archive metadata
 
 | Artifact | Unit | Role | Archive? | Answers |

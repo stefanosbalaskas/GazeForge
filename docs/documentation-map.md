@@ -44,7 +44,8 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Build semantic scanpaths | reviewed fixation/AOI assignments | [Practical workflow](practical-workflow.md) | `to_semantic_scanpaths()` | semantic sequence table | sequence representation ≠ latent-state inference | [Methods overview](methods-overview.md) |
 | Build statistical model inputs | reviewed event/AOI outputs + preserved design/coverage | [Analysis handoff](analysis-handoff.md) | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | participant × trial × AOI/event tables + denominators + censoring | missing ≠ zero; samples/fixations are not independent participants | specialist statistical software |
 | Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
-| Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Publication readiness](publication-readiness.md) |
+| Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Reporting clinic](reporting-clinic.md) |
+| Translate frozen evidence into manuscript language | frozen bundle + reconciled denominators | [Reporting & interpretation clinic](reporting-clinic.md) | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | Methods/results examples + citation table + boundaries + reporting manifest | reporting prose cannot strengthen evidence | [Publication readiness](publication-readiness.md) |
 | Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
 
 ## Four worked routes
@@ -104,6 +105,19 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 7. Fit the prespecified inferential model in specialist statistical software; do not let the handoff choose an estimator.
 
 **Stop rather than guess:** never use `fillna(0)` as a convenience repair, never aggregate away the inferential unit without changing the estimand explicitly, and never interpret a failed-convergence model as a valid result.
+
+### Route F · I have frozen evidence and need manuscript/supplement wording
+
+1. Start with the [Reporting & interpretation clinic](reporting-clinic.md).
+2. Keep import compatibility separate from device validity.
+3. Report QC evidence separately from review/exclusion decisions.
+4. Name event/AOI/scanpath identity and its validation boundary.
+5. Preserve participant/stimulus/source-token/dataset split identity exactly.
+6. Keep native/nominal, observed cadence, and derived analysis rates distinct.
+7. Put critical evidence qualifiers in figure/table captions when the visual could be overread.
+8. Run [Publication readiness](publication-readiness.md) before submission or archive release.
+
+**Stop rather than guess:** prose cannot upgrade a synthetic demo into empirical evidence, derived 60 Hz into native 60 Hz, or an observable gaze pattern into trust, persuasion, comprehension, emotion, diagnosis, preference, or intent.
 
 ## Documentation types
 

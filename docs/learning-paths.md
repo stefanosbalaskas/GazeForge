@@ -110,6 +110,17 @@ Keep source identity, pre-review QC, reviewed decisions, primary-analysis rows, 
 
 <div class="gf-path-card" markdown>
 
+### :material-text-box-check-outline: I need to write Methods, Results, and captions without overclaiming
+
+Translate the frozen evidence identity into claim-safe prose while preserving QC/exclusion, split, sampling, calibration, synthetic/empirical, and observable/latent-state distinctions.
+
+**Next:** [Reporting & interpretation clinic](reporting-clinic.md)  
+**Run it:** `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle`
+
+</div>
+
+<div class="gf-path-card" markdown>
+
 ### :material-shield-check-outline: I need defensible empirical evidence
 
 Use the benchmark/evidence layer only after the split, labels, sampling condition, and source provenance match the claim you intend to make.
@@ -222,4 +233,4 @@ The [results gallery](results-gallery.md) puts the current reviewed benchmark su
 
 ## Report the analysis so somebody else can reconstruct it
 
-When an analysis becomes manuscript-facing, continue with the [Publication-readiness checklist](publication-readiness.md), [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md). The reporting surfaces keep import compatibility versus device validity, QC flags versus review/exclusion decisions, demos versus empirical validation, split identity, sample/event metrics, calibration, confidence/coverage, native/derived rate, and model-selection versus confirmatory evaluation explicit. Use [Study-design templates](study-design-templates.md) to keep the required metadata explicit from preregistration onward.
+When an analysis becomes manuscript-facing, continue with the [Reporting & interpretation clinic](reporting-clinic.md), [Publication-readiness checklist](publication-readiness.md), [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md). The reporting surfaces keep import compatibility versus device validity, QC flags versus review/exclusion decisions, demos versus empirical validation, split identity, sample/event metrics, calibration, confidence/coverage, native/derived rate, and model-selection versus confirmatory evaluation explicit. Use [Study-design templates](study-design-templates.md) to keep the required metadata explicit from preregistration onward.

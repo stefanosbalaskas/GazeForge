@@ -54,6 +54,12 @@ def test_worked_research_evidence_bundle_is_archive_shaped_and_claim_safe(tmp_pa
     assert manifest["measurement_validity_claim_created"] is False
     assert manifest["psychological_state_claim_created"] is False
 
+    provenance = json.loads((output / "provenance.json").read_text(encoding="utf-8"))
+    assert provenance
+    assert {record["timestamp_utc"] for record in provenance} == {
+        "2026-01-15T12:00:00Z"
+    }
+
     index = pd.read_csv(output / "artifact_index.csv")
     expected_layers = {
         "source",

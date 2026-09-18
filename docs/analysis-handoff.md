@@ -253,7 +253,7 @@ Before exporting to R, Python, JASP, Stan, or another statistical environment, v
 - [ ] failed convergence or invalid diagnostics will stop interpretation;
 - [ ] exact GazeForge/software identity and fingerprints are archived.
 
-Continue with [Publication readiness](publication-readiness.md) before freezing manuscript results and [Research evidence bundle](research-evidence-bundle.md) when assembling the final archive.
+Continue with the [Research evidence bundle](research-evidence-bundle.md) when assembling the final archive, the [Reporting & interpretation clinic](reporting-clinic.md) when translating frozen artifacts into manuscript language, and [Publication readiness](publication-readiness.md) before submission.
 
 !!! note "Evidence boundary"
     The worked handoff is `synthetic_demo_not_empirical_evidence`. It demonstrates row construction, missingness semantics, exposure accounting, censoring, figures, and provenance. It does not establish device validity, event-model validity, AOI construct validity, causal effects, or psychological states.

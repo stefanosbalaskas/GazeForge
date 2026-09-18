@@ -39,7 +39,8 @@ GazeForge contains several ways to import, review, label, summarize, and validat
 | Build semantic scanpaths | reviewed fixation/AOI assignments | participant/trial sequence identity | [Practical workflow](practical-workflow.md) | semantic sequence table | assignment provenance | sequence ≠ latent mental state | downstream sequence analysis |
 | Build statistical model inputs | reviewed event/AOI outputs + design/coverage | participant/trial hierarchy | [Analysis handoff](analysis-handoff.md) | trial × AOI/event measures + denominators + censoring | preserve missing/zero/exposure semantics | samples/fixations ≠ independent participants | specialist statistical software |
 | Freeze a study | reviewed analysis derivative + final settings | exact source/software identity | [Study lifecycle](study-lifecycle.md) | manifest + provenance + fingerprints | deterministic reconstruction | reproducibility ≠ external validity | [Publication readiness](publication-readiness.md) |
-| Prepare a paper/archive | reconciled denominators + final results | claim-specific population/unit | [Research evidence bundle](research-evidence-bundle.md) | artifact index + methods/figures/tables + provenance/manifest | evidence class must match wording | archive completeness ≠ validity | [Publication readiness](publication-readiness.md) |
+| Prepare a paper/archive | reconciled denominators + final results | claim-specific population/unit | [Research evidence bundle](research-evidence-bundle.md) | artifact index + methods/figures/tables + provenance/manifest | evidence class must match wording | archive completeness ≠ validity | [Reporting clinic](reporting-clinic.md) |
+| Write claim-safe Methods/Results/captions | frozen evidence bundle + reporting facts | claim-specific population/unit | [Reporting & interpretation clinic](reporting-clinic.md) | methods/results examples + citation table + evidence boundaries | wording must match evidence identity | prose cannot strengthen evidence | [Publication readiness](publication-readiness.md) |
 | Evaluate benchmark evidence | exact source/provenance + labels | participant/source/dataset identity | [Validation guide](validation-evidence-guide.md) | evidence status/certificate/report | benchmark-specific | derived/native or token/participant distinctions cannot be collapsed | [Evidence status](evidence-status.md) |
 
 ## Decision rules that should stop the workflow
@@ -79,6 +80,10 @@ Stop before replacing them. Use the [Analysis handoff](analysis-handoff.md) to d
 ### The statistical model fails diagnostics or convergence
 
 Do not treat returned coefficients as a valid result. GazeForge does not automatically select or rescue an inferential estimator; resolve the statistical specification and diagnostics in the prespecified specialist analysis environment.
+
+### The analysis is frozen but the manuscript wording feels stronger than the evidence
+
+Use the [Reporting & interpretation clinic](reporting-clinic.md). Preserve import/device, QC/exclusion, split identity, calibration/correctness, native/derived rate, synthetic/empirical, and observable/latent-state distinctions in prose and captions.
 
 ## Which event route should I use?
 

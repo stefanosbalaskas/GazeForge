@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **twelve deterministic examples** that move from a small
+The repository contains **thirteen deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -41,6 +41,7 @@ artifacts, and continue to the corresponding research guide.
 | **QC review + exclusion ledger** | base | `python examples/08_worked_qc_review_ledger.py --output-dir worked-qc-review-ledger-demo` | criteria + review/exclusion ledgers |
 | **Research evidence bundle** | base | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | archive-shaped source/QC/review/analysis/provenance bundle |
 | **Statistical analysis handoff** | base with `--no-figures` | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | trial × AOI/event tables + handoff metadata + optional diagnostics |
+| **Manuscript/reporting bundle** | base | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | reporting-only Methods/Results/boundary/citation derivatives |
 
 ## 0 · GazeForge tour
 
@@ -433,6 +434,35 @@ native-rate, event-model, AOI-construct, causal, or psychological-state validity
 · [Read the analysis-handoff guide](analysis-handoff.md)
 · [Use the artifact dictionary](artifact-dictionary.md)
 
+## 12 · Manuscript/reporting bundle
+
+Use this after the evidence bundle is frozen and you need reporting derivatives without rewriting upstream source/QC/review/analysis artifacts.
+
+```bash
+python examples/11_worked_manuscript_reporting_bundle.py \
+  --output-dir worked-manuscript-reporting-bundle
+```
+
+The script reuses `09_worked_research_evidence_bundle.py` in a temporary directory, hashes every upstream file before and after reporting extraction, and fails if any upstream byte changes. It writes only:
+
+```text
+methods_record.json
+denominator_flow.csv
+artifact_citation_table.csv
+reporting_boundaries.json
+software_identity.json
+methods_example.md
+results_example.md
+archive_readme.md
+reporting_manifest.json
+```
+
+No p-values, effect sizes, inferential statistics, device-validity claims, or psychological-state claims are invented. The entire worked route remains `synthetic_demo_not_empirical_evidence`.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/11_worked_manuscript_reporting_bundle.py)
+· [Read the reporting clinic](reporting-clinic.md)
+· [Run publication readiness](publication-readiness.md)
+
 ## Which example should I run first?
 
 ```text
@@ -448,6 +478,7 @@ Need moving AOIs + interpolation auditing?   → 05_worked_dynamic_aoi_study.py
 Need participant-held-out event validation?  → 06_worked_event_model_validation.py
 Need a manuscript/archive evidence bundle?    → 09_worked_research_evidence_bundle.py
 Need model-ready trial/AOI/event tables?       → 10_worked_analysis_handoff.py
+Need manuscript/reporting derivatives?         → 11_worked_manuscript_reporting_bundle.py
 ```
 
 ## Move from demo data to a study

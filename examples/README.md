@@ -197,9 +197,22 @@ construct, causal, or psychological-state validity claim.
 Guide: [Analysis handoff](../docs/analysis-handoff.md) ·
 [Artifact & output dictionary](../docs/artifact-dictionary.md)
 
+## 12. Manuscript/reporting bundle
+
+```bash
+python examples/11_worked_manuscript_reporting_bundle.py \
+  --output-dir worked-manuscript-reporting-bundle
+```
+
+Reuses the existing evidence-bundle example in a temporary directory and writes reporting derivatives only. It verifies byte-level upstream immutability, reconciles denominators, maps manuscript-facing statements to exact upstream filenames/hashes, and records explicit evidence boundaries.
+
+No inferential statistics or substantive effects are invented. The reporting bundle remains `synthetic_demo_not_empirical_evidence`.
+
+Guide: [Reporting & interpretation clinic](../docs/reporting-clinic.md)
+
 ## Reproducibility notes
 
-The twelve examples use fixed or explicitly constructed synthetic/demo inputs.
+The thirteen examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
