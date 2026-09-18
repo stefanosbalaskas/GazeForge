@@ -102,7 +102,7 @@ These are audit questions, not automatic truth labels.
 
 ## Sensitivity without cherry-picking
 
-Sensitivity analysis asks whether a scientifically plausible alternative changes the conclusion. It should not search for the version with the smallest p-value or largest effect.
+Sensitivity analysis asks whether a scientifically plausible alternative changes the conclusion. It should not search for the version with the smallest p-value or largest effect. After execution, use the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) to retain failed/unevaluable variants, denominator changes, and same-estimand versus changed-estimand status.
 
 Useful prespecified checks include AOI boundary perturbation, event-detector/threshold alternatives, QC/exclusion sensitivity, rate/derivation sensitivity, coverage/exposure sensitivity, censoring-aware latency analysis, and alternative held-out units only when identity evidence supports them.
 
@@ -189,6 +189,7 @@ GazeForge therefore remains a **measurement/process-data and provenance layer**.
 - [Analysis handoff](analysis-handoff.md) — preserve inferential units, denominators, missingness, and censoring.
 - [Reporting & interpretation clinic](reporting-clinic.md) — translate frozen evidence into claim-safe Methods, Results, and captions.
 - [Research terminology](research-terminology.md) — keep evidence labels consistent.
+- [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) — audit the complete registered/executed sensitivity set without replacing the primary estimand.
 - [Reviewer & replication handoff](reviewer-replication-handoff.md) — declare claim-artifact traceability, rerun access class, software identity, and limitations for external inspection.
 - [Publication readiness](publication-readiness.md) — final manuscript/archive audit.
 - [API reference](api-reference.md) — exact public interfaces behind the measurement pipeline.
