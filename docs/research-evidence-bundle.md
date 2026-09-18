@@ -18,6 +18,16 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
+
+<nav class="gf-study-path" aria-label="Research workflow path">
+<a href="documentation-map.md"><strong>1</strong><span>Task</span></a>
+<a href="method-chooser.md"><strong>2</strong><span>Method</span></a>
+<a href="artifact-dictionary.md"><strong>3</strong><span>Artifacts</span></a>
+<a href="research-evidence-bundle.md" aria-current="step"><strong>4</strong><span>Evidence bundle</span></a>
+<a href="reporting-interpretation-clinic.md"><strong>5</strong><span>Report</span></a>
+<a href="publication-readiness.md"><strong>6</strong><span>Submit</span></a>
+</nav>
+
 A reproducible analysis is easier to review when the archive itself shows **which files are inputs, which are quality evidence, which encode researcher decisions, which are analysis derivatives, and which exist only to document/report the workflow**.
 
 This guide accompanies `examples/09_worked_research_evidence_bundle.py`. It deliberately composes existing public APIs instead of inventing a second scientific pipeline.
@@ -159,8 +169,9 @@ Adapt that wording to the actual study; do not copy the demonstration thresholds
 - [Artifact & output dictionary](artifact-dictionary.md) — understand common CSV/JSON outputs in more detail.
 - [First study blueprint](first-study-blueprint.md) — plan from research question through acquisition and publication.
 - [QC review & exclusion ledger](qc-review-exclusion-ledger.md) — separate automated QC from decisions.
+- [Reporting & interpretation clinic](reporting-interpretation-clinic.md) — translate frozen artifacts into Methods, Results, captions, denominator flow, and reporting-only derivatives without changing the analysis.
 - [Publication readiness](publication-readiness.md) — audit what must be reported before submission.
-- [Reproducible reporting](reproducible-reporting.md) — translate the frozen workflow into methods and archive documentation.
+- [Reproducible reporting](reproducible-reporting.md) — understand software/evidence identity and broader manuscript structure.
 
 ## Evidence boundary
 
