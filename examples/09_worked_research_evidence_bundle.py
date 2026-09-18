@@ -473,8 +473,10 @@ def run(output_dir: Path) -> None:
         ("11_aoi_definitions.csv", "analysis", "AOI", True, "researcher-defined geometry"),
         ("12_fixation_aoi_assignments.csv", "analysis", "fixation", False, "AOI assignments"),
         ("13_semantic_scanpaths.csv", "analysis", "trial sequence", False, "semantic sequence representation"),
+        ("artifact_index.csv", "reporting", "artifact", True, "bundle table of contents"),
         ("analysis_plan.json", "reporting", "plan", True, "frozen analysis intent and boundaries"),
         ("provenance.json", "provenance", "operation", True, "operation lineage"),
+        ("workflow_manifest.json", "reporting", "bundle", True, "bundle identity, hashes, denominators, and boundaries"),
     ]
     artifact_index = pd.DataFrame(
         [
