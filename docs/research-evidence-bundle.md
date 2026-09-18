@@ -167,6 +167,7 @@ Adapt that wording to the actual study; do not copy the demonstration thresholds
 
 - [Method chooser](method-chooser.md) — choose a workflow that matches the scientific question and held-out/generalisation unit.
 - [Artifact & output dictionary](artifact-dictionary.md) — understand common CSV/JSON outputs in more detail.
+- [Analysis handoff](analysis-handoff.md) — preserve inferential units, exposure, missing-versus-zero semantics, and censoring when building model-ready statistical tables.
 - [First study blueprint](first-study-blueprint.md) — plan from research question through acquisition and publication.
 - [QC review & exclusion ledger](qc-review-exclusion-ledger.md) — separate automated QC from decisions.
 - [Reporting & interpretation clinic](reporting-interpretation-clinic.md) — translate frozen artifacts into Methods, Results, captions, denominator flow, and reporting-only derivatives without changing the analysis.
