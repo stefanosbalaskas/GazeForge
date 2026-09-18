@@ -90,3 +90,35 @@ def test_bundle_is_deterministic_and_claim_safe(tmp_path: Path) -> None:
     assert "not empirical validation evidence" in start
     assert "private/restricted" in start
     assert "latent state" in start
+
+
+def test_reviewer_handoff_is_discoverable_and_claim_safe() -> None:
+    guide = (ROOT / "docs/reviewer-replication-handoff.md").read_text(encoding="utf-8")
+    mkdocs = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+    homepage = (ROOT / "docs/index.md").read_text(encoding="utf-8")
+    gallery = (ROOT / "docs/runnable-examples.md").read_text(encoding="utf-8")
+
+    lower = guide.lower()
+    assert "# Reviewer & replication handoff" in guide
+    assert "13_worked_reviewer_replication_bundle.py" in guide
+    assert "fully_rerunnable_demo" in guide
+    assert "rerunnable_with_private_input" in guide
+    assert "inspectable_only" in guide
+    assert "not empirical validation evidence" in lower
+    assert "privacy and licensing" in lower
+    assert "fillna(0)" in guide
+    assert "full git commit sha" in lower
+    assert "api-reference.md#quality-control" in guide
+    assert "api-reference.md#eye-events" in guide
+    assert "api-reference.md#semantic-aois" in guide
+    assert "api-reference.md#dynamic-aois" in guide
+    assert "api-reference.md#scanpaths" in guide
+    assert "api-reference.md#structural-validation-scope" in guide
+    assert "api-reference.md#sampling-sensitivity" in guide
+    assert "Reviewer & replication handoff: reviewer-replication-handoff.md" in mkdocs
+    assert "reviewer-replication-handoff.md" in homepage
+    assert "fifteen deterministic examples" in gallery
+
+    start = homepage.index('<div class="gf-hero-actions"')
+    end = homepage.index("</div>", start)
+    assert homepage[start:end].count("{ .md-button") == 3
