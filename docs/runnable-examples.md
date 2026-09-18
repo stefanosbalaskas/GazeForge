@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **ten deterministic examples** that move from a small
+The repository contains **eleven deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, and leakage-safe
 event-model validation. Use this page to choose a script, inspect its exact
@@ -39,6 +39,7 @@ artifacts, and continue to the corresponding research guide.
 | **Worked event-model validation** | base with `--no-figures` | `python examples/06_worked_event_model_validation.py --output-dir worked-event-model-validation-demo` | held-out validation bundle |
 | **Worked tracker import + QC** | base | `python examples/07_worked_tracker_import_qc.py --output-dir worked-tracker-import-qc-demo` | import/QC evidence bundle |
 | **QC review + exclusion ledger** | base | `python examples/08_worked_qc_review_ledger.py --output-dir worked-qc-review-ledger-demo` | criteria + review/exclusion ledgers |
+| **Research evidence bundle** | base | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | archive-shaped source/QC/review/analysis/provenance bundle |
 
 ## 0 · GazeForge tour
 
@@ -334,6 +335,46 @@ establish tracker, event-model, calibration, or measurement validity.
 [Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/08_worked_qc_review_ledger.py)
 · [Read the QC review/exclusion clinic](qc-review-exclusion-ledger.md)
 
+
+## 10 · Worked research evidence bundle
+
+Use this example when you understand the individual workflow stages and need to
+see **what a reviewable manuscript/archive directory should actually look like**.
+
+```bash
+python examples/09_worked_research_evidence_bundle.py \
+  --output-dir worked-research-evidence-bundle
+```
+
+The script composes existing public APIs into one archive-facing route:
+
+```text
+tracker-shaped source
+  → canonical gaze
+  → immutable pre-review QC
+  → explicit decision criteria
+  → reviewed trial ledger
+  → separate primary-analysis derivative
+  → transparent I-VT events
+  → researcher-defined AOIs
+  → fixation assignments
+  → semantic scanpaths
+  → artifact index + analysis plan + provenance + manifest + README
+```
+
+The output directory contains `01_source_tracker_export.csv` through
+`13_semantic_scanpaths.csv`, plus `source_contract.json`,
+`artifact_index.csv`, `analysis_plan.json`, `provenance.json`,
+`workflow_manifest.json`, and a reviewer-facing `README.md`.
+
+The example verifies that the source, canonical pre-review table, and pre-review
+QC table remain unchanged while reviewed exclusions create a **new**
+`07_primary_analysis_rows.csv`. Its thresholds are teaching values only.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/09_worked_research_evidence_bundle.py)
+· [Read the evidence-bundle guide](research-evidence-bundle.md)
+· [Use the artifact dictionary](artifact-dictionary.md)
+
 ## Which example should I run first?
 
 ```text
@@ -347,6 +388,7 @@ Need a complete reviewable output bundle?    → end_to_end_research_workflow.py
 Need a static domain-shaped worked study?    → 04_worked_advertising_study.py
 Need moving AOIs + interpolation auditing?   → 05_worked_dynamic_aoi_study.py
 Need participant-held-out event validation?  → 06_worked_event_model_validation.py
+Need a manuscript/archive evidence bundle?    → 09_worked_research_evidence_bundle.py
 ```
 
 ## Move from demo data to a study
@@ -361,7 +403,8 @@ A practical research sequence is:
 6. keep exploratory sensitivity decisions separate from the primary table;
 7. continue to event/AOI/scanpath analysis;
 8. use participant-disjoint or dataset-held-out validation where the intended claim requires it; and
-9. freeze provenance, software identity, figures, tables, and evidence boundaries before reporting.
+9. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct; and
+10. freeze software identity, figures, tables, and evidence boundaries before reporting.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into
