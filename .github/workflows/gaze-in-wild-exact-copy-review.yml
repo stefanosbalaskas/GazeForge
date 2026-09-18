@@ -18,7 +18,6 @@ on:
       - "tests/test_gaze_in_wild_quarantine_exit.py"
       - "tests/test_gaze_in_wild_quarantine_exit_cli.py"
       - "docs/gaze-in-wild-exact-copy-review.md"
-      - "mkdocs.yml"
       - ".github/workflows/gaze-in-wild-exact-copy-review.yml"
   pull_request:
     paths:
@@ -33,12 +32,15 @@ on:
       - "tests/test_gaze_in_wild_quarantine_exit.py"
       - "tests/test_gaze_in_wild_quarantine_exit_cli.py"
       - "docs/gaze-in-wild-exact-copy-review.md"
-      - "mkdocs.yml"
       - ".github/workflows/gaze-in-wild-exact-copy-review.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   focused:
