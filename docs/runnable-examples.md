@@ -1,5 +1,18 @@
 # Runnable examples
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>Runnable reference</strong> · Choose a deterministic example, exact command, and expected output bundle.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 The repository contains **ten deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, and leakage-safe

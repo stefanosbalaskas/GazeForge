@@ -1,0 +1,102 @@
+---
+description: Task-first map for choosing the shortest defensible GazeForge workflow, runnable example, artifact bundle, and scientific boundary.
+search:
+  boost: 1.6
+---
+
+# Documentation map
+
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>How-to router</strong> · Choose the shortest GazeForge route for the research task you have now.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md" aria-current="page">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+GazeForge has deep method, validation, benchmark, and workflow documentation. You do not need to read it in navigation order. Start from the task you need to complete, use the shortest runnable route, inspect the artifacts it produces, and only then move into explanation or reference pages.
+
+!!! info "How this map is organized"
+    The site separates four documentation needs: **tutorials** for first success, **how-to guides** for a concrete task, **explanations** for method/evidence reasoning, and **reference** for exact API or status information. A page can link across those types, but it should not try to be all four at once.
+
+!!! warning "Software routes are not scientific validation"
+    A successful command, reproducible artifact bundle, or passing software check demonstrates software behavior. It does not by itself establish tracker validity, event-model validity, calibration validity, measurement validity, or general scientific suitability for a study.
+
+## Choose by research task
+
+| Research task | Prerequisite | Primary start | Run / public surface | Main artifact | Boundary to keep visible | Continue to |
+| --- | --- | --- | --- | --- | --- | --- |
+| Understand GazeForge | none | [GazeForge Tour](gazeforge-tour.md) | `python examples/00_gazeforge_tour.py --output-dir gazeforge-tour-demo` | source→QC→events→AOIs→scanpaths bundle | synthetic demo ≠ empirical validation | [Learning paths](learning-paths.md) |
+| Plan a first study | clear research question + acquisition plan | [First study blueprint](first-study-blueprint.md) | existing worked static-study route | analysis contract + artifact plan | auditable workflow ≠ construct validity | [Study lifecycle](study-lifecycle.md) |
+| Install or check the environment | supported Python | [Getting started](getting-started.md) | `python -m pip install "gazeforge==0.1.0a1"` | importable environment | installation success ≠ measurement validity | [Runnable examples](runnable-examples.md) |
+| Import a tracker export | known source columns/units | [Worked tracker import + QC](worked-tracker-import.md) | `adapt_gazepoint_samples()` / canonical schema | source, canonical, preflight, QC tables | adapter compatibility ≠ device validity | [Real-data import clinic](data-import-clinic.md) |
+| Inspect QC without deleting data | canonical gaze table | [Synthetic QC tutorial](tutorial-synthetic-qc.md) | `ai_flag_anomalies()`, `score_trial_quality()` | anomaly flags + trial-quality table | flag ≠ invalid sample | [QC review & exclusion ledger](qc-review-exclusion-ledger.md) |
+| Review exclusions | preserved pre-review QC table | [QC review & exclusion ledger](qc-review-exclusion-ledger.md) | `python examples/08_worked_qc_review_ledger.py --output-dir worked-qc-review-ledger-demo` | sample/trial/participant ledgers + denominator flow | reproducible rule ≠ validated rule | [Study lifecycle](study-lifecycle.md) |
+| Label eye events transparently | gaze samples + sampling assumptions | [I-VT baseline tutorial](tutorial-ivt-baseline.md) | `ivt_classify_events()` | event-labelled samples / intervals | example threshold ≠ universal cutoff | [Event-model validation clinic](event-model-validation-clinic.md) |
+| Validate learned event models | labelled event data + valid grouping unit | [Event-model validation clinic](event-model-validation-clinic.md) | grouped CV / calibration / event metrics | split ledger + matched held-out predictions + metrics | held-out design must match the intended claim | [Validation reporting cookbook](validation-reporting-cookbook.md) |
+| Define static or dynamic AOIs | stimulus geometry or reviewed tracks | [Research recipes](research-recipes.md) | AOI mapping / dynamic AOI assignment | AOI definitions + assignments + review/audit | AI proposal ≠ ground truth; no silent extrapolation | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) |
+| Build semantic scanpaths | reviewed fixation/AOI assignments | [Practical workflow](practical-workflow.md) | `to_semantic_scanpaths()` | semantic sequence table | sequence representation ≠ latent-state inference | [Methods overview](methods-overview.md) |
+| Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
+| Prepare manuscript/archive evidence | finalized results and denominators | [Publication readiness](publication-readiness.md) | reporting bundle / versioned evidence records | exact methods, figures, tables, fingerprints | report only evidence class actually supported | [Reproducible reporting](reproducible-reporting.md) |
+| Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
+
+## Three worked routes
+
+### Route A · I have a Gazepoint-style export and need an analysis table
+
+1. Read [Worked tracker import + QC](worked-tracker-import.md).
+2. Freeze the source-column mapping, timestamp unit, coordinate basis, geometry, nominal/native rate, and observed timestamp cadence.
+3. Use the [Real-data import clinic](data-import-clinic.md) when the export differs from the worked source contract.
+4. Preserve the pre-review QC table.
+5. Use the [QC review & exclusion ledger](qc-review-exclusion-ledger.md) before creating the primary-analysis derivative.
+6. Continue to an event/AOI/scanpath route only after denominators and exclusion decisions reconcile.
+
+**Stop rather than guess:** unknown units, unknown participant/trial identity, unexplained duplicate keys, or an unverified timestamp basis are source-contract problems. Do not repair them by silently coercing the table until it “looks right.”
+
+### Route B · I have labelled events and want to compare classifiers
+
+1. Start with the [Event-model validation clinic](event-model-validation-clinic.md).
+2. Define the grouping unit that must remain disjoint across train/test partitions.
+3. Compare models on matched held-out observations.
+4. Inspect calibration and event-level temporal behavior, not only sample accuracy.
+5. Use the [Validation reporting cookbook](validation-reporting-cookbook.md) to report split design, denominators, uncertainty, and limitations.
+
+**Stop rather than guess:** source-token separation is not participant separation, derived 60 Hz is not native 60 Hz, and a synthetic ordering does not establish general model superiority.
+
+### Route C · I have a moving stimulus and need semantic AOIs
+
+1. Use the [Worked dynamic-AOI study](worked-dynamic-aoi-study.md).
+2. Preserve reviewed keyframes and the temporal support range.
+3. Audit interpolation and verify **no extrapolation** outside reviewed support.
+4. Keep AI-generated boxes or tracks as proposals until the intended review policy is satisfied.
+5. Build scanpaths only from the reviewed AOI-assignment derivative.
+
+**Stop rather than guess:** a detected object, track, or semantic label is not automatically a scientifically valid AOI for the study construct.
+
+## Documentation types
+
+### Tutorial · first success
+
+Use tutorials when you are learning the package and want a controlled path that works end to end. Start with the [GazeForge Tour](gazeforge-tour.md), [Synthetic QC tutorial](tutorial-synthetic-qc.md), or [I-VT baseline tutorial](tutorial-ivt-baseline.md).
+
+### How-to guide · complete a task
+
+Use how-to guides when you already know the outcome you need: import a real export, review exclusions, validate a model, audit dynamic AOIs, freeze a study, or prepare a manuscript.
+
+### Explanation · understand a method or boundary
+
+Use method and governance pages when you need the reasoning behind a choice: [Methods overview](methods-overview.md), [Scientific governance](scientific-governance.md), event-level evaluation, calibration, sampling sensitivity, or benchmark-specific evidence pages.
+
+### Reference · exact API/status
+
+Use [API reference](api-reference.md), [Evidence status](evidence-status.md), [Validation status](validation-status.md), and generated benchmark/status pages when you need exact current interfaces or evidence classifications rather than a teaching sequence.
+
+## When you are stuck
+
+Use the same help order on task pages. The persistent help row at the top of this page links to the Tour, this task map, troubleshooting, runnable examples, and the issue tracker.
+
+The [Troubleshooting & Diagnostics](troubleshooting.md) guide is for failures, surprising output, uncertain source contracts, and minimal reproducible issue reports. If the problem is a scientific-evidence question rather than a software failure, use [Evidence status](evidence-status.md) or the relevant validation page instead.

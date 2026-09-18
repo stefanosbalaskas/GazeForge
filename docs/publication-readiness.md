@@ -1,5 +1,18 @@
 # Publication-readiness checklist
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>Research checklist</strong> · Audit acquisition, exclusions, model identity, evidence class, software identity, and archive readiness before reporting.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 Use this checklist before preregistration, analysis freeze, manuscript submission, or release of a supplementary archive. It is designed to catch evidence inflation and reproducibility gaps before they become manuscript claims.
 
 !!! note "Checklist ≠ certification"

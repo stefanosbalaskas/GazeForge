@@ -1,5 +1,18 @@
 # Worked tracker import and QC
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>How-to guide</strong> · Move a documented tracker export into the canonical/QC workflow without guessing units or identity.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 Use this worked example when you have a tracker export and want to make the **import contract reviewable before event modelling**. It starts from a deterministic Gazepoint-style table, converts explicitly declared units into GazeForge's canonical schema, runs preflight diagnostics, adds non-destructive QC flags, and writes a manuscript-friendly audit bundle.
 
 !!! warning "Executable import ≠ tracker validation"

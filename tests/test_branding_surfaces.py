@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import struct
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BRAND = ROOT / "docs/assets/brand"
+DOCS = ROOT / "docs"
+BRAND = DOCS / "assets/brand"
+PYTHON_SUITE = DOCS / "assets/python-suite-logo.png"
 
 
 def _png_dimensions(path: Path) -> tuple[int, int]:
@@ -15,34 +16,25 @@ def _png_dimensions(path: Path) -> tuple[int, int]:
     return struct.unpack(">II", data[16:24])
 
 
-def test_brand_assets_exist_and_are_parseable() -> None:
-    informative = (
-        BRAND / "gazeforge-mark.svg",
-        BRAND / "gazeforge-lockup.svg",
-        BRAND / "gazeforge-social-preview.svg",
-    )
-    for path in informative:
-        assert path.is_file()
-        root = ET.parse(path).getroot()
-        ns = {"svg": "http://www.w3.org/2000/svg"}
-        assert root.find("svg:title", ns) is not None
-        assert root.find("svg:desc", ns) is not None
+def test_python_suite_logo_is_the_primary_package_identity() -> None:
+    assert PYTHON_SUITE.is_file()
+    assert _png_dimensions(PYTHON_SUITE) == (256, 229)
 
-    favicon = BRAND / "gazeforge-favicon.svg"
-    assert favicon.is_file()
-    ET.parse(favicon)
-
-
-def test_mkdocs_brand_paths_resolve() -> None:
     config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
-    assert "logo: assets/brand/gazeforge-mark.svg" in config
-    assert "favicon: assets/brand/gazeforge-favicon.svg" in config
-    assert "Brand & sharing: brand-assets.md" in config
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    homepage = (DOCS / "index.md").read_text(encoding="utf-8")
 
-    assert (ROOT / "docs/brand-assets.md").is_file()
+    assert "logo: assets/python-suite-logo.png" in config
+    assert "favicon: assets/python-suite-logo.png" in config
+    assert "assets/brand/gazeforge-mark.svg" not in config
+    assert "assets/brand/gazeforge-favicon.svg" not in config
+
+    assert 'src="docs/assets/python-suite-logo.png"' in readme
+    assert "raw.githubusercontent.com/stefanosbalaskas/gpbiometricspy" not in readme
+    assert 'src="assets/python-suite-logo.png"' in homepage
 
 
-def test_social_preview_is_upload_ready() -> None:
+def test_legacy_social_preview_remains_upload_ready() -> None:
     preview = BRAND / "gazeforge-social-preview.png"
     assert preview.is_file()
     assert _png_dimensions(preview) == (1280, 640)
@@ -55,8 +47,12 @@ def test_branding_preserves_accessibility_and_scientific_boundaries() -> None:
 
     assert "prefers-reduced-motion: no-preference" in css
     assert "prefers-reduced-motion: reduce" in css
-    assert ".gf-hero::before" in css
+    assert ".gf-suite-logo" in css
+    assert ".gf-hero::before" not in css
+    assert "gazeforge-mark.svg" not in css
+
+    assert "official python suite" in guide
+    assert "shared package identity" in guide
     assert "native gazepoint gp3 validation" in guide
     assert "presentation layer only" in guide
-    assert "surveillance" in guide
-    assert "diagnosis" in guide
+    assert "not proof of complete wcag conformance" in guide

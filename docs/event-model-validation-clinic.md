@@ -1,5 +1,18 @@
 # Event-model validation clinic
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>Validation how-to</strong> · Evaluate learned event models on explicit held-out units with sample, event, calibration, and coverage evidence.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 Use this clinic when you have labelled gaze events and want to evaluate a learned event classifier without confusing **model fitting** with **model validation**. The route below keeps identity, leakage controls, probabilities, event timing, sampling-rate provenance, and claim strength visible from the start.
 
 !!! warning "A successful model fit is not validation"

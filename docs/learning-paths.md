@@ -1,8 +1,21 @@
 # Learning paths
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>How-to router</strong> · Choose a learning route from the research task rather than from package internals.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 GazeForge spans data preparation, quality control, human review, eye-event modelling, semantic AOIs, scanpaths, benchmark validation, and scientific provenance. You do not need to learn every layer before starting.
 
-If you are not yet sure what the package does, begin with the [GazeForge Tour](gazeforge-tour.md). It is the canonical orientation route: one gaze table goes through the main layers and produces ordinary CSV/JSON artifacts you can inspect.
+If you are not yet sure what the package does, begin with the [GazeForge Tour](gazeforge-tour.md). It is the canonical orientation route: one gaze table goes through the main layers and produces ordinary CSV/JSON artifacts you can inspect. If you understand the package but need to turn a research question into a complete study workflow, continue with the [First study blueprint](first-study-blueprint.md).
 
 Choose the path that matches your immediate research question. If you are planning an entire study rather than learning one method, use the [Study lifecycle](study-lifecycle.md) as the orchestration layer from acquisition through publication. If you already know the task you need to perform, the [Research recipes](research-recipes.md) page gives the shortest defensible route and the artifacts to retain.
 

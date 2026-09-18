@@ -1,5 +1,18 @@
 # QC review and exclusion ledger
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>How-to guide</strong> · Turn QC evidence into explicit reviewed decisions and a separate analysis derivative.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 Use this clinic after you have created a canonical gaze table and **non-destructive QC evidence** but before you drop rows, trials, or participants from an analysis. The goal is to make the decision layer reconstructable: what was flagged, what required review, what was retained, what was excluded, which rule applied, and which denominator each decision used.
 
 !!! warning "QC evidence ≠ automatic invalidity"

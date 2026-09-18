@@ -1,5 +1,18 @@
 # Real-data import clinic
 
+<div class="gf-doc-kind" role="note" aria-label="Documentation type">
+<strong>How-to guide</strong> · Diagnose and adapt a real export only after its source semantics are known.
+</div>
+
+<nav class="gf-help" aria-label="Documentation help">
+<a href="gazeforge-tour.md">Tour</a>
+<a href="documentation-map.md">Task map</a>
+<a href="troubleshooting.md">Troubleshooting</a>
+<a href="runnable-examples.md">Examples</a>
+<a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
+</nav>
+
+
 Moving from a tracker export to analysis is where small assumptions about time, coordinates, identity, and sampling cadence can become large scientific errors. This clinic gives you a review-first path from **real source data** to GazeForge's canonical gaze table without pretending that successful import is evidence of tracker or model validity.
 
 !!! tip "Prefer an executable worked example?"
