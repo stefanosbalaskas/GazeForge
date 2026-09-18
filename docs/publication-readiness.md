@@ -13,6 +13,16 @@
 </nav>
 
 
+<nav class="gf-study-path" aria-label="Research workflow path">
+<a href="documentation-map.md"><strong>1</strong><span>Task</span></a>
+<a href="method-chooser.md"><strong>2</strong><span>Method</span></a>
+<a href="artifact-dictionary.md"><strong>3</strong><span>Artifacts</span></a>
+<a href="research-evidence-bundle.md"><strong>4</strong><span>Evidence bundle</span></a>
+<a href="reporting-interpretation-clinic.md"><strong>5</strong><span>Report</span></a>
+<a href="publication-readiness.md" aria-current="step"><strong>6</strong><span>Submit</span></a>
+</nav>
+
+
 Use this checklist before preregistration, analysis freeze, manuscript submission, or release of a supplementary archive. It is designed to catch evidence inflation and reproducibility gaps before they become manuscript claims.
 
 !!! note "Checklist ≠ certification"
