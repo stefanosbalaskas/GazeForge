@@ -88,8 +88,12 @@ def test_evidence_bundle_docs_are_discoverable_and_homepage_keeps_three_hero_but
     mkdocs = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
     homepage = (ROOT / "docs/index.md").read_text(encoding="utf-8")
 
-    for text in (guide, chooser, dictionary, runnable, mkdocs, homepage):
-        assert "research-evidence-bundle.md" in text or text is guide
+    assert "research-evidence-bundle.md" in chooser
+    assert "research-evidence-bundle.md" in dictionary
+    assert "research-evidence-bundle.md" in runnable
+    assert "research-evidence-bundle.md" in mkdocs
+    assert "research-evidence-bundle.md" in homepage
+    assert "# Research evidence bundle" in guide
 
     assert "09_worked_research_evidence_bundle.py" in guide
     assert "09_worked_research_evidence_bundle.py" in runnable
