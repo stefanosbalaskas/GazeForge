@@ -42,36 +42,36 @@ The filename number in a worked example indicates workflow order only. **Scienti
 | `01_source_gaze.csv` | synthetic/demo source sample | Source/demo | **Yes** within bundle | What did the example start from? | empirical evidence |
 | `02_canonical_gaze.csv` | canonical gaze sample | Canonical | regenerate, do not hand-edit | What are participant/trial/time/x/y values under the declared mapping? | source semantics if the mapping itself was guessed |
 | `03_import_preflight.csv` | one diagnostic per row | QC/import evidence | preserve with import | Were row counts, duplicate keys, missing identity, bounds, and cadence reviewed? | that the tracker is valid |
-| `import_contract.json` | one import contract | Provenance | **Yes** after freeze | Which source columns/units/geometry/conversions were declared? | that declared metadata are scientifically correct without source evidence |
+| `import_contract.json` or `source_contract.json` | one import/source contract | Provenance | **Yes** after freeze | Which source columns/units/geometry/conversions were declared? | that declared metadata are scientifically correct without source evidence |
 
 ## QC and review
 
 | Artifact | Row/unit | Role | Keep immutable? | Answers | Does not establish |
 | --- | --- | --- | --- | --- | --- |
-| `04_qc_samples.csv` or `02_pre_review_qc_samples.csv` | gaze sample | QC evidence | **Yes before decisions** | Which samples were flagged/scored? | automatic invalidity |
+| `04_qc_samples.csv`, `02_pre_review_qc_samples.csv`, or `03_pre_review_qc_samples.csv` | gaze sample | QC evidence | **Yes before decisions** | Which samples were flagged/scored? | automatic invalidity |
 | `05_trial_quality.csv` or `03_trial_quality.csv` | participant × trial | QC summary | preserve | What missing/off-screen/anomaly/gap burden was observed? | universal exclusion threshold |
 | `04_decision_criteria.csv` | criterion | Review policy | **Yes after freeze** | Which rule, scope, status, threshold, and purpose were declared? | that the criterion is externally validated |
 | `05_sample_review_ledger.csv` | reviewed sample decision | Review evidence | append/freeze | Was a flagged sample retained or excluded, by whom/why? | participant-level exclusion |
 | `06_trial_review_ledger.csv` | participant × trial decision | Review evidence | append/freeze | Which trials were retained/excluded and why? | validity of the underlying threshold |
 | `07_participant_review_ledger.csv` | participant | Review evidence | append/freeze | Which participants remain in the analysis denominator? | independence of repeated observations |
 | `08_exclusion_flow.csv` | workflow stage | Denominator evidence | preserve | How did denominators change from QC to primary analysis? | causal or measurement validity |
-| `10_primary_analysis_rows.csv` | retained gaze sample | Analysis derivative | regenerate from ledger | Which sample rows enter the declared primary analysis? | that downstream statistics are appropriate |
+| `10_primary_analysis_rows.csv` or `07_primary_analysis_rows.csv` | retained gaze sample | Analysis derivative | regenerate from ledger | Which sample rows enter the declared primary analysis? | that downstream statistics are appropriate |
 
 ## Event outputs
 
 | Artifact | Row/unit | Role | Answers | Boundary |
 | --- | --- | --- | --- | --- |
-| `05_event_samples.csv` / `11_event_samples.csv` | gaze sample | Analysis derivative | Which event label/probability is attached to each sample? | label ≠ validated truth |
-| `06_event_intervals.csv` / `12_event_intervals.csv` | contiguous event | Analysis derivative | What are event starts, ends, durations, and labels? | segmentation quality requires reference evidence |
-| `07_fixation_centroids.csv` / `13_fixation_centroids.csv` | fixation event | Analysis derivative | Where/when are retained fixation centroids? | centroid ≠ psychological interpretation |
+| `05_event_samples.csv` / `08_event_samples.csv` | gaze sample | Analysis derivative | Which event label/probability is attached to each sample? | label ≠ validated truth |
+| `06_event_intervals.csv` / `09_event_intervals.csv` | contiguous event | Analysis derivative | What are event starts, ends, durations, and labels? | segmentation quality requires reference evidence |
+| `07_fixation_centroids.csv` / `10_fixation_centroids.csv` | fixation event | Analysis derivative | Where/when are retained fixation centroids? | centroid ≠ psychological interpretation |
 
 ## AOIs and scanpaths
 
 | Artifact | Row/unit | Role | Answers | Boundary |
 | --- | --- | --- | --- | --- |
-| `08_aoi_definitions.csv` / `14_aoi_definitions.csv` | AOI | Reviewed analysis definition | Which semantic region and geometry were frozen? | semantic label ≠ construct validity |
-| `09_fixation_aoi_assignments.csv` / `15_fixation_aoi_assignments.csv` | fixation × assignment | Analysis derivative | Which reviewed AOI contains each fixation? | membership ≠ attention meaning beyond the declared observable |
-| `10_semantic_scanpaths.csv` / `16_semantic_scanpaths.csv` | participant × trial sequence | Analysis derivative | What AOI sequence was observed? | sequence ≠ latent cognitive/emotional state |
+| `08_aoi_definitions.csv` / `11_aoi_definitions.csv` | AOI | Reviewed analysis definition | Which semantic region and geometry were frozen? | semantic label ≠ construct validity |
+| `09_fixation_aoi_assignments.csv` / `12_fixation_aoi_assignments.csv` | fixation × assignment | Analysis derivative | Which reviewed AOI contains each fixation? | membership ≠ attention meaning beyond the declared observable |
+| `10_semantic_scanpaths.csv` / `13_semantic_scanpaths.csv` | participant × trial sequence | Analysis derivative | What AOI sequence was observed? | sequence ≠ latent cognitive/emotional state |
 | `05_interpolation_audit.csv` | dynamic-AOI time/support record | Review/derivation evidence | Was interpolation bounded and support explicit? | interpolated geometry ≠ ground truth outside reviewed support |
 
 ## Validation and calibration
@@ -93,7 +93,7 @@ The filename number in a worked example indicates workflow order only. **Scienti
 | `analysis_plan.json` | workflow/study | Analysis contract | **Usually yes** | What was declared as primary, exploratory, review-only, or illustrative? |
 | `provenance.json` | ordered operations | Provenance | **Yes** | Which operations, parameters, model identities, warnings, and fingerprints connected inputs to outputs? |
 | `workflow_manifest.json` | bundle | Manifest | **Yes** | Which files, versions, fingerprints, denominators, and evidence boundaries define the bundle? |
-| `17_artifact_index.csv` | artifact/file | Archive dictionary | **Yes** | What role, unit, mutability, and archive recommendation applies to each file? |
+| `artifact_index.csv` | artifact/file | Archive dictionary | **Yes** | What role, unit, mutability, and archive recommendation applies to each file? |
 | `README.md` inside a bundle | bundle | Human-readable context | **Yes** | How should a reviewer/user navigate the evidence bundle? |
 
 ## What should usually go into a manuscript archive?
