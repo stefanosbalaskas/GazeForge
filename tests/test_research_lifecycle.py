@@ -26,7 +26,7 @@ def test_lifecycle_navigation_places_research_route_after_import_clinic() -> Non
     assert "      - Research terminology: research-terminology.md" in mkdocs
 
 
-def test_lifecycle_covers_ten_stages_and_claim_boundaries() -> None:
+def test_lifecycle_covers_eleven_stages_and_claim_boundaries() -> None:
     lifecycle = _read("docs/study-lifecycle.md").lower()
 
     for stage in (
@@ -36,10 +36,11 @@ def test_lifecycle_covers_ten_stages_and_claim_boundaries() -> None:
         "4. canonicalise explicitly",
         "5. add qc evidence",
         "6. build measurement outputs",
-        "7. validate the estimand",
-        "8. audit rate and provenance",
-        "9. freeze the evidence bundle",
-        "10. report qualified claims",
+        "7. build the statistical handoff",
+        "8. validate the estimand",
+        "9. audit rate and provenance",
+        "10. freeze the evidence bundle",
+        "11. report qualified claims",
     ):
         assert stage in lifecycle
 

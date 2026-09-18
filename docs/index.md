@@ -332,12 +332,15 @@ canonical gaze schema
                                   reviewed analytic table
                                             │
                                             ▼
+                              model-ready statistical handoff
+                                            │
+                                            ▼
                                statistics / models / report
 ```
 
 The package does **not** infer diagnoses, emotions, personality, protected traits, or unsupported latent mental states from gaze.
 
-[Run the practical end-to-end workflow →](practical-workflow.md) · [Choose a research workflow →](research-workflows.md)
+[Run the practical end-to-end workflow →](practical-workflow.md) · [Build model-ready tables →](analysis-handoff.md) · [Choose a research workflow →](research-workflows.md)
 
 ## Validation is visible, not implied
 

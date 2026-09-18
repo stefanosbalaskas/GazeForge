@@ -13,10 +13,10 @@
 </nav>
 
 
-The repository contains **eleven deterministic examples** that move from a small
+The repository contains **twelve deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
-human-reviewed exclusion decisions, domain-shaped studies, and leakage-safe
-event-model validation. Use this page to choose a script, inspect its exact
+human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
+event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
 artifacts, and continue to the corresponding research guide.
 
 !!! warning "Demo output is not empirical validation evidence"
@@ -40,6 +40,7 @@ artifacts, and continue to the corresponding research guide.
 | **Worked tracker import + QC** | base | `python examples/07_worked_tracker_import_qc.py --output-dir worked-tracker-import-qc-demo` | import/QC evidence bundle |
 | **QC review + exclusion ledger** | base | `python examples/08_worked_qc_review_ledger.py --output-dir worked-qc-review-ledger-demo` | criteria + review/exclusion ledgers |
 | **Research evidence bundle** | base | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | archive-shaped source/QC/review/analysis/provenance bundle |
+| **Statistical analysis handoff** | base with `--no-figures` | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | trial × AOI/event tables + handoff metadata + optional diagnostics |
 
 ## 0 · GazeForge tour
 
@@ -375,6 +376,63 @@ QC table remain unchanged while reviewed exclusions create a **new**
 · [Read the evidence-bundle guide](research-evidence-bundle.md)
 · [Use the artifact dictionary](artifact-dictionary.md)
 
+## 11 · Statistical analysis handoff
+
+Use this example after event/AOI outputs have been reviewed and you need an explicit
+handoff to specialist statistical software without losing repeated-measures identity,
+exposure denominators, missing-versus-zero semantics, or latency censoring.
+
+```bash
+python examples/10_worked_analysis_handoff.py \
+  --output-dir worked-analysis-handoff-demo
+```
+
+Without the optional diagnostic figures:
+
+```bash
+python examples/10_worked_analysis_handoff.py \
+  --output-dir worked-analysis-handoff-demo \
+  --no-figures
+```
+
+The deterministic teaching design contains 20 participant × trial rows and produces
+80 participant × trial × AOI rows plus 40 participant × trial × event-type rows. It
+contains all three cases researchers must keep distinct: an AOI absent by design,
+a present/observed AOI with a true zero fixation count, and a completely missing
+trial. No-fixation latency remains explicitly right-censored rather than receiving
+an invented latency value.
+
+The bundle writes:
+
+```text
+01_reviewed_fixation_assignments.csv
+02_reviewed_event_intervals.csv
+03_trial_design_and_coverage.csv
+04_trial_aoi_metrics.csv
+05_trial_event_metrics.csv
+06_descriptive_participant_condition_summary.csv
+07_model_handoff_dictionary.csv
+08_aoi_definitions.csv
+upstream_reference.json
+analysis_handoff_plan.json
+provenance.json
+workflow_manifest.json
+figures/01_aoi_dwell_by_condition.png
+figures/02_trial_coverage_status.png
+```
+
+The participant × condition summary is explicitly marked descriptive-only; it does
+not silently replace the trial-level model inputs. GazeForge does not fit or choose an
+inferential estimator in this example, and a failed-convergence model in downstream
+software would remain a stop condition rather than a valid result.
+
+The complete bundle is `synthetic_demo_not_empirical_evidence`; it creates no device,
+native-rate, event-model, AOI-construct, causal, or psychological-state validity claim.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/10_worked_analysis_handoff.py)
+· [Read the analysis-handoff guide](analysis-handoff.md)
+· [Use the artifact dictionary](artifact-dictionary.md)
+
 ## Which example should I run first?
 
 ```text
@@ -389,6 +447,7 @@ Need a static domain-shaped worked study?    → 04_worked_advertising_study.py
 Need moving AOIs + interpolation auditing?   → 05_worked_dynamic_aoi_study.py
 Need participant-held-out event validation?  → 06_worked_event_model_validation.py
 Need a manuscript/archive evidence bundle?    → 09_worked_research_evidence_bundle.py
+Need model-ready trial/AOI/event tables?       → 10_worked_analysis_handoff.py
 ```
 
 ## Move from demo data to a study
@@ -402,9 +461,10 @@ A practical research sequence is:
 5. use the [QC review and exclusion ledger](qc-review-exclusion-ledger.md) to record criteria, denominators, review status, and retained/excluded units;
 6. keep exploratory sensitivity decisions separate from the primary table;
 7. continue to event/AOI/scanpath analysis;
-8. use participant-disjoint or dataset-held-out validation where the intended claim requires it; and
-9. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct; and
-10. freeze software identity, figures, tables, and evidence boundaries before reporting.
+8. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping, exposure, missing-versus-zero semantics, and censoring;
+9. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
+10. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct; and
+11. freeze software identity, figures, tables, and evidence boundaries before reporting.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into

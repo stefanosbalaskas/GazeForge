@@ -15,6 +15,7 @@ Start here when you have a **study task**, not a module name. Each recipe points
 | Transparent event baseline | `ivt_classify_events()` or angular I-VT | explicit threshold, sample labels, event intervals | example thresholds are not universal cutoffs |
 | Learned event validation | [Event-model validation clinic](event-model-validation-clinic.md) | fold ledger, matched predictions, sample/event metrics, calibration/coverage | name the held-out unit and native/derived rate |
 | Scanpath / transition analysis | `to_semantic_scanpaths()` | ordered fixation assignments, sequences, motifs/embeddings | sequence structure does not establish motive or intent |
+| Statistical analysis handoff | [Analysis handoff](analysis-handoff.md) | trial × AOI/event tables, denominators, missingness/censoring states, provenance | missing ≠ zero; repeated fixations/samples ≠ independent participants |
 | Manuscript / archive handoff | [Publication readiness](publication-readiness.md) | software identity, manifest, fingerprints, evidence boundary | report only what the design and evidence support |
 
 ## Recipe 1 · Static-stimulus semantic AOIs
@@ -181,7 +182,24 @@ If you add learned embeddings or clustering, record vectorizer/reducer settings,
 
 [Methods overview →](methods-overview.md) · [Worked studies →](runnable-examples.md)
 
-## Recipe 7 · Manuscript and archive handoff
+## Recipe 7 · Reviewed outputs → statistical analysis handoff
+
+**Use when:** event/AOI outputs have been reviewed and you need a defensible table for inferential modelling.
+
+Run the deterministic worked route:
+
+```bash
+python examples/10_worked_analysis_handoff.py \
+  --output-dir worked-analysis-handoff-demo
+```
+
+Preserve participant/trial grouping, explicit exposure denominators, missing-versus-observed-zero status, and latency censoring. The worked bundle writes participant × trial × AOI and participant × trial × event tables plus a separate descriptive summary and two diagnostic figures.
+
+**Boundary:** GazeForge prepares the measurement handoff; it does not silently choose a GLM/GLMM, survival model, SEM, Bayesian model, or other inferential estimator. Failed convergence or invalid diagnostics remain a stop condition in the specialist statistical environment.
+
+[Analysis handoff →](analysis-handoff.md) · [Artifact dictionary →](artifact-dictionary.md)
+
+## Recipe 8 · Manuscript and archive handoff
 
 Before writing a headline result, freeze the research identity of the analysis:
 
@@ -199,7 +217,8 @@ Use the [Study-design templates](study-design-templates.md) to make those values
 
 ## From a recipe to code
 
-- [Runnable examples](runnable-examples.md) gives exact commands and output inventories, including the worked tracker-import/QC and participant-held-out event-model validation studies.
+- [Runnable examples](runnable-examples.md) gives exact commands and output inventories, including tracker-import/QC, participant-held-out validation, research-evidence-bundle, and statistical-handoff studies.
+- [Analysis handoff](analysis-handoff.md) covers inferential units, denominators/exposure, missing-versus-zero semantics, latency censoring, descriptive-only summaries, and the boundary to specialist statistics.
 - [Worked tracker import and QC](worked-tracker-import.md) covers explicit source mapping, unit conversion, preflight, nominal-versus-observed cadence, non-destructive QC, and provenance.
 - [Event-model validation clinic](event-model-validation-clinic.md) covers leakage-safe learned event evaluation, calibration, abstention, and sample/event estimands.
 - [Study lifecycle](study-lifecycle.md) connects design, acquisition, QC, modelling, validation, freeze, and publication.

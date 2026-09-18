@@ -53,12 +53,13 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "07_worked_tracker_import_qc.py",
         "08_worked_qc_review_ledger.py",
         "09_worked_research_evidence_bundle.py",
+        "10_worked_analysis_handoff.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
-    assert "eleven deterministic examples" in page
+    assert "twelve deterministic examples" in page
     assert "python examples/00_gazeforge_tour.py" in page
     assert "--output-dir gazeforge-tour-demo" in page
     assert "python examples/01_synthetic_qc.py" in page
@@ -78,6 +79,8 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     assert "--output-dir worked-qc-review-ledger-demo" in page
     assert "python examples/09_worked_research_evidence_bundle.py" in page
     assert "--output-dir worked-research-evidence-bundle" in page
+    assert "python examples/10_worked_analysis_handoff.py" in page
+    assert "--output-dir worked-analysis-handoff-demo" in page
 
 
 def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> None:
@@ -125,6 +128,14 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "figures/03_scanpath.png",
         "figures/01_calibration.png",
         "figures/02_confidence_coverage.png",
+        "03_trial_design_and_coverage.csv",
+        "04_trial_aoi_metrics.csv",
+        "05_trial_event_metrics.csv",
+        "06_descriptive_participant_condition_summary.csv",
+        "07_model_handoff_dictionary.csv",
+        "analysis_handoff_plan.json",
+        "figures/01_aoi_dwell_by_condition.png",
+        "figures/02_trial_coverage_status.png",
     ):
         assert output in page
 
@@ -186,6 +197,8 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "07_worked_tracker_import_qc.py" in examples_readme
     assert "08_worked_qc_review_ledger.py" in examples_readme
     assert "09_worked_research_evidence_bundle.py" in examples_readme
+    assert "10_worked_analysis_handoff.py" in examples_readme
+    assert "../docs/analysis-handoff.md" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)
