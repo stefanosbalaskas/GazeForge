@@ -253,9 +253,29 @@ causal, or external validity.
 Guide: [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) ·
 [Publication readiness](../docs/publication-readiness.md)
 
+
+## 16. Sensitivity/robustness audit
+
+```bash
+python examples/15_worked_sensitivity_robustness_audit.py \
+  --output-dir worked-sensitivity-robustness-audit
+```
+
+Builds a deterministic post-analysis audit of the registered sensitivity set. The
+example keeps the primary estimand fixed for direct comparisons, records denominator
+and exposure changes, retains `not_evaluable` and `non_converged` conditions, and
+separates a changed-estimand post-registration deviation from same-estimand checks.
+
+It uses fixed synthetic teaching values only: no p-values, significance decisions,
+causal/construct/native-device validity claims, or automatic robustness verdict are
+created.
+
+Guide: [Sensitivity & robustness clinic](../docs/sensitivity-robustness-clinic.md) ·
+[Reporting clinic](../docs/reporting-clinic.md)
+
 ## Reproducibility notes
 
-The sixteen examples use fixed or explicitly constructed synthetic/demo inputs.
+The seventeen examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -273,5 +293,5 @@ planning, the [Outcome & estimand preregistration clinic](../docs/estimand-prere
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
 for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
-for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, the [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) before external sharing, and [Publication readiness](../docs/publication-readiness.md)
+for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, the [Sensitivity & robustness clinic](../docs/sensitivity-robustness-clinic.md) before final reporting, the [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) before external sharing, and [Publication readiness](../docs/publication-readiness.md)
 before freezing a study bundle.
