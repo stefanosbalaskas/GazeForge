@@ -18,6 +18,16 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
+
+<nav class="gf-study-path" aria-label="Research workflow path">
+<a href="documentation-map.md"><strong>1</strong><span>Task</span></a>
+<a href="method-chooser.md" aria-current="step"><strong>2</strong><span>Method</span></a>
+<a href="artifact-dictionary.md"><strong>3</strong><span>Artifacts</span></a>
+<a href="research-evidence-bundle.md"><strong>4</strong><span>Evidence bundle</span></a>
+<a href="reporting-interpretation-clinic.md"><strong>5</strong><span>Report</span></a>
+<a href="publication-readiness.md"><strong>6</strong><span>Submit</span></a>
+</nav>
+
 GazeForge contains several ways to import, review, label, summarize, and validate gaze data. The right route depends on **what you are trying to learn**, **what evidence you actually have**, and **which unit must generalize**.
 
 !!! warning "Do not choose a method from a headline metric"
@@ -124,7 +134,7 @@ AI proposals remain proposals until the study's review policy is satisfied.
 
 Use the [Artifact & output dictionary](artifact-dictionary.md) to identify which CSV/JSON is source evidence, QC/review evidence, an analysis derivative, validation evidence, or reporting/provenance metadata.
 
-Run the [Worked research evidence bundle](research-evidence-bundle.md) to see those layers assembled into one deterministic archive-facing output directory, then use [Publication readiness](publication-readiness.md) before freezing manuscript claims.
+Run the [Worked research evidence bundle](research-evidence-bundle.md) to see those layers assembled into one deterministic archive-facing output directory. Use the [Analysis handoff](analysis-handoff.md) before specialist modelling when model-ready tables are needed, then use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md) to translate frozen evidence into Methods/Results/captions before [Publication readiness](publication-readiness.md).
 
 ## Method choice is not a ranking
 
