@@ -18,7 +18,7 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
-Use this page when the measurement table already exists and the next question is **what does this variable support me saying?**
+Use this page when the measurement table already exists and the next question is **what does this variable support me saying?** If the planned primary/secondary/exploratory outcomes or contrasts are not frozen yet, first use the [Outcome & estimand preregistration clinic](estimand-preregistration.md).
 
 GazeForge can make event definitions, AOIs, denominators, censoring, confidence, sampling provenance, and review decisions explicit. It does **not** automatically turn those observables into trust, persuasion, comprehension, interest, memory, emotion, intent, diagnosis, preference, cognitive effort, or another latent construct.
 
@@ -185,6 +185,7 @@ GazeForge therefore remains a **measurement/process-data and provenance layer**.
 
 ## Continue through the research path
 
+- [Outcome & estimand preregistration](estimand-preregistration.md) — freeze outcome status, estimands, contrasts, exposure/censoring rules, sensitivity checks, and deviations before modelling.
 - [Analysis handoff](analysis-handoff.md) — preserve inferential units, denominators, missingness, and censoring.
 - [Reporting & interpretation clinic](reporting-clinic.md) — translate frozen evidence into claim-safe Methods, Results, and captions.
 - [Research terminology](research-terminology.md) — keep evidence labels consistent.

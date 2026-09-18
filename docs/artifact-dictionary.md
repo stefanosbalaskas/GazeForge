@@ -76,6 +76,10 @@ For the archive-facing composition of these artifacts, use the [Research evidenc
 | `10_semantic_scanpaths.csv` / `13_semantic_scanpaths.csv` | participant × trial sequence | Analysis derivative | What AOI sequence was observed? | sequence ≠ latent cognitive/emotional state |
 | `05_interpolation_audit.csv` | dynamic-AOI time/support record | Review/derivation evidence | Was interpolation bounded and support explicit? | interpolated geometry ≠ ground truth outside reviewed support |
 
+## Preregistration registries
+
+The [Outcome & estimand preregistration clinic](estimand-preregistration.md) writes decision records before model fitting: `01_outcome_registry.csv`, `02_estimand_registry.csv`, `03_contrast_registry.csv`, `04_sensitivity_registry.csv`, `05_deviation_registry.csv`, `06_reporting_plan.csv`, and `preregistration_manifest.json`. These files record the planned measurement/estimand identity; they contain no empirical results and do not establish construct or causal validity.
+
 ## Statistical analysis handoff
 
 The worked [Analysis handoff](analysis-handoff.md) adds a deliberately separate layer between reviewed measurement outputs and specialist inferential software.

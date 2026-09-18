@@ -9,6 +9,7 @@ Start here when you have a **study task**, not a module name. Each recipe points
 
 | Research task | Start with | Keep as artifacts | Principal boundary |
 | --- | --- | --- | --- |
+| Outcome/estimand preregistration | [Outcome & estimand preregistration clinic](estimand-preregistration.md) | outcome/estimand/contrast/sensitivity/deviation registries | preregistration ≠ estimator choice, construct validity, or causal validity |
 | Static-stimulus AOI study | [`AOI`](api-reference.md), `map_fixations_to_aois()` | frozen AOI table, review record, fixation assignments, scanpaths | AOI membership is not a psychological state |
 | Dynamic/video AOI study | `DynamicAOIKeyframe`, `map_fixations_to_dynamic_aois()` | keyframes, interpolation policy, assignments, review record | bounded interpolation only; no silent extrapolation |
 | Real tracker → canonical table → QC | [Worked tracker import](worked-tracker-import.md) + [Real-data import clinic](data-import-clinic.md) | untouched source, import contract, canonical table, metadata, QC table | import compatibility is not device validation |
@@ -17,6 +18,23 @@ Start here when you have a **study task**, not a module name. Each recipe points
 | Scanpath / transition analysis | `to_semantic_scanpaths()` | ordered fixation assignments, sequences, motifs/embeddings | sequence structure does not establish motive or intent |
 | Statistical analysis handoff | [Analysis handoff](analysis-handoff.md) | trial × AOI/event tables, denominators, missingness/censoring states, provenance | missing ≠ zero; repeated fixations/samples ≠ independent participants |
 | Manuscript / archive handoff | [Reporting clinic](reporting-clinic.md) + [Publication readiness](publication-readiness.md) | software identity, manifest, fingerprints, evidence boundary, claim-safe prose | report only what the design and evidence support |
+
+## Recipe 0 · Outcomes and estimands before modelling
+
+**Use when:** the research question is defined and measurement/model fitting has not yet started or the study is being frozen before confirmatory analysis.
+
+Run:
+
+```bash
+python examples/13_worked_estimand_preregistration.py \\
+  --output-dir worked-estimand-preregistration
+```
+
+Register primary/secondary/exploratory status, exact observable definition, row/inferential unit, exposure/denominator, missing/zero/censoring semantics, target population, contrast, multiplicity family, and prespecified sensitivity checks. Start with an empty deviation ledger and append later changes rather than rewriting the original plan.
+
+**Boundary:** GazeForge records the plan; it does not choose the statistical estimator, establish construct validity, or make the contrast causal.
+
+[Preregistration clinic →](estimand-preregistration.md) · [Study-design templates →](study-design-templates.md) · [Analysis handoff →](analysis-handoff.md)
 
 ## Recipe 1 · Static-stimulus semantic AOIs
 
@@ -218,6 +236,7 @@ Use the [Study-design templates](study-design-templates.md) to make those values
 ## From a recipe to code
 
 - [Runnable examples](runnable-examples.md) gives exact commands and output inventories, including tracker-import/QC, participant-held-out validation, research-evidence-bundle, and statistical-handoff studies.
+- [Outcome & estimand preregistration](estimand-preregistration.md) freezes planned outcomes, contrasts, exposure/censoring policies, sensitivity checks, and deviations before model fitting.
 - [Analysis handoff](analysis-handoff.md) covers inferential units, denominators/exposure, missing-versus-zero semantics, latency censoring, descriptive-only summaries, and the boundary to specialist statistics.
 - [Worked tracker import and QC](worked-tracker-import.md) covers explicit source mapping, unit conversion, preflight, nominal-versus-observed cadence, non-destructive QC, and provenance.
 - [Event-model validation clinic](event-model-validation-clinic.md) covers leakage-safe learned event evaluation, calibration, abstention, and sample/event estimands.

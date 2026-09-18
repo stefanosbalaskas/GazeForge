@@ -110,6 +110,17 @@ Keep source identity, pre-review QC, reviewed decisions, primary-analysis rows, 
 
 <div class="gf-path-card" markdown>
 
+### :material-clipboard-text-clock-outline: I need to freeze outcomes and estimands before modelling
+
+Register primary/secondary/exploratory outcomes, contrasts, exposure/denominator, missing/zero/censoring semantics, sensitivity checks, and a deviation ledger before results exist.
+
+**Next:** [Outcome & estimand preregistration clinic](estimand-preregistration.md)  
+**Run it:** `python examples/13_worked_estimand_preregistration.py --output-dir worked-estimand-preregistration`
+
+</div>
+
+<div class="gf-path-card" markdown>
+
 ### :material-eye-check-outline: I have a gaze metric and need to know what it supports
 
 Separate the observable from the proposed construct, review validity threats, preserve censoring/exposure, and plan justified sensitivity checks before making a substantive interpretation.
@@ -164,7 +175,7 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for **fourteen deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for **fifteen deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
@@ -179,7 +190,7 @@ Open the [Runnable examples gallery](runnable-examples.md) for **fourteen determ
 | **6. Extend** | semantic/dynamic AOIs, scanpaths, hierarchical models | task-specific analytic structures | unsupported psychological inference |
 | **7. Freeze** | manifests, fingerprints, certificates, source resolution | artifact index + auditable evidence bundle + reviewer README | stronger provenance than the source supports |
 
-For a more complete research route, the [Study lifecycle](study-lifecycle.md) ties every stage to a reviewable artifact and explicit claim boundary. The [Study-design templates](study-design-templates.md) make the corresponding records copy-ready.
+For a more complete research route, use the [Outcome & estimand preregistration clinic](estimand-preregistration.md) before modelling; the [Study lifecycle](study-lifecycle.md) ties every stage to a reviewable artifact and explicit claim boundary. The [Study-design templates](study-design-templates.md) make the corresponding records copy-ready.
 
 ## Which import and QC workflow should I use?
 

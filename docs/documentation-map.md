@@ -31,7 +31,8 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Research task | Prerequisite | Primary start | Run / public surface | Main artifact | Boundary to keep visible | Continue to |
 | --- | --- | --- | --- | --- | --- | --- |
 | Understand GazeForge | none | [GazeForge Tour](gazeforge-tour.md) | `python examples/00_gazeforge_tour.py --output-dir gazeforge-tour-demo` | source→QC→events→AOIs→scanpaths bundle | synthetic demo ≠ empirical validation | [Learning paths](learning-paths.md) |
-| Plan a first study | clear research question + acquisition plan | [First study blueprint](first-study-blueprint.md) | existing worked static-study route | analysis contract + artifact plan | auditable workflow ≠ construct validity | [Study lifecycle](study-lifecycle.md) |
+| Plan a first study | clear research question + acquisition plan | [First study blueprint](first-study-blueprint.md) | existing worked static-study route | analysis contract + artifact plan | auditable workflow ≠ construct validity | [Outcome/estimand preregistration](estimand-preregistration.md) |
+| Freeze outcomes and estimands before modelling | research question + planned measurement definitions | [Outcome & estimand preregistration clinic](estimand-preregistration.md) | `python examples/13_worked_estimand_preregistration.py --output-dir worked-estimand-preregistration` | outcome + estimand + contrast + sensitivity + deviation registries | preregistration ≠ construct/causal validity; estimator remains unselected | [Analysis handoff](analysis-handoff.md) |
 | Choose a method for a known task | explicit research question + available evidence | [Method chooser](method-chooser.md) | question/evidence/generalisation decision table | defensible workflow route | software availability ≠ scientific justification | [Artifact dictionary](artifact-dictionary.md) |
 | Understand output files | one or more GazeForge artifacts | [Artifact & output dictionary](artifact-dictionary.md) | artifact role/unit/boundary reference | source/QC/review/analysis/validation/provenance classification | filename order ≠ evidence strength | [Research evidence bundle](research-evidence-bundle.md) |
 | Install or check the environment | supported Python | [Getting started](getting-started.md) | `python -m pip install "gazeforge==0.1.0a1"` | importable environment | installation success ≠ measurement validity | [Runnable examples](runnable-examples.md) |
@@ -49,7 +50,18 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Translate frozen evidence into manuscript language | frozen bundle + reconciled denominators | [Reporting & interpretation clinic](reporting-clinic.md) | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | Methods/results examples + citation table + boundaries + reporting manifest | reporting prose cannot strengthen evidence | [Publication readiness](publication-readiness.md) |
 | Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
 
-## Four worked routes
+## Worked routes
+
+### Route 0 · I am planning outcomes/estimands before analysis
+
+1. Start with the [Outcome & estimand preregistration clinic](estimand-preregistration.md).
+2. Register every primary, secondary, and exploratory outcome before model fitting.
+3. Declare the row/inferential unit, exposure/denominator, time window, missing/zero/censoring semantics, and contrast.
+4. Prespecify scientifically justified sensitivity checks and a deviation-ledger schema.
+5. Leave the estimator/model family unselected until the design and outcome support are assessed in specialist statistical software.
+6. Carry the registry into the [Analysis handoff](analysis-handoff.md) and [Measurement & interpretation clinic](measurement-interpretation.md).
+
+**Stop rather than guess:** do not silently switch outcomes, convert missing/censored observations to zero, or promote an exploratory result to primary after viewing results.
 
 ### Route A · I have a Gazepoint-style export and need an analysis table
 

@@ -12,9 +12,15 @@ study_id: <stable study identifier>
 research_question: <observable question>
 primary_estimand: <what quantity is estimated>
 primary_unit_of_analysis: <sample | event | fixation | trial | participant | other>
+target_population: <who/what the estimand concerns>
+primary_contrast: <condition levels + direction>
 stimulus_scope: <static image | interface | video | mixed>
 primary_outcome_definition: <explicit operational definition>
+primary_outcome_exposure_or_denominator: <explicit>
+primary_missing_zero_censoring_policy: <explicit>
 secondary_outcomes: <list or none>
+exploratory_outcomes: <list or none>
+multiplicity_family: <family ID / not applicable>
 planned_aoi_labels: <list or none>
 planned_event_method: <I-VT | angular I-VT | learned model | other>
 planned_qc_review_rule: <explicit rule>
@@ -23,6 +29,8 @@ planned_validation_design: <if applicable>
 planned_sensitivity_analyses: <list>
 scientific_boundary: <what the design will not establish>
 ```
+
+For studies with multiple gaze outcomes or contrasts, use the [Outcome & estimand preregistration clinic](estimand-preregistration.md) and its deterministic worked registry rather than compressing every decision into one YAML field. The registry keeps primary/secondary/exploratory status, exposure, censoring, contrasts, sensitivity checks, and later deviations separate.
 
 ## Acquisition metadata record
 
@@ -203,4 +211,4 @@ The exact folder names are optional. The important property is separation of imm
 
 ## Pair with the reporting guide
 
-Use [Reproducible reporting](reproducible-reporting.md) for claim-safe manuscript wording, [Research recipes](research-recipes.md) for task-first routes, and [Publication readiness](publication-readiness.md) for the final pre-submission audit.
+Use the [Outcome & estimand preregistration clinic](estimand-preregistration.md) before modelling, [Reproducible reporting](reproducible-reporting.md) for claim-safe manuscript wording, [Research recipes](research-recipes.md) for task-first routes, and [Publication readiness](publication-readiness.md) for the final pre-submission audit.

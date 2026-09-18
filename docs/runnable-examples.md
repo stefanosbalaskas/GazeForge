@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **fourteen deterministic examples** that move from a small
+The repository contains **fifteen deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -43,6 +43,7 @@ artifacts, and continue to the corresponding research guide.
 | **Statistical analysis handoff** | base with `--no-figures` | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | trial × AOI/event tables + handoff metadata + optional diagnostics |
 | **Manuscript/reporting bundle** | base | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | reporting-only Methods/Results/boundary/citation derivatives |
 | **Measurement/interpretation audit** | base | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + measure/validity/sensitivity/reporting audit |
+| **Outcome/estimand preregistration** | base | `python examples/13_worked_estimand_preregistration.py --output-dir worked-estimand-preregistration` | outcome + estimand + contrast + sensitivity + deviation registries |
 
 ## 0 · GazeForge tour
 
@@ -479,6 +480,23 @@ The deterministic teaching bundle writes a claim registry, measurement/interpret
 · [Read the measurement & interpretation clinic](measurement-interpretation.md)
 · [Continue to reporting](reporting-clinic.md)
 
+## 14 · Outcome & estimand preregistration
+
+Use this **before model fitting** to freeze primary/secondary/exploratory outcomes, exact observable definitions, inferential units, exposure/denominator rules, missing/zero/censoring semantics, contrasts, multiplicity families, and prespecified sensitivity checks.
+
+```bash
+python examples/13_worked_estimand_preregistration.py \\
+  --output-dir worked-estimand-preregistration
+```
+
+The worked bundle writes `01_outcome_registry.csv`, `02_estimand_registry.csv`, `03_contrast_registry.csv`, `04_sensitivity_registry.csv`, an initially empty but schema-valid `05_deviation_registry.csv`, `06_reporting_plan.csv`, `preregistration_manifest.json`, and `README.md`.
+
+It fits no model, selects no estimator/model family, creates no p-values/effect sizes/results, never converts missing/no-fixation to zero, and does not claim construct or causal validity.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/13_worked_estimand_preregistration.py)
+· [Read the preregistration clinic](estimand-preregistration.md)
+· [Continue to the analysis handoff](analysis-handoff.md)
+
 ## Which example should I run first?
 
 ```text
@@ -496,24 +514,26 @@ Need a manuscript/archive evidence bundle?    → 09_worked_research_evidence_bu
 Need model-ready trial/AOI/event tables?       → 10_worked_analysis_handoff.py
 Need manuscript/reporting derivatives?         → 11_worked_manuscript_reporting_bundle.py
 Need to audit what a gaze metric supports?      → 12_worked_measurement_interpretation_audit.py
+Need to freeze outcomes/estimands first?         → 13_worked_estimand_preregistration.py
 ```
 
 ## Move from demo data to a study
 
 A practical research sequence is:
 
-1. preserve acquisition/source identity;
-2. run the [Worked tracker import and QC](worked-tracker-import.md) and use the [Real-data import clinic](data-import-clinic.md) when the source contract differs from the worked example;
-3. freeze the actual source mapping, units, geometry, nominal rate, and observed cadence;
-4. preserve the pre-review QC derivative;
-5. use the [QC review and exclusion ledger](qc-review-exclusion-ledger.md) to record criteria, denominators, review status, and retained/excluded units;
-6. keep exploratory sensitivity decisions separate from the primary table;
-7. continue to event/AOI/scanpath analysis;
-8. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping, exposure, missing-versus-zero semantics, and censoring;
-9. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
-10. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct; and
-11. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks;
-12. freeze software identity, figures, tables, and evidence boundaries before reporting.
+1. freeze the intended primary/secondary/exploratory outcomes and estimands with the [Outcome & estimand preregistration clinic](estimand-preregistration.md);
+2. preserve acquisition/source identity;
+3. run the [Worked tracker import and QC](worked-tracker-import.md) and use the [Real-data import clinic](data-import-clinic.md) when the source contract differs from the worked example;
+4. freeze the actual source mapping, units, geometry, nominal rate, and observed cadence;
+5. preserve the pre-review QC derivative;
+6. use the [QC review and exclusion ledger](qc-review-exclusion-ledger.md) to record criteria, denominators, review status, and retained/excluded units;
+7. keep exploratory sensitivity decisions separate from the primary table;
+8. continue to event/AOI/scanpath analysis;
+9. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping, exposure, missing-versus-zero semantics, and censoring;
+10. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
+11. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct;
+12. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks; and
+13. freeze software identity, figures, tables, and evidence boundaries before reporting.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into

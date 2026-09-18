@@ -221,9 +221,20 @@ Builds a deterministic claim registry plus measurement, validity-threat, sensiti
 
 Guide: [Measurement & interpretation clinic](../docs/measurement-interpretation.md)
 
+## 14. Outcome/estimand preregistration
+
+```bash
+python examples/13_worked_estimand_preregistration.py \\
+  --output-dir worked-estimand-preregistration
+```
+
+Builds deterministic outcome, estimand, contrast, sensitivity, deviation, and reporting-plan registries before model fitting. The example keeps primary/secondary/exploratory status explicit, preserves exposure and right-censoring semantics, starts with a schema-valid empty deviation ledger, and never selects an estimator or creates inferential results.
+
+Guide: [Outcome & estimand preregistration clinic](../docs/estimand-preregistration.md)
+
 ## Reproducibility notes
 
-The fourteen examples use fixed or explicitly constructed synthetic/demo inputs.
+The fifteen examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -237,7 +248,7 @@ For manuscript-facing work:
   or software execution as tracker/model/measurement validation.
 
 Use the [Study-design templates](../docs/study-design-templates.md) while
-planning, [Worked tracker import](../docs/worked-tracker-import.md) for the
+planning, the [Outcome & estimand preregistration clinic](../docs/estimand-preregistration.md) before confirmatory model fitting, [Worked tracker import](../docs/worked-tracker-import.md) for the
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
 for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
