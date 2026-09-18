@@ -18,7 +18,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 !!! note "Checklist ≠ certification"
     Completing this page is a reporting and audit aid. It does not independently validate a tracker, dataset, model, or scientific conclusion.
 
-For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md).
+For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
 
 ## Before preregistration or data collection
 
@@ -112,6 +112,8 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 - ☐ Validation archives include the split ledger, held-out predictions, probability columns where applicable, sample/event metric tables, calibration/coverage diagnostics, and model-selection/threshold policy.
 - ☐ Random seeds and non-default parameters are recorded.
 - ☐ The archive contains a short **evidence boundary** statement.
+- ☐ An artifact index or equivalent table of contents identifies source, QC, review, analysis, validation, provenance, and reporting files.
+- ☐ A human-readable README explains the intended reading order and any files that cannot be redistributed.
 
 ## Compact evidence boundary record
 
@@ -153,4 +155,4 @@ evidence_boundary: <what this design does not establish>
 | Provenance | package version/SHA, environment, source/output fingerprints |
 | Boundary | explicit statement of unsupported/generalisation claims |
 
-For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
+For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
