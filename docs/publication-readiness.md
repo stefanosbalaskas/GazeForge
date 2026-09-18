@@ -18,7 +18,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 !!! note "Checklist ≠ certification"
     Completing this page is a reporting and audit aid. It does not independently validate a tracker, dataset, model, or scientific conclusion.
 
-For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. Before promoting a gaze-derived variable into a substantive construct, use the [Measurement & interpretation clinic](measurement-interpretation.md) to record the construct bridge, validity threats, sensitivity checks, and unsupported inferences. After the archive is frozen, use the [Reporting & interpretation clinic](reporting-clinic.md) for claim-safe Methods, Results, captions, and reporting derivatives. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
+For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. Before promoting a gaze-derived variable into a substantive construct, use the [Measurement & interpretation clinic](measurement-interpretation.md) to record the construct bridge, validity threats, sensitivity checks, and unsupported inferences. After the archive is frozen, use the [Reporting & interpretation clinic](reporting-clinic.md) for claim-safe Methods, Results, captions, and reporting derivatives, then use the [Reviewer & replication handoff](reviewer-replication-handoff.md) to classify rerun access and package reviewer-facing traceability without strengthening the evidence. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
 
 ## Before preregistration or data collection
 
@@ -132,6 +132,16 @@ Use the [Reporting & interpretation clinic](reporting-clinic.md) before finalizi
 
 ## Before releasing a supplement or analysis archive
 
+- ☐ The reviewer/replication class is explicit: fully rerunnable, rerunnable with authorized/private input, or inspectable only.
+- ☐ A start-here file and rerun plan identify exact commands, required inputs, expected outputs, and access restrictions.
+- ☐ Claim-supporting artifacts are named with exact file identities/hashes where available.
+- ☐ The hash ledger states that checksums establish byte identity rather than scientific validity.
+- ☐ Private/restricted participant or benchmark sources are not redistributed without authorization.
+- ☐ Privacy/licensing status is reported separately from technical ability to package a file.
+- ☐ Reviewer inspectability is not described as a complete independent rerun when source-dependent calculations cannot be reproduced.
+- ☐ Reproducibility wording does not imply device, model, measurement/construct, causal, external, or latent-state validity.
+
+
 - ☐ Source/reuse rights have been checked independently from article-level licensing.
 - ☐ Sensitive or restricted source data are not redistributed merely because derived outputs can be shared.
 - ☐ The archive records source identity without overstating access or redistribution rights.
@@ -183,4 +193,4 @@ evidence_boundary: <what this design does not establish>
 | Provenance | package version/SHA, environment, source/output fingerprints |
 | Boundary | explicit statement of unsupported/generalisation claims |
 
-For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For model-ready trial/AOI/event tables, use the [Analysis handoff](analysis-handoff.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
+For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For model-ready trial/AOI/event tables, use the [Analysis handoff](analysis-handoff.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For reviewer/replicator traceability and rerun access classification, use the [Reviewer & replication handoff](reviewer-replication-handoff.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
