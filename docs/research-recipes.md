@@ -16,7 +16,7 @@ Start here when you have a **study task**, not a module name. Each recipe points
 | Learned event validation | [Event-model validation clinic](event-model-validation-clinic.md) | fold ledger, matched predictions, sample/event metrics, calibration/coverage | name the held-out unit and native/derived rate |
 | Scanpath / transition analysis | `to_semantic_scanpaths()` | ordered fixation assignments, sequences, motifs/embeddings | sequence structure does not establish motive or intent |
 | Statistical analysis handoff | [Analysis handoff](analysis-handoff.md) | trial × AOI/event tables, denominators, missingness/censoring states, provenance | missing ≠ zero; repeated fixations/samples ≠ independent participants |
-| Manuscript / archive handoff | [Publication readiness](publication-readiness.md) | software identity, manifest, fingerprints, evidence boundary | report only what the design and evidence support |
+| Manuscript / archive handoff | [Reporting clinic](reporting-clinic.md) + [Publication readiness](publication-readiness.md) | software identity, manifest, fingerprints, evidence boundary, claim-safe prose | report only what the design and evidence support |
 
 ## Recipe 1 · Static-stimulus semantic AOIs
 
@@ -213,7 +213,7 @@ Before writing a headline result, freeze the research identity of the analysis:
 8. source and output fingerprints; and
 9. the explicit **evidence boundary**—what the study does not establish.
 
-Use the [Study-design templates](study-design-templates.md) to make those values copy-ready, the [Worked tracker import](worked-tracker-import.md) to freeze the real-data handoff, the [Validation reporting cookbook](validation-reporting-cookbook.md) to keep validation language proportional to the design, then run the [Publication-readiness checklist](publication-readiness.md).
+Use the [Study-design templates](study-design-templates.md) to make those values copy-ready, the [Worked tracker import](worked-tracker-import.md) to freeze the real-data handoff, the [Validation reporting cookbook](validation-reporting-cookbook.md) for validation-specific wording, the [Reporting & interpretation clinic](reporting-clinic.md) for the whole frozen artifact set, then run the [Publication-readiness checklist](publication-readiness.md).
 
 ## From a recipe to code
 

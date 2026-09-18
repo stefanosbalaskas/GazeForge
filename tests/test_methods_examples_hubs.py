@@ -54,12 +54,13 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "08_worked_qc_review_ledger.py",
         "09_worked_research_evidence_bundle.py",
         "10_worked_analysis_handoff.py",
+        "11_worked_manuscript_reporting_bundle.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
-    assert "twelve deterministic examples" in page
+    assert "thirteen deterministic examples" in page
     assert "python examples/00_gazeforge_tour.py" in page
     assert "--output-dir gazeforge-tour-demo" in page
     assert "python examples/01_synthetic_qc.py" in page
@@ -81,6 +82,8 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     assert "--output-dir worked-research-evidence-bundle" in page
     assert "python examples/10_worked_analysis_handoff.py" in page
     assert "--output-dir worked-analysis-handoff-demo" in page
+    assert "python examples/11_worked_manuscript_reporting_bundle.py" in page
+    assert "--output-dir worked-manuscript-reporting-bundle" in page
 
 
 def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> None:
@@ -136,6 +139,15 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "analysis_handoff_plan.json",
         "figures/01_aoi_dwell_by_condition.png",
         "figures/02_trial_coverage_status.png",
+        "methods_record.json",
+        "denominator_flow.csv",
+        "artifact_citation_table.csv",
+        "reporting_boundaries.json",
+        "software_identity.json",
+        "methods_example.md",
+        "results_example.md",
+        "archive_readme.md",
+        "reporting_manifest.json",
     ):
         assert output in page
 
@@ -199,6 +211,8 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "09_worked_research_evidence_bundle.py" in examples_readme
     assert "10_worked_analysis_handoff.py" in examples_readme
     assert "../docs/analysis-handoff.md" in examples_readme
+    assert "11_worked_manuscript_reporting_bundle.py" in examples_readme
+    assert "../docs/reporting-clinic.md" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

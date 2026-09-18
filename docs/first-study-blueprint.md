@@ -219,7 +219,7 @@ study-freeze/
 
 Record the exact GazeForge version or full commit SHA, Python version, key parameters, source fingerprints, and the native/derived status of any validation evidence used to justify the workflow.
 
-Use the [Research evidence bundle](research-evidence-bundle.md) to see this separation implemented as one runnable archive, the [Artifact & output dictionary](artifact-dictionary.md) to interpret each file, then [Publication readiness](publication-readiness.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md) before manuscript submission.
+Use the [Research evidence bundle](research-evidence-bundle.md) to see this separation implemented as one runnable archive, the [Artifact & output dictionary](artifact-dictionary.md) to interpret each file, then the [Reporting & interpretation clinic](reporting-clinic.md), [Publication readiness](publication-readiness.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md) before manuscript submission.
 
 ## Run the archive-facing worked example
 

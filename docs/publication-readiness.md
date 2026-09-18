@@ -18,7 +18,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 !!! note "Checklist ≠ certification"
     Completing this page is a reporting and audit aid. It does not independently validate a tracker, dataset, model, or scientific conclusion.
 
-For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
+For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. After the archive is frozen, use the [Reporting & interpretation clinic](reporting-clinic.md) for claim-safe Methods, Results, captions, and reporting derivatives. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
 
 ## Before preregistration or data collection
 
@@ -99,6 +99,8 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 - ☐ Sensitivity analyses preserve the derivation rule and source provenance.
 
 ## Before manuscript submission
+
+Use the [Reporting & interpretation clinic](reporting-clinic.md) before finalizing prose. It provides explicit **Interpret / Report / Do not say / Archive / Continue to** guidance for imports, QC, events, AOIs, scanpaths, validation splits, calibration/confidence, native-versus-derived sampling, synthetic demos, and downstream statistical results.
 
 - ☐ GazeForge version is reported; development analyses also include the exact commit SHA.
 - ☐ Python version and material optional dependencies are archived or reported.

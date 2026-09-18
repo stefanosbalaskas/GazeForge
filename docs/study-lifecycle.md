@@ -73,9 +73,9 @@ Archive the exact software/environment identity, source and output fingerprints,
 
 ### :material-text-box-check-outline: Write what was actually done
 
-Translate acquisition, preprocessing, QC, model, split, rate, metric, calibration, and evidence identity into manuscript methods language that another team can reconstruct.
+Translate acquisition, preprocessing, QC, model, split, rate, metric, calibration, statistical-handoff, and evidence identity into manuscript language that another team can reconstruct without strengthening the claim in prose.
 
-[Use the validation reporting cookbook →](validation-reporting-cookbook.md)
+[Open the reporting & interpretation clinic →](reporting-clinic.md) · [Use the validation reporting cookbook →](validation-reporting-cookbook.md)
 
 </div>
 
@@ -95,7 +95,7 @@ Translate acquisition, preprocessing, QC, model, split, rate, metric, calibratio
 | **8. Validate the estimand** | reference labels + split policy | evaluate on leakage-safe held-out data with matching metrics | split ledger + held-out predictions + sample/event/calibration metrics | [Event-model validation clinic](event-model-validation-clinic.md) | sample accuracy = temporal event quality |
 | **9. Audit rate and provenance** | acquisition + analysis-rate history | distinguish native/nominal, observed cadence, and derived analysis rates | rate/sensitivity record | [Sampling sensitivity](sampling-sensitivity.md) | derived 60 Hz = native 60 Hz validity; observed cadence = native hardware proof |
 | **10. Freeze the evidence bundle** | final analysis outputs | freeze manifests, fingerprints, certificates, code/environment, figures/tables | reconstructable archive | [Publication readiness](publication-readiness.md) | archive completeness = stronger evidence |
-| **11. Report qualified claims** | frozen bundle | write methods/results with explicit evidence boundary | manuscript-ready record | [Validation reporting cookbook](validation-reporting-cookbook.md) | broader claims than the design supports |
+| **11. Report qualified claims** | frozen bundle | write methods/results/captions with explicit evidence boundary | manuscript-ready record + reporting derivatives | [Reporting clinic](reporting-clinic.md) | prose stronger than the frozen evidence |
 
 ## Worked route: tracker export → canonical samples → QC
 

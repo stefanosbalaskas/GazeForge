@@ -451,6 +451,12 @@ def run(output_dir: Path) -> None:
         ),
     }
     _write_json(output_dir / "analysis_plan.json", analysis_plan)
+
+    # The worked archive is advertised as deterministic. Freeze demo provenance
+    # timestamps so repeated runs have byte-identical reporting identities.
+    for record in trail.records:
+        record.timestamp_utc = REVIEWED_AT_UTC
+
     (output_dir / "provenance.json").write_text(
         trail.to_json(indent=2) + "\n",
         encoding="utf-8",

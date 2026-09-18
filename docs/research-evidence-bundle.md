@@ -159,8 +159,13 @@ Adapt that wording to the actual study; do not copy the demonstration thresholds
 - [Artifact & output dictionary](artifact-dictionary.md) — understand common CSV/JSON outputs in more detail.
 - [First study blueprint](first-study-blueprint.md) — plan from research question through acquisition and publication.
 - [QC review & exclusion ledger](qc-review-exclusion-ledger.md) — separate automated QC from decisions.
+- [Reporting & interpretation clinic](reporting-clinic.md) — translate frozen artifacts into claim-safe Methods, Results, captions, and reporting derivatives.
 - [Publication readiness](publication-readiness.md) — audit what must be reported before submission.
-- [Reproducible reporting](reproducible-reporting.md) — translate the frozen workflow into methods and archive documentation.
+- [Reproducible reporting](reproducible-reporting.md) — retain exact software/evidence identity in methods and archives.
+
+## From evidence bundle to reporting bundle
+
+Once this archive is frozen, do not rewrite its source/QC/review/analysis files for manuscript convenience. Use the [Reporting & interpretation clinic](reporting-clinic.md) and `examples/11_worked_manuscript_reporting_bundle.py` to generate reporting derivatives that point back to exact upstream filenames and SHA-256 identities while verifying the upstream bundle is unchanged.
 
 ## Evidence boundary
 

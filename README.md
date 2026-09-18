@@ -87,6 +87,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I have reviewed gaze outputs and need model-ready statistical tables | [Analysis handoff](docs/analysis-handoff.md) |
 | I need a study from acquisition to publication | [Study lifecycle](docs/study-lifecycle.md) |
 | I need a reviewable manuscript/archive bundle | [Research evidence bundle](docs/research-evidence-bundle.md) |
+| I need claim-safe Methods/Results/archive wording | [Reporting & interpretation clinic](docs/reporting-clinic.md) |
 | I am preparing a manuscript | [Publication readiness](docs/publication-readiness.md) |
 | I need to know what is empirically supported | [Evidence status](docs/evidence-status.md) |
 
@@ -169,6 +170,7 @@ The repository now has a task-oriented learning sequence:
 08  QC review + exclusion ledger
 09  archive-facing research evidence bundle
 10  statistical analysis handoff + diagnostic figures
+11  manuscript/reporting derivatives + claim boundaries
 +   complete end-to-end research workflow
 ```
 
@@ -246,6 +248,7 @@ Recommended entry points:
 - [Artifact & output dictionary](docs/artifact-dictionary.md)
 - [Research evidence bundle](docs/research-evidence-bundle.md)
 - [Analysis handoff](docs/analysis-handoff.md)
+- [Reporting & interpretation clinic](docs/reporting-clinic.md)
 - [Research recipes](docs/research-recipes.md)
 - [Runnable examples](docs/runnable-examples.md)
 - [Evidence status](docs/evidence-status.md)
