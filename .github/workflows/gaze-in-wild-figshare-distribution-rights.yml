@@ -9,7 +9,6 @@ on:
     paths:
       - .github/workflows/gaze-in-wild-figshare-distribution-rights.yml
       - docs/gaze-in-wild-figshare-distribution-rights.md
-      - mkdocs.yml
       - scripts/gaze_in_wild_figshare_live_probe.py
       - src/gazeforge/gaze_in_wild_figshare_evidence.py
       - tests/test_gaze_in_wild_figshare_evidence.py
@@ -20,7 +19,6 @@ on:
     paths:
       - .github/workflows/gaze-in-wild-figshare-distribution-rights.yml
       - docs/gaze-in-wild-figshare-distribution-rights.md
-      - mkdocs.yml
       - scripts/gaze_in_wild_figshare_live_probe.py
       - src/gazeforge/gaze_in_wild_figshare_evidence.py
       - tests/test_gaze_in_wild_figshare_evidence.py
@@ -30,6 +28,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   provenance:
