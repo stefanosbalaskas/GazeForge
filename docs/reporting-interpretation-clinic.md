@@ -180,6 +180,7 @@ Do not copy the empirical source into a reporting directory merely for convenien
 ## How this page differs from the existing reporting guides
 
 - **This clinic** is task-first: “I have frozen files; what can I say?”
+- [Analysis handoff](analysis-handoff.md) is earlier in the workflow: it builds model-ready participant × trial × AOI/event tables while preserving denominators, missing-versus-zero semantics, and censoring. It does not write the manuscript and does not choose the inferential estimator.
 - [Reproducible reporting](reproducible-reporting.md) explains software/evidence identity and manuscript structure.
 - [Validation reporting cookbook](validation-reporting-cookbook.md) gives detailed wording for held-out model evaluation.
 - [Publication readiness](publication-readiness.md) is the final pre-submission audit.
