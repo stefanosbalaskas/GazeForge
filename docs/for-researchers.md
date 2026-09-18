@@ -140,4 +140,4 @@ Decide in advance:
 8. how uncertainty, missingness, and abstention will be represented;
 9. which evidence artifacts and software identity will be archived.
 
-Then follow the [Study lifecycle](study-lifecycle.md), use the [Measurement & interpretation clinic](measurement-interpretation.md) before promoting gaze observables into substantive constructs, use the [Publication-readiness checklist](publication-readiness.md) before freezing a manuscript-facing analysis, and use [Reproducible reporting](reproducible-reporting.md) for the final methods record.
+Then follow the [Study lifecycle](study-lifecycle.md), use the [Measurement & interpretation clinic](measurement-interpretation.md) before promoting gaze observables into substantive constructs, use [Reproducible reporting](reproducible-reporting.md) for the final methods record, use the [Reviewer & replication handoff](reviewer-replication-handoff.md) before sharing a frozen archive externally, and use the [Publication-readiness checklist](publication-readiness.md) before final release.
