@@ -38,7 +38,7 @@ GazeForge contains several ways to import, review, label, summarize, and validat
 | Use moving AOIs | reviewed timestamped keyframes/tracks | stimulus + timebase | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) | keyframes + interpolation audit + assignments | support/no-extrapolation checks | detected track ≠ ground truth | scanpaths / dynamic evaluation |
 | Build semantic scanpaths | reviewed fixation/AOI assignments | participant/trial sequence identity | [Practical workflow](practical-workflow.md) | semantic sequence table | assignment provenance | sequence ≠ latent mental state | downstream sequence analysis |
 | Freeze a study | reviewed analysis derivative + final settings | exact source/software identity | [Study lifecycle](study-lifecycle.md) | manifest + provenance + fingerprints | deterministic reconstruction | reproducibility ≠ external validity | [Publication readiness](publication-readiness.md) |
-| Prepare a paper/archive | reconciled denominators + final results | claim-specific population/unit | [Publication readiness](publication-readiness.md) | methods, tables, figures, archive metadata | evidence class must match wording | archive completeness ≠ validity | [Reproducible reporting](reproducible-reporting.md) |
+| Prepare a paper/archive | reconciled denominators + final results | claim-specific population/unit | [Research evidence bundle](research-evidence-bundle.md) | artifact index + methods/figures/tables + provenance/manifest | evidence class must match wording | archive completeness ≠ validity | [Publication readiness](publication-readiness.md) |
 | Evaluate benchmark evidence | exact source/provenance + labels | participant/source/dataset identity | [Validation guide](validation-evidence-guide.md) | evidence status/certificate/report | benchmark-specific | derived/native or token/participant distinctions cannot be collapsed | [Evidence status](evidence-status.md) |
 
 ## Decision rules that should stop the workflow
@@ -115,7 +115,7 @@ AI proposals remain proposals until the study's review policy is satisfied.
 
 Use the [Artifact & output dictionary](artifact-dictionary.md) to identify which CSV/JSON is source evidence, QC/review evidence, an analysis derivative, validation evidence, or reporting/provenance metadata.
 
-Run the [Worked research evidence bundle](runnable-examples.md#10-worked-research-evidence-bundle) to see those layers assembled into one deterministic archive-facing output directory.
+Run the [Worked research evidence bundle](research-evidence-bundle.md) to see those layers assembled into one deterministic archive-facing output directory, then use [Publication readiness](publication-readiness.md) before freezing manuscript claims.
 
 ## Method choice is not a ranking
 
