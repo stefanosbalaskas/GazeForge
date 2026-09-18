@@ -175,6 +175,7 @@ The repository now has a task-oriented learning sequence:
 11  manuscript/reporting derivatives + claim boundaries
 12  measurement/interpretation claim audit
 13  outcome & estimand preregistration registry
+14  reviewer/replication handoff
 +   complete end-to-end research workflow
 ```
 
