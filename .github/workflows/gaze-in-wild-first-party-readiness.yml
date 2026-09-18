@@ -13,7 +13,6 @@ on:
       - "src/gazeforge/gaze_in_wild_recovery.py"
       - "tests/test_gaze_in_wild_first_party_readiness.py"
       - "docs/gaze-in-wild-first-party-readiness.md"
-      - "mkdocs.yml"
       - "validation/evidence/gaze-in-wild/**"
       - "validation/requests/gaze-in-wild/**"
       - ".github/workflows/gaze-in-wild-first-party-readiness.yml"
@@ -26,7 +25,6 @@ on:
       - "src/gazeforge/gaze_in_wild_recovery.py"
       - "tests/test_gaze_in_wild_first_party_readiness.py"
       - "docs/gaze-in-wild-first-party-readiness.md"
-      - "mkdocs.yml"
       - "validation/evidence/gaze-in-wild/**"
       - "validation/requests/gaze-in-wild/**"
       - ".github/workflows/gaze-in-wild-first-party-readiness.yml"
@@ -34,6 +32,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   focused:
