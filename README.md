@@ -90,6 +90,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I need a study from acquisition to publication | [Study lifecycle](docs/study-lifecycle.md) |
 | I need a reviewable manuscript/archive bundle | [Research evidence bundle](docs/research-evidence-bundle.md) |
 | I need claim-safe Methods/Results/archive wording | [Reporting & interpretation clinic](docs/reporting-clinic.md) |
+| I need to hand the frozen study to a reviewer/replicator | [Reviewer & replication handoff](docs/reviewer-replication-handoff.md) |
 | I am preparing a manuscript | [Publication readiness](docs/publication-readiness.md) |
 | I need to know what is empirically supported | [Evidence status](docs/evidence-status.md) |
 
@@ -256,6 +257,7 @@ Recommended entry points:
 - [Analysis handoff](docs/analysis-handoff.md)
 - [Measurement & interpretation clinic](docs/measurement-interpretation.md)
 - [Reporting & interpretation clinic](docs/reporting-clinic.md)
+- [Reviewer & replication handoff](docs/reviewer-replication-handoff.md)
 - [Research recipes](docs/research-recipes.md)
 - [Runnable examples](docs/runnable-examples.md)
 - [Evidence status](docs/evidence-status.md)
