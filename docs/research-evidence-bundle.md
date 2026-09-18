@@ -18,6 +18,16 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
+
+<nav class="gf-study-path" aria-label="Research workflow path">
+<a href="documentation-map.md"><strong>1</strong><span>Task</span></a>
+<a href="method-chooser.md"><strong>2</strong><span>Method</span></a>
+<a href="artifact-dictionary.md"><strong>3</strong><span>Artifacts</span></a>
+<a href="research-evidence-bundle.md" aria-current="step"><strong>4</strong><span>Evidence bundle</span></a>
+<a href="reporting-interpretation-clinic.md"><strong>5</strong><span>Report</span></a>
+<a href="publication-readiness.md"><strong>6</strong><span>Submit</span></a>
+</nav>
+
 A reproducible analysis is easier to review when the archive itself shows **which files are inputs, which are quality evidence, which encode researcher decisions, which are analysis derivatives, and which exist only to document/report the workflow**.
 
 This guide accompanies `examples/09_worked_research_evidence_bundle.py`. It deliberately composes existing public APIs instead of inventing a second scientific pipeline.
