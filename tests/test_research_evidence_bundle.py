@@ -55,7 +55,16 @@ def test_worked_research_evidence_bundle_is_archive_shaped_and_claim_safe(tmp_pa
     assert manifest["psychological_state_claim_created"] is False
 
     index = pd.read_csv(output / "artifact_index.csv")
-    assert {"source", "canonical", "qc", "review", "analysis", "provenance", "reporting"} <= set(index["layer"])
+    expected_layers = {
+        "source",
+        "canonical",
+        "qc",
+        "review",
+        "analysis",
+        "provenance",
+        "reporting",
+    }
+    assert expected_layers <= set(index["layer"])
     assert index["archive_recommended"].astype(bool).all()
     assert index["filename"].is_unique
     assert {"artifact_index.csv", "workflow_manifest.json"} <= set(index["filename"])
