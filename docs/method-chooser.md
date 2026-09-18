@@ -125,7 +125,7 @@ AI proposals remain proposals until the study's review policy is satisfied.
 
 Use the [Artifact & output dictionary](artifact-dictionary.md) to identify which CSV/JSON is source evidence, QC/review evidence, an analysis derivative, validation evidence, or reporting/provenance metadata.
 
-Run the [Worked research evidence bundle](research-evidence-bundle.md) to see those layers assembled into one deterministic archive-facing output directory, then use [Publication readiness](publication-readiness.md) before freezing manuscript claims.
+Run the [Worked research evidence bundle](research-evidence-bundle.md) to see those layers assembled into one deterministic archive-facing output directory. Then use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md) to translate frozen evidence into Methods/Results/captions before running [Publication readiness](publication-readiness.md).
 
 ## Method choice is not a ranking
 
