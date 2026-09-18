@@ -18,11 +18,21 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
+
+<nav class="gf-study-path" aria-label="Research workflow path">
+<a href="documentation-map.md"><strong>1</strong><span>Task</span></a>
+<a href="method-chooser.md"><strong>2</strong><span>Method</span></a>
+<a href="artifact-dictionary.md" aria-current="step"><strong>3</strong><span>Artifacts</span></a>
+<a href="research-evidence-bundle.md"><strong>4</strong><span>Evidence bundle</span></a>
+<a href="reporting-interpretation-clinic.md"><strong>5</strong><span>Report</span></a>
+<a href="publication-readiness.md"><strong>6</strong><span>Submit</span></a>
+</nav>
+
 A GazeForge workflow deliberately produces multiple artifacts instead of collapsing source data, automated diagnostics, human review, analysis derivatives, and reporting metadata into one table.
 
 The filename number in a worked example indicates workflow order only. **Scientific meaning comes from the artifact role and unit of observation.**
 
-For the archive-facing composition of these artifacts, use the [Research evidence bundle](research-evidence-bundle.md). It shows the reading order, source/QC/review/analysis separation, and the minimum reporting metadata that should travel with a manuscript-facing bundle.
+For the archive-facing composition of these artifacts, use the [Research evidence bundle](research-evidence-bundle.md). It shows the reading order, source/QC/review/analysis separation, and the minimum reporting metadata that should travel with a manuscript-facing bundle. Use the [Analysis handoff](analysis-handoff.md) for model-ready statistical tables and the [Reporting & interpretation clinic](reporting-interpretation-clinic.md) once the evidence is frozen and manuscript wording begins.
 
 ## Artifact classes
 
