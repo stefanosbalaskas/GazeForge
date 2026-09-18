@@ -26,7 +26,7 @@ Machine learning, computer vision, temporal event modelling, semantic AOIs, scan
 
 <div class="gf-resource-rail" markdown>
 
-[Install](release-install.md) · [Task map](documentation-map.md) · [Troubleshooting](troubleshooting.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation & attribution](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650013) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
+[Install](release-install.md) · [Task map](documentation-map.md) · [Report](reporting-interpretation-clinic.md) · [Troubleshooting](troubleshooting.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation & attribution](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650013) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
 
 </div>
 
@@ -163,7 +163,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · [Follow a first study](first-study-blueprint.md) · [Choose from the Documentation Map](documentation-map.md) · [Choose a method](method-chooser.md) · [Understand outputs](artifact-dictionary.md) · [Build an evidence bundle](research-evidence-bundle.md) · [Troubleshoot a workflow](troubleshooting.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
+**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · [Follow a first study](first-study-blueprint.md) · [Choose from the Documentation Map](documentation-map.md) · [Choose a method](method-chooser.md) · [Understand outputs](artifact-dictionary.md) · [Build an evidence bundle](research-evidence-bundle.md) · [Report the study](reporting-interpretation-clinic.md) · [Troubleshoot a workflow](troubleshooting.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 
@@ -204,6 +204,18 @@ Use a deterministic static advertising/interface demonstration with explicit `br
 Check acquisition provenance, exclusions, model identity, split design, native/derived wording, evidence status, archive identity, and reproducible reporting before freezing manuscript claims.
 
 [Open publication readiness →](publication-readiness.md)
+
+</div>
+
+<div class="gf-task-card" markdown>
+
+<span class="gf-task-kicker">Write the paper</span>
+
+### :material-file-document-edit-outline: Translate evidence into reporting
+
+Turn frozen artifacts into Methods, Results, captions, denominator flow, software identity, and claim-safe wording without changing the upstream analysis.
+
+[Open the reporting clinic →](reporting-interpretation-clinic.md)
 
 </div>
 
