@@ -221,8 +221,8 @@ full commit SHA should replace any demonstration placeholder.
 def _results_markdown(manifest: dict[str, Any]) -> str:
     return f"""# Worked Results example
 
-This reporting example contains **descriptive workflow accounting only**. No
-inferential statistical test, effect estimate, causal contrast, or psychological
+This reporting example contains **descriptive workflow accounting only**.
+No inferential statistical test, effect estimate, causal contrast, or psychological
 state inference is created.
 
 The synthetic/demo workflow reviewed {manifest["trial_denominator"]} trials.
