@@ -99,6 +99,11 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 - ☐ No-fixation latency is retained as censoring rather than converted to zero or silently dropped.
 - ☐ Event, AOI, sampling, quality, exclusion, and coverage threats have been reviewed where material.
 - ☐ Sensitivity analyses are scientifically justified and not selected for favourable results.
+- ☐ Every registered sensitivity condition is accounted for as completed, not evaluable, non-converged, exploratory, or deviated.
+- ☐ Same-estimand versus changed-estimand variants are distinguished before direct comparison.
+- ☐ Denominator/exposure changes are reported alongside sensitivity-result changes.
+- ☐ Non-evaluable/non-converged variants remain visible rather than disappearing from tables or prose.
+- ☐ No automatic robust/not-robust label is generated from an arbitrary software threshold.
 - ☐ Confidence/probability is not treated as individual correctness without held-out calibration/validation evidence.
 - ☐ Dwell, counts, latency, and scanpaths are not promoted automatically to trust, persuasion, interest, comprehension, emotion, intent, diagnosis, preference, or cognitive effort.
 
@@ -200,4 +205,4 @@ evidence_boundary: <what this design does not establish>
 | Provenance | package version/SHA, environment, source/output fingerprints |
 | Boundary | explicit statement of unsupported/generalisation claims |
 
-For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For model-ready trial/AOI/event tables, use the [Analysis handoff](analysis-handoff.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For reviewer/replicator traceability and rerun access classification, use the [Reviewer & replication handoff](reviewer-replication-handoff.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
+For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For model-ready trial/AOI/event tables, use the [Analysis handoff](analysis-handoff.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For sensitivity completeness and changed-estimand auditing, use the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md). For reviewer/replicator traceability and rerun access classification, use the [Reviewer & replication handoff](reviewer-replication-handoff.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
