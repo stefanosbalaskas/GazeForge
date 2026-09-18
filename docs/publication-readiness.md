@@ -28,7 +28,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 !!! note "Checklist ≠ certification"
     Completing this page is a reporting and audit aid. It does not independently validate a tracker, dataset, model, or scientific conclusion.
 
-For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
+For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). If the analysis is already frozen and you need to convert those artifacts into Methods, Results, captions, denominator flow, and reporting metadata, use the [Reporting & interpretation clinic](reporting-interpretation-clinic.md) first.
 
 ## Before preregistration or data collection
 
