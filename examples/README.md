@@ -174,9 +174,32 @@ psychological-state validity claim.
 Guide: [Research evidence bundle](../docs/research-evidence-bundle.md) ·
 [Artifact & output dictionary](../docs/artifact-dictionary.md)
 
+## 11. Statistical analysis handoff
+
+```bash
+python examples/10_worked_analysis_handoff.py \
+  --output-dir worked-analysis-handoff-demo
+```
+
+Builds explicit participant × trial × AOI and participant × trial × event tables
+from reviewed deterministic synthetic/demo records. The handoff preserves repeated-
+measures identity, observed exposure/denominators, observed zero versus missing or
+absent-by-design states, and right-censored no-fixation latency.
+
+The script also writes a model-handoff dictionary, analysis-handoff plan,
+provenance, manifest, a descriptive-only participant × condition summary, and two
+optional diagnostic figures. Use `--no-figures` for a base-install run.
+
+No statistical estimator is selected or fitted. The entire bundle remains
+`synthetic_demo_not_empirical_evidence` and makes no device, event-model, AOI-
+construct, causal, or psychological-state validity claim.
+
+Guide: [Analysis handoff](../docs/analysis-handoff.md) ·
+[Artifact & output dictionary](../docs/artifact-dictionary.md)
+
 ## Reproducibility notes
 
-The eleven examples use fixed or explicitly constructed synthetic/demo inputs.
+The twelve examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;

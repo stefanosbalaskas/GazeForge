@@ -37,6 +37,7 @@ GazeForge contains several ways to import, review, label, summarize, and validat
 | Use static AOIs | reviewed stimulus geometry | stimulus/version identity | [First study blueprint](first-study-blueprint.md) | AOI definitions + fixation assignments | AOI construct rationale | AOI membership ≠ psychological state | scanpaths / analysis |
 | Use moving AOIs | reviewed timestamped keyframes/tracks | stimulus + timebase | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) | keyframes + interpolation audit + assignments | support/no-extrapolation checks | detected track ≠ ground truth | scanpaths / dynamic evaluation |
 | Build semantic scanpaths | reviewed fixation/AOI assignments | participant/trial sequence identity | [Practical workflow](practical-workflow.md) | semantic sequence table | assignment provenance | sequence ≠ latent mental state | downstream sequence analysis |
+| Build statistical model inputs | reviewed event/AOI outputs + design/coverage | participant/trial hierarchy | [Analysis handoff](analysis-handoff.md) | trial × AOI/event measures + denominators + censoring | preserve missing/zero/exposure semantics | samples/fixations ≠ independent participants | specialist statistical software |
 | Freeze a study | reviewed analysis derivative + final settings | exact source/software identity | [Study lifecycle](study-lifecycle.md) | manifest + provenance + fingerprints | deterministic reconstruction | reproducibility ≠ external validity | [Publication readiness](publication-readiness.md) |
 | Prepare a paper/archive | reconciled denominators + final results | claim-specific population/unit | [Research evidence bundle](research-evidence-bundle.md) | artifact index + methods/figures/tables + provenance/manifest | evidence class must match wording | archive completeness ≠ validity | [Publication readiness](publication-readiness.md) |
 | Evaluate benchmark evidence | exact source/provenance + labels | participant/source/dataset identity | [Validation guide](validation-evidence-guide.md) | evidence status/certificate/report | benchmark-specific | derived/native or token/participant distinctions cannot be collapsed | [Evidence status](evidence-status.md) |
@@ -70,6 +71,14 @@ Return unassigned / unsupported according to the declared workflow. Preserve **n
 ### One model leads on one metric
 
 Report the metric-specific result. Sample-level classification, event-boundary fidelity, calibration, confidence/coverage, and downstream utility answer different questions.
+
+### A model-ready table contains missing values
+
+Stop before replacing them. Use the [Analysis handoff](analysis-handoff.md) to distinguish observed zeros from missing trials, AOIs absent by design, undefined denominators, and right-censored latency. Preserve participant/trial grouping to avoid pseudoreplication.
+
+### The statistical model fails diagnostics or convergence
+
+Do not treat returned coefficients as a valid result. GazeForge does not automatically select or rescue an inferential estimator; resolve the statistical specification and diagnostics in the prespecified specialist analysis environment.
 
 ## Which event route should I use?
 

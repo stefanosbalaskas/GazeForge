@@ -42,6 +42,7 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Validate learned event models | labelled event data + valid grouping unit | [Event-model validation clinic](event-model-validation-clinic.md) | grouped CV / calibration / event metrics | split ledger + matched held-out predictions + metrics | held-out design must match the intended claim | [Validation reporting cookbook](validation-reporting-cookbook.md) |
 | Define static or dynamic AOIs | stimulus geometry or reviewed tracks | [Research recipes](research-recipes.md) | AOI mapping / dynamic AOI assignment | AOI definitions + assignments + review/audit | AI proposal ≠ ground truth; no silent extrapolation | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) |
 | Build semantic scanpaths | reviewed fixation/AOI assignments | [Practical workflow](practical-workflow.md) | `to_semantic_scanpaths()` | semantic sequence table | sequence representation ≠ latent-state inference | [Methods overview](methods-overview.md) |
+| Build statistical model inputs | reviewed event/AOI outputs + preserved design/coverage | [Analysis handoff](analysis-handoff.md) | `python examples/10_worked_analysis_handoff.py --output-dir worked-analysis-handoff-demo` | participant × trial × AOI/event tables + denominators + censoring | missing ≠ zero; samples/fixations are not independent participants | specialist statistical software |
 | Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
 | Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Publication readiness](publication-readiness.md) |
 | Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
@@ -91,6 +92,18 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 6. Run the [Publication readiness](publication-readiness.md) checklist before sharing or citing the archive.
 
 **Stop rather than guess:** a complete archive proves neither measurement validity nor external validity. Archive only the evidence class the study actually supports, and respect participant privacy and source licensing.
+
+### Route E · I have reviewed gaze outputs and need statistical model inputs
+
+1. Start with the [Analysis handoff](analysis-handoff.md).
+2. Preserve participant, trial/session, condition, stimulus, and repeated-measures identity.
+3. Carry observed exposure/denominators into count, rate, proportion, and dwell summaries.
+4. Keep observed zero, absent-by-design, undefined, and missing states distinct.
+5. Carry no-fixation latency as explicit censoring when the AOI was observable.
+6. Generate descriptive participant × condition summaries separately from trial-level inferential inputs.
+7. Fit the prespecified inferential model in specialist statistical software; do not let the handoff choose an estimator.
+
+**Stop rather than guess:** never use `fillna(0)` as a convenience repair, never aggregate away the inferential unit without changing the estimand explicitly, and never interpret a failed-convergence model as a valid result.
 
 ## Documentation types
 

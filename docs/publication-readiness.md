@@ -18,7 +18,7 @@ Use this checklist before preregistration, analysis freeze, manuscript submissio
 !!! note "Checklist ≠ certification"
     Completing this page is a reporting and audit aid. It does not independently validate a tracker, dataset, model, or scientific conclusion.
 
-For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
+For a runnable real-data handoff before using this checklist, see the [Worked tracker import and QC](worked-tracker-import.md). Before statistical modelling, use the [Analysis handoff](analysis-handoff.md) to preserve inferential units, denominators, missing-versus-zero semantics, and censoring. For an archive-shaped worked example, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md).
 
 ## Before preregistration or data collection
 
@@ -70,6 +70,20 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 - ☐ AI-proposed AOIs retain model/confidence provenance and explicit review decisions.
 - ☐ Final AOI geometry is frozen before manuscript-facing aggregation when the design requires fixed AOIs.
 - ☐ Scanpath/transition outputs retain participant/trial identity and their AOI-label source.
+
+### Statistical analysis handoff
+
+- ☐ The inferential unit and repeated-measures grouping are explicit before model fitting.
+- ☐ Participant/trial identity has not been aggregated away merely for convenience.
+- ☐ Count, rate, proportion, and dwell outcomes retain their relevant observed exposure/denominator.
+- ☐ Observed zero, absent-by-design, undefined, and missing states remain distinguishable.
+- ☐ No-fixation latency retains an event indicator/censoring status rather than an invented latency.
+- ☐ Descriptive participant × condition summaries are labelled separately from inferential model inputs.
+- ☐ Statistical estimator choice is prespecified/justified in specialist software rather than selected automatically by GazeForge.
+- ☐ Failed convergence, singularity, separation, or invalid diagnostics stop interpretation rather than being silently accepted.
+- ☐ Handoff tables preserve event/AOI/QC/source provenance and exact software identity.
+
+[Open the statistical analysis handoff →](analysis-handoff.md)
 
 ### Validation and metrics
 
@@ -155,4 +169,4 @@ evidence_boundary: <what this design does not establish>
 | Provenance | package version/SHA, environment, source/output fingerprints |
 | Boundary | explicit statement of unsupported/generalisation claims |
 
-For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).
+For the import/QC handoff, use the [Worked tracker import](worked-tracker-import.md) and [Real-data import clinic](data-import-clinic.md). For model-ready trial/AOI/event tables, use the [Analysis handoff](analysis-handoff.md). For archive assembly, use the [Research evidence bundle](research-evidence-bundle.md) and [Artifact & output dictionary](artifact-dictionary.md). For learned event models, work through the [Event-model validation clinic](event-model-validation-clinic.md) before freezing the analysis. For copy-ready claim-safe validation wording, use the [Validation reporting cookbook](validation-reporting-cookbook.md). For terminology that is easy to overstate, use [Research terminology](research-terminology.md). For broader prose structure, continue with [Reproducible reporting](reproducible-reporting.md).

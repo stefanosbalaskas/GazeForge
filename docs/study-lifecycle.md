@@ -37,9 +37,9 @@ Keep the source immutable, fingerprint the analysed table, document time/coordin
 
 ### :material-chart-timeline-variant: QC, events, AOIs, sequences
 
-Add non-destructive QC, start from inspectable event rules, preserve AOI provenance, and retain reviewable semantic sequence outputs.
+Add non-destructive QC, start from inspectable event rules, preserve AOI provenance, and retain reviewable semantic sequence outputs. Before inferential modelling, convert reviewed outputs into model-ready tables without losing grouping, exposure, missingness, or censoring.
 
-[Choose a research recipe →](research-recipes.md)
+[Choose a research recipe →](research-recipes.md) · [Build the statistical handoff →](analysis-handoff.md)
 
 </div>
 
@@ -81,7 +81,7 @@ Translate acquisition, preprocessing, QC, model, split, rate, metric, calibratio
 
 </div>
 
-## The ten-stage research route
+## The eleven-stage research route
 
 | Stage | Input | Action | Reviewable output | Continue with | Do not infer |
 | --- | --- | --- | --- | --- | --- |
@@ -91,10 +91,11 @@ Translate acquisition, preprocessing, QC, model, split, rate, metric, calibratio
 | **4. Canonicalise explicitly** | source semantics | map time, coordinates, identity, optional fields; inspect duplicates/cadence/bounds/row counts | import contract + canonical gaze table | [Adapters & validation](adapters-validation.md) | successful import = device validity |
 | **5. Add QC evidence** | canonical samples | flag anomalies and score trial quality without silent deletion | QC columns + trial summaries | [Research recipes](research-recipes.md) | QC flag = invalid observation |
 | **6. Build measurement outputs** | reviewed samples | apply event baseline/model; define/review static or dynamic AOIs; derive scanpaths if needed | event/AOI/sequence tables | [Methods overview](methods-overview.md) | complex model = superior model |
-| **7. Validate the estimand** | reference labels + split policy | evaluate on leakage-safe held-out data with matching metrics | split ledger + held-out predictions + sample/event/calibration metrics | [Event-model validation clinic](event-model-validation-clinic.md) | sample accuracy = temporal event quality |
-| **8. Audit rate and provenance** | acquisition + analysis-rate history | distinguish native/nominal, observed cadence, and derived analysis rates | rate/sensitivity record | [Sampling sensitivity](sampling-sensitivity.md) | derived 60 Hz = native 60 Hz validity; observed cadence = native hardware proof |
-| **9. Freeze the evidence bundle** | final analysis outputs | freeze manifests, fingerprints, certificates, code/environment, figures/tables | reconstructable archive | [Publication readiness](publication-readiness.md) | archive completeness = stronger evidence |
-| **10. Report qualified claims** | frozen bundle | write methods/results with explicit evidence boundary | manuscript-ready record | [Validation reporting cookbook](validation-reporting-cookbook.md) | broader claims than the design supports |
+| **7. Build the statistical handoff** | reviewed event/AOI outputs + design/coverage | preserve participant/trial hierarchy, denominators, missing/zero semantics, and censoring | model-ready trial × AOI/event tables + handoff dictionary | [Analysis handoff](analysis-handoff.md) | aggregation convenience = correct inferential unit |
+| **8. Validate the estimand** | reference labels + split policy | evaluate on leakage-safe held-out data with matching metrics | split ledger + held-out predictions + sample/event/calibration metrics | [Event-model validation clinic](event-model-validation-clinic.md) | sample accuracy = temporal event quality |
+| **9. Audit rate and provenance** | acquisition + analysis-rate history | distinguish native/nominal, observed cadence, and derived analysis rates | rate/sensitivity record | [Sampling sensitivity](sampling-sensitivity.md) | derived 60 Hz = native 60 Hz validity; observed cadence = native hardware proof |
+| **10. Freeze the evidence bundle** | final analysis outputs | freeze manifests, fingerprints, certificates, code/environment, figures/tables | reconstructable archive | [Publication readiness](publication-readiness.md) | archive completeness = stronger evidence |
+| **11. Report qualified claims** | frozen bundle | write methods/results with explicit evidence boundary | manuscript-ready record | [Validation reporting cookbook](validation-reporting-cookbook.md) | broader claims than the design supports |
 
 ## Worked route: tracker export → canonical samples → QC
 

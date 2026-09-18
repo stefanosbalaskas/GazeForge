@@ -76,6 +76,19 @@ For the archive-facing composition of these artifacts, use the [Research evidenc
 | `10_semantic_scanpaths.csv` / `13_semantic_scanpaths.csv` | participant × trial sequence | Analysis derivative | What AOI sequence was observed? | sequence ≠ latent cognitive/emotional state |
 | `05_interpolation_audit.csv` | dynamic-AOI time/support record | Review/derivation evidence | Was interpolation bounded and support explicit? | interpolated geometry ≠ ground truth outside reviewed support |
 
+## Statistical analysis handoff
+
+The worked [Analysis handoff](analysis-handoff.md) adds a deliberately separate layer between reviewed measurement outputs and specialist inferential software.
+
+| Artifact | Row/unit | Role | Answers | Boundary |
+| --- | --- | --- | --- | --- |
+| `03_trial_design_and_coverage.csv` | participant × trial | Design / denominator registry | Which repeated unit, condition, expected duration, observed exposure, and coverage status apply? | coverage is not an outcome effect |
+| `04_trial_aoi_metrics.csv` | participant × trial × AOI | Model-ready analysis handoff | What fixation count, dwell, proportion, latency, denominator, and missingness/censoring status are available? | `NA` must not be silently converted to zero |
+| `05_trial_event_metrics.csv` | participant × trial × event type | Model-ready analysis handoff | What event counts/durations/rates are available with observed exposure? | fixations/events are not independent participants |
+| `06_descriptive_participant_condition_summary.csv` | participant × condition × AOI | Descriptive-only summary | What compact means are useful for inspection/plots? | not automatically the inferential model input |
+| `07_model_handoff_dictionary.csv` | column | Handoff dictionary | What does each identity, denominator, outcome, censoring, and governance field mean? | dictionary ≠ statistical model specification |
+| `analysis_handoff_plan.json` | bundle | Statistical handoff contract | What inferential unit, repeated grouping, zero policy, censoring policy, and model-selection boundary were declared? | GazeForge does not choose the inferential estimator |
+
 ## Validation and calibration
 
 | Artifact | Row/unit | Role | Answers | Boundary |
