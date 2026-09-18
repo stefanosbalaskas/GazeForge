@@ -219,9 +219,6 @@ Assemble source identity, pre-review QC, reviewed decisions, the primary-analysi
 
 </div>
 
-</div>
-
-
 <div class="gf-task-card" markdown>
 
 <span class="gf-task-kicker">Write the paper</span>
@@ -231,6 +228,8 @@ Assemble source identity, pre-review QC, reviewed decisions, the primary-analysi
 Turn frozen artifacts into Methods, Results, captions, denominator flow, software identity, and claim-safe wording without changing the upstream analysis.
 
 [Open the reporting clinic →](reporting-interpretation-clinic.md)
+
+</div>
 
 </div>
 
