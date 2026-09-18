@@ -163,7 +163,7 @@ def test_qc_review_ledger_learning_path_is_discoverable_and_claim_safe() -> None
     assert "reproducibility does not make it externally validated" in lower
     assert "sample, trial, participant" in lower
 
-    assert "fifteen deterministic examples" in gallery.lower()
+    assert "sixteen deterministic examples" in gallery.lower()
     assert "08_worked_qc_review_ledger.py" in gallery
     assert "qc-review-exclusion-ledger.md" in gallery
     assert "08_worked_qc_review_ledger.py" in examples_readme

@@ -232,9 +232,30 @@ Builds deterministic outcome, estimand, contrast, sensitivity, deviation, and re
 
 Guide: [Outcome & estimand preregistration clinic](../docs/estimand-preregistration.md)
 
+
+## 15. Reviewer/replication handoff
+
+```bash
+python examples/14_worked_reviewer_replication_bundle.py \
+  --output-dir worked-reviewer-replication-bundle
+```
+
+Builds reviewer-facing reproducibility metadata without running a new scientific
+analysis or bundling private/restricted source data. The bundle records
+claim→artifact/API traceability, rerun access classes, reproducibility checks,
+limitations, software identity, SHA-256 file identities, and a start-here guide.
+
+The worked example distinguishes `fully_rerunnable_demo`,
+`rerunnable_with_private_input`, and `inspectable_only`. Matching hashes improve
+auditability but do not establish empirical, device, model, measurement/construct,
+causal, or external validity.
+
+Guide: [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) ·
+[Publication readiness](../docs/publication-readiness.md)
+
 ## Reproducibility notes
 
-The fifteen examples use fixed or explicitly constructed synthetic/demo inputs.
+The sixteen examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -252,5 +273,5 @@ planning, the [Outcome & estimand preregistration clinic](../docs/estimand-prere
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
 for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
-for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, and [Publication readiness](../docs/publication-readiness.md)
+for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, the [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) before external sharing, and [Publication readiness](../docs/publication-readiness.md)
 before freezing a study bundle.

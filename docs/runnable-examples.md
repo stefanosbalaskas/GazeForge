@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **fifteen deterministic examples** that move from a small
+The repository contains **sixteen deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -44,6 +44,7 @@ artifacts, and continue to the corresponding research guide.
 | **Manuscript/reporting bundle** | base | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | reporting-only Methods/Results/boundary/citation derivatives |
 | **Measurement/interpretation audit** | base | `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit` | claim registry + measure/validity/sensitivity/reporting audit |
 | **Outcome/estimand preregistration** | base | `python examples/13_worked_estimand_preregistration.py --output-dir worked-estimand-preregistration` | outcome + estimand + contrast + sensitivity + deviation registries |
+| **Reviewer/replication handoff** | base | `python examples/14_worked_reviewer_replication_bundle.py --output-dir worked-reviewer-replication-bundle` | claim-artifact + rerun + limitations + API + hash audit bundle |
 
 ## 0 · GazeForge tour
 
@@ -497,6 +498,43 @@ It fits no model, selects no estimator/model family, creates no p-values/effect 
 · [Read the preregistration clinic](estimand-preregistration.md)
 · [Continue to the analysis handoff](analysis-handoff.md)
 
+
+## 15 · Reviewer/replication handoff
+
+Use this after preregistration/estimand records, evidence, analysis handoff,
+measurement interpretation, and manuscript-facing reporting are frozen and an
+external reviewer or replicator needs to know **what can actually be rerun**.
+
+```bash
+python examples/14_worked_reviewer_replication_bundle.py \
+  --output-dir worked-reviewer-replication-bundle
+```
+
+The deterministic base-install example writes:
+
+```text
+01_claim_artifact_matrix.csv
+02_rerun_plan.csv
+03_reproducibility_checklist.csv
+04_limitations_register.csv
+05_api_route_map.csv
+software_environment.json
+reviewer_start_here.md
+artifact_hash_ledger.csv
+replication_manifest.json
+```
+
+It distinguishes `fully_rerunnable_demo`,
+`rerunnable_with_private_input`, and `inspectable_only`. Private/restricted
+source files are not bundled. Matching hashes establish file identity only; they do
+not create device, model, measurement/construct, causal, external, or
+psychological validity.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/14_worked_reviewer_replication_bundle.py)
+· [Read the reviewer & replication handoff](reviewer-replication-handoff.md)
+· [Inspect the API reference](api-reference.md)
+· [Run publication readiness](publication-readiness.md)
+
 ## Which example should I run first?
 
 ```text
@@ -515,6 +553,7 @@ Need model-ready trial/AOI/event tables?       → 10_worked_analysis_handoff.py
 Need manuscript/reporting derivatives?         → 11_worked_manuscript_reporting_bundle.py
 Need to audit what a gaze metric supports?      → 12_worked_measurement_interpretation_audit.py
 Need to freeze outcomes/estimands first?         → 13_worked_estimand_preregistration.py
+Need a reviewer/replication handoff?             → 14_worked_reviewer_replication_bundle.py
 ```
 
 ## Move from demo data to a study

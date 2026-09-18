@@ -48,6 +48,7 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 | Reproduce or freeze a study | finalized analysis plan + provenance | [Study lifecycle](study-lifecycle.md) | fingerprints / manifests / deterministic exports | frozen inputs, outputs, provenance | frozen software artifact ≠ external validity | [Publication readiness](publication-readiness.md) |
 | Prepare manuscript/archive evidence | finalized results and denominators | [Research evidence bundle](research-evidence-bundle.md) | `python examples/09_worked_research_evidence_bundle.py --output-dir worked-research-evidence-bundle` | artifact index + source/QC/review/analysis/provenance layers | archive completeness ≠ empirical validity | [Reporting clinic](reporting-clinic.md) |
 | Translate frozen evidence into manuscript language | frozen bundle + reconciled denominators | [Reporting & interpretation clinic](reporting-clinic.md) | `python examples/11_worked_manuscript_reporting_bundle.py --output-dir worked-manuscript-reporting-bundle` | Methods/results examples + citation table + boundaries + reporting manifest | reporting prose cannot strengthen evidence | [Publication readiness](publication-readiness.md) |
+| Hand a frozen study to a reviewer/replicator | frozen archive + access/licensing status | [Reviewer & replication handoff](reviewer-replication-handoff.md) | `python examples/14_worked_reviewer_replication_bundle.py --output-dir worked-reviewer-replication-bundle` | claim-artifact map + rerun plan + reproducibility class + limitations + API/hash ledger | inspectability/reruns ≠ scientific validity | [Publication readiness](publication-readiness.md) |
 | Inspect current empirical support | no prerequisite | [Evidence status](evidence-status.md) | generated evidence/status pages | Frozen / Reviewed / Bounded / pending status | native/derived and split/identity boundaries remain explicit | [Validation status](validation-status.md) |
 
 ## Worked routes
@@ -143,6 +144,20 @@ GazeForge has deep method, validation, benchmark, and workflow documentation. Yo
 8. Run [Publication readiness](publication-readiness.md) before submission or archive release.
 
 **Stop rather than guess:** prose cannot upgrade a synthetic demo into empirical evidence, derived 60 Hz into native 60 Hz, or an observable gaze pattern into trust, persuasion, comprehension, emotion, diagnosis, preference, or intent.
+
+
+### Route H · I need to hand the frozen study to a reviewer or replicator
+
+1. Start with the [Reviewer & replication handoff](reviewer-replication-handoff.md).
+2. Classify the archive as `fully_rerunnable_demo`, `rerunnable_with_private_input`, or `inspectable_only`.
+3. Map each material statement to an exact artifact, access requirement, API/guide route, and interpretation boundary.
+4. Record exact software/version/full-commit identity plus material environment/configuration information.
+5. State whether public, private, or restricted inputs are required and never imply that unavailable/restricted source files are bundled.
+6. Reconcile denominators, exclusions, missing-versus-zero states, censoring, and preregistered outcome/estimand identity before sharing.
+7. Carry the limitations register and evidence class with the archive.
+8. Run [Publication readiness](publication-readiness.md) before release.
+
+**Stop rather than guess:** matching hashes, deterministic reruns, or reviewer inspectability do not establish device, model, measurement/construct, causal, external, or latent-state validity.
 
 ## Documentation types
 
