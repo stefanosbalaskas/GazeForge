@@ -55,6 +55,8 @@ nav:
   - Start:
       - Getting started: getting-started.md
       - Documentation map: documentation-map.md
+      - Method chooser: method-chooser.md
+      - Artifact & output dictionary: artifact-dictionary.md
       - Troubleshooting & diagnostics: troubleshooting.md
       - Release & install: release-install.md
       - Citation & attribution: citation-attribution.md
@@ -68,6 +70,7 @@ nav:
   - Learn:
       - GazeForge tour: gazeforge-tour.md
       - First study blueprint: first-study-blueprint.md
+      - Research evidence bundle: research-evidence-bundle.md
       - Learning paths: learning-paths.md
       - Research recipes: research-recipes.md
       - Real-data import clinic: data-import-clinic.md
