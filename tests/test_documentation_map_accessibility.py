@@ -26,6 +26,9 @@ def test_documentation_map_routes_research_tasks_to_real_pages() -> None:
     required = (
         "gazeforge-tour.md",
         "first-study-blueprint.md",
+        "method-chooser.md",
+        "artifact-dictionary.md",
+        "research-evidence-bundle.md",
         "getting-started.md",
         "worked-tracker-import.md",
         "tutorial-synthetic-qc.md",
@@ -67,6 +70,9 @@ def test_consistent_help_order_is_present_on_entry_pages() -> None:
         "docs/gazeforge-tour.md",
         "docs/documentation-map.md",
         "docs/first-study-blueprint.md",
+        "docs/method-chooser.md",
+        "docs/artifact-dictionary.md",
+        "docs/research-evidence-bundle.md",
         "docs/troubleshooting.md",
         "docs/getting-started.md",
         "docs/learning-paths.md",
@@ -87,6 +93,9 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
 
     assert "Documentation map: documentation-map.md" in mkdocs
     assert "Troubleshooting & diagnostics: troubleshooting.md" in mkdocs
+    assert "Method chooser: method-chooser.md" in mkdocs
+    assert "Artifact & output dictionary: artifact-dictionary.md" in mkdocs
+    assert "Research evidence bundle: research-evidence-bundle.md" in mkdocs
     assert "assets/python-suite-logo.png" in mkdocs
 
     for target in (
@@ -94,6 +103,9 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
         "troubleshooting.md",
         "gazeforge-tour.md",
         "first-study-blueprint.md",
+        "method-chooser.md",
+        "artifact-dictionary.md",
+        "research-evidence-bundle.md",
         "worked-tracker-import.md",
         "qc-review-exclusion-ledger.md",
         "event-model-validation-clinic.md",
