@@ -18,7 +18,7 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
-Use this clinic after reviewed measurement outputs and the statistical handoff are frozen.
+Use this clinic after reviewed measurement outputs and the statistical handoff are frozen. If the unresolved question is whether a gaze-derived observable supports a substantive construct, use the [Measurement & interpretation clinic](measurement-interpretation.md) first.
 For model-ready participant × trial tables, start with the
 [Analysis handoff](analysis-handoff.md). For source/QC/review/analysis/provenance
 packaging, use the [Research evidence bundle](research-evidence-bundle.md).
@@ -319,5 +319,6 @@ manifests, and evidence boundaries still match the frozen analysis.
 
 [Research evidence bundle →](research-evidence-bundle.md) ·
 [Analysis handoff →](analysis-handoff.md) ·
+[Measurement & interpretation →](measurement-interpretation.md) ·
 [Reproducible reporting →](reproducible-reporting.md) ·
 [Publication readiness →](publication-readiness.md)

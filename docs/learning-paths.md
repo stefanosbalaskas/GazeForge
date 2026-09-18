@@ -110,6 +110,17 @@ Keep source identity, pre-review QC, reviewed decisions, primary-analysis rows, 
 
 <div class="gf-path-card" markdown>
 
+### :material-eye-check-outline: I have a gaze metric and need to know what it supports
+
+Separate the observable from the proposed construct, review validity threats, preserve censoring/exposure, and plan justified sensitivity checks before making a substantive interpretation.
+
+**Next:** [Measurement & interpretation clinic](measurement-interpretation.md)  
+**Run it:** `python examples/12_worked_measurement_interpretation_audit.py --output-dir worked-measurement-interpretation-audit`
+
+</div>
+
+<div class="gf-path-card" markdown>
+
 ### :material-text-box-check-outline: I need to write Methods, Results, and captions without overclaiming
 
 Translate the frozen evidence identity into claim-safe prose while preserving QC/exclusion, split, sampling, calibration, synthetic/empirical, and observable/latent-state distinctions.
@@ -153,7 +164,7 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for **eleven deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for **fourteen deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
@@ -233,4 +244,4 @@ The [results gallery](results-gallery.md) puts the current reviewed benchmark su
 
 ## Report the analysis so somebody else can reconstruct it
 
-When an analysis becomes manuscript-facing, continue with the [Reporting & interpretation clinic](reporting-clinic.md), [Publication-readiness checklist](publication-readiness.md), [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md). The reporting surfaces keep import compatibility versus device validity, QC flags versus review/exclusion decisions, demos versus empirical validation, split identity, sample/event metrics, calibration, confidence/coverage, native/derived rate, and model-selection versus confirmatory evaluation explicit. Use [Study-design templates](study-design-templates.md) to keep the required metadata explicit from preregistration onward.
+When an analysis becomes manuscript-facing, use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any substantive gaze claim, then continue with the [Reporting & interpretation clinic](reporting-clinic.md), [Publication-readiness checklist](publication-readiness.md), [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md), [Validation reporting cookbook](validation-reporting-cookbook.md), and [Reproducible reporting](reproducible-reporting.md). The reporting surfaces keep import compatibility versus device validity, QC flags versus review/exclusion decisions, demos versus empirical validation, split identity, sample/event metrics, calibration, confidence/coverage, native/derived rate, and model-selection versus confirmatory evaluation explicit. Use [Study-design templates](study-design-templates.md) to keep the required metadata explicit from preregistration onward.

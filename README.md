@@ -85,6 +85,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I know the task but need to choose the method | [Method chooser](docs/method-chooser.md) |
 | I need to understand a CSV/JSON output | [Artifact & output dictionary](docs/artifact-dictionary.md) |
 | I have reviewed gaze outputs and need model-ready statistical tables | [Analysis handoff](docs/analysis-handoff.md) |
+| I have a gaze metric and need to know what it supports saying | [Measurement & interpretation clinic](docs/measurement-interpretation.md) |
 | I need a study from acquisition to publication | [Study lifecycle](docs/study-lifecycle.md) |
 | I need a reviewable manuscript/archive bundle | [Research evidence bundle](docs/research-evidence-bundle.md) |
 | I need claim-safe Methods/Results/archive wording | [Reporting & interpretation clinic](docs/reporting-clinic.md) |
@@ -248,6 +249,7 @@ Recommended entry points:
 - [Artifact & output dictionary](docs/artifact-dictionary.md)
 - [Research evidence bundle](docs/research-evidence-bundle.md)
 - [Analysis handoff](docs/analysis-handoff.md)
+- [Measurement & interpretation clinic](docs/measurement-interpretation.md)
 - [Reporting & interpretation clinic](docs/reporting-clinic.md)
 - [Research recipes](docs/research-recipes.md)
 - [Runnable examples](docs/runnable-examples.md)

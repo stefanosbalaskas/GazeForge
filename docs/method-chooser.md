@@ -38,6 +38,7 @@ GazeForge contains several ways to import, review, label, summarize, and validat
 | Use moving AOIs | reviewed timestamped keyframes/tracks | stimulus + timebase | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) | keyframes + interpolation audit + assignments | support/no-extrapolation checks | detected track ≠ ground truth | scanpaths / dynamic evaluation |
 | Build semantic scanpaths | reviewed fixation/AOI assignments | participant/trial sequence identity | [Practical workflow](practical-workflow.md) | semantic sequence table | assignment provenance | sequence ≠ latent mental state | downstream sequence analysis |
 | Build statistical model inputs | reviewed event/AOI outputs + design/coverage | participant/trial hierarchy | [Analysis handoff](analysis-handoff.md) | trial × AOI/event measures + denominators + censoring | preserve missing/zero/exposure semantics | samples/fixations ≠ independent participants | specialist statistical software |
+| Interpret a gaze-derived measure | frozen observable + intended substantive claim | declared measurement/inferential unit | [Measurement & interpretation clinic](measurement-interpretation.md) | claim registry + threats + sensitivity/reporting boundaries | construct bridge must be explicit | gaze observable ≠ latent construct | [Reporting clinic](reporting-clinic.md) |
 | Freeze a study | reviewed analysis derivative + final settings | exact source/software identity | [Study lifecycle](study-lifecycle.md) | manifest + provenance + fingerprints | deterministic reconstruction | reproducibility ≠ external validity | [Publication readiness](publication-readiness.md) |
 | Prepare a paper/archive | reconciled denominators + final results | claim-specific population/unit | [Research evidence bundle](research-evidence-bundle.md) | artifact index + methods/figures/tables + provenance/manifest | evidence class must match wording | archive completeness ≠ validity | [Reporting clinic](reporting-clinic.md) |
 | Write claim-safe Methods/Results/captions | frozen evidence bundle + reporting facts | claim-specific population/unit | [Reporting & interpretation clinic](reporting-clinic.md) | methods/results examples + citation table + evidence boundaries | wording must match evidence identity | prose cannot strengthen evidence | [Publication readiness](publication-readiness.md) |
@@ -80,6 +81,10 @@ Stop before replacing them. Use the [Analysis handoff](analysis-handoff.md) to d
 ### The statistical model fails diagnostics or convergence
 
 Do not treat returned coefficients as a valid result. GazeForge does not automatically select or rescue an inferential estimator; resolve the statistical specification and diagnostics in the prespecified specialist analysis environment.
+
+### A gaze result is being used as a psychological construct
+
+Open the [Measurement & interpretation clinic](measurement-interpretation.md). Separate the observable from the proposed construct, name the external outcome/theory required, review measurement threats, and keep unsupported latent-state language out of the result.
 
 ### The analysis is frozen but the manuscript wording feels stronger than the evidence
 

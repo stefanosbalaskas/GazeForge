@@ -109,6 +109,10 @@ qualified interpretation
 
 GazeForge should usually occupy the **measurement and process-data layer** of a domain study. The substantive theory—HCI, consumer behaviour, tourism, education, visual cognition, or another field—still determines the construct definition, experimental design, outcome model, and interpretation.
 
+## From gaze measure to substantive interpretation
+
+Before promoting dwell, fixation count, first-fixation latency, scanpaths, model confidence, or QC output into a domain construct, run the [Measurement & interpretation clinic](measurement-interpretation.md). The worked audit records what is directly observable, what independent outcome or validation evidence is required, which sensitivity checks are justified, and what wording remains unsupported by gaze alone.
+
 ## Claims GazeForge does not make for you
 
 Do not convert gaze patterns directly into unsupported claims about:
@@ -136,4 +140,4 @@ Decide in advance:
 8. how uncertainty, missingness, and abstention will be represented;
 9. which evidence artifacts and software identity will be archived.
 
-Then follow the [Study lifecycle](study-lifecycle.md), use the [Publication-readiness checklist](publication-readiness.md) before freezing a manuscript-facing analysis, and use [Reproducible reporting](reproducible-reporting.md) for the final methods record.
+Then follow the [Study lifecycle](study-lifecycle.md), use the [Measurement & interpretation clinic](measurement-interpretation.md) before promoting gaze observables into substantive constructs, use the [Publication-readiness checklist](publication-readiness.md) before freezing a manuscript-facing analysis, and use [Reproducible reporting](reproducible-reporting.md) for the final methods record.

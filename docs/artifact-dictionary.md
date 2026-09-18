@@ -101,6 +101,10 @@ The worked [Analysis handoff](analysis-handoff.md) adds a deliberately separate 
 | `08_confidence_coverage.csv` | model × threshold | Decision diagnostic | What accuracy/coverage trade-off occurs at confidence thresholds? | threshold is not universal policy |
 | `09_illustrative_abstention_policy.csv` | illustrative policy row | Demo/reporting | How can abstention be represented explicitly? | not a validated deployment cutoff |
 
+## Measurement/interpretation audit derivatives
+
+The [Measurement & interpretation clinic](measurement-interpretation.md) adds a claim-audit layer without altering the scientific data. Its worked example writes `01_claim_registry.csv`, `02_measurement_interpretation_matrix.csv`, `03_validity_threats.csv`, `04_sensitivity_plan.csv`, `05_reporting_language.csv`, and `interpretation_audit.json`. These files document interpretation requirements and limitations; they do not label claims scientifically valid/invalid or create new inferential results.
+
 ## Manuscript/reporting derivatives
 
 The [Reporting & interpretation clinic](reporting-clinic.md) and worked reporting example create a final layer that **references** frozen upstream artifacts rather than rewriting them.
