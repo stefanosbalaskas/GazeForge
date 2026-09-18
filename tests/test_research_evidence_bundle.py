@@ -56,8 +56,9 @@ def test_worked_research_evidence_bundle_is_archive_shaped_and_claim_safe(tmp_pa
 
     index = pd.read_csv(output / "artifact_index.csv")
     assert {"source", "canonical", "qc", "review", "analysis", "provenance", "reporting"} <= set(index["layer"])
-    assert (index["archive_recommended"] == True).all()  # noqa: E712
+    assert index["archive_recommended"].astype(bool).all()
     assert index["filename"].is_unique
+    assert {"artifact_index.csv", "workflow_manifest.json"} <= set(index["filename"])
 
     source = pd.read_csv(output / "01_source_tracker_export.csv")
     canonical = pd.read_csv(output / "02_canonical_gaze.csv")
