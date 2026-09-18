@@ -42,6 +42,7 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     page = _read("docs/runnable-examples.md")
 
     scripts = (
+        "00_gazeforge_tour.py",
         "01_synthetic_qc.py",
         "02_ivt_baseline.py",
         "03_visual_diagnostics.py",
@@ -50,12 +51,15 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "05_worked_dynamic_aoi_study.py",
         "06_worked_event_model_validation.py",
         "07_worked_tracker_import_qc.py",
+        "08_worked_qc_review_ledger.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
-    assert "eight deterministic examples" in page
+    assert "ten deterministic examples" in page
+    assert "python examples/00_gazeforge_tour.py" in page
+    assert "--output-dir gazeforge-tour-demo" in page
     assert "python examples/01_synthetic_qc.py" in page
     assert "python examples/02_ivt_baseline.py" in page
     assert "python examples/03_visual_diagnostics.py --output-dir visual-demo" in page
@@ -69,6 +73,8 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     assert "--output-dir worked-event-model-validation-demo" in page
     assert "python examples/07_worked_tracker_import_qc.py" in page
     assert "--output-dir worked-tracker-import-qc-demo" in page
+    assert "python examples/08_worked_qc_review_ledger.py" in page
+    assert "--output-dir worked-qc-review-ledger-demo" in page
 
 
 def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> None:
@@ -95,6 +101,16 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "03_import_preflight.csv",
         "04_qc_samples.csv",
         "05_trial_quality.csv",
+        "01_canonical_source.csv",
+        "02_pre_review_qc_samples.csv",
+        "04_decision_criteria.csv",
+        "05_sample_review_ledger.csv",
+        "06_trial_review_ledger.csv",
+        "07_participant_review_ledger.csv",
+        "08_exclusion_flow.csv",
+        "09_reviewed_sample_status.csv",
+        "10_primary_analysis_rows.csv",
+        "11_exploratory_sensitivity.csv",
         "import_contract.json",
         "analysis_plan.json",
         "provenance.json",
@@ -121,6 +137,10 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
     assert "no extrapolation" in lower
     assert "participant-disjoint" in lower
     assert "matched held-out rows" in lower
+    assert "qc flag" in lower
+    assert "automatic exclusion" in lower
+    assert "prespecified" in lower
+    assert "exploratory" in lower
     assert "synthetic_demo_not_empirical_evidence" in page
 
 
@@ -132,8 +152,11 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     examples_readme = _read("examples/README.md")
 
     assert "      - Runnable examples: runnable-examples.md" in mkdocs
+    assert "gazeforge-tour.md" in mkdocs
     assert "worked-tracker-import.md" in mkdocs
+    assert "qc-review-exclusion-ledger.md" in mkdocs
     assert "event-model-validation-clinic.md" in mkdocs
+    assert "gazeforge-tour.md" in homepage
     assert "methods-overview.md" in homepage
     assert "runnable-examples.md" in homepage
     assert "study-lifecycle.md" in homepage
@@ -141,16 +164,20 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "worked-tracker-import.md" in homepage
     assert "publication-readiness.md" in homepage
     assert "event-model-validation-clinic.md" in homepage
+    assert "gazeforge-tour.md" in getting_started
     assert "runnable-examples.md" in getting_started
     assert "worked-tracker-import.md" in getting_started
+    assert "gazeforge-tour.md" in learning_paths
     assert "runnable-examples.md" in learning_paths
     assert "worked-tracker-import.md" in learning_paths
     assert "event-model-validation-clinic.md" in learning_paths
     assert "../docs/runnable-examples.md" in examples_readme
+    assert "00_gazeforge_tour.py" in examples_readme
     assert "04_worked_advertising_study.py" in examples_readme
     assert "05_worked_dynamic_aoi_study.py" in examples_readme
     assert "06_worked_event_model_validation.py" in examples_readme
     assert "07_worked_tracker_import_qc.py" in examples_readme
+    assert "08_worked_qc_review_ledger.py" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

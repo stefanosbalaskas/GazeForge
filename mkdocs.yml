@@ -64,10 +64,12 @@ nav:
       - Scientific governance: scientific-governance.md
       - Brand & sharing: brand-assets.md
   - Learn:
+      - GazeForge tour: gazeforge-tour.md
       - Learning paths: learning-paths.md
       - Research recipes: research-recipes.md
       - Real-data import clinic: data-import-clinic.md
       - Worked tracker import & QC: worked-tracker-import.md
+      - QC review & exclusion ledger: qc-review-exclusion-ledger.md
       - Event-model validation clinic: event-model-validation-clinic.md
       - Study lifecycle: study-lifecycle.md
       - Study-design templates: study-design-templates.md

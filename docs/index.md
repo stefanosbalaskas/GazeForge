@@ -105,7 +105,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
+**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 
@@ -313,7 +313,7 @@ gaze = canonicalize_gaze(raw, sampling_rate_hz=60)
 flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 ```
 
-[Import real study data →](data-import-clinic.md) · [Run the worked tracker import/QC →](worked-tracker-import.md) · [Validate a learned event model →](event-model-validation-clinic.md) · [Run the worked validation study →](runnable-examples.md#7-worked-event-model-validation-study) · [Continue with the getting-started guide →](getting-started.md) · [Run the practical end-to-end workflow →](practical-workflow.md)
+[Take the GazeForge Tour →](gazeforge-tour.md) · [Import real study data →](data-import-clinic.md) · [Run the worked tracker import/QC →](worked-tracker-import.md) · [Review QC/exclusions →](qc-review-exclusion-ledger.md) · [Validate a learned event model →](event-model-validation-clinic.md) · [Run the worked validation study →](runnable-examples.md#7-worked-event-model-validation-study) · [Continue with the getting-started guide →](getting-started.md) · [Run the practical end-to-end workflow →](practical-workflow.md)
 
 ## Current project phase
 
