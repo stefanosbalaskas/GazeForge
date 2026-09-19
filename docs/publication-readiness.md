@@ -101,6 +101,17 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 
 [Open the statistical analysis handoff →](analysis-handoff.md)
 
+### Model diagnostics / convergence
+
+- ☐ Every reported specialist model has stable model, estimand, population, software, and input identity.
+- ☐ Non-converged fits are not interpreted.
+- ☐ Singular/boundary states are resolved or explicitly blocked from confirmatory interpretation.
+- ☐ Separation/perfect-prediction and invalid covariance/Hessian states are not ignored.
+- ☐ Missing required diagnostics fail closed rather than defaulting to pass.
+- ☐ Any replacement that changes estimand/population/specification is recorded as sensitivity/deviation rather than silently replacing the primary model.
+
+[Open the model diagnostics clinic →](model-diagnostics-convergence.md)
+
 ### Measurement interpretation
 
 - ☐ Every substantive gaze interpretation names the underlying observable and unit.
