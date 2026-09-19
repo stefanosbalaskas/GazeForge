@@ -106,3 +106,36 @@ def test_denominator_exposure_audit_contract(tmp_path: Path) -> None:
     assert "fillna(0)" in readme
     assert "right-censored" in readme
     assert "not empirical validation evidence" in readme
+
+
+def test_denominator_exposure_clinic_is_discoverable_and_claim_safe() -> None:
+    guide = (ROOT / "docs/denominator-exposure-censoring.md").read_text(encoding="utf-8")
+    mkdocs = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+    homepage = (ROOT / "docs/index.md").read_text(encoding="utf-8")
+    gallery = (ROOT / "docs/runnable-examples.md").read_text(encoding="utf-8")
+
+    lower = guide.lower()
+    assert "# Denominator, exposure & censoring clinic" in guide
+    assert "16_worked_denominator_exposure_audit.py" in guide
+    assert "fillna(0)" in guide
+    assert "observed_zero" in guide
+    assert "missing_trial" in guide
+    assert "absent_by_design" in guide
+    assert "undefined_denominator" in guide
+    assert "right-censored" in lower
+    assert "not empirical validation" in lower
+    for route in (
+        "api-reference.md#schema-validation",
+        "api-reference.md#quality-control",
+        "api-reference.md#eye-events",
+        "api-reference.md#semantic-aois",
+        "api-reference.md#scanpaths",
+    ):
+        assert route in guide
+    assert "Denominator, exposure & censoring clinic: denominator-exposure-censoring.md" in mkdocs
+    assert "denominator-exposure-censoring.md" in homepage
+    assert "eighteen deterministic examples" in gallery
+
+    start = homepage.index('<div class="gf-hero-actions"')
+    end = homepage.index("</div>", start)
+    assert homepage[start:end].count("{ .md-button") == 3
