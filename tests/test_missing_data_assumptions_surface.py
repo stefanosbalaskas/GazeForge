@@ -64,7 +64,7 @@ def test_missing_data_handoff_is_discoverable_without_hero_growth() -> None:
     homepage = _read("docs/index.md")
     assert "18_worked_missing_data_assumptions_audit.py" in gallery
     assert "18_worked_missing_data_assumptions_audit.py" in examples_readme
-    assert "twenty deterministic examples" in gallery
+    assert "twenty-one deterministic examples" in gallery
     assert "The twenty examples" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')
