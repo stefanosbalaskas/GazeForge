@@ -287,9 +287,23 @@ and right-censored no-fixation latency. It performs no inferential modelling.
 
 Guide: [Denominator, exposure & censoring clinic](../docs/denominator-exposure-censoring.md)
 
+
+## 18. Model diagnostics/convergence audit
+
+```bash
+python examples/17_worked_model_diagnostics_audit.py \
+  --output-dir worked-model-diagnostics-audit
+```
+
+Builds a deterministic vendor-neutral audit of convergence, singular/boundary states,
+separation/invalid covariance, diagnostic completeness, and changed-estimand
+replacement candidates. It fits no real model and creates no p-values/effect sizes.
+
+Guide: [Model diagnostics & convergence clinic](../docs/model-diagnostics-convergence.md)
+
 ## Reproducibility notes
 
-The eighteen examples use fixed or explicitly constructed synthetic/demo inputs.
+The nineteen examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
