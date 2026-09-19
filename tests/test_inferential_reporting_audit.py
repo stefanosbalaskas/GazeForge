@@ -92,3 +92,33 @@ def test_inferential_reporting_audit_contract(tmp_path: Path) -> None:
     readme = (out / "README.md").read_text().lower()
     assert "all estimates, intervals, and p-values are teaching values" in readme
     assert "not empirical" in readme
+
+
+def test_inferential_reporting_clinic_is_discoverable_and_claim_safe() -> None:
+    guide = (ROOT / "docs/inferential-reporting-audit.md").read_text(encoding="utf-8")
+    mkdocs = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+    homepage = (ROOT / "docs/index.md").read_text(encoding="utf-8")
+    gallery = (ROOT / "docs/runnable-examples.md").read_text(encoding="utf-8")
+
+    lower = guide.lower()
+    assert "# Uncertainty, multiplicity & inferential reporting clinic" in guide
+    assert "19_worked_inferential_reporting_audit.py" in guide
+    assert "p_value_raw" in guide
+    assert "p_value_adjusted" in guide
+    assert "no universal correction" in lower
+    assert "eligible_confirmatory" in guide
+    assert "eligible_exploratory" in guide
+    assert "blocked_multiplicity_incomplete" in guide
+    assert "workflow gates, not scientific truth labels" in lower
+    assert "every estimate, interval" in lower
+    assert "teaching value" in lower
+    assert (
+        "Uncertainty, multiplicity & inferential reporting: "
+        "inferential-reporting-audit.md"
+    ) in mkdocs
+    assert "inferential-reporting-audit.md" in homepage
+    assert "twenty-one deterministic examples" in gallery
+
+    start = homepage.index('<div class="gf-hero-actions"')
+    end = homepage.index("</div>", start)
+    assert homepage[start:end].count("{ .md-button") == 3
