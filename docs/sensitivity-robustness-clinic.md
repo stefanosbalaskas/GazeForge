@@ -156,7 +156,7 @@ inspected and resource limits should be explicit.
 Do not generate a large specification search and then report only the most favourable
 subset. Report the complete registered set, including failures and unevaluable cells.
 
-Before treating a fitted variant as an interpretable sensitivity result, pass it through the [Model diagnostics & convergence clinic](model-diagnostics-convergence.md). A model can be same-estimand yet still be blocked by convergence, singularity, separation, covariance/Hessian, or missing-diagnostic failures.
+Before treating a fitted variant as an interpretable sensitivity result, pass it through the [Model diagnostics & convergence clinic](model-diagnostics-convergence.md). Then use the [Uncertainty, multiplicity & inferential reporting clinic](inferential-reporting-audit.md) when effect scale, interval identity, confirmatory-family treatment, or raw/adjusted inferential fields are material. A model can be same-estimand yet still be blocked by convergence, singularity, separation, covariance/Hessian, or missing-diagnostic failures.
 
 ## Non-evaluable and non-converged are results of the audit
 
