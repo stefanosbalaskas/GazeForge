@@ -6,6 +6,8 @@ search:
 
 # Analysis handoff: from reviewed gaze outputs to model-ready tables
 
+Use the [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) when exposure, zero/missing, or no-fixation censoring needs a dedicated reconciliation audit.
+
 If primary/secondary/exploratory outcomes, contrasts, exposure rules, or censoring semantics are not frozen yet, start with the [Outcome & estimand preregistration clinic](estimand-preregistration.md) before constructing model inputs.
 
 <div class="gf-doc-kind" role="note" aria-label="Documentation type">
