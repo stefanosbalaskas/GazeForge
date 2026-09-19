@@ -85,3 +85,31 @@ def test_model_diagnostics_audit_contract(tmp_path: Path) -> None:
     assert "singular/boundary" in readme
     assert "missing diagnostics" in readme
     assert "not empirical" in readme
+
+
+def test_model_diagnostics_clinic_is_discoverable_and_claim_safe() -> None:
+    guide = (ROOT / "docs/model-diagnostics-convergence.md").read_text(encoding="utf-8")
+    mkdocs = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+    homepage = (ROOT / "docs/index.md").read_text(encoding="utf-8")
+    gallery = (ROOT / "docs/runnable-examples.md").read_text(encoding="utf-8")
+
+    lower = guide.lower()
+    assert "# Model diagnostics & convergence clinic" in guide
+    assert "17_worked_model_diagnostics_audit.py" in guide
+    assert "blocked_non_converged" in guide
+    assert "blocked_singular_or_boundary" in guide
+    assert "blocked_missing_diagnostics" in guide
+    assert "blocked_separation_or_covariance" in guide
+    assert "glm / glmm" in lower
+    assert "survival / time-to-event" in lower
+    assert "sem checks" in lower
+    assert "bayesian checks" in lower
+    assert "coefficient table is not a convergence certificate" in lower
+    assert "passing the gate does not make a model scientifically correct" in lower
+    assert "Model diagnostics & convergence clinic: model-diagnostics-convergence.md" in mkdocs
+    assert "model-diagnostics-convergence.md" in homepage
+    assert "nineteen deterministic examples" in gallery
+
+    start = homepage.index('<div class="gf-hero-actions"')
+    end = homepage.index("</div>", start)
+    assert homepage[start:end].count("{ .md-button") == 3
