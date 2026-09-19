@@ -273,9 +273,23 @@ created.
 Guide: [Sensitivity & robustness clinic](../docs/sensitivity-robustness-clinic.md) ·
 [Reporting clinic](../docs/reporting-clinic.md)
 
+
+## 17. Denominator/exposure audit
+
+```bash
+python examples/16_worked_denominator_exposure_audit.py \
+  --output-dir worked-denominator-exposure-audit
+```
+
+Builds a deterministic audit of observed zero, missing trial, absent-by-design,
+undefined denominator, partial exposure, count/rate and dwell/proportion construction,
+and right-censored no-fixation latency. It performs no inferential modelling.
+
+Guide: [Denominator, exposure & censoring clinic](../docs/denominator-exposure-censoring.md)
+
 ## Reproducibility notes
 
-The seventeen examples use fixed or explicitly constructed synthetic/demo inputs.
+The eighteen examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
