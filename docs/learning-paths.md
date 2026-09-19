@@ -154,6 +154,17 @@ diagnostics as stop conditions before interpretation.
 **Run it:** `python examples/17_worked_model_diagnostics_audit.py --output-dir worked-model-diagnostics-audit`  
 **Continue to:** [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) · [Reporting clinic](reporting-clinic.md)
 
+
+### :material-chart-error: I need to audit uncertainty or multiplicity before reporting
+
+Use this route after the fitted model has passed convergence/diagnostic checks. Keep
+effect scale, units, interval method/level, multiplicity family, and raw/adjusted
+inferential fields explicit before manuscript wording is frozen.
+
+**Start here:** [Uncertainty, multiplicity & inferential reporting clinic](inferential-reporting-audit.md)  
+**Run it:** `python examples/18_worked_inferential_reporting_audit.py --output-dir worked-inferential-reporting-audit`  
+**Continue to:** [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) · [Reporting clinic](reporting-clinic.md)
+
 ### :material-chart-bell-curve-cumulative: I need to audit sensitivity or robustness
 
 Use this route after the primary estimand and sensitivity plan are frozen and the
@@ -219,7 +230,7 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for **nineteen deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for **twenty deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
