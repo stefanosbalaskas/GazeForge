@@ -110,6 +110,23 @@ The worked [Analysis handoff](analysis-handoff.md) adds a deliberately separate 
 The [Measurement & interpretation clinic](measurement-interpretation.md) adds a claim-audit layer without altering the scientific data. Its worked example writes `01_claim_registry.csv`, `02_measurement_interpretation_matrix.csv`, `03_validity_threats.csv`, `04_sensitivity_plan.csv`, `05_reporting_language.csv`, and `interpretation_audit.json`. These files document interpretation requirements and limitations; they do not label claims scientifically valid/invalid or create new inferential results.
 
 
+
+## Denominator/exposure audit derivatives
+
+The [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md)
+separates observed zero, missing, absent-by-design, undefined denominator, and
+right-censored latency before modelling.
+
+| Artifact | Unit | Role | Boundary |
+| --- | --- | --- | --- |
+| `01_observation_status_registry.csv` | participant × trial × AOI | observation-state registry | status ≠ substantive outcome |
+| `02_denominator_exposure_ledger.csv` | participant × trial × AOI | expected/observed/AOI exposure ledger | coverage ≠ validity |
+| `03_count_rate_audit.csv` | participant × trial × AOI | count + exposure-derived rate | undefined denominator remains NA |
+| `04_proportion_dwell_audit.csv` | participant × trial × AOI | dwell numerator + proportion denominator audit | absent-by-design ≠ zero |
+| `05_latency_censoring_audit.csv` | participant × trial × AOI | observed/censored latency representation | missing/absent trials are not censored events |
+| `06_reconciliation_flow.csv` | workflow status | denominator reconciliation | counts do not establish effects |
+| `denominator_exposure_manifest.json` | bundle | audit manifest | deterministic audit ≠ empirical validation |
+
 ## Sensitivity/robustness audit derivatives
 
 The [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) adds a
