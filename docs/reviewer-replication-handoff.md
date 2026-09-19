@@ -233,6 +233,7 @@ licensing, or governance problem.
 - [Analysis handoff](analysis-handoff.md) — preserve inferential units, denominators, missingness, and censoring.
 - [Measurement & interpretation clinic](measurement-interpretation.md) — audit what gaze-derived measures can support.
 - [Reporting & interpretation clinic](reporting-clinic.md) — write Methods/Results/captions without strengthening evidence.
+- [Model diagnostics & convergence clinic](model-diagnostics-convergence.md) — expose model/estimand/software identity and fail-closed convergence/diagnostic status.
 - [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) — expose the complete registered/executed sensitivity set, including non-evaluable/non-converged conditions and changed-estimand deviations.
 - [Publication readiness](publication-readiness.md) — final preregistration/submission/archive audit.
 - [API reference](api-reference.md) — exact public interfaces behind the workflow.
