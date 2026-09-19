@@ -112,6 +112,18 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 
 [Open the model diagnostics clinic →](model-diagnostics-convergence.md)
 
+### Uncertainty / multiplicity / inferential reporting
+
+- ☐ Every reported result names the effect scale and unit.
+- ☐ Confidence/credible interval type, level, and construction method are recoverable.
+- ☐ Raw and adjusted p-values remain separate when both are part of the prespecified analysis.
+- ☐ Every confirmatory result belongs to a declared multiplicity family with the declared procedure recorded.
+- ☐ Exploratory results remain outside the confirmatory family and are labelled exploratory.
+- ☐ No p-value threshold is converted into a scientific truth label.
+- ☐ Diagnostically blocked results remain blocked from inferential interpretation.
+
+[Open the uncertainty/multiplicity clinic →](inferential-reporting-audit.md)
+
 ### Measurement interpretation
 
 - ☐ Every substantive gaze interpretation names the underlying observable and unit.
