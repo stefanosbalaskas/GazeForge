@@ -75,6 +75,7 @@ nav:
       - Analysis handoff: analysis-handoff.md
       - Denominator, exposure & censoring clinic: denominator-exposure-censoring.md
       - Model diagnostics & convergence clinic: model-diagnostics-convergence.md
+      - Uncertainty, multiplicity & inferential reporting: inferential-reporting-audit.md
       - Measurement & interpretation clinic: measurement-interpretation.md
       - Sensitivity & robustness clinic: sensitivity-robustness-clinic.md
       - Learning paths: learning-paths.md
