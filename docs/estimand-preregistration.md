@@ -95,7 +95,7 @@ Before analysis, decide what each state means.
 
 Never use a convenient zero to stand in for the other states.
 
-The [Analysis handoff](analysis-handoff.md) shows how these statuses survive into model-ready tables.
+The [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) preserves these statuses mechanically. When genuinely unavailable measurements require missing-data assumptions or treatment planning, use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) before the [Analysis handoff](analysis-handoff.md).
 
 ## Counts, rates, proportions, dwell, latency, and sequences
 

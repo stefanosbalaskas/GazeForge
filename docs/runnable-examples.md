@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **nineteen deterministic examples** that move from a small
+The repository contains **twenty deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -48,6 +48,7 @@ artifacts, and continue to the corresponding research guide.
 | **Sensitivity/robustness audit** | base | `python examples/15_worked_sensitivity_robustness_audit.py --output-dir worked-sensitivity-robustness-audit` | registered/executed variants + denominator/result comparison + deviations + reporting guidance |
 | **Denominator/exposure audit** | base | `python examples/16_worked_denominator_exposure_audit.py --output-dir worked-denominator-exposure-audit` | observation-status + exposure/rate/proportion/censoring reconciliation bundle |
 | **Model diagnostics audit** | base | `python examples/17_worked_model_diagnostics_audit.py --output-dir worked-model-diagnostics-audit` | fit registry + diagnostic status + interpretation gate + replacement linkage |
+| **Missing-data assumptions audit** | base | `python examples/18_worked_missing_data_assumptions_audit.py --output-dir worked-missing-data-assumptions-audit` | source registry + mechanism questions + non-selecting treatment/sensitivity/reporting handoff |
 
 ## 0 · GazeForge tour
 
@@ -611,6 +612,38 @@ that changes the estimand/population and therefore remains exploratory.
 · [Read the model diagnostics clinic](model-diagnostics-convergence.md)
 · [Continue to sensitivity/robustness](sensitivity-robustness-clinic.md)
 
+## 19 · Missing-data assumptions/treatment audit
+
+Use this after denominator/exposure/censoring states are reconciled and before a
+specialist statistical analysis selects how unavailable measurements will be treated.
+
+```bash
+python examples/18_worked_missing_data_assumptions_audit.py \
+  --output-dir worked-missing-data-assumptions-audit
+```
+
+The deterministic bundle writes:
+
+```text
+01_missing_data_source_registry.csv
+02_mechanism_assumption_questions.csv
+03_analysis_treatment_registry.csv
+04_exclusion_missingness_separation.csv
+05_sensitivity_handoff.csv
+06_reporting_language.csv
+README.md
+missing_data_assumptions_manifest.json
+```
+
+It never infers MCAR/MAR/MNAR, never performs automatic complete-case filtering,
+never selects imputation, weighting, joint-model, survival, GLM/GLMM, SEM, Bayesian,
+or another inferential treatment, and keeps censoring, design absence, and undefined
+derived metrics distinct from ordinary unavailable measurement.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/18_worked_missing_data_assumptions_audit.py)
+· [Read the missing-data assumptions handoff](missing-data-assumptions.md)
+· [Continue to analysis handoff](analysis-handoff.md)
+
 ## Which example should I run first?
 
 ```text
@@ -633,6 +666,7 @@ Need a reviewer/replication handoff?             → 14_worked_reviewer_replicat
 Need to audit sensitivity/robustness?             → 15_worked_sensitivity_robustness_audit.py
 Need to reconcile denominators/exposure?          → 16_worked_denominator_exposure_audit.py
 Need to audit model diagnostics/convergence?       → 17_worked_model_diagnostics_audit.py
+Need to document missing-data assumptions?         → 18_worked_missing_data_assumptions_audit.py
 ```
 
 ## Move from demo data to a study
@@ -647,12 +681,14 @@ A practical research sequence is:
 6. use the [QC review and exclusion ledger](qc-review-exclusion-ledger.md) to record criteria, denominators, review status, and retained/excluded units;
 7. keep exploratory sensitivity decisions separate from the primary table;
 8. continue to event/AOI/scanpath analysis;
-9. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping, exposure, missing-versus-zero semantics, and censoring;
-10. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
-11. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct;
-12. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks;
-13. use the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) to execute/report the complete registered sensitivity set without replacing the primary estimand; and
-14. freeze software identity, figures, tables, and evidence boundaries before reporting.
+9. use the [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) to reconcile observation-state, exposure, rate/proportion, and censoring mechanics;
+10. use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) when unavailable/partial measurements require explicit assumptions or treatment planning;
+11. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping and those semantics;
+12. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
+13. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct;
+14. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks;
+15. use the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) to execute/report the complete registered sensitivity set without replacing the primary estimand; and
+16. freeze software identity, figures, tables, and evidence boundaries before reporting.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into

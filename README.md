@@ -86,6 +86,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I need to understand a CSV/JSON output | [Artifact & output dictionary](docs/artifact-dictionary.md) |
 | I need to freeze outcomes/estimands before modelling | [Outcome & estimand preregistration clinic](docs/estimand-preregistration.md) |
 | I need to reconcile denominator/exposure/missingness/censoring | [Denominator, exposure & censoring clinic](docs/denominator-exposure-censoring.md) |
+| I need to document missing-data assumptions/treatment choices | [Missing-data assumptions & treatment handoff](docs/missing-data-assumptions.md) |
 | I have reviewed gaze outputs and need model-ready statistical tables | [Analysis handoff](docs/analysis-handoff.md) |
 | I need to audit model convergence/diagnostics after fitting | [Model diagnostics & convergence clinic](docs/model-diagnostics-convergence.md) |
 | I have a gaze metric and need to know what it supports saying | [Measurement & interpretation clinic](docs/measurement-interpretation.md) |
@@ -183,6 +184,7 @@ The repository now has a task-oriented learning sequence:
 15  sensitivity/robustness audit
 16  denominator/exposure/censoring audit
 17  model diagnostics/convergence audit
+18  missing-data assumptions/treatment audit
 +   complete end-to-end research workflow
 ```
 
@@ -262,6 +264,7 @@ Recommended entry points:
 - [Outcome & estimand preregistration clinic](docs/estimand-preregistration.md)
 - [Analysis handoff](docs/analysis-handoff.md)
 - [Denominator, exposure & censoring clinic](docs/denominator-exposure-censoring.md)
+- [Missing-data assumptions & treatment handoff](docs/missing-data-assumptions.md)
 - [Measurement & interpretation clinic](docs/measurement-interpretation.md)
 - [Sensitivity & robustness clinic](docs/sensitivity-robustness-clinic.md)
 - [Reporting & interpretation clinic](docs/reporting-clinic.md)

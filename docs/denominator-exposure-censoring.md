@@ -115,8 +115,7 @@ exposure must remain visible.
 - [Semantic AOIs](api-reference.md#semantic-aois) — AOI identity/assignment provenance.
 - [Scanpaths](api-reference.md#scanpaths) — sequence support without zero-filling absent states.
 
-Continue with the [Analysis handoff](analysis-handoff.md) after denominator and
-censoring semantics are frozen. After the specialist model is fitted, use the
+After denominator and censoring semantics are frozen, use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) when unavailable or partial measurements require explicit assumptions or treatment planning, then continue with the [Analysis handoff](analysis-handoff.md). After the specialist model is fitted, use the
 [Model diagnostics & convergence clinic](model-diagnostics-convergence.md) before
 interpreting the result.
 

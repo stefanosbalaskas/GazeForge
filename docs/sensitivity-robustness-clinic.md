@@ -289,6 +289,7 @@ these artifacts when sensitivity analyses are material to a manuscript claim.
 - [Outcome & estimand preregistration](estimand-preregistration.md) — freeze sensitivity intent before model fitting.
 - [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) — reconcile exposure, observed zero, missingness, and censoring before comparing variants.
 - [Analysis handoff](analysis-handoff.md) — preserve inferential units, exposure, missingness, and censoring.
+- [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) — document mechanism assumptions and candidate treatment families before executing missing-data sensitivity variants.
 - [Measurement & interpretation clinic](measurement-interpretation.md) — distinguish observable sensitivity from construct validity.
 - [Reporting & interpretation clinic](reporting-clinic.md) — translate the complete sensitivity record into claim-safe prose.
 - [Publication readiness](publication-readiness.md) — verify complete sensitivity reporting before submission.
