@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **nineteen deterministic examples** that move from a small
+The repository contains **twenty deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -48,6 +48,7 @@ artifacts, and continue to the corresponding research guide.
 | **Sensitivity/robustness audit** | base | `python examples/15_worked_sensitivity_robustness_audit.py --output-dir worked-sensitivity-robustness-audit` | registered/executed variants + denominator/result comparison + deviations + reporting guidance |
 | **Denominator/exposure audit** | base | `python examples/16_worked_denominator_exposure_audit.py --output-dir worked-denominator-exposure-audit` | observation-status + exposure/rate/proportion/censoring reconciliation bundle |
 | **Model diagnostics audit** | base | `python examples/17_worked_model_diagnostics_audit.py --output-dir worked-model-diagnostics-audit` | fit registry + diagnostic status + interpretation gate + replacement linkage |
+| **Uncertainty/multiplicity audit** | base | `python examples/18_worked_inferential_reporting_audit.py --output-dir worked-inferential-reporting-audit` | result scale + interval identity + multiplicity family + reporting gate |
 
 ## 0 · GazeForge tour
 
@@ -611,6 +612,27 @@ that changes the estimand/population and therefore remains exploratory.
 · [Read the model diagnostics clinic](model-diagnostics-convergence.md)
 · [Continue to sensitivity/robustness](sensitivity-robustness-clinic.md)
 
+
+## 19 · Uncertainty/multiplicity & inferential reporting audit
+
+Use this after the specialist model has passed the diagnostics gate and before
+confirmatory/exploratory results are translated into manuscript language.
+
+```bash
+python examples/18_worked_inferential_reporting_audit.py \
+  --output-dir worked-inferential-reporting-audit
+```
+
+The deterministic teaching bundle preserves effect scale/unit, interval method/level,
+raw versus adjusted p-value identity, multiplicity-family membership, diagnostic
+eligibility, and confirmatory versus exploratory status. It includes complete
+confirmatory and exploratory examples plus blocked cases for missing uncertainty
+identity, incomplete multiplicity, scale/unit mismatch, and failed diagnostics.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/18_worked_inferential_reporting_audit.py)
+· [Read the uncertainty/multiplicity clinic](inferential-reporting-audit.md)
+· [Continue to reporting](reporting-clinic.md)
+
 ## Which example should I run first?
 
 ```text
@@ -633,6 +655,7 @@ Need a reviewer/replication handoff?             → 14_worked_reviewer_replicat
 Need to audit sensitivity/robustness?             → 15_worked_sensitivity_robustness_audit.py
 Need to reconcile denominators/exposure?          → 16_worked_denominator_exposure_audit.py
 Need to audit model diagnostics/convergence?       → 17_worked_model_diagnostics_audit.py
+Need to audit uncertainty/multiplicity?            → 18_worked_inferential_reporting_audit.py
 ```
 
 ## Move from demo data to a study
