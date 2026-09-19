@@ -227,6 +227,7 @@ For each outcome, write the reporting rule while the result is still unknown.
 Continue with:
 
 - [Study-design templates](study-design-templates.md) for acquisition/QC/AOI/validation records;
+- [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) — reconcile observed zero, missing, absent-by-design, undefined denominators, and no-event censoring before modelling.
 - [Analysis handoff](analysis-handoff.md) for model-ready tables;
 - [Measurement & interpretation clinic](measurement-interpretation.md) for construct-bridge boundaries;
 - [Reporting & interpretation clinic](reporting-clinic.md) for manuscript wording;
