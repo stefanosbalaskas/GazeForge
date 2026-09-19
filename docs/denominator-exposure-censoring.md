@@ -116,7 +116,9 @@ exposure must remain visible.
 - [Scanpaths](api-reference.md#scanpaths) — sequence support without zero-filling absent states.
 
 Continue with the [Analysis handoff](analysis-handoff.md) after denominator and
-censoring semantics are frozen.
+censoring semantics are frozen. After the specialist model is fitted, use the
+[Model diagnostics & convergence clinic](model-diagnostics-convergence.md) before
+interpreting the result.
 
 ## Reporting examples
 
