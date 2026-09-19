@@ -317,9 +317,24 @@ than duplicates the denominator/exposure/censoring and model-diagnostics audits.
 
 Guide: [Missing-data assumptions & treatment handoff](../docs/missing-data-assumptions.md)
 
+
+## 20. Uncertainty/multiplicity & inferential reporting audit
+
+```bash
+python examples/19_worked_inferential_reporting_audit.py \
+  --output-dir worked-inferential-reporting-audit
+```
+
+Builds a deterministic post-fit audit of effect scale/unit, uncertainty identity,
+multiplicity-family completeness, raw versus adjusted p-value identity, diagnostics,
+and confirmatory versus exploratory status. All inferential numbers are synthetic
+teaching values.
+
+Guide: [Uncertainty, multiplicity & inferential reporting clinic](../docs/inferential-reporting-audit.md)
+
 ## Reproducibility notes
 
-The twenty examples use fixed or explicitly constructed synthetic/demo inputs.
+The twenty-one examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
