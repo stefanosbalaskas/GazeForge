@@ -108,7 +108,7 @@ def test_model_diagnostics_clinic_is_discoverable_and_claim_safe() -> None:
     assert "passing the gate does not make a model scientifically correct" in lower
     assert "Model diagnostics & convergence clinic: model-diagnostics-convergence.md" in mkdocs
     assert "model-diagnostics-convergence.md" in homepage
-    assert "twenty deterministic examples" in gallery
+    assert "twenty-one deterministic examples" in gallery
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

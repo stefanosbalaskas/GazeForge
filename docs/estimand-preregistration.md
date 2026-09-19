@@ -229,6 +229,7 @@ Continue with:
 - [Study-design templates](study-design-templates.md) for acquisition/QC/AOI/validation records;
 - [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) — reconcile observed zero, missing, absent-by-design, undefined denominators, and no-event censoring before modelling.
 - [Analysis handoff](analysis-handoff.md) for model-ready tables;
+- [Uncertainty, multiplicity & inferential reporting clinic](inferential-reporting-audit.md) to verify effect scale, interval identity, confirmatory-family completeness, and raw/adjusted inferential fields after diagnostics;
 - [Measurement & interpretation clinic](measurement-interpretation.md) for construct-bridge boundaries;
 - [Reporting & interpretation clinic](reporting-clinic.md) for manuscript wording;
 - [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) to reconcile the registered sensitivity set with executed, non-evaluable, non-converged, exploratory, and deviation analyses;
