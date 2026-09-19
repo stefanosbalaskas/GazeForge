@@ -78,6 +78,15 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 - ☐ Final AOI geometry is frozen before manuscript-facing aggregation when the design requires fixed AOIs.
 - ☐ Scanpath/transition outputs retain participant/trial identity and their AOI-label source.
 
+### Denominator / exposure / censoring
+
+- ☐ Observed zero, missing, absent-by-design, undefined, and right-censored states remain distinguishable.
+- ☐ Rates/proportions retain numerator and positive defined denominator/exposure.
+- ☐ No-fixation latency is censored only when the target was observable.
+- ☐ No silent complete-case filtering or missing→zero repair occurred.
+
+[Open the denominator/exposure clinic →](denominator-exposure-censoring.md)
+
 ### Statistical analysis handoff
 
 - ☐ The inferential unit and repeated-measures grouping are explicit before model fitting.

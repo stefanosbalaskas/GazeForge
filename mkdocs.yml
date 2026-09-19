@@ -73,6 +73,7 @@ nav:
       - Outcome & estimand preregistration: estimand-preregistration.md
       - Research evidence bundle: research-evidence-bundle.md
       - Analysis handoff: analysis-handoff.md
+      - Denominator, exposure & censoring clinic: denominator-exposure-censoring.md
       - Measurement & interpretation clinic: measurement-interpretation.md
       - Sensitivity & robustness clinic: sensitivity-robustness-clinic.md
       - Learning paths: learning-paths.md

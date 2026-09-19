@@ -133,7 +133,7 @@ def test_reviewer_handoff_is_discoverable_and_claim_safe() -> None:
     assert "api-reference.md#sampling-sensitivity" in guide
     assert "Reviewer & replication handoff: reviewer-replication-handoff.md" in mkdocs
     assert "reviewer-replication-handoff.md" in homepage
-    assert "seventeen deterministic examples" in gallery
+    assert "eighteen deterministic examples" in gallery
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

@@ -229,6 +229,7 @@ licensing, or governance problem.
 ## Continue through the publication path
 
 - [Research evidence bundle](research-evidence-bundle.md) — freeze source/QC/review/analysis/provenance layers.
+- [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) — verify denominator/exposure/missingness/censoring identities before external handoff.
 - [Analysis handoff](analysis-handoff.md) — preserve inferential units, denominators, missingness, and censoring.
 - [Measurement & interpretation clinic](measurement-interpretation.md) — audit what gaze-derived measures can support.
 - [Reporting & interpretation clinic](reporting-clinic.md) — write Methods/Results/captions without strengthening evidence.

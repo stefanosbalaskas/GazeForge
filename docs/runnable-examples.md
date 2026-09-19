@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **seventeen deterministic examples** that move from a small
+The repository contains **eighteen deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -46,6 +46,7 @@ artifacts, and continue to the corresponding research guide.
 | **Outcome/estimand preregistration** | base | `python examples/13_worked_estimand_preregistration.py --output-dir worked-estimand-preregistration` | outcome + estimand + contrast + sensitivity + deviation registries |
 | **Reviewer/replication handoff** | base | `python examples/14_worked_reviewer_replication_bundle.py --output-dir worked-reviewer-replication-bundle` | claim-artifact + rerun + limitations + API + hash audit bundle |
 | **Sensitivity/robustness audit** | base | `python examples/15_worked_sensitivity_robustness_audit.py --output-dir worked-sensitivity-robustness-audit` | registered/executed variants + denominator/result comparison + deviations + reporting guidance |
+| **Denominator/exposure audit** | base | `python examples/16_worked_denominator_exposure_audit.py --output-dir worked-denominator-exposure-audit` | observation-status + exposure/rate/proportion/censoring reconciliation bundle |
 
 ## 0 · GazeForge tour
 
@@ -569,6 +570,26 @@ never creates a p-value, significance decision, or automatic robustness verdict.
 · [Read the sensitivity & robustness clinic](sensitivity-robustness-clinic.md)
 · [Continue to reporting](reporting-clinic.md)
 
+
+## 17 · Denominator/exposure audit
+
+Use this before specialist modelling when counts, rates, proportions, dwell, or latency
+depend on unequal exposure, missing trials, absent-by-design AOIs, or no-fixation
+censoring.
+
+```bash
+python examples/16_worked_denominator_exposure_audit.py \
+  --output-dir worked-denominator-exposure-audit
+```
+
+The deterministic teaching bundle writes an observation-status registry, exposure
+ledger, count/rate audit, dwell/proportion audit, latency-censoring audit,
+reconciliation flow, reporting-language table, API map, README, and manifest.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/16_worked_denominator_exposure_audit.py)
+· [Read the denominator/exposure clinic](denominator-exposure-censoring.md)
+· [Continue to analysis handoff](analysis-handoff.md)
+
 ## Which example should I run first?
 
 ```text
@@ -589,6 +610,7 @@ Need to audit what a gaze metric supports?      → 12_worked_measurement_interp
 Need to freeze outcomes/estimands first?         → 13_worked_estimand_preregistration.py
 Need a reviewer/replication handoff?             → 14_worked_reviewer_replication_bundle.py
 Need to audit sensitivity/robustness?             → 15_worked_sensitivity_robustness_audit.py
+Need to reconcile denominators/exposure?          → 16_worked_denominator_exposure_audit.py
 ```
 
 ## Move from demo data to a study

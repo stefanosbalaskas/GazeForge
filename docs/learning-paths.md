@@ -133,6 +133,16 @@ Separate the observable from the proposed construct, review validity threats, pr
 <div class="gf-path-card" markdown>
 
 
+
+### :material-table-eye: I need to reconcile denominators, exposure, or censoring
+
+Use this route before modelling when a zero may mean several different things, when
+trial/AOI exposure differs, or when no-fixation latency must remain right-censored.
+
+**Start here:** [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md)  
+**Run it:** `python examples/16_worked_denominator_exposure_audit.py --output-dir worked-denominator-exposure-audit`  
+**Continue to:** [Analysis handoff](analysis-handoff.md)
+
 ### :material-chart-bell-curve-cumulative: I need to audit sensitivity or robustness
 
 Use this route after the primary estimand and sensitivity plan are frozen and the
@@ -198,7 +208,7 @@ Read the validation matrix, frozen evidence, source-resolution records, and benc
 
 ## Prefer runnable scripts?
 
-Open the [Runnable examples gallery](runnable-examples.md) for **seventeen deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
+Open the [Runnable examples gallery](runnable-examples.md) for **eighteen deterministic examples/workflows** with exact commands, dependencies, expected outputs, and links to the underlying repository files. Start with the [GazeForge Tour](gazeforge-tour.md) if you need the package-wide mental model. The [worked tracker-import/QC example](worked-tracker-import.md) demonstrates the real-data handoff contract; the [QC review/exclusion-ledger clinic](qc-review-exclusion-ledger.md) demonstrates review and denominator accounting; the [worked advertising/interface study](worked-advertising-study.md) demonstrates a static-stimulus design; the [worked dynamic-AOI study](worked-dynamic-aoi-study.md) demonstrates moving regions, bounded interpolation, and explicit no-extrapolation checks; and the [worked event-model validation study](runnable-examples.md#7-worked-event-model-validation-study) demonstrates participant-disjoint model comparison with separate sample/event/calibration outputs; and the [research evidence bundle](research-evidence-bundle.md) demonstrates how to freeze those layers into an archive-facing directory. For a task-first map, start with [Research recipes](research-recipes.md); for deeper technical documentation, use the [Methods overview](methods-overview.md).
 
 ## A practical progression
 
