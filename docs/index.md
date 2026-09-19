@@ -163,7 +163,7 @@ Start with the generated evidence layer, then drill into the benchmark whose pro
 
 <div class="gf-support-links" markdown>
 
-**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · [Follow a first study](first-study-blueprint.md) · [Freeze outcomes & estimands](estimand-preregistration.md) · [Choose from the Documentation Map](documentation-map.md) · [Choose a method](method-chooser.md) · [Understand outputs](artifact-dictionary.md) · [Build an evidence bundle](research-evidence-bundle.md) · [Audit what a gaze measure supports](measurement-interpretation.md) · [Audit denominators & exposure](denominator-exposure-censoring.md) · [Audit model diagnostics](model-diagnostics-convergence.md) · [Audit sensitivity & robustness](sensitivity-robustness-clinic.md) · [Report without overclaiming](reporting-clinic.md) · [Share with a reviewer](reviewer-replication-handoff.md) · [Troubleshoot a workflow](troubleshooting.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
+**New here?** [Start with the GazeForge Tour](gazeforge-tour.md) · [Follow a first study](first-study-blueprint.md) · [Freeze outcomes & estimands](estimand-preregistration.md) · [Choose from the Documentation Map](documentation-map.md) · [Choose a method](method-chooser.md) · [Understand outputs](artifact-dictionary.md) · [Build an evidence bundle](research-evidence-bundle.md) · [Audit what a gaze measure supports](measurement-interpretation.md) · [Audit denominators & exposure](denominator-exposure-censoring.md) · [Audit model diagnostics](model-diagnostics-convergence.md) · [Audit uncertainty & multiplicity](inferential-reporting-audit.md) · [Audit sensitivity & robustness](sensitivity-robustness-clinic.md) · [Report without overclaiming](reporting-clinic.md) · [Share with a reviewer](reviewer-replication-handoff.md) · [Troubleshoot a workflow](troubleshooting.md) · **Also useful:** [Research recipes](research-recipes.md) · [Import real data](data-import-clinic.md) · [Worked tracker import/QC](worked-tracker-import.md) · [Review QC & exclusions](qc-review-exclusion-ledger.md) · [Validate event models](event-model-validation-clinic.md) · [Study lifecycle](study-lifecycle.md) · [Study-design templates](study-design-templates.md) · [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) · [Methods overview](methods-overview.md) · [Runnable examples](runnable-examples.md) · [Validation reporting](validation-reporting-cookbook.md) · [Research terminology](research-terminology.md) · [Benchmark guide](benchmark-guide.md) · [Reproducible reporting](reproducible-reporting.md)
 
 </div>
 
@@ -221,6 +221,20 @@ Treat non-convergence, singular/boundary states, separation or invalid covarianc
 and missing diagnostics as explicit stop conditions before interpretation.
 
 [Open the diagnostics clinic →](model-diagnostics-convergence.md)
+
+</div>
+
+
+<div class="gf-task-card" markdown>
+
+<span class="gf-task-kicker">Check inferential reporting</span>
+
+### :material-chart-error: Audit uncertainty & multiplicity
+
+Keep effect scale, units, interval method/level, confirmatory-family membership,
+and raw versus adjusted inferential fields explicit before manuscript wording.
+
+[Open the inferential audit →](inferential-reporting-audit.md)
 
 </div>
 
