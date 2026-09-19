@@ -218,6 +218,7 @@ Retain:
 ## Continue through the workflow
 
 - [Analysis handoff](analysis-handoff.md) — construct model-ready tables without choosing the estimator.
+- [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) — preserve the design identities that a fitted model is supposed to represent; a small variance component does not erase the design.
 - [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) — freeze exposure/missingness/censoring semantics.
 - [Uncertainty, multiplicity & inferential reporting clinic](inferential-reporting-audit.md) — verify effect scale, uncertainty identity, multiplicity families, and confirmatory/exploratory status after the diagnostic gate passes.
 - [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) — register alternative/replacement fits and changed-estimand deviations.

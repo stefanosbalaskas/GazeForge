@@ -63,12 +63,13 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
         "17_worked_model_diagnostics_audit.py",
         "18_worked_missing_data_assumptions_audit.py",
         "19_worked_inferential_reporting_audit.py",
+        "20_worked_grouping_pseudoreplication_audit.py",
     )
     for script in scripts:
         assert script in page
         assert f"blob/main/examples/{script}" in page
 
-    assert "twenty-one deterministic examples" in page
+    assert "twenty-two deterministic examples" in page
     assert "python examples/00_gazeforge_tour.py" in page
     assert "--output-dir gazeforge-tour-demo" in page
     assert "python examples/01_synthetic_qc.py" in page
@@ -107,6 +108,8 @@ def test_examples_gallery_covers_all_real_scripts_and_exact_commands() -> None:
     assert "--output-dir worked-missing-data-assumptions-audit" in page
     assert "python examples/19_worked_inferential_reporting_audit.py" in page
     assert "--output-dir worked-inferential-reporting-audit" in page
+    assert "python examples/20_worked_grouping_pseudoreplication_audit.py" in page
+    assert "--output-dir worked-grouping-pseudoreplication-audit" in page
     assert "--output-dir worked-sensitivity-robustness-audit" in page
 
 
@@ -219,6 +222,13 @@ def test_examples_gallery_names_real_outputs_and_preserves_demo_boundary() -> No
         "04_exclusion_missingness_separation.csv",
         "05_sensitivity_handoff.csv",
         "missing_data_assumptions_manifest.json",
+        "01_unit_registry.csv",
+        "02_grouping_structure.csv",
+        "03_row_independence_audit.csv",
+        "04_aggregation_risk_register.csv",
+        "05_crossed_nested_handoff.csv",
+        "07_api_route_map.csv",
+        "grouping_pseudoreplication_manifest.json",
     ):
         assert output in page
 
@@ -270,6 +280,7 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "model-diagnostics-convergence.md" in homepage
     assert "missing-data-assumptions.md" in homepage
     assert "inferential-reporting-audit.md" in homepage
+    assert "grouping-repeated-measures.md" in homepage
     assert "event-model-validation-clinic.md" in homepage
     assert "gazeforge-tour.md" in getting_started
     assert "runnable-examples.md" in getting_started
@@ -305,6 +316,8 @@ def test_new_hubs_are_discoverable_without_expanding_homepage_hero() -> None:
     assert "../docs/missing-data-assumptions.md" in examples_readme
     assert "19_worked_inferential_reporting_audit.py" in examples_readme
     assert "../docs/inferential-reporting-audit.md" in examples_readme
+    assert "20_worked_grouping_pseudoreplication_audit.py" in examples_readme
+    assert "../docs/grouping-repeated-measures.md" in examples_readme
     assert "../docs/sensitivity-robustness-clinic.md" in examples_readme
 
     start = homepage.index('<div class="gf-hero-actions"')

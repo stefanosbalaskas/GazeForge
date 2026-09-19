@@ -256,6 +256,8 @@ empirical effect estimate and do not establish that any real study is robust.
 
 ## Figure and table guidance
 
+Grouping changes belong in the sensitivity record when a variant changes aggregation, clustering, participant/stimulus inclusion, or the represented inferential/generalisation unit. Use the [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) to distinguish a same-estimand grouping sensitivity from a changed analysis target.
+
 A sensitivity figure/table should identify:
 
 - primary reference row/line;

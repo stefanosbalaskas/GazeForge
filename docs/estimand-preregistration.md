@@ -43,6 +43,8 @@ For every registered outcome, record at least:
 - measurement unit;
 - row/inferential structure;
 - participant/trial/AOI/event grouping;
+- observation-row, measurement, inferential, and generalisation units;
+- repeated/nested/crossed participant-stimulus/session structure where relevant;
 - time window;
 - observed exposure or denominator;
 - observed-zero versus missing versus absent-by-design versus undefined semantics;
@@ -95,7 +97,7 @@ Before analysis, decide what each state means.
 
 Never use a convenient zero to stand in for the other states.
 
-The [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) preserves these statuses mechanically. When genuinely unavailable measurements require missing-data assumptions or treatment planning, use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) before the [Analysis handoff](analysis-handoff.md).
+The [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) preserves these statuses mechanically. When genuinely unavailable measurements require missing-data assumptions or treatment planning, use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md). After the model-ready table exists, use the [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) to verify that inferential/generalisation units and repeated/nested/crossed identities survive before specialist modelling.
 
 ## Counts, rates, proportions, dwell, latency, and sequences
 

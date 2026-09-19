@@ -13,7 +13,7 @@
 </nav>
 
 
-The repository contains **twenty-one deterministic examples** that move from a small
+The repository contains **twenty-two deterministic examples** that move from a small
 installation check to complete reviewable workflows, tracker import/QC,
 human-reviewed exclusion decisions, domain-shaped studies, leakage-safe
 event-model validation, and an explicit statistical-analysis handoff. Use this page to choose a script, inspect its exact
@@ -50,6 +50,7 @@ artifacts, and continue to the corresponding research guide.
 | **Model diagnostics audit** | base | `python examples/17_worked_model_diagnostics_audit.py --output-dir worked-model-diagnostics-audit` | fit registry + diagnostic status + interpretation gate + replacement linkage |
 | **Missing-data assumptions audit** | base | `python examples/18_worked_missing_data_assumptions_audit.py --output-dir worked-missing-data-assumptions-audit` | source registry + mechanism questions + non-selecting treatment/sensitivity/reporting handoff |
 | **Uncertainty/multiplicity audit** | base | `python examples/19_worked_inferential_reporting_audit.py --output-dir worked-inferential-reporting-audit` | result scale + interval identity + multiplicity family + reporting gate |
+| **Grouping/pseudoreplication audit** | base | `python examples/20_worked_grouping_pseudoreplication_audit.py --output-dir worked-grouping-pseudoreplication-audit` | unit registry + nested/crossed grouping + independence/aggregation audit + reporting/API handoff |
 
 ## 0 · GazeForge tour
 
@@ -666,6 +667,39 @@ identity, incomplete multiplicity, scale/unit mismatch, and failed diagnostics.
 · [Read the uncertainty/multiplicity clinic](inferential-reporting-audit.md)
 · [Continue to reporting](reporting-clinic.md)
 
+## 21 · Grouping/repeated-measures & pseudoreplication audit
+
+Use this after model-ready rows exist and before specialist model structure is selected.
+
+```bash
+python examples/20_worked_grouping_pseudoreplication_audit.py \
+  --output-dir worked-grouping-pseudoreplication-audit
+```
+
+The deterministic teaching bundle writes:
+
+```text
+01_unit_registry.csv
+02_grouping_structure.csv
+03_row_independence_audit.csv
+04_aggregation_risk_register.csv
+05_crossed_nested_handoff.csv
+06_reporting_language.csv
+07_api_route_map.csv
+README.md
+grouping_pseudoreplication_manifest.json
+```
+
+It distinguishes observation rows, measurement units, inferential units, and
+generalisation units; records nested/crossed/repeated identities; flags obvious
+pseudoreplication and inferential-unit-changing aggregation; and deliberately selects
+no fixed effects, random intercepts/slopes, covariance structure, cluster-robust
+standard errors, GEE, LMM/GLMM, Bayesian hierarchical model, or other estimator.
+
+[Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/20_worked_grouping_pseudoreplication_audit.py)
+· [Read the grouping/repeated-measures clinic](grouping-repeated-measures.md)
+· [Continue to model diagnostics](model-diagnostics-convergence.md)
+
 ## Which example should I run first?
 
 ```text
@@ -690,6 +724,7 @@ Need to reconcile denominators/exposure?          → 16_worked_denominator_expo
 Need to audit model diagnostics/convergence?       → 17_worked_model_diagnostics_audit.py
 Need to document missing-data assumptions?         → 18_worked_missing_data_assumptions_audit.py
 Need to audit uncertainty/multiplicity?            → 19_worked_inferential_reporting_audit.py
+Need to audit grouping/pseudoreplication?           → 20_worked_grouping_pseudoreplication_audit.py
 ```
 
 ## Move from demo data to a study
@@ -707,11 +742,12 @@ A practical research sequence is:
 9. use the [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) to reconcile observation-state, exposure, rate/proportion, and censoring mechanics;
 10. use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) when unavailable/partial measurements require explicit assumptions or treatment planning;
 11. use the [Analysis handoff](analysis-handoff.md) to build model-ready tables while preserving participant/trial grouping and those semantics;
-12. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
-13. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct;
-14. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks;
-15. use the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) to execute/report the complete registered sensitivity set without replacing the primary estimand; and
-16. freeze software identity, figures, tables, and evidence boundaries before reporting.
+12. use the [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) to audit row/inferential/generalisation units and nested/crossed participant-stimulus structure before specialist fitting;
+13. use participant-disjoint or dataset-held-out validation where the intended claim requires it;
+14. assemble the [Research evidence bundle](research-evidence-bundle.md) so source, QC, decisions, derivatives, provenance, and reporting metadata remain distinct;
+15. use the [Measurement & interpretation clinic](measurement-interpretation.md) to audit any observable→construct bridge and justified sensitivity checks;
+16. use the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) to execute/report the complete registered sensitivity set without replacing the primary estimand; and
+17. freeze software identity, figures, tables, and evidence boundaries before reporting.
 
 Synthetic examples are learning tools. They do not turn a derived lower-rate
 condition into native-device validation, turn Gazepoint/GP3 compatibility into

@@ -157,6 +157,21 @@ The [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) 
 | `missing_data_assumptions_manifest.json` | bundle | safeguard record | deterministic audit ≠ statistical validity |
 
 
+## Grouping/repeated-measures audit derivatives
+
+The [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) adds a non-model-selecting audit between model-ready measurement rows and specialist statistical fitting.
+
+| Artifact | Unit | Role | Boundary |
+| --- | --- | --- | --- |
+| `01_unit_registry.csv` | analysis representation | row/measurement/inferential/generalisation registry | row identity ≠ independent experimental unit |
+| `02_grouping_structure.csv` | grouping relation | nested/crossed/repeated/design record | design relation ≠ selected random/fixed term |
+| `03_row_independence_audit.csv` | scenario | pseudoreplication/independence gate | flagged risk ≠ automatic estimator choice |
+| `04_aggregation_risk_register.csv` | transformation | aggregation/estimand risk record | descriptive aggregation ≠ inferential replacement |
+| `05_crossed_nested_handoff.csv` | identity | specialist-model handoff | identity retained ≠ model syntax selected |
+| `06_reporting_language.csv` | reporting pattern | claim-safe wording | wording ≠ model validation |
+| `07_api_route_map.csv` | workflow layer | API map | API availability ≠ method suitability |
+| `grouping_pseudoreplication_manifest.json` | bundle | safeguard record | deterministic audit ≠ statistical validity |
+
 ## Inferential reporting audit derivatives
 
 The [Uncertainty, multiplicity & inferential reporting clinic](inferential-reporting-audit.md)

@@ -73,6 +73,7 @@ nav:
       - Outcome & estimand preregistration: estimand-preregistration.md
       - Research evidence bundle: research-evidence-bundle.md
       - Analysis handoff: analysis-handoff.md
+      - Grouping, repeated measures & pseudoreplication: grouping-repeated-measures.md
       - Denominator, exposure & censoring clinic: denominator-exposure-censoring.md
       - Missing-data assumptions & treatment handoff: missing-data-assumptions.md
       - Model diagnostics & convergence clinic: model-diagnostics-convergence.md

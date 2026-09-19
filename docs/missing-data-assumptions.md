@@ -137,7 +137,7 @@ denominator / observable exposure
 ~~~
 
 Missingness clustered within a participant or stimulus cannot be studied correctly if
-those identities were removed during aggregation.
+those identities were removed during aggregation. Use the [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) to audit those identities before a missing-data treatment or specialist model is chosen.
 
 ## Censoring remains censoring
 

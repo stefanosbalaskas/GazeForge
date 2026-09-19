@@ -117,7 +117,7 @@ def test_inferential_reporting_clinic_is_discoverable_and_claim_safe() -> None:
         "inferential-reporting-audit.md"
     ) in mkdocs
     assert "inferential-reporting-audit.md" in homepage
-    assert "twenty-one deterministic examples" in gallery
+    assert "twenty-two deterministic examples" in gallery
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)

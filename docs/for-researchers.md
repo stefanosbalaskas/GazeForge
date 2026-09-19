@@ -82,6 +82,7 @@ Start with: [Validation guide](validation-evidence-guide.md) · [Benchmark guide
 | Can a probabilistic event model be trusted at its confidence values? | calibration | ECE, Brier, calibration table | calibration requires held-out predictions |
 | Does a result survive different acquisition/derivation assumptions? | sensitivity | rate × purity/retention summaries | derived rate ≠ native-device validation |
 | What assumptions govern unavailable measurements? | missing-data handoff | source registry + mechanism questions + treatment registry | MCAR/MAR/MNAR and treatment choice are not package outputs |
+| Are repeated gaze rows being treated as independent? | grouping audit | unit registry + nested/crossed/pseudoreplication audit | repeated rows ≠ independent participants; design identity ≠ automatic model syntax |
 | Can somebody reconstruct the analysis? | provenance | fingerprints, manifests, certificates | preserve exact source/software identity |
 
 ## A domain workflow that remains auditable
@@ -131,7 +132,7 @@ The package can help quantify **where, when, how long, in what sequence, with wh
 
 Decide in advance:
 
-1. the observable gaze construct and unit of analysis;
+1. the observable gaze construct, row/measurement/inferential unit, and intended generalisation unit;
 2. tracker/acquisition rate and geometry requirements;
 3. QC review/exclusion rules;
 4. event algorithm and any threshold/sampling-rate sensitivity plan;
@@ -141,4 +142,4 @@ Decide in advance:
 8. how uncertainty, missingness source/reason, missing-data assumptions, censoring, and abstention will be represented;
 9. which evidence artifacts and software identity will be archived.
 
-Then follow the [Study lifecycle](study-lifecycle.md), use the [Outcome & estimand preregistration clinic](estimand-preregistration.md) before confirmatory modelling, use the [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) to preserve observation-state mechanics, use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) before selecting a missing-data strategy in specialist software, use the [Measurement & interpretation clinic](measurement-interpretation.md) before promoting gaze observables into substantive constructs, use [Reproducible reporting](reproducible-reporting.md) for the final methods record, use the [Reviewer & replication handoff](reviewer-replication-handoff.md) before sharing a frozen archive externally, and use the [Publication-readiness checklist](publication-readiness.md) before final release.
+Then follow the [Study lifecycle](study-lifecycle.md), use the [Outcome & estimand preregistration clinic](estimand-preregistration.md) before confirmatory modelling, use the [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) before specialist fitting when participant/trial/stimulus/AOI rows repeat, use the [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) to preserve observation-state mechanics, use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) before selecting a missing-data strategy in specialist software, use the [Measurement & interpretation clinic](measurement-interpretation.md) before promoting gaze observables into substantive constructs, use [Reproducible reporting](reproducible-reporting.md) for the final methods record, use the [Reviewer & replication handoff](reviewer-replication-handoff.md) before sharing a frozen archive externally, and use the [Publication-readiness checklist](publication-readiness.md) before final release.

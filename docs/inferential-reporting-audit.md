@@ -208,7 +208,7 @@ the estimand or population should remain a deviation/exploratory result rather t
 being silently folded into the primary confirmatory family.
 
 Use the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) for the
-complete registered/executed sensitivity set.
+complete registered/executed sensitivity set. When repeated observations or recurring stimuli are present, the [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) should have preserved the inferential/generalisation identities underlying the reported uncertainty.
 
 ## Reporting examples
 
