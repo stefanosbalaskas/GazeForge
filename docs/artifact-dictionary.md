@@ -127,6 +127,21 @@ right-censored latency before modelling.
 | `06_reconciliation_flow.csv` | workflow status | denominator reconciliation | counts do not establish effects |
 | `denominator_exposure_manifest.json` | bundle | audit manifest | deterministic audit ≠ empirical validation |
 
+
+## Model diagnostics audit derivatives
+
+The [Model diagnostics & convergence clinic](model-diagnostics-convergence.md) records
+post-fit computational admissibility without choosing or refitting the estimator.
+
+| Artifact | Unit | Role | Boundary |
+| --- | --- | --- | --- |
+| `01_model_fit_registry.csv` | model | model/estimand/population/software identity | identity ≠ valid inference |
+| `02_diagnostic_status.csv` | model | convergence/singularity/separation/covariance/diagnostic status | warnings cannot be silently ignored |
+| `03_interpretation_gate.csv` | model | fail-closed interpretation gate | passing gate ≠ scientific truth |
+| `04_sensitivity_linkage.csv` | model | primary/sensitivity/deviation linkage | changed estimand/population ≠ replacement primary |
+| `05_reporting_language.csv` | reporting pattern | failed-fit and replacement wording | prose cannot repair a failed model |
+| `model_diagnostics_manifest.json` | bundle | audit manifest | deterministic audit ≠ empirical validation |
+
 ## Sensitivity/robustness audit derivatives
 
 The [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) adds a
