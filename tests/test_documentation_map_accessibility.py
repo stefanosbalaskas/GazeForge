@@ -118,7 +118,10 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
     assert "Measurement & interpretation clinic: measurement-interpretation.md" in mkdocs
     assert "Denominator, exposure & censoring clinic: denominator-exposure-censoring.md" in mkdocs
     assert "Model diagnostics & convergence clinic: model-diagnostics-convergence.md" in mkdocs
-    assert "Uncertainty, multiplicity & inferential reporting: inferential-reporting-audit.md" in mkdocs
+    assert (
+        "Uncertainty, multiplicity & inferential reporting: "
+        "inferential-reporting-audit.md"
+    ) in mkdocs
     assert "Missing-data assumptions & treatment handoff: missing-data-assumptions.md" in mkdocs
     assert "Sensitivity & robustness clinic: sensitivity-robustness-clinic.md" in mkdocs
     assert "Outcome & estimand preregistration: estimand-preregistration.md" in mkdocs
