@@ -139,7 +139,7 @@ def test_sensitivity_clinic_is_discoverable_and_claim_safe() -> None:
         assert route in guide
     assert "Sensitivity & robustness clinic: sensitivity-robustness-clinic.md" in mkdocs
     assert "sensitivity-robustness-clinic.md" in homepage
-    assert "eighteen deterministic examples" in gallery
+    assert "nineteen deterministic examples" in gallery
 
     start = homepage.index('<div class="gf-hero-actions"')
     end = homepage.index("</div>", start)
