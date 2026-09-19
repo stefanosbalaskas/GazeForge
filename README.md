@@ -87,6 +87,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I need to freeze outcomes/estimands before modelling | [Outcome & estimand preregistration clinic](docs/estimand-preregistration.md) |
 | I need to reconcile denominator/exposure/missingness/censoring | [Denominator, exposure & censoring clinic](docs/denominator-exposure-censoring.md) |
 | I have reviewed gaze outputs and need model-ready statistical tables | [Analysis handoff](docs/analysis-handoff.md) |
+| I need to audit model convergence/diagnostics after fitting | [Model diagnostics & convergence clinic](docs/model-diagnostics-convergence.md) |
 | I have a gaze metric and need to know what it supports saying | [Measurement & interpretation clinic](docs/measurement-interpretation.md) |
 | I need to audit sensitivity/robustness without cherry-picking | [Sensitivity & robustness clinic](docs/sensitivity-robustness-clinic.md) |
 | I need a study from acquisition to publication | [Study lifecycle](docs/study-lifecycle.md) |
@@ -181,6 +182,7 @@ The repository now has a task-oriented learning sequence:
 14  reviewer/replication handoff
 15  sensitivity/robustness audit
 16  denominator/exposure/censoring audit
+17  model diagnostics/convergence audit
 +   complete end-to-end research workflow
 ```
 
