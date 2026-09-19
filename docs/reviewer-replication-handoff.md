@@ -234,6 +234,7 @@ licensing, or governance problem.
 - [Measurement & interpretation clinic](measurement-interpretation.md) — audit what gaze-derived measures can support.
 - [Reporting & interpretation clinic](reporting-clinic.md) — write Methods/Results/captions without strengthening evidence.
 - [Model diagnostics & convergence clinic](model-diagnostics-convergence.md) — expose model/estimand/software identity and fail-closed convergence/diagnostic status.
+- [Uncertainty, multiplicity & inferential reporting clinic](inferential-reporting-audit.md) — expose effect scale, interval method/level, confirmatory-family treatment, and raw/adjusted inferential fields.
 - [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) — expose the complete registered/executed sensitivity set, including non-evaluable/non-converged conditions and changed-estimand deviations.
 - [Publication readiness](publication-readiness.md) — final preregistration/submission/archive audit.
 - [API reference](api-reference.md) — exact public interfaces behind the workflow.
