@@ -219,6 +219,7 @@ Retain:
 
 - [Analysis handoff](analysis-handoff.md) — construct model-ready tables without choosing the estimator.
 - [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) — freeze exposure/missingness/censoring semantics.
+- [Uncertainty, multiplicity & inferential reporting clinic](inferential-reporting-audit.md) — verify effect scale, uncertainty identity, multiplicity families, and confirmatory/exploratory status after the diagnostic gate passes.
 - [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) — register alternative/replacement fits and changed-estimand deviations.
 - [Reporting & interpretation clinic](reporting-clinic.md) — report only diagnostically admissible results with limitations.
 - [Publication readiness](publication-readiness.md) — verify convergence/diagnostic status before manuscript freeze.
