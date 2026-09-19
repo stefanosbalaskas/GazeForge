@@ -33,6 +33,7 @@ def test_documentation_map_routes_research_tasks_to_real_pages() -> None:
         "measurement-interpretation.md",
         "denominator-exposure-censoring.md",
         "model-diagnostics-convergence.md",
+        "inferential-reporting-audit.md",
         "missing-data-assumptions.md",
         "sensitivity-robustness-clinic.md",
         "estimand-preregistration.md",
@@ -85,6 +86,7 @@ def test_consistent_help_order_is_present_on_entry_pages() -> None:
         "docs/measurement-interpretation.md",
         "docs/denominator-exposure-censoring.md",
         "docs/model-diagnostics-convergence.md",
+        "docs/inferential-reporting-audit.md",
         "docs/missing-data-assumptions.md",
         "docs/sensitivity-robustness-clinic.md",
         "docs/estimand-preregistration.md",
@@ -116,6 +118,7 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
     assert "Measurement & interpretation clinic: measurement-interpretation.md" in mkdocs
     assert "Denominator, exposure & censoring clinic: denominator-exposure-censoring.md" in mkdocs
     assert "Model diagnostics & convergence clinic: model-diagnostics-convergence.md" in mkdocs
+    assert "Uncertainty, multiplicity & inferential reporting: inferential-reporting-audit.md" in mkdocs
     assert "Missing-data assumptions & treatment handoff: missing-data-assumptions.md" in mkdocs
     assert "Sensitivity & robustness clinic: sensitivity-robustness-clinic.md" in mkdocs
     assert "Outcome & estimand preregistration: estimand-preregistration.md" in mkdocs
@@ -134,6 +137,7 @@ def test_navigation_and_homepage_discover_task_map_and_help() -> None:
         "measurement-interpretation.md",
         "denominator-exposure-censoring.md",
         "model-diagnostics-convergence.md",
+        "inferential-reporting-audit.md",
         "sensitivity-robustness-clinic.md",
         "estimand-preregistration.md",
         "reviewer-replication-handoff.md",
