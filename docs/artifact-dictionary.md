@@ -142,6 +142,21 @@ post-fit computational admissibility without choosing or refitting the estimator
 | `05_reporting_language.csv` | reporting pattern | failed-fit and replacement wording | prose cannot repair a failed model |
 | `model_diagnostics_manifest.json` | bundle | audit manifest | deterministic audit ≠ empirical validation |
 
+
+## Inferential reporting audit derivatives
+
+The [Uncertainty, multiplicity & inferential reporting clinic](inferential-reporting-audit.md)
+checks post-fit result identity after model diagnostics and before manuscript prose.
+
+| Artifact | Unit | Role | Boundary |
+| --- | --- | --- | --- |
+| `01_result_registry.csv` | result | estimand/population/scale/unit/estimate/p-value identity | estimate ≠ substantive truth |
+| `02_uncertainty_audit.csv` | result | interval bounds/level/method + scale/unit checks | complete interval ≠ model validity |
+| `03_multiplicity_family.csv` | confirmatory family | family membership + declared method completeness | GazeForge does not select a correction |
+| `04_interpretation_gate.csv` | result | confirmatory/exploratory/blocking workflow gate | gate status ≠ scientific truth label |
+| `05_reporting_language.csv` | reporting pattern | claim-safe inferential wording examples | wording cannot repair missing evidence |
+| `inferential_reporting_manifest.json` | bundle | deterministic audit identity and safeguards | synthetic audit ≠ empirical effect evidence |
+
 ## Sensitivity/robustness audit derivatives
 
 The [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) adds a
