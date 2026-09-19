@@ -88,6 +88,7 @@ GazeForge does **not** infer diagnoses, emotions, personality, protected traits,
 | I need to reconcile denominator/exposure/missingness/censoring | [Denominator, exposure & censoring clinic](docs/denominator-exposure-censoring.md) |
 | I need to document missing-data assumptions/treatment choices | [Missing-data assumptions & treatment handoff](docs/missing-data-assumptions.md) |
 | I have reviewed gaze outputs and need model-ready statistical tables | [Analysis handoff](docs/analysis-handoff.md) |
+| I need to preserve repeated-measures/grouping and avoid pseudoreplication | [Grouping, repeated measures & pseudoreplication clinic](docs/grouping-repeated-measures.md) |
 | I need to audit model convergence/diagnostics after fitting | [Model diagnostics & convergence clinic](docs/model-diagnostics-convergence.md) |
 | I need to audit effect scale/uncertainty/multiplicity before reporting | [Uncertainty, multiplicity & inferential reporting clinic](docs/inferential-reporting-audit.md) |
 | I have a gaze metric and need to know what it supports saying | [Measurement & interpretation clinic](docs/measurement-interpretation.md) |
@@ -187,6 +188,7 @@ The repository now has a task-oriented learning sequence:
 17  model diagnostics/convergence audit
 18  missing-data assumptions/treatment audit
 19  uncertainty/multiplicity inferential reporting audit
+20  grouping/repeated-measures/pseudoreplication audit
 +   complete end-to-end research workflow
 ```
 
@@ -265,6 +267,7 @@ Recommended entry points:
 - [Research evidence bundle](docs/research-evidence-bundle.md)
 - [Outcome & estimand preregistration clinic](docs/estimand-preregistration.md)
 - [Analysis handoff](docs/analysis-handoff.md)
+- [Grouping, repeated measures & pseudoreplication clinic](docs/grouping-repeated-measures.md)
 - [Denominator, exposure & censoring clinic](docs/denominator-exposure-censoring.md)
 - [Missing-data assumptions & treatment handoff](docs/missing-data-assumptions.md)
 - [Measurement & interpretation clinic](docs/measurement-interpretation.md)

@@ -86,6 +86,8 @@ one row per gaze sample treated as an independent participant
 
 The correct unit depends on the scientific question, but the grouping structure must survive aggregation. Losing `participant_id` or `trial_id` creates pseudoreplication risk and makes it impossible to represent repeated measures correctly.
 
+Before specialist fitting, use the [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) to distinguish row, measurement, inferential, and generalisation units; preserve repeated participant/trial/stimulus/AOI identities; and audit nested/crossed structure without automatically choosing model terms.
+
 ## Pattern 1 · Fixations → trial × AOI measures
 
 Start from reviewed fixation-to-AOI assignments. Preserve the trial design and reviewed AOI inventory separately, then aggregate with explicit keys.

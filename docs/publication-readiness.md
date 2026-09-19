@@ -89,7 +89,11 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 
 ### Statistical analysis handoff
 
-- ☐ The inferential unit and repeated-measures grouping are explicit before model fitting.
+- ☐ The observation row, measurement unit, inferential unit, and intended generalisation unit are explicit before model fitting.
+- ☐ Nested/crossed participant, trial/session, stimulus, AOI/event identities are retained where the design requires them.
+- ☐ Samples/fixations/AOI rows are not treated as independent participants.
+- ☐ Descriptive aggregation has not silently replaced the registered inferential input.
+- ☐ Small/zero/unavailable variance components are not used to erase design identities automatically.
 - ☐ Participant/trial identity has not been aggregated away merely for convenience.
 - ☐ Count, rate, proportion, and dwell outcomes retain their relevant observed exposure/denominator.
 - ☐ Observed zero, absent-by-design, undefined, and missing states remain distinguishable.
@@ -101,7 +105,7 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 - ☐ Failed convergence, singularity, separation, or invalid diagnostics stop interpretation rather than being silently accepted.
 - ☐ Handoff tables preserve event/AOI/QC/source provenance and exact software identity.
 
-[Open the statistical analysis handoff →](analysis-handoff.md) · [Missing-data assumptions →](missing-data-assumptions.md)
+[Open the statistical analysis handoff →](analysis-handoff.md) · [Grouping/pseudoreplication audit →](grouping-repeated-measures.md) · [Missing-data assumptions →](missing-data-assumptions.md)
 
 ### Model diagnostics / convergence
 

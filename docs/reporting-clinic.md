@@ -204,6 +204,8 @@ detector, the AOI method, or a psychological interpretation.”
 
 When missing-data assumptions or treatment choices affect the analysis, use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) before writing Methods/Results. MCAR/MAR/MNAR language and complete-case/imputation/weighting/model choices must be reported as study/statistical assumptions and decisions, not as package-generated classifications.
 
+When reporting repeated-measures results, retain the observation-row, inferential, and generalisation units plus participant/stimulus grouping identity. Use the [Grouping, repeated measures & pseudoreplication clinic](grouping-repeated-measures.md) before manuscript prose if aggregation or independence could be ambiguous.
+
 GazeForge does not choose the inferential estimator. Downstream reporting should
 distinguish the measurement table, inferential unit, repeated-measures grouping,
 statistical family/link/estimator, hierarchical structure, missing/censoring treatment,

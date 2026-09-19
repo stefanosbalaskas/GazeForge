@@ -332,9 +332,26 @@ teaching values.
 
 Guide: [Uncertainty, multiplicity & inferential reporting clinic](../docs/inferential-reporting-audit.md)
 
+## 21. Grouping/repeated-measures & pseudoreplication audit
+
+```bash
+python examples/20_worked_grouping_pseudoreplication_audit.py \
+  --output-dir worked-grouping-pseudoreplication-audit
+```
+
+Builds a deterministic audit of observation-row, measurement, inferential, and
+generalisation units; nested/crossed/repeated identities; obvious pseudoreplication;
+aggregation changes; specialist-model handoff; reporting language; and API routes.
+
+The example performs no automatic aggregation and selects no fixed/random effects,
+covariance structure, clustering correction, GEE, LMM/GLMM, Bayesian hierarchy, or
+other estimator.
+
+Guide: [Grouping, repeated measures & pseudoreplication clinic](../docs/grouping-repeated-measures.md)
+
 ## Reproducibility notes
 
-The twenty-one examples use fixed or explicitly constructed synthetic/demo inputs.
+The twenty-two examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -352,5 +369,5 @@ planning, the [Outcome & estimand preregistration clinic](../docs/estimand-prere
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
 for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
-for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, the [Denominator, exposure & censoring clinic](../docs/denominator-exposure-censoring.md) to preserve observation-state mechanics, the [Missing-data assumptions & treatment handoff](../docs/missing-data-assumptions.md) before any missing-data strategy is selected, the [Sensitivity & robustness clinic](../docs/sensitivity-robustness-clinic.md) before final reporting, the [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) before external sharing, and [Publication readiness](../docs/publication-readiness.md)
+for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, the [Denominator, exposure & censoring clinic](../docs/denominator-exposure-censoring.md) to preserve observation-state mechanics, the [Missing-data assumptions & treatment handoff](../docs/missing-data-assumptions.md) before any missing-data strategy is selected, the [Grouping, repeated measures & pseudoreplication clinic](../docs/grouping-repeated-measures.md) before specialist fitting when rows repeat within participants or stimuli, the [Sensitivity & robustness clinic](../docs/sensitivity-robustness-clinic.md) before final reporting, the [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) before external sharing, and [Publication readiness](../docs/publication-readiness.md)
 before freezing a study bundle.
