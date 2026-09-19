@@ -301,9 +301,24 @@ replacement candidates. It fits no real model and creates no p-values/effect siz
 
 Guide: [Model diagnostics & convergence clinic](../docs/model-diagnostics-convergence.md)
 
+
+## 19. Uncertainty/multiplicity & inferential reporting audit
+
+```bash
+python examples/18_worked_inferential_reporting_audit.py \
+  --output-dir worked-inferential-reporting-audit
+```
+
+Builds a deterministic post-fit audit of effect scale/unit, uncertainty identity,
+multiplicity-family completeness, raw versus adjusted p-value identity, diagnostics,
+and confirmatory versus exploratory status. All inferential numbers are synthetic
+teaching values.
+
+Guide: [Uncertainty, multiplicity & inferential reporting clinic](../docs/inferential-reporting-audit.md)
+
 ## Reproducibility notes
 
-The nineteen examples use fixed or explicitly constructed synthetic/demo inputs.
+The twenty examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
