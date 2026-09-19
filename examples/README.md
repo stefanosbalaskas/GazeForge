@@ -301,9 +301,25 @@ replacement candidates. It fits no real model and creates no p-values/effect siz
 
 Guide: [Model diagnostics & convergence clinic](../docs/model-diagnostics-convergence.md)
 
+## 19. Missing-data assumptions/treatment audit
+
+```bash
+python examples/18_worked_missing_data_assumptions_audit.py \
+  --output-dir worked-missing-data-assumptions-audit
+```
+
+Builds a deterministic source/reason registry, MCAR/MAR/MNAR assumption-question
+table, non-selecting treatment registry, exclusion/missingness separation ledger,
+sensitivity handoff, reporting-language contrasts, and safeguard manifest.
+
+The example selects no missing-data or inferential treatment. It complements rather
+than duplicates the denominator/exposure/censoring and model-diagnostics audits.
+
+Guide: [Missing-data assumptions & treatment handoff](../docs/missing-data-assumptions.md)
+
 ## Reproducibility notes
 
-The nineteen examples use fixed or explicitly constructed synthetic/demo inputs.
+The twenty examples use fixed or explicitly constructed synthetic/demo inputs.
 For manuscript-facing work:
 
 - record the GazeForge version or exact commit SHA;
@@ -321,5 +337,5 @@ planning, the [Outcome & estimand preregistration clinic](../docs/estimand-prere
 import/QC handoff, [QC review and exclusion ledger](../docs/qc-review-exclusion-ledger.md)
 before exclusions, the [Event-model validation clinic](../docs/event-model-validation-clinic.md)
 for learned event evaluation, the [Research evidence bundle](../docs/research-evidence-bundle.md)
-for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, the [Sensitivity & robustness clinic](../docs/sensitivity-robustness-clinic.md) before final reporting, the [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) before external sharing, and [Publication readiness](../docs/publication-readiness.md)
+for archive assembly, the [Measurement & interpretation clinic](../docs/measurement-interpretation.md) before promoting gaze observables into substantive constructs, the [Denominator, exposure & censoring clinic](../docs/denominator-exposure-censoring.md) to preserve observation-state mechanics, the [Missing-data assumptions & treatment handoff](../docs/missing-data-assumptions.md) before any missing-data strategy is selected, the [Sensitivity & robustness clinic](../docs/sensitivity-robustness-clinic.md) before final reporting, the [Reviewer & replication handoff](../docs/reviewer-replication-handoff.md) before external sharing, and [Publication readiness](../docs/publication-readiness.md)
 before freezing a study bundle.

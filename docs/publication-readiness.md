@@ -93,13 +93,15 @@ The [Worked tracker import](worked-tracker-import.md) demonstrates this prefligh
 - ☐ Participant/trial identity has not been aggregated away merely for convenience.
 - ☐ Count, rate, proportion, and dwell outcomes retain their relevant observed exposure/denominator.
 - ☐ Observed zero, absent-by-design, undefined, and missing states remain distinguishable.
+- ☐ Any MCAR/MAR/MNAR statement is an explicitly justified statistical assumption rather than a software-inferred label.
+- ☐ Complete-case, imputation, weighting, survival, or other missing-data treatment is an explicit analysis choice rather than silent preprocessing.
 - ☐ No-fixation latency retains an event indicator/censoring status rather than an invented latency.
 - ☐ Descriptive participant × condition summaries are labelled separately from inferential model inputs.
 - ☐ Statistical estimator choice is prespecified/justified in specialist software rather than selected automatically by GazeForge.
 - ☐ Failed convergence, singularity, separation, or invalid diagnostics stop interpretation rather than being silently accepted.
 - ☐ Handoff tables preserve event/AOI/QC/source provenance and exact software identity.
 
-[Open the statistical analysis handoff →](analysis-handoff.md)
+[Open the statistical analysis handoff →](analysis-handoff.md) · [Missing-data assumptions →](missing-data-assumptions.md)
 
 ### Model diagnostics / convergence
 

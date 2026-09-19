@@ -74,6 +74,7 @@ nav:
       - Research evidence bundle: research-evidence-bundle.md
       - Analysis handoff: analysis-handoff.md
       - Denominator, exposure & censoring clinic: denominator-exposure-censoring.md
+      - Missing-data assumptions & treatment handoff: missing-data-assumptions.md
       - Model diagnostics & convergence clinic: model-diagnostics-convergence.md
       - Measurement & interpretation clinic: measurement-interpretation.md
       - Sensitivity & robustness clinic: sensitivity-robustness-clinic.md

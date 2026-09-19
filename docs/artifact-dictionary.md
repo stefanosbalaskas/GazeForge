@@ -142,6 +142,20 @@ post-fit computational admissibility without choosing or refitting the estimator
 | `05_reporting_language.csv` | reporting pattern | failed-fit and replacement wording | prose cannot repair a failed model |
 | `model_diagnostics_manifest.json` | bundle | audit manifest | deterministic audit ≠ empirical validation |
 
+## Missing-data assumptions/treatment derivatives
+
+The [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) follows the denominator/exposure audit and documents assumptions without selecting a statistical method.
+
+| Artifact | Unit | Role | Boundary |
+| --- | --- | --- | --- |
+| `01_missing_data_source_registry.csv` | participant × trial × outcome | source/reason registry | source class ≠ MCAR/MAR/MNAR mechanism |
+| `02_mechanism_assumption_questions.csv` | assumption question | study-specific evidence prompt | software does not infer the mechanism |
+| `03_analysis_treatment_registry.csv` | candidate strategy | non-selecting treatment registry | candidate family ≠ selected method |
+| `04_exclusion_missingness_separation.csv` | participant × trial | QC/missingness/exclusion separation | missingness ≠ automatic exclusion |
+| `05_sensitivity_handoff.csv` | analysis variant | sensitivity handoff | changed estimand must remain explicit |
+| `06_reporting_language.csv` | reporting pattern | claim-safe wording | prose does not validate assumptions |
+| `missing_data_assumptions_manifest.json` | bundle | safeguard record | deterministic audit ≠ statistical validity |
+
 ## Sensitivity/robustness audit derivatives
 
 The [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) adds a

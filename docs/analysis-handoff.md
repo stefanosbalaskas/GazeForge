@@ -44,6 +44,8 @@ A model-ready table should make these questions answerable from the columns alon
 
 If those questions cannot be answered, the table is not ready for confirmatory inference.
 
+When the unresolved question is **why measurements are unavailable and what statistical assumptions/treatment are intended**, use the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md). It documents mechanism questions and candidate treatment families without inferring MCAR/MAR/MNAR or selecting a method.
+
 ## Missing is not zero
 
 This is the most important aggregation rule.

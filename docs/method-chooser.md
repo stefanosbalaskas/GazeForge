@@ -38,6 +38,7 @@ GazeForge contains several ways to import, review, label, summarize, and validat
 | Use moving AOIs | reviewed timestamped keyframes/tracks | stimulus + timebase | [Worked dynamic-AOI study](worked-dynamic-aoi-study.md) | keyframes + interpolation audit + assignments | support/no-extrapolation checks | detected track ≠ ground truth | scanpaths / dynamic evaluation |
 | Build semantic scanpaths | reviewed fixation/AOI assignments | participant/trial sequence identity | [Practical workflow](practical-workflow.md) | semantic sequence table | assignment provenance | sequence ≠ latent mental state | downstream sequence analysis |
 | Freeze outcomes/estimands before modelling | research question + planned observables | declared population/contrast/inferential unit | [Outcome & estimand preregistration](estimand-preregistration.md) | outcome/estimand/contrast/sensitivity/deviation registries | primary/secondary/exploratory status frozen before results | preregistration ≠ estimator choice or validity | [Analysis handoff](analysis-handoff.md) |
+| Document missing-data assumptions | reconciled observation states + grouping/QC context | participant/trial/stimulus hierarchy | [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) | source registry + mechanism questions + treatment/sensitivity handoff | assumptions must be study-specific | MCAR/MAR/MNAR and treatment choice are not package outputs | [Analysis handoff](analysis-handoff.md) |
 | Build statistical model inputs | reviewed event/AOI outputs + design/coverage | participant/trial hierarchy | [Analysis handoff](analysis-handoff.md) | trial × AOI/event measures + denominators + censoring | preserve missing/zero/exposure semantics | samples/fixations ≠ independent participants | specialist statistical software |
 | Interpret a gaze-derived measure | frozen observable + intended substantive claim | declared measurement/inferential unit | [Measurement & interpretation clinic](measurement-interpretation.md) | claim registry + threats + sensitivity/reporting boundaries | construct bridge must be explicit | gaze observable ≠ latent construct | [Reporting clinic](reporting-clinic.md) |
 | Freeze a study | reviewed analysis derivative + final settings | exact source/software identity | [Study lifecycle](study-lifecycle.md) | manifest + provenance + fingerprints | deterministic reconstruction | reproducibility ≠ external validity | [Publication readiness](publication-readiness.md) |
@@ -81,7 +82,7 @@ Report the metric-specific result. Sample-level classification, event-boundary f
 
 ### A model-ready table contains missing values
 
-Stop before replacing them. Use the [Analysis handoff](analysis-handoff.md) to distinguish observed zeros from missing trials, AOIs absent by design, undefined denominators, and right-censored latency. Preserve participant/trial grouping to avoid pseudoreplication.
+Stop before replacing them. Use the [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) to preserve observation-state mechanics, then the [Missing-data assumptions & treatment handoff](missing-data-assumptions.md) when unavailable measurements require explicit assumptions or treatment planning. Preserve participant/trial grouping through the [Analysis handoff](analysis-handoff.md).
 
 ### The statistical model fails diagnostics or convergence
 
