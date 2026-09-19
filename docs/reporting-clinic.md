@@ -18,6 +18,8 @@ search:
 <a href="https://github.com/stefanosbalaskas/GazeForge/issues">Ask / report</a>
 </nav>
 
+Use the [Denominator, exposure & censoring clinic](denominator-exposure-censoring.md) first when zero/missing/exposure/censoring semantics are not yet reconciled.
+
 Use this clinic after reviewed measurement outputs, the statistical handoff, and any material sensitivity/robustness audit are frozen. Primary/secondary/exploratory outcome status and planned contrasts should trace back to the [Outcome & estimand preregistration clinic](estimand-preregistration.md) when that registry is part of the study. If the unresolved question is whether a gaze-derived observable supports a substantive construct, use the [Measurement & interpretation clinic](measurement-interpretation.md) first. If registered sensitivity variants have been executed, freeze the complete record through the [Sensitivity & robustness clinic](sensitivity-robustness-clinic.md) before summarizing robustness in prose.
 For model-ready participant × trial tables, start with the
 [Analysis handoff](analysis-handoff.md). For source/QC/review/analysis/provenance
