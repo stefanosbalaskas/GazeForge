@@ -1082,3 +1082,806 @@ def test_fresh_validation_helper_guards() -> None:
             "fingerprint",
             "test",
         )
+
+
+# === GIW EXACT COVERAGE CLOSURE V1 ===
+
+
+def _assembly_inputs():
+    parts = []
+    reports = []
+
+    for index in range(18):
+        parts.append(
+            pd.DataFrame(
+                {
+                    "participant_id": [f"PrIdx_{(index % 12) + 1}"],
+                    "trial_id": [f"TrIdx_{index + 1}"],
+                    "event_label": ["fixation" if index % 2 == 0 else "saccade"],
+                }
+            )
+        )
+
+        reports.append(
+            {
+                "source_rows": 1,
+                "label_process_timestamp_vector_exactly_equal": True,
+            }
+        )
+
+    return parts, reports
+
+
+def _install_prepare_guard_fixture(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    label = tmp_path / "label.mat"
+    process = tmp_path / "process.mat"
+
+    label.write_bytes(b"x")
+    process.write_bytes(b"x")
+
+    times = np.array(
+        [0.0, 3.3333333333333335, 6.666666666666667],
+        dtype=float,
+    )
+
+    source = pd.DataFrame(
+        {
+            "timestamp_ms": times,
+            "x_px": [1.0, 2.0, 3.0],
+            "y_px": [4.0, 5.0, 6.0],
+            "confidence": [1.0, 1.0, 1.0],
+            "event_label": [
+                "fixation",
+                "fixation",
+                "saccade",
+            ],
+            "annotator": ["5"] * 3,
+            "dataset_id": ["GIW"] * 3,
+            "source_file": ["label.mat"] * 3,
+        }
+    )
+
+    resampled = pd.DataFrame(
+        {
+            "timestamp_ms": [0.0, 5.0],
+            "event_label": ["fixation", "saccade"],
+        }
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "_mat_timestamp_vector",
+        lambda path, variable: times.copy(),
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "preflight_gaze_in_wild_processdata",
+        lambda path: SimpleNamespace(
+            scene_resolution_px=(1920, 1080),
+            participant_index=1,
+            trial_index=1,
+        ),
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "load_gaze_in_wild_mat",
+        lambda *args, **kwargs: SimpleNamespace(
+            data=source.copy(),
+            sampling_rate_hz=300.0,
+        ),
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "resample_labeled_gaze",
+        lambda *args, **kwargs: SimpleNamespace(
+            data=resampled.copy(),
+            report={"status": "closure-test"},
+        ),
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "_interpolate_adjacent",
+        lambda *args, **kwargs: np.array(
+            [1.0, 2.0],
+            dtype=float,
+        ),
+    )
+
+    manifest = {
+        "name": label.name,
+        "process_filename": process.name,
+        "participant_token": "PrIdx_1",
+        "trial_token": "TrIdx_1",
+        "timestamp_sha256_float64_le": (exact._raw_float64_sha(times)),
+        "inferred_sampling_rate_hz": 300.0,
+    }
+
+    return label, process, manifest
+
+
+def test_reference_manifest_expected_field_guard(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    record = copy.deepcopy(_load(REFERENCE))
+
+    record["selected_reference"]["file_count"] = 17
+
+    monkeypatch.setattr(
+        exact,
+        "_validated_evidence",
+        lambda payload, **kwargs: dict(payload),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="file_count drifted",
+    ):
+        exact.validate_exact_reference_manifest(record)
+
+
+def test_reference_manifest_files_type_short_circuit(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    record = copy.deepcopy(_load(REFERENCE))
+    record["selected_reference"]["files"] = None
+
+    monkeypatch.setattr(
+        exact,
+        "_validated_evidence",
+        lambda payload, **kwargs: dict(payload),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="exactly 18 file rows",
+    ):
+        exact.validate_exact_reference_manifest(record)
+
+
+def test_reference_manifest_recording_coverage_guard(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    record = copy.deepcopy(_load(REFERENCE))
+    files = record["selected_reference"]["files"]
+
+    counts = {}
+
+    for row in files:
+        token = str(row["recording_token"])
+        counts[token] = counts.get(token, 0) + 1
+
+    victim = next(token for token, count in counts.items() if count == 1)
+
+    replacement = next(token for token in counts if token != victim)
+
+    next(row for row in files if str(row["recording_token"]) == victim)["recording_token"] = (
+        replacement
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "_validated_evidence",
+        lambda payload, **kwargs: dict(payload),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="participant/recording coverage",
+    ):
+        exact.validate_exact_reference_manifest(record)
+
+
+@pytest.mark.parametrize(
+    ("case", "match"),
+    [
+        ("non_mapping", "participant/recording coverage"),
+        ("raw_retained", "file-row boundary"),
+    ],
+)
+def test_reference_manifest_file_row_short_circuits(
+    monkeypatch: pytest.MonkeyPatch,
+    case: str,
+    match: str,
+) -> None:
+    record = copy.deepcopy(_load(REFERENCE))
+    files = record["selected_reference"]["files"]
+
+    if case == "non_mapping":
+        files[0] = "bad-row"
+    else:
+        files[0]["raw_bytes_retained"] = True
+
+    monkeypatch.setattr(
+        exact,
+        "_validated_evidence",
+        lambda payload, **kwargs: dict(payload),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match=match,
+    ):
+        exact.validate_exact_reference_manifest(record)
+
+
+def test_execution_protocol_exact_value_guard(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    record = copy.deepcopy(_load(PROTOCOL))
+
+    record["execution_protocol"]["random_state"] = 99
+
+    monkeypatch.setattr(
+        exact,
+        "_validated_evidence",
+        lambda payload, **kwargs: dict(payload),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="random_state drifted",
+    ):
+        exact.validate_exact_execution_protocol(record)
+
+
+def test_execution_protocol_false_boundary_guard(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    record = copy.deepcopy(_load(PROTOCOL))
+
+    record["scientific_boundary"]["gp3_validity_claim_created"] = True
+
+    monkeypatch.setattr(
+        exact,
+        "_validated_evidence",
+        lambda payload, **kwargs: dict(payload),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="must keep",
+    ):
+        exact.validate_exact_execution_protocol(record)
+
+
+def test_prepare_digest_guard(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    label, process, manifest = _install_prepare_guard_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    manifest["timestamp_sha256_float64_le"] = "0" * 64
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="timestamp digest drifted",
+    ):
+        exact.prepare_exact_gaze_in_wild_recording(
+            label,
+            process,
+            manifest,
+            _load(PROTOCOL),
+        )
+
+
+def test_prepare_label_filename_guard(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    label, process, manifest = _install_prepare_guard_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    manifest["name"] = "other.mat"
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="filename/manifest binding",
+    ):
+        exact.prepare_exact_gaze_in_wild_recording(
+            label,
+            process,
+            manifest,
+            _load(PROTOCOL),
+        )
+
+
+def test_prepare_process_filename_short_circuit(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    label, process, manifest = _install_prepare_guard_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    manifest["process_filename"] = "other.mat"
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="filename/manifest binding",
+    ):
+        exact.prepare_exact_gaze_in_wild_recording(
+            label,
+            process,
+            manifest,
+            _load(PROTOCOL),
+        )
+
+
+def test_prepare_scene_guard(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    label, process, manifest = _install_prepare_guard_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "preflight_gaze_in_wild_processdata",
+        lambda path: SimpleNamespace(
+            scene_resolution_px=(1, 1),
+            participant_index=1,
+            trial_index=1,
+        ),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="scene resolution drifted",
+    ):
+        exact.prepare_exact_gaze_in_wild_recording(
+            label,
+            process,
+            manifest,
+            _load(PROTOCOL),
+        )
+
+
+def test_prepare_participant_identity_guard(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    label, process, manifest = _install_prepare_guard_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "preflight_gaze_in_wild_processdata",
+        lambda path: SimpleNamespace(
+            scene_resolution_px=(1920, 1080),
+            participant_index=999,
+            trial_index=1,
+        ),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="internal identity drifted",
+    ):
+        exact.prepare_exact_gaze_in_wild_recording(
+            label,
+            process,
+            manifest,
+            _load(PROTOCOL),
+        )
+
+
+def test_prepare_trial_identity_short_circuit(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    label, process, manifest = _install_prepare_guard_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "preflight_gaze_in_wild_processdata",
+        lambda path: SimpleNamespace(
+            scene_resolution_px=(1920, 1080),
+            participant_index=1,
+            trial_index=999,
+        ),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="internal identity drifted",
+    ):
+        exact.prepare_exact_gaze_in_wild_recording(
+            label,
+            process,
+            manifest,
+            _load(PROTOCOL),
+        )
+
+
+def test_prepare_source_rate_guard(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    label, process, manifest = _install_prepare_guard_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    source = pd.DataFrame(
+        {
+            "timestamp_ms": [0.0, 1.0],
+            "x_px": [1.0, 2.0],
+            "y_px": [1.0, 2.0],
+            "confidence": [1.0, 1.0],
+            "event_label": ["fixation", "saccade"],
+        }
+    )
+
+    monkeypatch.setattr(
+        exact,
+        "load_gaze_in_wild_mat",
+        lambda *args, **kwargs: SimpleNamespace(
+            data=source,
+            sampling_rate_hz=299.0,
+        ),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="inferred rate drifted",
+    ):
+        exact.prepare_exact_gaze_in_wild_recording(
+            label,
+            process,
+            manifest,
+            _load(PROTOCOL),
+        )
+
+
+def test_assemble_participant_coverage_guard() -> None:
+    parts, reports = _assembly_inputs()
+
+    for part in parts:
+        part["participant_id"] = "PrIdx_1"
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="participant/recording coverage",
+    ):
+        exact.assemble_exact_gaze_in_wild_benchmark(
+            parts,
+            reports,
+            _load(REFERENCE),
+            _load(PROTOCOL),
+        )
+
+
+def test_assemble_recording_coverage_short_circuit() -> None:
+    parts, reports = _assembly_inputs()
+
+    parts[-1]["trial_id"] = parts[-2]["trial_id"].iloc[0]
+    parts[-1]["participant_id"] = parts[-2]["participant_id"].iloc[0]
+
+    # Restore 12 unique participants while reducing unique
+    # participant/trial recording pairs.
+    parts[0]["participant_id"] = "PrIdx_12"
+
+    participant_ids = pd.concat(parts)["participant_id"].nunique()
+
+    assert participant_ids == 12
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="participant/recording coverage",
+    ):
+        exact.assemble_exact_gaze_in_wild_benchmark(
+            parts,
+            reports,
+            _load(REFERENCE),
+            _load(PROTOCOL),
+        )
+
+
+def test_assemble_timestamp_pairing_guard() -> None:
+    parts, reports = _assembly_inputs()
+
+    reports[0]["label_process_timestamp_vector_exactly_equal"] = False
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="timestamp pairing is incomplete",
+    ):
+        exact.assemble_exact_gaze_in_wild_benchmark(
+            parts,
+            reports,
+            _load(REFERENCE),
+            _load(PROTOCOL),
+        )
+
+
+def test_assemble_frozen_source_count_guard(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    parts, reports = _assembly_inputs()
+
+    manifest = _load(REFERENCE)
+    manifest["selected_reference"]["total_samples"] = 1
+
+    monkeypatch.setattr(
+        exact,
+        "validate_exact_reference_manifest",
+        lambda payload: payload,
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="sample count drifted",
+    ):
+        exact.assemble_exact_gaze_in_wild_benchmark(
+            parts,
+            reports,
+            manifest,
+            _load(PROTOCOL),
+        )
+
+
+def test_split_integrity_duplicate_reference_row_guard() -> None:
+    predictions = pd.DataFrame(
+        [
+            {
+                "comparison_model": "I-VT",
+                "validation_fold": 1,
+                "participant_id": "P1",
+                "comparison_row_position": 1,
+            },
+            {
+                "comparison_model": "I-VT",
+                "validation_fold": 1,
+                "participant_id": "P1",
+                "comparison_row_position": 1,
+            },
+        ]
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="OOF rows repeat",
+    ):
+        exact._split_integrity(predictions)
+
+
+def test_reviewed_split_participant_overlap_guard() -> None:
+    split = copy.deepcopy(_load(REVIEWED_VALIDATION)["split_integrity"])
+
+    assignments = split["fold_participant_assignments"]
+
+    assignments[1]["participant_id"] = assignments[0]["participant_id"]
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="participant assignments overlap",
+    ):
+        reviewed._validate_split(split)
+
+
+def test_reviewed_split_non_mapping_assignment_guard() -> None:
+    split = copy.deepcopy(_load(REVIEWED_VALIDATION)["split_integrity"])
+
+    split["fold_participant_assignments"][0] = "bad"
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="participant assignments overlap",
+    ):
+        reviewed._validate_split(split)
+
+
+def test_structure_exact_parent_success_branch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    por = BASE / "gaze-in-wild-por-coordinate-semantics-evidence-v1.json"
+
+    monkeypatch.setattr(
+        structure,
+        "validate_gaze_in_wild_figshare_exact_bytes_evidence",
+        lambda *args, **kwargs: SimpleNamespace(
+            fingerprint_sha256=(structure.EXACT_BYTE_EVIDENCE_FINGERPRINT_SHA256),
+            exact_original_distribution_bytes_verified=True,
+            raw_dataset_bytes_retained=False,
+        ),
+    )
+
+    result = structure.validate_gaze_in_wild_exact_processdata_structure_evidence(
+        STRUCTURE_EVIDENCE,
+        IDENTITIES,
+        RATES,
+        por,
+        {},
+        {},
+        {},
+        {},
+    )
+
+    assert result.processdata_file_count == 68
+
+
+@pytest.mark.parametrize(
+    ("case", "match"),
+    [
+        ("fingerprint_type", "fingerprint is invalid"),
+        ("fingerprint_length", "fingerprint is invalid"),
+        ("rows_type", "68 file rows"),
+        ("rows_length", "68 file rows"),
+        ("row_type", "row is malformed"),
+        ("name_type", "filename is invalid/duplicate"),
+        ("duplicate_name", "filename is invalid/duplicate"),
+        ("scene", "scene resolution drifted"),
+        ("por", "POR shape drifted"),
+        ("confidence", "vector shape drifted"),
+        ("labels", "vector shape drifted"),
+    ],
+)
+def test_fresh_structure_exact_remaining_guards(
+    monkeypatch: pytest.MonkeyPatch,
+    case: str,
+    match: str,
+) -> None:
+    probe = _fresh_structure_probe(monkeypatch)
+
+    rows = probe["verified_processdata"]["file_results"]
+
+    if case == "fingerprint_type":
+        probe["structure_probe_fingerprint_sha256"] = None
+
+    elif case == "fingerprint_length":
+        probe["structure_probe_fingerprint_sha256"] = "bad"
+
+    elif case == "rows_type":
+        probe["verified_processdata"]["file_results"] = None
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    elif case == "rows_length":
+        probe["verified_processdata"]["file_results"] = rows[:-1]
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    elif case == "row_type":
+        rows[0] = "bad-row"
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    elif case == "name_type":
+        rows[0]["name"] = None
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    elif case == "duplicate_name":
+        rows[1]["name"] = rows[0]["name"]
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    elif case == "scene":
+        rows[0]["scene_resolution_px"] = [1, 1]
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    elif case == "por":
+        rows[0]["por_shape"] = [1, 1]
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    elif case == "confidence":
+        rows[0]["confidence_shape"] = [1]
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    elif case == "labels":
+        rows[0]["labels_shape"] = [1]
+        probe["structure_probe_fingerprint_sha256"] = structure.probe_fingerprint(probe)
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match=match,
+    ):
+        structure.validate_fresh_gaze_in_wild_processdata_structure_probe(
+            probe,
+            STRUCTURE_EVIDENCE,
+            IDENTITIES,
+            RATES,
+        )
+
+
+class _GetOnlyFreshItem:
+    def __init__(self, label: str):
+        self.label = label
+
+    def get(self, key: str, default=None):
+        if key == "label":
+            return self.label
+
+        return default
+
+
+@pytest.mark.parametrize(
+    ("case", "match"),
+    [
+        ("items_type", "item list is missing"),
+        ("item_non_mapping", "item is invalid"),
+        ("fresh_manifest", "file manifest is missing"),
+        ("frozen_manifest", "file manifest is missing"),
+        ("row_non_mapping", "file row is invalid"),
+        ("unknown_id", "file id drifted"),
+        ("duplicate_id", "file id drifted"),
+        ("sha", "SHA-256 is invalid"),
+        ("schema", "schema is missing"),
+        ("variables", "variables are missing"),
+        ("primary_empty", "primary struct drifted"),
+        ("primary_wrong", "primary struct drifted"),
+    ],
+)
+def test_fresh_exact_byte_remaining_guards(
+    monkeypatch: pytest.MonkeyPatch,
+    case: str,
+    match: str,
+) -> None:
+    probe, raw = _fresh_exact_byte_probe(monkeypatch)
+
+    items = probe["verified_items"]
+    fresh_files = items[0]["files"]
+
+    if case == "items_type":
+        probe["verified_items"] = None
+
+    elif case == "item_non_mapping":
+        items[0] = _GetOnlyFreshItem("ProcessData")
+
+    elif case == "fresh_manifest":
+        items[0]["files"] = None
+
+    elif case == "frozen_manifest":
+        raw["items"][0]["files"] = None
+
+    elif case == "row_non_mapping":
+        fresh_files[0] = "bad-row"
+
+    elif case == "unknown_id":
+        fresh_files[0]["figshare_file_id"] = -1
+
+    elif case == "duplicate_id":
+        fresh_files[1]["figshare_file_id"] = fresh_files[0]["figshare_file_id"]
+
+    elif case == "sha":
+        fresh_files[0]["sha256"] = "bad"
+
+    elif case == "schema":
+        fresh_files[0]["mat_schema"] = None
+
+    elif case == "variables":
+        fresh_files[0]["mat_schema"]["variables"] = "bad"
+
+    elif case == "primary_empty":
+        fresh_files[0]["mat_schema"]["variables"] = []
+
+    elif case == "primary_wrong":
+        fresh_files[0]["mat_schema"]["variables"][0] = {
+            "class": "struct",
+            "name": "Wrong",
+            "shape": [1, 1],
+        }
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match=match,
+    ):
+        exact_bytes.validate_fresh_gaze_in_wild_exact_byte_probe(
+            probe,
+            raw,
+        )
