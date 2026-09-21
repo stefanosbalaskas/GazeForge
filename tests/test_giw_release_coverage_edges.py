@@ -153,7 +153,18 @@ def test_reference_manifest_participant_coverage_drift(
 ) -> None:
     record = copy.deepcopy(_load(REFERENCE))
 
-    record["selected_reference"]["files"][0]["participant_token"] = "PrIdx_999"
+    files = record["selected_reference"]["files"]
+    counts: dict[str, int] = {}
+
+    for row in files:
+        token = str(row["participant_token"])
+        counts[token] = counts.get(token, 0) + 1
+
+    victim = next(token for token, count in counts.items() if count == 1)
+    replacement = next(token for token in counts if token != victim)
+
+    victim_row = next(row for row in files if str(row["participant_token"]) == victim)
+    victim_row["participant_token"] = replacement
 
     _resign_exact(
         record,
@@ -361,14 +372,49 @@ def test_reviewed_pursuit_requires_sections() -> None:
         reviewed._extract_pursuit({})
 
 
+def _synthetic_pursuit_metrics() -> dict[str, list[dict[str, Any]]]:
+    sample_rows: list[dict[str, Any]] = []
+    event_rows: list[dict[str, Any]] = []
+
+    support = reviewed.EXPECTED_PURSUIT["analysis_support"]
+    reference_count = reviewed.EXPECTED_PURSUIT["reference_event_count"]
+
+    for model, values in reviewed.EXPECTED_PURSUIT["models"].items():
+        sample_rows.append(
+            {
+                "model": model,
+                "event_label": "pursuit",
+                "support": support,
+                "f1": values["sample_f1"],
+                "precision": values["sample_precision"],
+                "recall": values["sample_recall"],
+            }
+        )
+
+        event_rows.append(
+            {
+                "model": model,
+                "event_label": "pursuit",
+                "n_reference_events": reference_count,
+                "f1": values["event_f1"],
+                "precision": values["event_precision"],
+                "recall": values["event_recall"],
+                "true_positive": values["matched_reference_events"],
+                "n_predicted_events": values["predicted_events"],
+            }
+        )
+
+    return {
+        "sample_event_class_performance": sample_rows,
+        "event_class_performance": event_rows,
+    }
+
+
 def test_reviewed_pursuit_requires_model_coverage() -> None:
-    record = _load(REVIEWED)
-    metrics = copy.deepcopy(record["metrics"])
+    metrics = _synthetic_pursuit_metrics()
 
     metrics["sample_event_class_performance"] = [
-        row
-        for row in metrics["sample_event_class_performance"]
-        if not (row.get("event_label") == "pursuit" and row.get("model") == "I-VT")
+        row for row in metrics["sample_event_class_performance"] if row["model"] != "I-VT"
     ]
 
     with pytest.raises(
@@ -379,13 +425,9 @@ def test_reviewed_pursuit_requires_model_coverage() -> None:
 
 
 def test_reviewed_pursuit_reference_counts_must_agree() -> None:
-    record = _load(REVIEWED)
-    metrics = copy.deepcopy(record["metrics"])
+    metrics = _synthetic_pursuit_metrics()
 
-    for row in metrics["event_class_performance"]:
-        if row.get("event_label") == "pursuit" and row.get("model") == "I-VT":
-            row["n_reference_events"] += 1
-            break
+    metrics["event_class_performance"][0]["n_reference_events"] += 1
 
     with pytest.raises(
         BenchmarkIntegrityError,
