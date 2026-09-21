@@ -51,7 +51,10 @@ def _outcomes() -> pd.DataFrame:
             "grouping": "participant repeated across trials",
             "time_window": "full declared trial exposure",
             "exposure_denominator_policy": "retain aoi_observable_ms and observed_gaze_ms",
-            "missing_zero_censoring_policy": "zero only when the AOI was observable and no dwell occurred; missing remains missing",
+            "missing_zero_censoring_policy": (
+                "zero only when the AOI was observable and no dwell occurred; missing "
+                "remains missing"
+            ),
             "transformation": "none preregistered",
             "event_source": "declared fixation detector/version frozen before analysis",
             "aoi_source": "researcher-defined reviewed claim AOI",
@@ -67,7 +70,9 @@ def _outcomes() -> pd.DataFrame:
             "row_unit": "participant × trial × AOI",
             "grouping": "participant repeated across trials",
             "time_window": "full declared trial exposure",
-            "exposure_denominator_policy": "retain observable trial/AOI exposure; do not invent zero for unavailable trials",
+            "exposure_denominator_policy": (
+                "retain observable trial/AOI exposure; do not invent zero for unavailable trials"
+            ),
             "missing_zero_censoring_policy": "observed zero distinct from missing or absent-by-design",
             "transformation": "none preregistered",
             "event_source": "same frozen fixation detector as O01",
@@ -79,13 +84,18 @@ def _outcomes() -> pd.DataFrame:
             "outcome_id": "O03",
             "analysis_status": "secondary",
             "name": "disclosure_first_fixation_latency_ms",
-            "observable_definition": "time from declared trial origin to first reviewed fixation in the disclosure AOI",
+            "observable_definition": (
+                "time from declared trial origin to first reviewed fixation in the disclosure AOI"
+            ),
             "measurement_unit": "milliseconds",
             "row_unit": "participant × trial × AOI",
             "grouping": "participant repeated across trials",
             "time_window": "from trial origin through available disclosure exposure",
             "exposure_denominator_policy": "retain event_observed and latency_censor_time_ms",
-            "missing_zero_censoring_policy": "no fixation is right-censored at observable exposure; never encode no fixation as latency=0",
+            "missing_zero_censoring_policy": (
+                "no fixation is right-censored at observable exposure; never encode "
+                "no fixation as latency=0"
+            ),
             "transformation": "none preregistered",
             "event_source": "same frozen fixation detector as O01",
             "aoi_source": "researcher-defined reviewed disclosure AOI",
@@ -96,13 +106,18 @@ def _outcomes() -> pd.DataFrame:
             "outcome_id": "O04",
             "analysis_status": "exploratory",
             "name": "claim_to_product_transition_count",
-            "observable_definition": "count of declared claim→product semantic AOI transitions within trial",
+            "observable_definition": (
+                "count of declared claim→product semantic AOI transitions within trial"
+            ),
             "measurement_unit": "count",
             "row_unit": "participant × trial sequence",
             "grouping": "participant repeated across trials",
             "time_window": "full declared trial exposure",
             "exposure_denominator_policy": "retain analysed sequence length and unassigned-state policy",
-            "missing_zero_censoring_policy": "zero only when a valid sequence was observed with no target transition; missing sequence remains missing",
+            "missing_zero_censoring_policy": (
+                "zero only when a valid sequence was observed with no target "
+                "transition; missing sequence remains missing"
+            ),
             "transformation": "collapse immediate repeated AOI labels before transition counting",
             "event_source": "reviewed fixation sequence",
             "aoi_source": "frozen reviewed AOI set",
@@ -124,7 +139,10 @@ def _estimands() -> pd.DataFrame:
             "summary_target": "condition difference in expected participant-trial claim dwell",
             "inferential_unit": "participant with repeated trial observations",
             "aggregation_before_model": "none beyond fixation→trial×AOI measurement construction",
-            "missingness_policy": "do not impute or coerce unavailable outcomes to zero without a separately justified plan",
+            "missingness_policy": (
+                "do not impute or coerce unavailable outcomes to zero without a "
+                "separately justified plan"
+            ),
             "censoring_policy": "not applicable to dwell; preserve missing exposure",
             "estimator_selected": False,
             "model_family_selected": False,
@@ -135,7 +153,10 @@ def _estimands() -> pd.DataFrame:
             "analysis_status": "secondary",
             "target_population": "same reviewed population as E01",
             "condition_contrast_id": "C01",
-            "summary_target": "condition difference in expected claim fixation-event frequency under observed exposure",
+            "summary_target": (
+                "condition difference in expected claim fixation-event frequency "
+                "under observed exposure"
+            ),
             "inferential_unit": "participant with repeated trial observations",
             "aggregation_before_model": "fixations counted within participant×trial×AOI only",
             "missingness_policy": "retain exposure and distinguish observed zero from missing",
@@ -163,7 +184,9 @@ def _estimands() -> pd.DataFrame:
             "analysis_status": "exploratory",
             "target_population": "same reviewed population as E01",
             "condition_contrast_id": "C01",
-            "summary_target": "exploratory condition difference in claim→product transition frequency",
+            "summary_target": (
+                "exploratory condition difference in claim→product transition frequency"
+            ),
             "inferential_unit": "participant with repeated trial sequences",
             "aggregation_before_model": "within-trial transition counting only",
             "missingness_policy": "retain missing sequences and analysed sequence length",
@@ -195,11 +218,44 @@ def _contrasts() -> pd.DataFrame:
 
 def _sensitivities() -> pd.DataFrame:
     rows = [
-        ("S01", "O01", "prespecified", "AOI boundary perturbation", "repeat O01 under a small justified reviewed claim-AOI perturbation"),
-        ("S02", "O01;O02;O03", "prespecified", "event detector threshold", "repeat affected measurements under one prespecified detector sensitivity setting"),
-        ("S03", "O01;O02", "prespecified", "coverage threshold", "repeat with the prespecified minimum observable-exposure sensitivity rule"),
-        ("S04", "O03", "prespecified", "latency censoring", "retain all no-fixation cases and vary only a justified administrative exposure definition"),
-        ("S05", "O04", "exploratory", "sequence preprocessing", "compare repeat-collapse versus preserved-repeat sequence coding"),
+        (
+            "S01",
+            "O01",
+            "prespecified",
+            "AOI boundary perturbation",
+            "repeat O01 under a small justified reviewed claim-AOI perturbation",
+        ),
+        (
+            "S02",
+            "O01;O02;O03",
+            "prespecified",
+            "event detector threshold",
+            "repeat affected measurements under one prespecified detector sensitivity setting",
+        ),
+        (
+            "S03",
+            "O01;O02",
+            "prespecified",
+            "coverage threshold",
+            "repeat with the prespecified minimum observable-exposure sensitivity rule",
+        ),
+        (
+            "S04",
+            "O03",
+            "prespecified",
+            "latency censoring",
+            (
+                "retain all no-fixation cases and vary only a justified "
+                "administrative exposure definition"
+            ),
+        ),
+        (
+            "S05",
+            "O04",
+            "exploratory",
+            "sequence preprocessing",
+            "compare repeat-collapse versus preserved-repeat sequence coding",
+        ),
     ]
     return pd.DataFrame(
         rows,
@@ -213,10 +269,33 @@ def _deviations() -> pd.DataFrame:
 
 def _reporting_plan() -> pd.DataFrame:
     rows = [
-        ("O01", "primary", "report effect/uncertainty only after specialist modelling; always report observed exposure and analysis population", "AOI dwell is visual inspection and not a direct trust/persuasion measure"),
-        ("O02", "secondary", "report count outcome with exposure/denominator and multiplicity-family status", "fixation count is not automatically interest or cognitive effort"),
-        ("O03", "secondary", "report no-fixation censoring and exposure alongside latency inference", "no observed fixation is not latency zero or proof of no awareness"),
-        ("O04", "exploratory", "label exploratory in tables/text and report the sequence-construction rule", "transition structure is not a direct persuasion-strategy measure"),
+        (
+            "O01",
+            "primary",
+            (
+                "report effect/uncertainty only after specialist modelling; always "
+                "report observed exposure and analysis population"
+            ),
+            "AOI dwell is visual inspection and not a direct trust/persuasion measure",
+        ),
+        (
+            "O02",
+            "secondary",
+            "report count outcome with exposure/denominator and multiplicity-family status",
+            "fixation count is not automatically interest or cognitive effort",
+        ),
+        (
+            "O03",
+            "secondary",
+            "report no-fixation censoring and exposure alongside latency inference",
+            "no observed fixation is not latency zero or proof of no awareness",
+        ),
+        (
+            "O04",
+            "exploratory",
+            "label exploratory in tables/text and report the sequence-construction rule",
+            "transition structure is not a direct persuasion-strategy measure",
+        ),
     ]
     return pd.DataFrame(
         rows,
@@ -305,7 +384,8 @@ def run(output_dir: Path) -> None:
             "causal_validity_claim_created": False,
             "scientific_boundary": (
                 "Preregistration makes planned measurement and estimand choices auditable; "
-                "it does not establish construct validity, causal validity, or estimator suitability."
+                "it does not establish construct validity, causal validity, or "
+                "estimator suitability."
             ),
         },
     )

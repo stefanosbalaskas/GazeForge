@@ -143,8 +143,7 @@ def _write_figures(
         (flagged["participant_id"] == participant) & (flagged["trial_id"] == trial)
     ]
     assigned_first = assignments.loc[
-        (assignments["participant_id"] == participant)
-        & (assignments["trial_id"] == trial)
+        (assignments["participant_id"] == participant) & (assignments["trial_id"] == trial)
     ]
 
     paths = [

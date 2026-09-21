@@ -24,12 +24,10 @@ from gazeforge.hollywood2_token_validation import (
 )
 
 DEFAULT_FROZEN = Path(
-    "validation/evidence/hollywood2/"
-    "hollywood2-source-token-60hz-frozen-summary-v1.json"
+    "validation/evidence/hollywood2/hollywood2-source-token-60hz-frozen-summary-v1.json"
 )
 DEFAULT_PORTABILITY_EVIDENCE = Path(
-    "validation/evidence/hollywood2/"
-    "hollywood2-source-token-numeric-portability-evidence-v2.json"
+    "validation/evidence/hollywood2/hollywood2-source-token-numeric-portability-evidence-v2.json"
 )
 METRIC_KEYS = (
     "analysis_label_counts",
@@ -72,12 +70,10 @@ def _load_raw_reviewed_report(
     lineage: dict[str, Any],
 ) -> dict[str, Any]:
     raw_bytes = path.read_bytes()
-    assert hashlib.sha256(raw_bytes).hexdigest() == (
-        lineage["uncanonicalized_report_file_sha256"]
-    )
+    assert hashlib.sha256(raw_bytes).hexdigest() == (lineage["uncanonicalized_report_file_sha256"])
     raw = validate_hollywood2_source_token_validation_report(json.loads(raw_bytes))
-    assert raw["report_fingerprint_sha256"] == (
-        lineage["uncanonicalized_report_fingerprint_sha256"]
+    assert (
+        raw["report_fingerprint_sha256"] == (lineage["uncanonicalized_report_fingerprint_sha256"])
     )
     return raw
 
@@ -151,8 +147,8 @@ def replay_reviewed_artifacts(
     assert v2_texts[0] == v2_texts[1]
     assert v1_texts[0] != v2_texts[0]
     assert reviewed["v2_recanonicalized_reports_byte_identical"] is True
-    assert frozen["report_fingerprint_sha256"] == (
-        before["frozen_summary_report_fingerprint_sha256"]
+    assert (
+        frozen["report_fingerprint_sha256"] == (before["frozen_summary_report_fingerprint_sha256"])
     )
     print("v1 evidence preserved and v2 reviewed artifacts are byte-identical")
     print("this is artifact replay, not a fresh source rerun")
@@ -178,11 +174,13 @@ def bind_live_v2_report(
     assert protocol["numeric_canonicalization"] == (
         HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2
     )
-    assert report["report_fingerprint_sha256"] == (
-        expected["canonical_source_report_fingerprint_sha256"]
+    assert (
+        report["report_fingerprint_sha256"]
+        == (expected["canonical_source_report_fingerprint_sha256"])
     )
-    assert hashlib.sha256(report_path.read_bytes()).hexdigest() == (
-        expected["canonical_source_report_file_sha256"]
+    assert (
+        hashlib.sha256(report_path.read_bytes()).hexdigest()
+        == (expected["canonical_source_report_file_sha256"])
     )
     assert report["benchmark"] == frozen["benchmark"]
     assert report["model"] == frozen["model"]
@@ -193,18 +191,18 @@ def bind_live_v2_report(
         )
 
     assert preparation["analysis_rows"] == frozen_preparation["analysis_rows"]
-    assert preparation["analysis_sampling_rate_hz"] == (
-        frozen_preparation["analysis_sampling_rate_hz"]
+    assert (
+        preparation["analysis_sampling_rate_hz"]
+        == (frozen_preparation["analysis_sampling_rate_hz"])
     )
-    assert preparation["prepared_rows_before_exclusions"] == (
-        frozen_preparation["prepared_rows_before_exclusions"]
+    assert (
+        preparation["prepared_rows_before_exclusions"]
+        == (frozen_preparation["prepared_rows_before_exclusions"])
     )
     assert preparation["excluded_rows"] == frozen_preparation["excluded_rows"]
-    assert inventory["ground_truth_file_count"] == (
-        frozen_preparation["ground_truth_file_count"]
-    )
-    assert inventory["ground_truth_sample_count"] == (
-        frozen_preparation["ground_truth_sample_count"]
+    assert inventory["ground_truth_file_count"] == (frozen_preparation["ground_truth_file_count"])
+    assert (
+        inventory["ground_truth_sample_count"] == (frozen_preparation["ground_truth_sample_count"])
     )
     assert inventory["source_tokens"] == frozen_preparation["source_tokens"]
     assert inventory["source_token_count"] == frozen_preparation["source_token_count"]

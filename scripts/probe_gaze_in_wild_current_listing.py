@@ -257,9 +257,7 @@ def main() -> int:
         json.dumps(
             {
                 "listing_target": payload["current_first_party_page"]["listing_target"],
-                "listing_target_class": payload["current_first_party_page"][
-                    "listing_target_class"
-                ],
+                "listing_target_class": payload["current_first_party_page"]["listing_target_class"],
                 "historical_http_status": payload["historical_endpoint_observation"][
                     "observed_http_status"
                 ],
@@ -272,9 +270,7 @@ def main() -> int:
                 "requires_human_evidence_review": payload["review_trigger"][
                     "requires_human_evidence_review"
                 ],
-                "listing_state_fingerprint_sha256": payload[
-                    "listing_state_fingerprint_sha256"
-                ],
+                "listing_state_fingerprint_sha256": payload["listing_state_fingerprint_sha256"],
                 "observation_fingerprint_sha256": payload["observation_fingerprint_sha256"],
             },
             sort_keys=True,

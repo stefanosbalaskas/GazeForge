@@ -228,7 +228,7 @@ Retain:
 
 ## Scientific boundary
 
-This clinic provides a fail-closed **computational interpretation gate**. Passing the
-gate does not make a model scientifically correct, causal, construct-valid,
+This clinic provides a fail-closed **computational interpretation gate**.
+Passing the gate does not make a model scientifically correct, causal, construct-valid,
 device-valid, or externally valid. GazeForge does not silently select a replacement
 estimator or promote a changed-estimand model to the primary analysis.

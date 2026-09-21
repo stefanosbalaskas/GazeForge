@@ -169,12 +169,8 @@ def _aoi_metrics(
         aoi_definitions[["aoi_id", "label"]].rename(columns={"label": "aoi_label"}),
         how="cross",
     )
-    out["aoi_present"] = ~(
-        out["condition"].eq("standard") & out["aoi_id"].eq("disclosure")
-    )
-    out["aoi_observable_ms"] = np.where(
-        out["aoi_present"], out["observed_gaze_ms"], 0.0
-    )
+    out["aoi_present"] = ~(out["condition"].eq("standard") & out["aoi_id"].eq("disclosure"))
+    out["aoi_observable_ms"] = np.where(out["aoi_present"], out["observed_gaze_ms"], 0.0)
     observed = (
         assignments.dropna(subset=["aoi_id"])
         .groupby(["participant_id", "trial_id", "aoi_id"], as_index=False)
@@ -210,25 +206,18 @@ def _aoi_metrics(
     out.loc[no_fixation, "latency_status"] = "right_censored_no_fixation"
     out.loc[absent, "latency_status"] = "not_present_by_design"
     out.loc[missing, "latency_status"] = "missing_trial"
-    out["latency_censor_time_ms"] = np.where(
-        no_fixation, out["aoi_observable_ms"], np.nan
-    )
+    out["latency_censor_time_ms"] = np.where(no_fixation, out["aoi_observable_ms"], np.nan)
     out["analysis_role"] = "model_ready_trial_aoi_measure"
     out["zero_policy"] = "zero only when AOI present + trial observed; missing/absent stay NA"
     return out.drop(columns=["participant_index", "trial_retained_after_review"])
 
 
 def _event_metrics(events: pd.DataFrame, design: pd.DataFrame) -> pd.DataFrame:
-    out = design.merge(
-        pd.DataFrame({"event_label": ["fixation", "saccade"]}), how="cross"
-    )
-    observed = (
-        events.groupby(["participant_id", "trial_id", "event_label"], as_index=False)
-        .agg(
-            n_events=("event_index", "size"),
-            total_event_ms=("duration_ms", "sum"),
-            mean_event_ms=("duration_ms", "mean"),
-        )
+    out = design.merge(pd.DataFrame({"event_label": ["fixation", "saccade"]}), how="cross")
+    observed = events.groupby(["participant_id", "trial_id", "event_label"], as_index=False).agg(
+        n_events=("event_index", "size"),
+        total_event_ms=("duration_ms", "sum"),
+        mean_event_ms=("duration_ms", "mean"),
     )
     out = out.merge(
         observed,
@@ -253,18 +242,13 @@ def _event_metrics(events: pd.DataFrame, design: pd.DataFrame) -> pd.DataFrame:
 
 
 def _descriptive(aoi_metrics: pd.DataFrame) -> pd.DataFrame:
-    observed = aoi_metrics[
-        aoi_metrics["metric_status"].isin(["observed", "observed_zero"])
-    ]
-    out = (
-        observed.groupby(
-            ["participant_id", "condition", "aoi_id", "aoi_label"], as_index=False
-        )
-        .agg(
-            n_contributing_trials=("trial_id", "nunique"),
-            mean_dwell_ms=("dwell_ms", "mean"),
-            mean_dwell_proportion_observed=("dwell_proportion_observed", "mean"),
-        )
+    observed = aoi_metrics[aoi_metrics["metric_status"].isin(["observed", "observed_zero"])]
+    out = observed.groupby(
+        ["participant_id", "condition", "aoi_id", "aoi_label"], as_index=False
+    ).agg(
+        n_contributing_trials=("trial_id", "nunique"),
+        mean_dwell_ms=("dwell_ms", "mean"),
+        mean_dwell_proportion_observed=("dwell_proportion_observed", "mean"),
     )
     out["analysis_role"] = "descriptive_only_not_inferential_input"
     return out
@@ -296,9 +280,7 @@ def _write_json(path: Path, payload: Any) -> None:
     )
 
 
-def _figures(
-    output_dir: Path, aoi_metrics: pd.DataFrame, design: pd.DataFrame
-) -> list[str]:
+def _figures(output_dir: Path, aoi_metrics: pd.DataFrame, design: pd.DataFrame) -> list[str]:
     try:
         import matplotlib.pyplot as plt
     except ImportError as exc:
@@ -307,9 +289,7 @@ def _figures(
         ) from exc
     figure_dir = output_dir / "figures"
     figure_dir.mkdir(parents=True, exist_ok=True)
-    observed = aoi_metrics[
-        aoi_metrics["metric_status"].isin(["observed", "observed_zero"])
-    ]
+    observed = aoi_metrics[aoi_metrics["metric_status"].isin(["observed", "observed_zero"])]
     dwell = (
         observed.groupby(["aoi_label", "condition"])["dwell_ms"]
         .mean()
@@ -444,9 +424,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Build deterministic model-ready trial tables without model fitting."
     )
-    parser.add_argument(
-        "--output-dir", type=Path, default=Path("worked-analysis-handoff-demo")
-    )
+    parser.add_argument("--output-dir", type=Path, default=Path("worked-analysis-handoff-demo"))
     parser.add_argument("--no-figures", action="store_true")
     args = parser.parse_args()
     run(args.output_dir, figures=not args.no_figures)

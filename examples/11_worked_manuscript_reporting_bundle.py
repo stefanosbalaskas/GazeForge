@@ -197,15 +197,11 @@ def run(output_dir: Path) -> None:
         _run_upstream(upstream)
         hashes_before = _hash_bundle(upstream)
 
-        manifest = json.loads(
-            (upstream / "workflow_manifest.json").read_text(encoding="utf-8")
-        )
+        manifest = json.loads((upstream / "workflow_manifest.json").read_text(encoding="utf-8"))
         source_contract = json.loads(
             (upstream / "source_contract.json").read_text(encoding="utf-8")
         )
-        analysis_plan = json.loads(
-            (upstream / "analysis_plan.json").read_text(encoding="utf-8")
-        )
+        analysis_plan = json.loads((upstream / "analysis_plan.json").read_text(encoding="utf-8"))
         artifact_index = pd.read_csv(upstream / "artifact_index.csv")
         denominator_flow = _denominator_flow(manifest)
         citation_table = _artifact_citation_table(artifact_index, hashes_before)

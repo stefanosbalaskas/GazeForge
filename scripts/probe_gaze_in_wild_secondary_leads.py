@@ -72,9 +72,7 @@ def _verify_checkout(root: Path, *, repository: str, commit: str, tree: str) -> 
 
 def _paths(root: Path) -> list[str]:
     return [
-        line
-        for line in _git(root, "ls-tree", "-r", "--name-only", "HEAD").splitlines()
-        if line
+        line for line in _git(root, "ls-tree", "-r", "--name-only", "HEAD").splitlines() if line
     ]
 
 
@@ -87,9 +85,9 @@ def _text(root: Path, path: str) -> str:
 
 
 def _canonical_bytes(value: Any) -> bytes:
-    return json.dumps(
-        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-    ).encode("utf-8")
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
+        "utf-8"
+    )
 
 
 def probe_fingerprint(record: dict[str, Any]) -> str:
@@ -124,7 +122,10 @@ def build_probe(awesome_root: Path, edit_root: Path) -> dict[str, Any]:
     awesome_readme = _text(awesome_root, "README.md")
     required_awesome = (
         "A curated collection of real-world eye tracking datasets unified under a common format",
-        "| **GazeinTheWild** | Eye and head coordination data captured during everyday activities |",
+        (
+            "| **GazeinTheWild** | Eye and head coordination data captured during "
+            "everyday activities |"
+        ),
         f"Processed data is available for download on [Google Drive]({AWESOME_DRIVE_URL})",
         "ANNOTATIONS/   # CSV files (one per chunk)",
         "VIDEOS/        # Chunked eye video clips (.mp4)",
@@ -219,7 +220,11 @@ def main() -> int:
     payload = build_probe(args.awesome_root.resolve(), args.edit_root.resolve())
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"probe_fingerprint_sha256": payload["probe_fingerprint_sha256"]}, sort_keys=True))
+    print(
+        json.dumps(
+            {"probe_fingerprint_sha256": payload["probe_fingerprint_sha256"]}, sort_keys=True
+        )
+    )
     return 0
 
 

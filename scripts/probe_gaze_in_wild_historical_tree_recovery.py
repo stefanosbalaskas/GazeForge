@@ -94,9 +94,7 @@ def _sha256(path: Path) -> str:
 
 def _tree_paths(root: Path, commit: str) -> list[str]:
     return [
-        line
-        for line in _git(root, "ls-tree", "-r", "--name-only", commit).splitlines()
-        if line
+        line for line in _git(root, "ls-tree", "-r", "--name-only", commit).splitlines() if line
     ]
 
 
@@ -200,9 +198,7 @@ def _describe_processdata(process: Any) -> tuple[list[str], dict[str, Any], dict
         "IMU.HeadVector_shape": list(np.asarray(imu.HeadVector).shape),
         "ZED.FrameNo_shape": list(np.asarray(zed.FrameNo).shape),
         "GIW.GIWvector_shape": list(np.asarray(giw.GIWvector).shape),
-        "Path2Data_sha256": hashlib.sha256(
-            str(process.Path2Data).encode("utf-8")
-        ).hexdigest(),
+        "Path2Data_sha256": hashlib.sha256(str(process.Path2Data).encode("utf-8")).hexdigest(),
     }
     return fields, described, identity
 
@@ -261,9 +257,7 @@ def _archive_audit(root: Path) -> dict[str, Any]:
             alternate_labeller_members = sorted(
                 name for name in names if _LABEL_ALT_RE.search(name)
             )
-            labeldata_members = sorted(
-                name for name in names if "labeldata" in name.lower()
-            )
+            labeldata_members = sorted(name for name in names if "labeldata" in name.lower())
             nested_archive_members = sorted(name for name in names if _ARCHIVE_RE.search(name))
 
             member_info = archive.getinfo(EMBEDDED_MEMBER)
@@ -304,8 +298,7 @@ def _archive_audit(root: Path) -> dict[str, Any]:
         "IMU.HeadVector_shape": [106_225, 3],
         "ZED.FrameNo_shape": [106_225],
         "GIW.GIWvector_shape": [106_225, 3],
-        "Path2Data_sha256":
-            "8058c7143cf9104f3802ee7578792db8c48ad74d2515d27e993c435ed126ff4d",
+        "Path2Data_sha256": "8058c7143cf9104f3802ee7578792db8c48ad74d2515d27e993c435ed126ff4d",
     }
     if identity != expected_identity:
         raise ProbeError("Embedded ProcessData structural identity drifted.")
@@ -354,9 +347,7 @@ def build_probe(root: Path, releases_json: Path) -> dict[str, Any]:
     if origin != CANONICAL_REPOSITORY:
         raise ProbeError(f"Unexpected origin {origin!r}.")
 
-    commits = [
-        line for line in _git(root, "rev-list", "--reverse", "HEAD").splitlines() if line
-    ]
+    commits = [line for line in _git(root, "rev-list", "--reverse", "HEAD").splitlines() if line]
     if len(commits) != EXPECTED_COMMIT_COUNT:
         raise ProbeError(
             f"Expected {EXPECTED_COMMIT_COUNT} reachable commits, observed {len(commits)}."
@@ -504,9 +495,7 @@ def main() -> int:
             {
                 "reachable_commit_count": record["reachable_commit_count"],
                 "unique_mat_path_count": len(audit["unique_mat_paths"]),
-                "unique_exact_giw_data_path_count": len(
-                    audit["unique_exact_giw_data_paths"]
-                ),
+                "unique_exact_giw_data_path_count": len(audit["unique_exact_giw_data_paths"]),
                 "preprocessing_archive_member_count": archive["member_count"],
                 "embedded_processdata_sha256": sample["member_sha256"],
                 "embedded_PrIdx": sample["identity"]["PrIdx"],

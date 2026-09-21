@@ -127,17 +127,11 @@ def _split_ledger(data: pd.DataFrame) -> pd.DataFrame:
         splitter.split(data, y=data["event_label"], groups=groups),
         start=1,
     ):
-        train_ids = sorted(
-            data.iloc[train_idx]["participant_id"].astype(str).unique()
-        )
-        test_ids = sorted(
-            data.iloc[test_idx]["participant_id"].astype(str).unique()
-        )
+        train_ids = sorted(data.iloc[train_idx]["participant_id"].astype(str).unique())
+        test_ids = sorted(data.iloc[test_idx]["participant_id"].astype(str).unique())
         overlap = sorted(set(train_ids) & set(test_ids))
         if overlap:
-            raise RuntimeError(
-                f"Participant leakage detected in fold {fold}: {overlap}"
-            )
+            raise RuntimeError(f"Participant leakage detected in fold {fold}: {overlap}")
         for participant_id in train_ids:
             rows.append(
                 {
@@ -164,8 +158,7 @@ def _validate_prediction_split_identity(
     for fold in sorted(predictions["validation_fold"].unique()):
         expected = set(
             split_ledger.loc[
-                (split_ledger["fold"] == fold)
-                & (split_ledger["split_role"] == "test"),
+                (split_ledger["fold"] == fold) & (split_ledger["split_role"] == "test"),
                 "participant_id",
             ].astype(str)
         )
@@ -191,9 +184,7 @@ def _calibration_outputs(
     thresholds = (0.0, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95)
 
     for model_name in ("RandomForest", "ContextMLP"):
-        model_predictions = predictions.loc[
-            predictions["comparison_model"] == model_name
-        ].copy()
+        model_predictions = predictions.loc[predictions["comparison_model"] == model_name].copy()
         diagnostics = evaluate_event_calibration(
             model_predictions,
             true_label_col="event_label",
@@ -205,9 +196,7 @@ def _calibration_outputs(
                     "model": model_name,
                     **row,
                     "multiclass_brier_score": diagnostics["multiclass_brier_score"],
-                    "expected_calibration_error": diagnostics[
-                        "expected_calibration_error"
-                    ],
+                    "expected_calibration_error": diagnostics["expected_calibration_error"],
                 }
             )
 
@@ -219,9 +208,7 @@ def _calibration_outputs(
         selective.insert(0, "model", model_name)
         selective_parts.append(selective)
 
-        selected = selective.loc[
-            selective["confidence_threshold"] == ABSTENTION_THRESHOLD
-        ].iloc[0]
+        selected = selective.loc[selective["confidence_threshold"] == ABSTENTION_THRESHOLD].iloc[0]
         policy_rows.append(
             {
                 "model": model_name,
@@ -363,9 +350,7 @@ def main() -> None:
     ]
     sample_metrics = comparison.fold_metrics[sample_metric_columns].copy()
     event_metrics = comparison.fold_metrics[event_metric_columns].copy()
-    calibration, selective, abstention_policy = _calibration_outputs(
-        comparison.predictions
-    )
+    calibration, selective, abstention_policy = _calibration_outputs(comparison.predictions)
 
     pd.testing.assert_frame_equal(source, source_snapshot, check_exact=True)
     source_unchanged = fingerprint_frame(source) == source_fingerprint
@@ -444,9 +429,7 @@ def main() -> None:
     (args.output_dir / "analysis_plan.json").write_text(
         json.dumps(analysis_plan, indent=2), encoding="utf-8"
     )
-    (args.output_dir / "provenance.json").write_text(
-        trail.to_json(indent=2), encoding="utf-8"
-    )
+    (args.output_dir / "provenance.json").write_text(trail.to_json(indent=2), encoding="utf-8")
 
     manifest = {
         "workflow": "worked_event_model_validation",

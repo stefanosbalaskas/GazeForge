@@ -26,11 +26,7 @@ def _canonical_bytes(payload: dict[str, Any]) -> bytes:
 def probe_fingerprint(payload: dict[str, Any]) -> str:
     """Return a SHA-256 identity excluding the record's self-fingerprint."""
 
-    body = {
-        key: value
-        for key, value in payload.items()
-        if key != "probe_fingerprint_sha256"
-    }
+    body = {key: value for key, value in payload.items() if key != "probe_fingerprint_sha256"}
     return hashlib.sha256(_canonical_bytes(body)).hexdigest()
 
 
@@ -138,8 +134,7 @@ def main() -> int:
     result = subprocess.run(
         command,
         text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         check=False,
     )
     if result.returncode == 0:

@@ -481,7 +481,21 @@ python examples/12_worked_measurement_interpretation_audit.py \
   --output-dir worked-measurement-interpretation-audit
 ```
 
-The deterministic teaching bundle writes a claim registry, measurement/interpretation matrix, validity-threat register, sensitivity plan, reporting-language table, audit manifest, and README. It preserves no-fixation latency as right-censored rather than zero, never assigns `valid`/`invalid` truth-label statuses, performs no inferential statistics, and never infers a latent state from gaze alone.
+The deterministic teaching bundle writes:
+
+```text
+01_claim_registry.csv
+02_measurement_interpretation_matrix.csv
+03_validity_threats.csv
+04_sensitivity_plan.csv
+05_reporting_language.csv
+interpretation_audit.json
+README.md
+```
+
+It preserves no-fixation latency as right-censored rather than zero, never assigns
+`valid`/`invalid` truth-label statuses, performs no inferential statistics, and never
+infers a latent state from gaze alone.
 
 [Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/12_worked_measurement_interpretation_audit.py)
 · [Read the measurement & interpretation clinic](measurement-interpretation.md)
@@ -699,6 +713,26 @@ standard errors, GEE, LMM/GLMM, Bayesian hierarchical model, or other estimator.
 [Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/20_worked_grouping_pseudoreplication_audit.py)
 · [Read the grouping/repeated-measures clinic](grouping-repeated-measures.md)
 · [Continue to model diagnostics](model-diagnostics-convergence.md)
+
+## Complete deterministic artifact inventory
+
+The runnable examples collectively create the following additional audit artifacts. Their presence records workflow evidence and does not itself establish construct, causal, device, model, or external validity.
+
+```text
+01_observation_status_registry.csv
+02_denominator_exposure_ledger.csv
+03_count_rate_audit.csv
+04_proportion_dwell_audit.csv
+05_latency_censoring_audit.csv
+06_reconciliation_flow.csv
+08_api_route_map.csv
+denominator_exposure_manifest.json
+01_model_fit_registry.csv
+02_diagnostic_status.csv
+03_interpretation_gate.csv
+04_sensitivity_linkage.csv
+model_diagnostics_manifest.json
+```
 
 ## Which example should I run first?
 

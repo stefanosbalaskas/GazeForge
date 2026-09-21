@@ -45,9 +45,7 @@ def _candidate(args: argparse.Namespace) -> int:
     _write_object(args.output, candidate)
     summary = {
         "candidate_fingerprint_sha256": candidate["candidate_fingerprint_sha256"],
-        "complete_gin_token_coverage": candidate["mapping_summary"][
-            "complete_gin_token_coverage"
-        ],
+        "complete_gin_token_coverage": candidate["mapping_summary"]["complete_gin_token_coverage"],
         "entry_count": candidate["mapping_summary"]["entry_count"],
         "participant_identity_mapping_verified": candidate["review_boundary"][
             "participant_identity_mapping_verified"

@@ -28,7 +28,7 @@ GazeForge can make event definitions, AOIs, denominators, censoring, confidence,
     - Dunn et al., *Minimal reporting guideline for research involving eye tracking (2023 edition)* — [DOI 10.3758/s13428-023-02187-1](https://doi.org/10.3758/s13428-023-02187-1)
     - Orquin & Holmqvist, *Threats to the validity of eye-movement research in psychology* — [DOI 10.3758/s13428-017-0998-z](https://doi.org/10.3758/s13428-017-0998-z)
 
-    The clinic does **not** rely on the retracted “Eye tracking: empirical foundations for a minimal reporting guideline” article.
+    The clinic does not rely on the retracted “Eye tracking: empirical foundations for a minimal reporting guideline” article.
 
 ## The interpretation path
 
@@ -182,6 +182,10 @@ Before manuscript freeze, retain the exact observable, unit, event method, AOI s
 This page does not provide universal rules such as “more dwell = more interest.” Interpretation depends on task, measurement model, preprocessing, missingness, event/AOI definitions, experimental design, external outcomes, and substantive theory.
 
 GazeForge therefore remains a **measurement/process-data and provenance layer**. Construct validation belongs to the scientific design, not to an automatic package rule.
+
+The worked measurement/interpretation audit is explicitly
+`synthetic_demo_not_empirical_evidence`; it demonstrates the audit contract and does
+not establish empirical measurement, construct, device, causal, or external validity.
 
 ## Continue through the research path
 

@@ -84,9 +84,9 @@ def _registry(source: pd.DataFrame) -> pd.DataFrame:
     out["eligible_for_rate_or_proportion"] = (
         out.aoi_observable_ms.fillna(0).gt(0) & out.fixation_count.notna()
     )
-    out["observed_zero_is_valid"] = (
-        out.fixation_count.fillna(-1).eq(0) & out.aoi_observable_ms.fillna(0).gt(0)
-    )
+    out["observed_zero_is_valid"] = out.fixation_count.fillna(-1).eq(
+        0
+    ) & out.aoi_observable_ms.fillna(0).gt(0)
     return out
 
 
@@ -162,13 +162,17 @@ def _latency(registry: pd.DataFrame) -> pd.DataFrame:
         }
         observed = not blocked and pd.notna(row.first_fixation_ms)
         censored = not blocked and not observed
-        status = row.observation_status if blocked else (
-            "event_observed" if observed else "right_censored_no_fixation"
+        status = (
+            row.observation_status
+            if blocked
+            else ("event_observed" if observed else "right_censored_no_fixation")
         )
         time_ms = (
             float(row.first_fixation_ms)
             if observed
-            else float(row.aoi_observable_ms) if censored else None
+            else float(row.aoi_observable_ms)
+            if censored
+            else None
         )
         rows.append(
             {

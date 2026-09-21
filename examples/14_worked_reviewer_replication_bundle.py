@@ -101,6 +101,7 @@ def _claims() -> pd.DataFrame:
         ],
     )
 
+
 def _rerun_plan() -> pd.DataFrame:
     rows = [
         (
@@ -198,6 +199,7 @@ def _api_routes() -> pd.DataFrame:
         ("sampling sensitivity", "api-reference.md#sampling-sensitivity"),
     ]
     return pd.DataFrame(rows, columns=["layer", "api_route"])
+
 
 def _readme() -> str:
     return """# Reviewer / replicator start here

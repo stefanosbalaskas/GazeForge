@@ -45,9 +45,7 @@ def _candidate(args: argparse.Namespace) -> int:
     _write_object(args.output, candidate)
     summary = {
         "candidate_fingerprint_sha256": candidate["candidate_fingerprint_sha256"],
-        "complete_one_to_one_mapping": candidate["mapping_summary"][
-            "complete_one_to_one_mapping"
-        ],
+        "complete_one_to_one_mapping": candidate["mapping_summary"]["complete_one_to_one_mapping"],
         "entry_count": candidate["mapping_summary"]["entry_count"],
         "tridx4_present_in_transcription": candidate["mapping_summary"][
             "tridx4_present_in_transcription"
@@ -61,9 +59,7 @@ def _candidate(args: argparse.Namespace) -> int:
 
 
 def _review_template(args: argparse.Namespace) -> int:
-    candidate = validate_candidate_record(
-        _load_object(args.candidate, label="candidate")
-    )
+    candidate = validate_candidate_record(_load_object(args.candidate, label="candidate"))
     template: dict[str, Any] = {
         "record_type": REVIEW_RECORD_TYPE,
         "decision": "pending",
@@ -93,13 +89,9 @@ def _review_template(args: argparse.Namespace) -> int:
     print(
         json.dumps(
             {
-                "candidate_fingerprint_sha256": candidate[
-                    "candidate_fingerprint_sha256"
-                ],
+                "candidate_fingerprint_sha256": candidate["candidate_fingerprint_sha256"],
                 "decision": "pending",
-                "review_fingerprint_sha256": template[
-                    "review_fingerprint_sha256"
-                ],
+                "review_fingerprint_sha256": template["review_fingerprint_sha256"],
             },
             indent=2,
             sort_keys=True,
@@ -111,18 +103,14 @@ def _review_template(args: argparse.Namespace) -> int:
 def _seal_review(args: argparse.Namespace) -> int:
     review = _load_object(args.review, label="review")
     if review.get("record_type") != REVIEW_RECORD_TYPE:
-        raise BenchmarkIntegrityError(
-            "Gaze-in-the-Wild task-mapping review record type drifted."
-        )
+        raise BenchmarkIntegrityError("Gaze-in-the-Wild task-mapping review record type drifted.")
     review["review_fingerprint_sha256"] = review_fingerprint(review)
     _write_object(args.output, review)
     print(
         json.dumps(
             {
                 "decision": review.get("decision"),
-                "review_fingerprint_sha256": review[
-                    "review_fingerprint_sha256"
-                ],
+                "review_fingerprint_sha256": review["review_fingerprint_sha256"],
             },
             indent=2,
             sort_keys=True,
@@ -132,9 +120,7 @@ def _seal_review(args: argparse.Namespace) -> int:
 
 
 def _certificate(args: argparse.Namespace) -> int:
-    candidate = validate_candidate_record(
-        _load_object(args.candidate, label="candidate")
-    )
+    candidate = validate_candidate_record(_load_object(args.candidate, label="candidate"))
     if candidate["candidate_fingerprint_sha256"] != candidate_fingerprint(candidate):
         raise BenchmarkIntegrityError(
             "Gaze-in-the-Wild task-mapping candidate fingerprint drifted."
@@ -148,13 +134,11 @@ def _certificate(args: argparse.Namespace) -> int:
     certificate = validate_certificate_record(reviewed.certificate)
     _write_object(args.output, certificate)
     summary = {
-        "certificate_fingerprint_sha256": certificate[
-            "certificate_fingerprint_sha256"
-        ],
+        "certificate_fingerprint_sha256": certificate["certificate_fingerprint_sha256"],
         "mapping_fingerprint_sha256": certificate["mapping_fingerprint_sha256"],
-        "authoritative_trial_task_mapping_verified": certificate[
-            "mapping_boundary"
-        ]["authoritative_trial_task_mapping_verified"],
+        "authoritative_trial_task_mapping_verified": certificate["mapping_boundary"][
+            "authoritative_trial_task_mapping_verified"
+        ],
         "tridx4_explicit_in_source_verified": certificate["mapping_boundary"][
             "tridx4_explicit_in_source_verified"
         ],

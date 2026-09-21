@@ -27,8 +27,7 @@ def main() -> None:
     participant = classified["participant_id"].iloc[0]
     trial = classified["trial_id"].iloc[0]
     first_trial = classified.loc[
-        (classified["participant_id"] == participant)
-        & (classified["trial_id"] == trial),
+        (classified["participant_id"] == participant) & (classified["trial_id"] == trial),
         ["participant_id", "trial_id", "timestamp_ms", "predicted_event"],
     ]
     changes = first_trial["predicted_event"].ne(first_trial["predicted_event"].shift())

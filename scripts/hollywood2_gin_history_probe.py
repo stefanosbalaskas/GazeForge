@@ -41,8 +41,7 @@ def _run(
         cwd=cwd,
         env=env,
         text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         timeout=timeout,
         check=False,
     )
@@ -120,8 +119,7 @@ def _blob_bytes(repo: Path, commit: str, path: str) -> bytes:
         ["git", "show", f"{commit}:{path}"],
         cwd=repo,
         env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         timeout=300,
         check=False,
     )
@@ -208,14 +206,10 @@ def _history(repo: Path, ref: str) -> dict[str, Any]:
         sha = str(commit["commit_sha1"])
         paths = _paths(repo, sha)
         license_paths = sorted(
-            path
-            for path in paths
-            if PurePosixPath(path).name.lower() in LICENSE_NAMES
+            path for path in paths if PurePosixPath(path).name.lower() in LICENSE_NAMES
         )
         readme_paths = sorted(
-            path
-            for path in paths
-            if PurePosixPath(path).name.lower() in README_NAMES
+            path for path in paths if PurePosixPath(path).name.lower() in README_NAMES
         )
         ground = _ground_truth_summary(paths)
 
@@ -257,9 +251,7 @@ def _history(repo: Path, ref: str) -> dict[str, Any]:
                 "ground_truth_file_count": ground["file_count"],
                 "ground_truth_token_count": ground["file_subject_token_count"],
                 "ground_truth_clip_count": ground["clip_count"],
-                "ground_truth_path_fingerprint_sha256": ground[
-                    "path_fingerprint_sha256"
-                ],
+                "ground_truth_path_fingerprint_sha256": ground["path_fingerprint_sha256"],
             }
         )
 
@@ -300,9 +292,7 @@ def _history(repo: Path, ref: str) -> dict[str, Any]:
     ]
 
     token_sets = {tuple(version["file_subject_tokens"]) for version in ground_versions}
-    path_fingerprints = {
-        str(version["path_fingerprint_sha256"]) for version in ground_versions
-    }
+    path_fingerprints = {str(version["path_fingerprint_sha256"]) for version in ground_versions}
     return {
         "commit_count": len(commits),
         "initial_commit_sha1": commits[0]["commit_sha1"],
@@ -348,10 +338,7 @@ def _history(repo: Path, ref: str) -> dict[str, Any]:
             "all_current_paths_first_seen": len(first_seen) == current_ground["file_count"],
             "first_seen_commit_counts": dict(sorted(first_seen_counts.items())),
             "first_seen_fingerprint_sha256": _sha256(
-                [
-                    {"path": path, "commit_sha1": first_seen[path]}
-                    for path in sorted(first_seen)
-                ]
+                [{"path": path, "commit_sha1": first_seen[path]} for path in sorted(first_seen)]
             ),
         },
     }

@@ -106,14 +106,10 @@ def _build_tracker_source() -> pd.DataFrame:
     source = pd.DataFrame(rows)
 
     # Two deliberate trial-level review cases. They stay in source/canonical/QC.
-    p1b = source.index[
-        (source["USER_FILE"] == "P001") & (source["MEDIA_ID"] == "ad_b")
-    ][:26]
+    p1b = source.index[(source["USER_FILE"] == "P001") & (source["MEDIA_ID"] == "ad_b")][:26]
     source.loc[p1b, ["BPOGX", "BPOGY"]] = np.nan
 
-    p2b = source.index[
-        (source["USER_FILE"] == "P002") & (source["MEDIA_ID"] == "ad_b")
-    ][:20]
+    p2b = source.index[(source["USER_FILE"] == "P002") & (source["MEDIA_ID"] == "ad_b")][:20]
     source.loc[p2b, "BPOGX"] = 1.08
 
     return source
@@ -173,7 +169,10 @@ def _criteria() -> pd.DataFrame:
                 "operator": ">=",
                 "threshold": 0.20,
                 "action": "exclude_trial_after_review",
-                "rationale": "Teaching threshold for the deterministic bundle; not a validated universal rule.",
+                "rationale": (
+                    "Teaching threshold for the deterministic bundle; not a validated "
+                    "universal rule."
+                ),
             },
             {
                 "criterion_id": "C02",
@@ -183,7 +182,10 @@ def _criteria() -> pd.DataFrame:
                 "operator": ">=",
                 "threshold": 0.15,
                 "action": "exclude_trial_after_review",
-                "rationale": "Teaching threshold for the deterministic bundle; not a validated universal rule.",
+                "rationale": (
+                    "Teaching threshold for the deterministic bundle; not a validated "
+                    "universal rule."
+                ),
             },
             {
                 "criterion_id": "C03",
@@ -193,7 +195,10 @@ def _criteria() -> pd.DataFrame:
                 "operator": "==",
                 "threshold": True,
                 "action": "review_not_automatic_exclusion",
-                "rationale": "Automated anomaly flags are evidence for review, not invalidity labels.",
+                "rationale": (
+                    "Automated anomaly flags are evidence for review, not invalidity "
+                    "labels."
+                ),
             },
         ]
     )
@@ -466,23 +471,65 @@ def run(output_dir: Path) -> None:
     artifact_rows = [
         ("README.md", "reporting", "bundle", True, "human-readable archive map"),
         ("source_contract.json", "source", "source contract", True, "declared import semantics"),
-        ("01_source_tracker_export.csv", "source", "sample", True, "immutable tracker-shaped source"),
-        ("02_canonical_gaze.csv", "canonical", "sample", True, "vendor-neutral canonical derivative"),
-        ("03_pre_review_qc_samples.csv", "qc", "sample", True, "non-destructive pre-review QC evidence"),
+        (
+            "01_source_tracker_export.csv",
+            "source",
+            "sample",
+            True,
+            "immutable tracker-shaped source",
+        ),
+        (
+            "02_canonical_gaze.csv",
+            "canonical",
+            "sample",
+            True,
+            "vendor-neutral canonical derivative",
+        ),
+        (
+            "03_pre_review_qc_samples.csv",
+            "qc",
+            "sample",
+            True,
+            "non-destructive pre-review QC evidence",
+        ),
         ("04_decision_criteria.csv", "review", "criterion", True, "review policy registry"),
         ("05_trial_quality.csv", "qc", "trial", True, "trial-quality evidence"),
-        ("06_trial_review_ledger.csv", "review", "trial decision", True, "reviewed exclusion decisions"),
-        ("07_primary_analysis_rows.csv", "analysis", "sample", False, "reviewed primary-analysis derivative"),
+        (
+            "06_trial_review_ledger.csv",
+            "review",
+            "trial decision",
+            True,
+            "reviewed exclusion decisions",
+        ),
+        (
+            "07_primary_analysis_rows.csv",
+            "analysis",
+            "sample",
+            False,
+            "reviewed primary-analysis derivative",
+        ),
         ("08_event_samples.csv", "analysis", "sample", False, "transparent event labels"),
         ("09_event_intervals.csv", "analysis", "event", False, "event intervals"),
         ("10_fixation_centroids.csv", "analysis", "fixation", False, "fixation-level coordinates"),
         ("11_aoi_definitions.csv", "analysis", "AOI", True, "researcher-defined geometry"),
         ("12_fixation_aoi_assignments.csv", "analysis", "fixation", False, "AOI assignments"),
-        ("13_semantic_scanpaths.csv", "analysis", "trial sequence", False, "semantic sequence representation"),
+        (
+            "13_semantic_scanpaths.csv",
+            "analysis",
+            "trial sequence",
+            False,
+            "semantic sequence representation",
+        ),
         ("artifact_index.csv", "reporting", "artifact", True, "bundle table of contents"),
         ("analysis_plan.json", "reporting", "plan", True, "frozen analysis intent and boundaries"),
         ("provenance.json", "provenance", "operation", True, "operation lineage"),
-        ("workflow_manifest.json", "reporting", "bundle", True, "bundle identity, hashes, denominators, and boundaries"),
+        (
+            "workflow_manifest.json",
+            "reporting",
+            "bundle",
+            True,
+            "bundle identity, hashes, denominators, and boundaries",
+        ),
     ]
     artifact_index = pd.DataFrame(
         [

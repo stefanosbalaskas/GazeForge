@@ -423,9 +423,7 @@ def run(output_dir: Path) -> None:
                 independence["risk_status"].eq("pseudoreplication_risk").sum()
             ),
             "aggregation_change_risk_count": int(
-                independence["risk_status"]
-                .eq("aggregation_changes_inferential_unit")
-                .sum()
+                independence["risk_status"].eq("aggregation_changes_inferential_unit").sum()
             ),
             "automatic_aggregation_performed": False,
             "fixed_effect_selected": False,

@@ -46,8 +46,7 @@ def _run(
         cwd=cwd,
         env=env,
         text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         timeout=timeout,
         check=False,
     )
@@ -437,14 +436,12 @@ def probe(repository: str = REPOSITORY) -> dict[str, Any]:
         license_records = [
             _text_record(repo, item)
             for item in tree
-            if Path(str(item["path"])).name.lower() in LICENSE_NAMES
-            and item["mode"] != "120000"
+            if Path(str(item["path"])).name.lower() in LICENSE_NAMES and item["mode"] != "120000"
         ]
         readme_records = [
             _text_record(repo, item)
             for item in tree
-            if Path(str(item["path"])).name.lower() in README_NAMES
-            and item["mode"] != "120000"
+            if Path(str(item["path"])).name.lower() in README_NAMES and item["mode"] != "120000"
         ]
         ground_truth = _ground_truth_audit(repo, tree)
 
@@ -471,9 +468,7 @@ def probe(repository: str = REPOSITORY) -> dict[str, Any]:
             "arff_path_count": sum(
                 1 for item in tree if str(item["path"]).lower().endswith(".arff")
             ),
-            "total_git_object_bytes": sum(
-                int(item["git_object_bytes"] or 0) for item in tree
-            ),
+            "total_git_object_bytes": sum(int(item["git_object_bytes"] or 0) for item in tree),
             "top_level_entry_counts": dict(sorted(top_level_counts.items())),
         },
         "license_files": license_records,

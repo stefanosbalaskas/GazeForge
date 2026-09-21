@@ -138,9 +138,7 @@ def _readme_history(root: Path) -> list[dict[str, Any]]:
                 "all_data_files_download_webpage_statement_present": (
                     "To download all data files" in text and "project" in text.lower()
                 ),
-                "raw_data_over_14tb_statement_present": (
-                    "raw data is well over 14TB" in text
-                ),
+                "raw_data_over_14tb_statement_present": ("raw data is well over 14TB" in text),
                 "raw_data_contact_authors_statement_present": (
                     "contact the authors" in text.lower()
                 ),
@@ -168,7 +166,9 @@ def build_probe(root: Path) -> dict[str, Any]:
     if str(_git(root, "status", "--porcelain", "--untracked-files=no")):
         raise ProbeError("Pinned checkout has tracked working-tree changes.")
 
-    commits = [line for line in str(_git(root, "rev-list", "--reverse", "HEAD")).splitlines() if line]
+    commits = [
+        line for line in str(_git(root, "rev-list", "--reverse", "HEAD")).splitlines() if line
+    ]
     if len(commits) != EXPECTED_COMMIT_COUNT:
         raise ProbeError(
             f"Expected {EXPECTED_COMMIT_COUNT} commits reachable from pinned HEAD; "
@@ -279,11 +279,16 @@ def main() -> int:
         json.dumps(payload, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    print(json.dumps({
-        "reachable_commit_count": payload["reachable_commit_count"],
-        "readme_unique_blob_count": payload["readme_history"]["unique_blob_count"],
-        "probe_fingerprint_sha256": payload["probe_fingerprint_sha256"],
-    }, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "reachable_commit_count": payload["reachable_commit_count"],
+                "readme_unique_blob_count": payload["readme_history"]["unique_blob_count"],
+                "probe_fingerprint_sha256": payload["probe_fingerprint_sha256"],
+            },
+            sort_keys=True,
+        )
+    )
     return 0
 
 

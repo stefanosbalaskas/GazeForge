@@ -253,9 +253,7 @@ def run(output_dir: Path) -> None:
     trial_quality.to_csv(quality_path, index=False)
 
     source_unchanged = source.equals(source_snapshot)
-    row_count_preserved = (
-        len(source) == len(canonical) == len(qc_samples)
-    )
+    row_count_preserved = len(source) == len(canonical) == len(qc_samples)
 
     assert source_unchanged
     assert row_count_preserved
@@ -346,9 +344,7 @@ def run(output_dir: Path) -> None:
         "screen_size_px": list(SCREEN_SIZE_PX),
         "nominal_rate_hz": NOMINAL_RATE_HZ,
         "observed_cadence_hz": observed_rate_hz,
-        "duplicate_sample_key_rows_retained": preflight_summary[
-            "duplicate_sample_key_rows"
-        ],
+        "duplicate_sample_key_rows_retained": preflight_summary["duplicate_sample_key_rows"],
         "missing_identity_rows": preflight_summary["missing_identity_rows"],
         "offscreen_rows_retained": preflight_summary["offscreen_rows"],
         "missing_gaze_rows_retained": preflight_summary["missing_gaze_rows"],

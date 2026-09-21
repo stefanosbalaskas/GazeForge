@@ -18,7 +18,9 @@ from typing import Any
 DESCRIPTION_URL = "https://vision.imar.ro/eyetracking/description.php"
 LICENSE_URL = "https://vision.imar.ro/eyetracking/license.php"
 RECORD_TYPE = "hollywood2-underlying-source-live-probe-v1"
-USER_AGENT = "GazeForge/0.1 source-resolution audit (+https://github.com/stefanosbalaskas/GazeForge)"
+USER_AGENT = (
+    "GazeForge/0.1 source-resolution audit (+https://github.com/stefanosbalaskas/GazeForge)"
+)
 _ALLOWED_DOWNLOAD_HOSTS = {"vision.imar.ro", "www.vision.imar.ro"}
 _ALLOWED_DOWNLOAD_SCHEMES = {"http", "https"}
 
@@ -135,9 +137,7 @@ def _validate_download_url(url: str, *, label: str) -> urllib.parse.ParseResult:
 
 def _resolve_download_link(description: dict[str, Any]) -> str:
     candidates = [
-        item
-        for item in description["links"]
-        if "hollywood-2 gaze data" in item["text"].lower()
+        item for item in description["links"] if "hollywood-2 gaze data" in item["text"].lower()
     ]
     if len(candidates) != 1:
         raise RuntimeError(
@@ -212,8 +212,14 @@ def probe() -> dict[str, Any]:
             "may not rent, lease, lend, sub-license or transfer the dataset",
             "RESPONSIBLE USE",
             "ACCEPTANCE OF THIS AGREEMENT",
-            "Dynamic Eye Movement Datasets and Learnt Saliency Models for Visual Action Recognition",
-            "Actions in the Eye: Dynamic Gaze Datasets and Learnt Saliency Models for Visual Recognition",
+            (
+                "Dynamic Eye Movement Datasets and Learnt Saliency Models for Visual "
+                "Action Recognition"
+            ),
+            (
+                "Actions in the Eye: Dynamic Gaze Datasets and Learnt Saliency Models "
+                "for Visual Recognition"
+            ),
         ],
         label="Hollywood-2 institutional licence",
     )

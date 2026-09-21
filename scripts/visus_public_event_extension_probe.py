@@ -144,9 +144,7 @@ def _parse_export(path: Path, expected_participant: str) -> dict[str, Any]:
         "Velocity threshold": "35",
         "Distance threshold": "35",
     }
-    observed_filter_metadata = {
-        key: metadata.get(key) for key in expected_filter_metadata
-    }
+    observed_filter_metadata = {key: metadata.get(key) for key in expected_filter_metadata}
     if observed_filter_metadata != expected_filter_metadata:
         raise RuntimeError(
             f"Unexpected Tobii filter metadata for {expected_participant}: "
@@ -184,25 +182,24 @@ def _parse_export(path: Path, expected_participant: str) -> dict[str, Any]:
         }
     )
     if media_geometry != [(1920, 1080)]:
-        raise RuntimeError(f"Unexpected media geometry for {expected_participant}: {media_geometry}")
+        raise RuntimeError(
+            f"Unexpected media geometry for {expected_participant}: {media_geometry}"
+        )
 
     microseconds = [_to_int(row.get("MicroSecondTimestamp", "")) for row in samples]
     microseconds = [value for value in microseconds if value is not None]
-    positive_deltas = [b - a for a, b in zip(microseconds, microseconds[1:]) if b > a]
+    positive_deltas = [b - a for a, b in zip(microseconds, microseconds[1:], strict=False) if b > a]
     if not positive_deltas:
         raise RuntimeError(f"No positive sample intervals for {expected_participant}")
     median_delta_us = statistics.median(positive_deltas)
     inferred_hz = 1_000_000.0 / median_delta_us
     if not 59.0 <= inferred_hz <= 61.0:
-        raise RuntimeError(
-            f"Unexpected sampling rate for {expected_participant}: {inferred_hz} Hz"
-        )
+        raise RuntimeError(f"Unexpected sampling rate for {expected_participant}: {inferred_hz} Hz")
 
     both_eye_valid = sum(
         1
         for row in samples
-        if _to_int(row.get("ValidityLeft", "")) == 0
-        and _to_int(row.get("ValidityRight", "")) == 0
+        if _to_int(row.get("ValidityLeft", "")) == 0 and _to_int(row.get("ValidityRight", "")) == 0
     )
 
     fixation_events: list[dict[str, int]] = []
@@ -229,9 +226,7 @@ def _parse_export(path: Path, expected_participant: str) -> dict[str, Any]:
 
     total_fixation_duration = sum(event["duration_ms"] for event in fixation_events)
     in_media_fixations = sum(
-        1
-        for event in fixation_events
-        if 0 <= event["x"] < 1920 and 0 <= event["y"] < 1080
+        1 for event in fixation_events if 0 <= event["x"] < 1920 and 0 <= event["y"] < 1080
     )
     first_sample_ts = _to_int(samples[0].get("Timestamp", ""))
     last_sample_ts = _to_int(samples[-1].get("Timestamp", ""))
@@ -287,16 +282,16 @@ def _parse_lock(path: Path, key: str) -> dict[str, Any]:
 def _validate_test_source(path: Path) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8-sig")
     required_fragments = {
-        "P5B_file": 'Tobii_exports/01-OK.tsv',
-        "P3A_file": 'Tobii_exports/02-OK.tsv',
-        "P5B_movie_start": 'EXPECT_EQ(exportData[0].timestamp, 911097)',
-        "P5B_duration": 'EXPECT_EQ(exportData[1].fixationDuration, 766)',
-        "P5B_fixation_index": 'EXPECT_EQ(exportData[1].fixationIndex, 2349)',
-        "P3A_movie_start": 'EXPECT_EQ(exportData[0].timestamp, 16102)',
-        "P3A_duration": 'EXPECT_EQ(exportData[1].fixationDuration, 466)',
-        "P3A_fixation_index": 'EXPECT_EQ(exportData[1].fixationIndex, 47)',
-        "P5B_last_timestamp": 'EXPECT_EQ(exportData.back().timestamp, 930160)',
-        "P3A_last_timestamp": 'EXPECT_EQ(exportData.back().timestamp, 35171)',
+        "P5B_file": "Tobii_exports/01-OK.tsv",
+        "P3A_file": "Tobii_exports/02-OK.tsv",
+        "P5B_movie_start": "EXPECT_EQ(exportData[0].timestamp, 911097)",
+        "P5B_duration": "EXPECT_EQ(exportData[1].fixationDuration, 766)",
+        "P5B_fixation_index": "EXPECT_EQ(exportData[1].fixationIndex, 2349)",
+        "P3A_movie_start": "EXPECT_EQ(exportData[0].timestamp, 16102)",
+        "P3A_duration": "EXPECT_EQ(exportData[1].fixationDuration, 466)",
+        "P3A_fixation_index": "EXPECT_EQ(exportData[1].fixationIndex, 47)",
+        "P5B_last_timestamp": "EXPECT_EQ(exportData.back().timestamp, 930160)",
+        "P3A_last_timestamp": "EXPECT_EQ(exportData.back().timestamp, 35171)",
     }
     missing = [name for name, fragment in required_fragments.items() if fragment not in text]
     if missing:
@@ -329,14 +324,18 @@ def main() -> None:
         abs(value - ORIGINAL_VISUS_DIALOG_DURATION_SECONDS) <= 0.1 for value in durations
     )
     if not dialog_duration_match:
-        raise RuntimeError(f"The two complete segments no longer match the 19 s VISUS dialog: {durations}")
+        raise RuntimeError(
+            f"The two complete segments no longer match the 19 s VISUS dialog: {durations}"
+        )
 
     aggregate = {
         "participant_count": len(participants),
         "sample_count": sum(row["sample_count"] for row in participants),
         "valid_both_eye_samples": sum(row["valid_both_eye_samples"] for row in participants),
         "fixation_event_count": sum(row["fixation_event_count"] for row in participants),
-        "total_fixation_duration_ms": sum(row["total_fixation_duration_ms"] for row in participants),
+        "total_fixation_duration_ms": sum(
+            row["total_fixation_duration_ms"] for row in participants
+        ),
         "fixations_with_on_screen_mapped_point": sum(
             row["fixations_with_on_screen_mapped_point"] for row in participants
         ),
@@ -345,8 +344,7 @@ def main() -> None:
         aggregate["valid_both_eye_samples"] / aggregate["sample_count"]
     )
     aggregate["on_screen_fixation_fraction"] = (
-        aggregate["fixations_with_on_screen_mapped_point"]
-        / aggregate["fixation_event_count"]
+        aggregate["fixations_with_on_screen_mapped_point"] / aggregate["fixation_event_count"]
     )
 
     result: dict[str, Any] = {

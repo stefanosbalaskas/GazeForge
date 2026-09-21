@@ -33,13 +33,9 @@ def _summary(report: dict[str, object]) -> dict[str, object]:
         "analysis_sampling_rate_hz": preparation["analysis_sampling_rate_hz"],
         "models": report["model"]["models"],
         "summary": metrics["summary"],
-        "participant_identity_mapping_verified": boundary[
-            "participant_identity_mapping_verified"
-        ],
+        "participant_identity_mapping_verified": boundary["participant_identity_mapping_verified"],
         "participant_generalization_claim": boundary["participant_generalization_claim"],
-        "raw_source_redistributed_by_gazeforge": boundary[
-            "raw_source_redistributed_by_gazeforge"
-        ],
+        "raw_source_redistributed_by_gazeforge": boundary["raw_source_redistributed_by_gazeforge"],
     }
 
 
@@ -48,10 +44,7 @@ def main() -> int:
     parser.add_argument("--source-root", required=True)
     parser.add_argument(
         "--authorization",
-        default=(
-            "validation/governance/"
-            "hollywood2-source-token-analysis-authorization-v1.json"
-        ),
+        default=("validation/governance/hollywood2-source-token-analysis-authorization-v1.json"),
     )
     parser.add_argument(
         "--output",
@@ -70,18 +63,14 @@ def main() -> int:
     args = parser.parse_args()
 
     hidden = tuple(
-        int(value.strip())
-        for value in str(args.context_hidden).split(",")
-        if value.strip()
+        int(value.strip()) for value in str(args.context_hidden).split(",") if value.strip()
     )
     if not hidden:
         parser.error("--context-hidden must contain at least one positive layer size")
     if any(value <= 0 for value in hidden):
         parser.error("--context-hidden layer sizes must be positive")
 
-    authorization = load_hollywood2_source_token_analysis_authorization(
-        args.authorization
-    )
+    authorization = load_hollywood2_source_token_analysis_authorization(args.authorization)
     run = run_hollywood2_source_token_validation(
         args.source_root,
         authorization,

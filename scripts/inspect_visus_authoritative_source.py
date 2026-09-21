@@ -150,9 +150,7 @@ def _certificate(args: argparse.Namespace) -> int:
     print(
         json.dumps(
             {
-                "certificate_fingerprint_sha256": certificate[
-                    "certificate_fingerprint_sha256"
-                ],
+                "certificate_fingerprint_sha256": certificate["certificate_fingerprint_sha256"],
                 "source_audit_stage_authorized": certificate["authority_boundary"][
                     "source_audit_stage_authorized"
                 ],
