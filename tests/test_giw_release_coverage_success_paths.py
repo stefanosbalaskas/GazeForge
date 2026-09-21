@@ -1885,3 +1885,18 @@ def test_fresh_exact_byte_remaining_guards(
             probe,
             raw,
         )
+
+
+def test_structure_without_optional_exact_byte_parents_succeeds() -> None:
+    por = BASE / "gaze-in-wild-por-coordinate-semantics-evidence-v1.json"
+
+    result = structure.validate_gaze_in_wild_exact_processdata_structure_evidence(
+        STRUCTURE_EVIDENCE,
+        IDENTITIES,
+        RATES,
+        por,
+    )
+
+    assert result.processdata_file_count == 68
+    assert result.processdata_participant_count == 20
+    assert result.normalized_por_semantics_bound is True
