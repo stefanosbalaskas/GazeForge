@@ -1435,3 +1435,20 @@ def test_validate_directory_input_success(
     )
 
     assert result["manifest_path"].endswith("visus-execution-provenance.json")
+
+
+# === VISUS EXECUTION FINAL COVERAGE CLOSURE ===
+
+
+def test_internal_manifest_non_object_raw_row_guard(
+    baseline,
+) -> None:
+    manifest = copy.deepcopy(baseline["manifest"])
+
+    manifest["raw_inputs"][1] = "bad-row"
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="non-object raw-input record",
+    ):
+        execution._validate_internal_manifest(manifest)
