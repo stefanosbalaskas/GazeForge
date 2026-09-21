@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parent
-EXAMPLE = ROOT / "20_worked_grouping_pseudoreplication_audit.py"
+ROOT = Path(__file__).resolve().parents[1]
+EXAMPLE = ROOT / "examples" / "20_worked_grouping_pseudoreplication_audit.py"
 
 
 def _hashes(path: Path) -> dict[str, str]:
