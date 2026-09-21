@@ -481,7 +481,21 @@ python examples/12_worked_measurement_interpretation_audit.py \
   --output-dir worked-measurement-interpretation-audit
 ```
 
-The deterministic teaching bundle writes a claim registry, measurement/interpretation matrix, validity-threat register, sensitivity plan, reporting-language table, audit manifest, and README. It preserves no-fixation latency as right-censored rather than zero, never assigns `valid`/`invalid` truth-label statuses, performs no inferential statistics, and never infers a latent state from gaze alone.
+The deterministic teaching bundle writes:
+
+```text
+01_claim_registry.csv
+02_measurement_interpretation_matrix.csv
+03_validity_threats.csv
+04_sensitivity_plan.csv
+05_reporting_language.csv
+interpretation_audit.json
+README.md
+```
+
+It preserves no-fixation latency as right-censored rather than zero, never assigns
+`valid`/`invalid` truth-label statuses, performs no inferential statistics, and never
+infers a latent state from gaze alone.
 
 [Open the script on GitHub](https://github.com/stefanosbalaskas/GazeForge/blob/main/examples/12_worked_measurement_interpretation_audit.py)
 · [Read the measurement & interpretation clinic](measurement-interpretation.md)
