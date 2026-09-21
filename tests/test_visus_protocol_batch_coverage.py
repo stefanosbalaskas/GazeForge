@@ -1320,3 +1320,108 @@ def test_validator_prediction_intake_model_guards(
         match=match,
     ):
         batchmod.validate_visus_protocol_bound_batch_run(batch)
+
+
+# === VISUS PROTOCOL BATCH COVERAGE CLOSURE V1 ===
+
+
+def test_file_sha256_symlink_guard_portable(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    path = tmp_path / "payload.bin"
+    path.write_bytes(b"abc")
+
+    original = Path.is_symlink
+
+    def fake_is_symlink(self: Path) -> bool:
+        if self == path:
+            return True
+        return original(self)
+
+    monkeypatch.setattr(
+        Path,
+        "is_symlink",
+        fake_is_symlink,
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="symbolic link",
+    ):
+        batchmod._file_sha256(
+            path,
+            label="fixture",
+        )
+
+
+def test_load_report_file_symlink_guard_portable(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    path = tmp_path / "report.json"
+    path.write_text(
+        "{}",
+        encoding="utf-8",
+    )
+
+    original = Path.is_symlink
+
+    def fake_is_symlink(self: Path) -> bool:
+        if self == path:
+            return True
+        return original(self)
+
+    monkeypatch.setattr(
+        Path,
+        "is_symlink",
+        fake_is_symlink,
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="symbolic link",
+    ):
+        batchmod._load_report_file(path)
+
+
+def test_unique_execution_guard_success_and_duplicate() -> None:
+    sentinel = object()
+    executions = {}
+
+    batchmod._require_unique_execution(
+        executions,
+        "S01",
+    )
+
+    executions["S01"] = sentinel
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="duplicate execution",
+    ):
+        batchmod._require_unique_execution(
+            executions,
+            "S01",
+        )
+
+
+def test_execution_order_guard_success_and_failure() -> None:
+    executions = {
+        "S01": object(),
+        "S02": object(),
+    }
+
+    batchmod._require_execution_order(
+        executions,
+        ["S01", "S02"],
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="exact frozen stimulus order",
+    ):
+        batchmod._require_execution_order(
+            executions,
+            ["S02", "S01"],
+        )
