@@ -88,9 +88,7 @@ def _hash_regular_file(
         raise BenchmarkIntegrityError(
             "VISUS authority-certificate execution input exceeds the allowed size bound."
         )
-    if semantic_fingerprint_sha256 is not None and not _valid_sha256(
-        semantic_fingerprint_sha256
-    ):
+    if semantic_fingerprint_sha256 is not None and not _valid_sha256(semantic_fingerprint_sha256):
         raise BenchmarkIntegrityError(
             f"VISUS execution input {role!r} has an invalid semantic fingerprint."
         )
@@ -277,9 +275,7 @@ def _authority_snapshot(
     if not isinstance(snapshots, tuple) or any(
         not isinstance(item, VisusExecutionInputSnapshot) for item in snapshots
     ):
-        raise TypeError(
-            "snapshots must be a tuple of VisusExecutionInputSnapshot values."
-        )
+        raise TypeError("snapshots must be a tuple of VisusExecutionInputSnapshot values.")
     roles = tuple(item.role for item in snapshots)
     if roles != _INPUT_ROLES:
         raise BenchmarkIntegrityError(
@@ -377,15 +373,18 @@ def _validate_authority_row(
         raise BenchmarkIntegrityError(
             "Authority-bound VISUS execution provenance must bind exactly five raw inputs."
         )
-    roles = [str(row.get("role", "")) for row in rows if isinstance(row, dict)]
+    authority = rows[1]
+    if not isinstance(authority, dict):
+        raise BenchmarkIntegrityError("VISUS authority-certificate raw-input record is invalid.")
+    for row in rows:
+        if not isinstance(row, dict):
+            raise BenchmarkIntegrityError(
+                "VISUS execution provenance contains a non-object raw-input record."
+            )
+    roles = [str(row.get("role", "")) for row in rows]
     if roles != list(_INPUT_ROLES):
         raise BenchmarkIntegrityError(
             "Authority-bound VISUS execution raw-input roles are invalid."
-        )
-    authority = rows[1]
-    if not isinstance(authority, dict):
-        raise BenchmarkIntegrityError(
-            "VISUS authority-certificate raw-input record is invalid."
         )
     filename = authority.get("filename")
     if (
@@ -399,21 +398,13 @@ def _validate_authority_row(
         or authority["bytes"] > _MAX_AUTHORITY_CERTIFICATE_BYTES
         or not _valid_sha256(authority.get("semantic_fingerprint_sha256"))
     ):
-        raise BenchmarkIntegrityError(
-            "VISUS authority-certificate raw-input record is incomplete."
-        )
-    certificate_fingerprint = source.get(
-        AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD
-    )
+        raise BenchmarkIntegrityError("VISUS authority-certificate raw-input record is incomplete.")
+    certificate_fingerprint = source.get(AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD)
     if authority["semantic_fingerprint_sha256"] != certificate_fingerprint:
         raise BenchmarkIntegrityError(
             "VISUS authority-certificate semantic fingerprint does not match source identity."
         )
     for row in rows[2:]:
-        if not isinstance(row, dict):
-            raise BenchmarkIntegrityError(
-                "VISUS execution provenance contains a non-object raw-input record."
-            )
         if row.get("semantic_fingerprint_sha256") is not None:
             raise BenchmarkIntegrityError(
                 "Only the source-audit JSON and authority certificate may carry semantic "
@@ -447,18 +438,13 @@ def _validate_suite_binding(
         )
 
     source = manifest["source"]
-    observed_base = {
-        key: str(summary["source"].get(key, ""))
-        for key in _BASE_SOURCE_KEYS
-    }
+    observed_base = {key: str(summary["source"].get(key, "")) for key in _BASE_SOURCE_KEYS}
     expected_base = {key: str(source.get(key, "")) for key in _BASE_SOURCE_KEYS}
     if observed_base != expected_base:
         raise BenchmarkIntegrityError(
             "VISUS authority execution provenance/suite source identity mismatch."
         )
-    observed_authority = summary["source"].get(
-        AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD
-    )
+    observed_authority = summary["source"].get(AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD)
     if observed_authority != source.get(AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD):
         raise BenchmarkIntegrityError(
             "VISUS authority execution provenance/suite certificate identity mismatch."
@@ -471,9 +457,7 @@ def _validate_suite_binding(
             "VISUS suite lacks the required authority-bound protocol declaration."
         )
     if protocol.get(AUTHORITY_CERTIFICATE_FINGERPRINT_FIELD) != observed_authority:
-        raise BenchmarkIntegrityError(
-            "VISUS suite authority protocol/source fingerprint mismatch."
-        )
+        raise BenchmarkIntegrityError("VISUS suite authority protocol/source fingerprint mismatch.")
 
     children = _load_suite_children(manifest_path.parent, summary)
     reference = children.get("human_reference_intake")
@@ -501,9 +485,7 @@ def validate_visus_authority_execution_provenance(
     """Validate the v2 five-input authority-bound VISUS execution manifest."""
     source_path = Path(path)
     manifest_path = (
-        visus_execution_provenance_path(source_path)
-        if source_path.is_dir()
-        else source_path
+        visus_execution_provenance_path(source_path) if source_path.is_dir() else source_path
     )
     if not manifest_path.is_file():
         raise FileNotFoundError(manifest_path)
@@ -514,31 +496,19 @@ def validate_visus_authority_execution_provenance(
             "VISUS authority execution provenance is not valid JSON."
         ) from exc
     if not isinstance(manifest, dict):
-        raise BenchmarkIntegrityError(
-            "VISUS authority execution provenance must be a JSON object."
-        )
+        raise BenchmarkIntegrityError("VISUS authority execution provenance must be a JSON object.")
     claimed = str(manifest.get("execution_fingerprint_sha256", ""))
-    body = {
-        key: value
-        for key, value in manifest.items()
-        if key != "execution_fingerprint_sha256"
-    }
+    body = {key: value for key, value in manifest.items() if key != "execution_fingerprint_sha256"}
     if not _valid_sha256(claimed) or benchmark_fingerprint(body) != claimed:
-        raise BenchmarkIntegrityError(
-            "VISUS authority execution provenance fingerprint mismatch."
-        )
+        raise BenchmarkIntegrityError("VISUS authority execution provenance fingerprint mismatch.")
     if manifest.get("schema") != _EXECUTION_SCHEMA:
         raise BenchmarkIntegrityError(
             "VISUS Frozen Evidence requires authority-bound execution provenance v2."
         )
     if manifest.get("status") != "complete":
-        raise BenchmarkIntegrityError(
-            "VISUS authority execution provenance status is invalid."
-        )
+        raise BenchmarkIntegrityError("VISUS authority execution provenance status is invalid.")
     if manifest.get("provenance_scope") != _EXECUTION_SCOPE:
-        raise BenchmarkIntegrityError(
-            "VISUS authority execution provenance scope is invalid."
-        )
+        raise BenchmarkIntegrityError("VISUS authority execution provenance scope is invalid.")
     source = manifest.get("source")
     if not isinstance(source, dict):
         raise BenchmarkIntegrityError(
@@ -584,11 +554,7 @@ def write_visus_authority_execution_provenance(
     if not isinstance(manifest, dict):
         raise TypeError("manifest must be a dictionary.")
     claimed = str(manifest.get("execution_fingerprint_sha256", ""))
-    body = {
-        key: value
-        for key, value in manifest.items()
-        if key != "execution_fingerprint_sha256"
-    }
+    body = {key: value for key, value in manifest.items() if key != "execution_fingerprint_sha256"}
     if (
         manifest.get("schema") != _EXECUTION_SCHEMA
         or not _valid_sha256(claimed)

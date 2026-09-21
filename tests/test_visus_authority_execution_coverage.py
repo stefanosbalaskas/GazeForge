@@ -1282,3 +1282,114 @@ def test_write_success_with_revalidation_hook(
     )
 
     assert second.manifest_path == run.manifest_path
+
+
+# === VISUS AUTHORITY EXECUTION FINAL COVERAGE CLOSURE ===
+
+
+def test_bind_suite_post_seal_revalidation_guard(
+    baseline,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    suite = copy.copy(baseline["paths"]["suite"])
+
+    suite.manifest = copy.deepcopy(suite.manifest)
+
+    suite.manifest_path = tmp_path / "suite-manifest.json"
+
+    suite.manifest_path.write_text(
+        json.dumps(
+            suite.manifest,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    first = copy.deepcopy(baseline["verified_suite"])
+
+    first["suite_fingerprint_sha256"] = suite.suite_fingerprint_sha256
+
+    first["source"]["source_audit_report_fingerprint_sha256"] = baseline["paths"]["audit"].report[
+        "report_fingerprint_sha256"
+    ]
+
+    second = copy.deepcopy(first)
+
+    second["suite_fingerprint_sha256"] = "0" * 64
+
+    responses = iter(
+        [
+            first,
+            second,
+        ]
+    )
+
+    monkeypatch.setattr(
+        authority,
+        "validate_visus_dynamic_aoi_suite_manifest",
+        lambda *args, **kwargs: next(responses),
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="did not revalidate after sealing",
+    ):
+        authority.bind_visus_suite_to_source_authority(
+            baseline["paths"]["audit"],
+            suite,
+        )
+
+
+def test_validate_authority_row_non_object_authority_guard(
+    baseline,
+) -> None:
+    rows = copy.deepcopy(baseline["manifest"]["raw_inputs"])
+
+    rows[1] = "bad-authority-row"
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="authority-certificate raw-input record is invalid",
+    ):
+        authority._validate_authority_row(
+            rows,
+            source=baseline["manifest"]["source"],
+        )
+
+
+def test_validate_authority_row_non_object_analysis_input_guard(
+    baseline,
+) -> None:
+    rows = copy.deepcopy(baseline["manifest"]["raw_inputs"])
+
+    rows[2] = "bad-analysis-row"
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="non-object raw-input record",
+    ):
+        authority._validate_authority_row(
+            rows,
+            source=baseline["manifest"]["source"],
+        )
+
+
+def test_validate_suite_binding_requires_suite_object(
+    baseline,
+) -> None:
+    manifest = copy.deepcopy(baseline["manifest"])
+
+    manifest["suite"] = None
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="suite binding is invalid",
+    ):
+        authority._validate_suite_binding(
+            baseline["paths"]["suite"].manifest_path,
+            manifest,
+            verify_suite=True,
+        )
