@@ -183,6 +183,10 @@ This page does not provide universal rules such as “more dwell = more interest
 
 GazeForge therefore remains a **measurement/process-data and provenance layer**. Construct validation belongs to the scientific design, not to an automatic package rule.
 
+The worked measurement/interpretation audit is explicitly
+`synthetic_demo_not_empirical_evidence`; it demonstrates the audit contract and does
+not establish empirical measurement, construct, device, causal, or external validity.
+
 ## Continue through the research path
 
 - [Outcome & estimand preregistration](estimand-preregistration.md) — freeze outcome status, estimands, contrasts, exposure/censoring rules, sensitivity checks, and deviations before modelling.
