@@ -86,3 +86,191 @@ def test_grouped_event_cross_validation():
     assert len(result.predictions) == len(data)
     assert len(result.folds) == 2
     assert result.metrics["validation_design"]["group_col"] == "participant_id"
+
+
+def test_gazepoint_adapter_rejects_missing_required_source_columns():
+    raw = pd.DataFrame(
+        {
+            "USER_FILE": ["p1", "p1"],
+            "MEDIA_ID": ["m1", "m1"],
+            "TIME": [0.0, 0.01],
+            "BPOGX": [0.2, 0.3],
+        }
+    )
+
+    with pytest.raises(SchemaError, match="missing source columns"):
+        adapt_gazepoint_samples(raw, screen_size_px=(1920, 1080))
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "message"),
+    [
+        ({"time_unit": "minutes"}, "time_unit must be"),
+        ({"coordinates": "degrees"}, "coordinates must be"),
+    ],
+)
+def test_gazepoint_adapter_rejects_unknown_units(kwargs, message):
+    raw = pd.DataFrame(
+        {
+            "USER_FILE": ["p1", "p1"],
+            "MEDIA_ID": ["m1", "m1"],
+            "TIME": [0.0, 10.0],
+            "BPOGX": [100.0, 110.0],
+            "BPOGY": [200.0, 210.0],
+        }
+    )
+
+    with pytest.raises(ValueError, match=message):
+        adapt_gazepoint_samples(
+            raw,
+            screen_size_px=(1920, 1080),
+            sampling_rate_hz=100,
+            **kwargs,
+        )
+
+
+def test_gazepoint_adapter_preserves_pixel_milliseconds_and_optional_columns():
+    raw = pd.DataFrame(
+        {
+            "USER_FILE": ["p1", "p1"],
+            "MEDIA_ID": ["m1", "m1"],
+            "TIME": [0.0, 10.0],
+            "BPOGX": [100.0, 110.0],
+            "BPOGY": [200.0, 210.0],
+            "PUPIL": ["3.1", "3.2"],
+            "VALID": [1, 0],
+        }
+    )
+
+    gaze = adapt_gazepoint_samples(
+        raw,
+        screen_size_px=(1920, 1080),
+        pupil_col="PUPIL",
+        validity_col="VALID",
+        time_unit="milliseconds",
+        coordinates="pixels",
+        sampling_rate_hz=100,
+    )
+
+    assert gaze.data["timestamp_ms"].tolist() == [0.0, 10.0]
+    assert gaze.data["x_px"].tolist() == [100.0, 110.0]
+    assert gaze.data["y_px"].tolist() == [200.0, 210.0]
+    assert gaze.data["pupil"].tolist() == [3.1, 3.2]
+    assert gaze.data["validity"].tolist() == [1, 0]
+    assert gaze.metadata["adapter"] == "gazepoint"
+    assert gaze.metadata["source_time_unit"] == "milliseconds"
+    assert gaze.metadata["source_coordinates"] == "pixels"
+
+
+@pytest.mark.parametrize(
+    ("column_arg", "column_name"),
+    [("pupil_col", "PUPIL"), ("validity_col", "VALID")],
+)
+def test_gazepoint_adapter_rejects_requested_missing_optional_columns(column_arg, column_name):
+    raw = pd.DataFrame(
+        {
+            "USER_FILE": ["p1", "p1"],
+            "MEDIA_ID": ["m1", "m1"],
+            "TIME": [0.0, 0.01],
+            "BPOGX": [0.2, 0.3],
+            "BPOGY": [0.4, 0.5],
+        }
+    )
+
+    with pytest.raises(SchemaError, match="Requested .* column is missing"):
+        adapt_gazepoint_samples(
+            raw,
+            screen_size_px=(1920, 1080),
+            sampling_rate_hz=100,
+            **{column_arg: column_name},
+        )
+
+
+def test_processed_adapter_applies_scales_optional_columns_and_metadata():
+    raw = pd.DataFrame(
+        {
+            "subject": ["p1", "p1"],
+            "trial": ["t1", "t1"],
+            "time_s": [0.0, 0.02],
+            "gx_norm": [0.25, 0.50],
+            "gy_norm": [0.50, 0.75],
+            "pupil_raw": ["3.0", "3.5"],
+            "valid_raw": ["ok", "bad"],
+        }
+    )
+
+    gaze = adapt_processed_table(
+        raw,
+        participant_col="subject",
+        trial_col="trial",
+        timestamp_col="time_s",
+        x_col="gx_norm",
+        y_col="gy_norm",
+        pupil_col="pupil_raw",
+        validity_col="valid_raw",
+        timestamp_scale_to_ms=1000.0,
+        coordinate_scale=(1920.0, 1080.0),
+        sampling_rate_hz=50.0,
+        screen_size_px=(1920, 1080),
+        source_name="custom_export",
+    )
+
+    assert gaze.data["timestamp_ms"].tolist() == [0.0, 20.0]
+    assert gaze.data["x_px"].tolist() == [480.0, 960.0]
+    assert gaze.data["y_px"].tolist() == [540.0, 810.0]
+    assert gaze.data["pupil"].tolist() == [3.0, 3.5]
+    assert gaze.data["validity"].tolist() == ["ok", "bad"]
+    assert gaze.metadata == {
+        "adapter": "custom_export",
+        "timestamp_scale_to_ms": 1000.0,
+        "coordinate_scale": (1920.0, 1080.0),
+    }
+
+
+def test_processed_adapter_rejects_missing_required_source_columns():
+    raw = pd.DataFrame(
+        {
+            "subject": ["p1", "p1"],
+            "trial": ["t1", "t1"],
+            "time": [0.0, 10.0],
+            "gx": [100.0, 110.0],
+        }
+    )
+
+    with pytest.raises(SchemaError, match="processed_table adapter is missing source columns"):
+        adapt_processed_table(
+            raw,
+            participant_col="subject",
+            trial_col="trial",
+            timestamp_col="time",
+            x_col="gx",
+            y_col="gy",
+        )
+
+
+@pytest.mark.parametrize(
+    ("column_arg", "column_name"),
+    [("pupil_col", "PUPIL"), ("validity_col", "VALID")],
+)
+def test_processed_adapter_rejects_requested_missing_optional_columns(column_arg, column_name):
+    raw = pd.DataFrame(
+        {
+            "subject": ["p1", "p1"],
+            "trial": ["t1", "t1"],
+            "time": [0.0, 10.0],
+            "gx": [100.0, 110.0],
+            "gy": [200.0, 210.0],
+        }
+    )
+
+    with pytest.raises(SchemaError, match="Requested .* column is missing"):
+        adapt_processed_table(
+            raw,
+            participant_col="subject",
+            trial_col="trial",
+            timestamp_col="time",
+            x_col="gx",
+            y_col="gy",
+            sampling_rate_hz=100,
+            **{column_arg: column_name},
+        )
