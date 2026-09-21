@@ -465,16 +465,16 @@ def test_prepare_benchmark_validates_root_authorization_and_sampling_rate(
             authorization,
         )
 
-    with pytest.raises(BenchmarkIntegrityError, match="ground_truth directory"):
-        prepare_hollywood2_source_token_benchmark(tmp_path, authorization)
-
-    ground_truth = tmp_path / "ground_truth"
-    ground_truth.mkdir()
     monkeypatch.setattr(
         token_validation,
         "_verify_pinned_checkout",
         lambda root: {"repository": "synthetic"},
     )
+    with pytest.raises(BenchmarkIntegrityError, match="ground_truth directory"):
+        prepare_hollywood2_source_token_benchmark(tmp_path, authorization)
+
+    ground_truth = tmp_path / "ground_truth"
+    ground_truth.mkdir()
     with pytest.raises(ValueError, match="target_sampling_rate_hz"):
         prepare_hollywood2_source_token_benchmark(
             tmp_path,
