@@ -1506,3 +1506,141 @@ def test_suite_preflight_blocks_existing_output(
             timestamp_grid_basis="fixture",
             max_interpolation_gap_ms=100.0,
         )
+
+
+def test_safe_child_path_rejects_resolved_symlink_escape(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "root"
+    root.mkdir()
+
+    child = root / "child.json"
+    outside = tmp_path / "outside.json"
+
+    original_resolve = Path.resolve
+
+    def simulated_resolve(
+        self: Path,
+        *args,
+        **kwargs,
+    ) -> Path:
+        if self == child:
+            return original_resolve(
+                outside,
+                *args,
+                **kwargs,
+            )
+
+        return original_resolve(
+            self,
+            *args,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(
+        Path,
+        "resolve",
+        simulated_resolve,
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="escapes the suite directory",
+    ):
+        suite._safe_child_path(
+            root,
+            "child.json",
+        )
+
+
+def test_manifest_unknown_child_falls_through_then_inventory_rejects(
+    tmp_path: Path,
+) -> None:
+    path, manifest, _ = _manifest_fixture(tmp_path)
+
+    unknown = _fingerprinted(
+        {
+            **IDENTITY,
+            "status": "unknown-child",
+        }
+    )
+
+    unknown_path = path.parent / "unknown.json"
+
+    unknown_path.write_text(
+        json.dumps(unknown),
+        encoding="utf-8",
+    )
+
+    manifest["reports"].append(
+        {
+            "name": "unknown_child",
+            "path": "unknown.json",
+            "report_fingerprint_sha256": unknown["report_fingerprint_sha256"],
+        }
+    )
+
+    _write_manifest(
+        path,
+        manifest,
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="report inventory mismatch",
+    ):
+        suite.validate_visus_dynamic_aoi_suite_manifest(
+            path,
+            verify_reports=True,
+        )
+
+
+def test_suite_rejects_model_child_source_identity_after_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    (
+        audit,
+        reference,
+        prediction,
+        timestamps,
+    ) = _inputs(
+        tmp_path / "source",
+        independent=False,
+    )
+
+    original = suite.run_visus_dynamic_aoi_model_validation
+
+    def mismatched_model_run(*args, **kwargs):
+        run = original(
+            *args,
+            **kwargs,
+        )
+
+        run.report["protocol"]["source_manifest_fingerprint_sha256"] = "0" * 64
+
+        _resign_report(run.report)
+
+        return run
+
+    monkeypatch.setattr(
+        suite,
+        "run_visus_dynamic_aoi_model_validation",
+        mismatched_model_run,
+    )
+
+    with pytest.raises(
+        BenchmarkIntegrityError,
+        match="source identity mismatch",
+    ):
+        suite.run_visus_dynamic_aoi_validation_suite(
+            audit,
+            reference,
+            prediction,
+            timestamps,
+            tmp_path / "suite",
+            reference_stream_id="annotator_a",
+            timestamp_grid_basis=("Fixed coverage fixture grid."),
+            max_interpolation_gap_ms=100.0,
+        )
