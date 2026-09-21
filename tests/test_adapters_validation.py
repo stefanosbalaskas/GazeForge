@@ -162,7 +162,10 @@ def test_gazepoint_adapter_preserves_pixel_milliseconds_and_optional_columns():
     assert gaze.metadata["source_coordinates"] == "pixels"
 
 
-@pytest.mark.parametrize(("column_arg", "column_name"), [("pupil_col", "PUPIL"), ("validity_col", "VALID")])
+@pytest.mark.parametrize(
+    ("column_arg", "column_name"),
+    [("pupil_col", "PUPIL"), ("validity_col", "VALID")],
+)
 def test_gazepoint_adapter_rejects_requested_missing_optional_columns(column_arg, column_name):
     raw = pd.DataFrame(
         {
@@ -245,7 +248,10 @@ def test_processed_adapter_rejects_missing_required_source_columns():
         )
 
 
-@pytest.mark.parametrize(("column_arg", "column_name"), [("pupil_col", "PUPIL"), ("validity_col", "VALID")])
+@pytest.mark.parametrize(
+    ("column_arg", "column_name"),
+    [("pupil_col", "PUPIL"), ("validity_col", "VALID")],
+)
 def test_processed_adapter_rejects_requested_missing_optional_columns(column_arg, column_name):
     raw = pd.DataFrame(
         {
