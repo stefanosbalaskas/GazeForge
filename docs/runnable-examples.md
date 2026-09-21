@@ -714,6 +714,26 @@ standard errors, GEE, LMM/GLMM, Bayesian hierarchical model, or other estimator.
 · [Read the grouping/repeated-measures clinic](grouping-repeated-measures.md)
 · [Continue to model diagnostics](model-diagnostics-convergence.md)
 
+## Complete deterministic artifact inventory
+
+The runnable examples collectively create the following additional audit artifacts. Their presence records workflow evidence and does not itself establish construct, causal, device, model, or external validity.
+
+```text
+01_observation_status_registry.csv
+02_denominator_exposure_ledger.csv
+03_count_rate_audit.csv
+04_proportion_dwell_audit.csv
+05_latency_censoring_audit.csv
+06_reconciliation_flow.csv
+08_api_route_map.csv
+denominator_exposure_manifest.json
+01_model_fit_registry.csv
+02_diagnostic_status.csv
+03_interpretation_gate.csv
+04_sensitivity_linkage.csv
+model_diagnostics_manifest.json
+```
+
 ## Which example should I run first?
 
 ```text

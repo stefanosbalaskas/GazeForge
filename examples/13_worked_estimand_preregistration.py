@@ -71,8 +71,7 @@ def _outcomes() -> pd.DataFrame:
             "grouping": "participant repeated across trials",
             "time_window": "full declared trial exposure",
             "exposure_denominator_policy": (
-                "retain observable trial/AOI exposure; do not invent zero for "
-                "unavailable trials"
+                "retain observable trial/AOI exposure; do not invent zero for unavailable trials"
             ),
             "missing_zero_censoring_policy": "observed zero distinct from missing or absent-by-design",
             "transformation": "none preregistered",
@@ -86,8 +85,7 @@ def _outcomes() -> pd.DataFrame:
             "analysis_status": "secondary",
             "name": "disclosure_first_fixation_latency_ms",
             "observable_definition": (
-                "time from declared trial origin to first reviewed fixation in the "
-                "disclosure AOI"
+                "time from declared trial origin to first reviewed fixation in the disclosure AOI"
             ),
             "measurement_unit": "milliseconds",
             "row_unit": "participant × trial × AOI",
@@ -109,8 +107,7 @@ def _outcomes() -> pd.DataFrame:
             "analysis_status": "exploratory",
             "name": "claim_to_product_transition_count",
             "observable_definition": (
-                "count of declared claim→product semantic AOI transitions within "
-                "trial"
+                "count of declared claim→product semantic AOI transitions within trial"
             ),
             "measurement_unit": "count",
             "row_unit": "participant × trial sequence",
@@ -188,8 +185,7 @@ def _estimands() -> pd.DataFrame:
             "target_population": "same reviewed population as E01",
             "condition_contrast_id": "C01",
             "summary_target": (
-                "exploratory condition difference in claim→product transition "
-                "frequency"
+                "exploratory condition difference in claim→product transition frequency"
             ),
             "inferential_unit": "participant with repeated trial sequences",
             "aggregation_before_model": "within-trial transition counting only",
@@ -388,10 +384,8 @@ def run(output_dir: Path) -> None:
             "causal_validity_claim_created": False,
             "scientific_boundary": (
                 "Preregistration makes planned measurement and estimand choices auditable; "
-                (
-                    "it does not establish construct validity, causal validity, or "
-                    "estimator suitability."
-                )
+                "it does not establish construct validity, causal validity, or "
+                "estimator suitability."
             ),
         },
     )
