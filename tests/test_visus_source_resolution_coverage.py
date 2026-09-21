@@ -587,3 +587,20 @@ def test_load_typed_record_from_generated_checkpoint(
     assert typed.raw_data_redistribution_terms_status == "unresolved"
     assert typed.independent_annotation_streams_verified is False
     assert typed.human_human_agreement_ready is False
+
+
+def test_valid_stored_fingerprint_round_trip(
+    tmp_path: Path,
+) -> None:
+    payload = _payload()
+
+    payload["record_fingerprint_sha256"] = vsr._fingerprint(payload)
+
+    path = _write(
+        tmp_path,
+        payload,
+    )
+
+    summary = vsr.validate_visus_source_resolution_record(path)
+
+    assert summary["record_fingerprint_sha256"] == payload["record_fingerprint_sha256"]
