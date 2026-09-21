@@ -32,9 +32,7 @@ def _inspect_pdf(path: Path, *, require_participant_23: bool) -> dict[str, objec
         "sha256": hashlib.sha256(raw).hexdigest(),
         "byte_size": len(raw),
         "page_count": len(reader.pages),
-        "text_sha256_whitespace_canonical": hashlib.sha256(
-            canonical.encode("utf-8")
-        ).hexdigest(),
+        "text_sha256_whitespace_canonical": hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
         "required_markers_present": required,
     }
 

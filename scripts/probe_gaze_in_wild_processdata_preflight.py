@@ -23,9 +23,7 @@ ARCHIVE_BYTES = 72109475
 MEMBER_PATH = "exports/ProcessData.mat"
 MEMBER_SHA256 = "d633bbf0a3a9224b71e286ada10a63abe7761264eec7e8c25c94fcf0bbbafc63"
 MEMBER_BYTES = 40528499
-PARENT_EVIDENCE_FINGERPRINT = (
-    "f144f5b7edcdbd02e85b53e751812c41b6567105219fbfb63c097bcefc5c9ffc"
-)
+PARENT_EVIDENCE_FINGERPRINT = "f144f5b7edcdbd02e85b53e751812c41b6567105219fbfb63c097bcefc5c9ffc"
 
 
 def _parse_args() -> argparse.Namespace:
@@ -52,7 +50,9 @@ def main() -> None:
         if MEMBER_PATH not in names:
             raise RuntimeError(f"missing archive member {MEMBER_PATH!r}")
         if any(name.lower().endswith("labeldata.mat") for name in names):
-            raise RuntimeError("unexpected LabelData member surfaced in pinned preprocessing archive")
+            raise RuntimeError(
+                "unexpected LabelData member surfaced in pinned preprocessing archive"
+            )
         info = zf.getinfo(MEMBER_PATH)
         if info.file_size != MEMBER_BYTES:
             raise RuntimeError(

@@ -10,6 +10,7 @@ agreement, and discards raw MAT files before writing the JSON summary.
 No TrIdx-to-publication-task mapping, gaze-coordinate claim, model result, GP3 validity,
 or quarantine exit is created by this script.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -116,9 +117,7 @@ def _frozen_label_rows(frozen: dict[str, Any]) -> dict[str, dict[str, Any]]:
     if not isinstance(items, list):
         raise HHAError("Frozen Figshare items are missing.")
     matches = [
-        item
-        for item in items
-        if isinstance(item, dict) and item.get("label") == "LabelData"
+        item for item in items if isinstance(item, dict) and item.get("label") == "LabelData"
     ]
     if len(matches) != 1:
         raise HHAError("Expected exactly one frozen LabelData item.")

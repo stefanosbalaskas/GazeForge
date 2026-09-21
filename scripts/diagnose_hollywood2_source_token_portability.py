@@ -29,10 +29,7 @@ from gazeforge.hollywood2_token_validation import (
 
 def _round_metric_value(value: Any, decimal_places: int) -> Any:
     if isinstance(value, dict):
-        return {
-            str(key): _round_metric_value(item, decimal_places)
-            for key, item in value.items()
-        }
+        return {str(key): _round_metric_value(item, decimal_places) for key, item in value.items()}
     if isinstance(value, list):
         return [_round_metric_value(item, decimal_places) for item in value]
     if isinstance(value, tuple):
@@ -130,10 +127,7 @@ def main() -> int:
     parser.add_argument("--reviewed-raw", type=Path, required=True)
     parser.add_argument(
         "--authorization",
-        default=(
-            "validation/governance/"
-            "hollywood2-source-token-analysis-authorization-v1.json"
-        ),
+        default=("validation/governance/hollywood2-source-token-analysis-authorization-v1.json"),
     )
     parser.add_argument(
         "--raw-output",
@@ -148,13 +142,9 @@ def main() -> int:
     args = parser.parse_args()
 
     reviewed_bytes = args.reviewed_raw.read_bytes()
-    reviewed = validate_hollywood2_source_token_validation_report(
-        json.loads(reviewed_bytes)
-    )
+    reviewed = validate_hollywood2_source_token_validation_report(json.loads(reviewed_bytes))
 
-    authorization = load_hollywood2_source_token_analysis_authorization(
-        args.authorization
-    )
+    authorization = load_hollywood2_source_token_analysis_authorization(args.authorization)
     run = run_hollywood2_source_token_validation(
         args.source_root,
         authorization,
@@ -193,12 +183,8 @@ def main() -> int:
         file_match = reviewed_text == live_text
         candidate = {
             "metric_float_decimal_places": places,
-            "reviewed_report_fingerprint_sha256": reviewed_candidate[
-                "report_fingerprint_sha256"
-            ],
-            "live_report_fingerprint_sha256": live_candidate[
-                "report_fingerprint_sha256"
-            ],
+            "reviewed_report_fingerprint_sha256": reviewed_candidate["report_fingerprint_sha256"],
+            "live_report_fingerprint_sha256": live_candidate["report_fingerprint_sha256"],
             "reviewed_report_file_sha256": _file_sha(reviewed_text),
             "live_report_file_sha256": _file_sha(live_text),
             "fingerprint_match": fingerprint_match,
@@ -210,14 +196,10 @@ def main() -> int:
 
     diagnostic = {
         "record_type": "hollywood2-source-token-portability-diagnostic",
-        "reviewed_raw_report_fingerprint_sha256": reviewed[
-            "report_fingerprint_sha256"
-        ],
+        "reviewed_raw_report_fingerprint_sha256": reviewed["report_fingerprint_sha256"],
         "reviewed_raw_report_file_sha256": hashlib.sha256(reviewed_bytes).hexdigest(),
         "live_raw_report_fingerprint_sha256": live["report_fingerprint_sha256"],
-        "live_raw_report_file_sha256": hashlib.sha256(
-            args.raw_output.read_bytes()
-        ).hexdigest(),
+        "live_raw_report_file_sha256": hashlib.sha256(args.raw_output.read_bytes()).hexdigest(),
         "max_abs_raw_metric_delta": max_delta,
         "max_abs_raw_metric_delta_path": max_delta_path,
         "candidate_serializations": candidates,

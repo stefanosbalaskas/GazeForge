@@ -29,16 +29,13 @@ from gazeforge.hollywood2_token_validation import (
 )
 
 DEFAULT_FROZEN = Path(
-    "validation/evidence/hollywood2/"
-    "hollywood2-source-token-60hz-frozen-summary-v1.json"
+    "validation/evidence/hollywood2/hollywood2-source-token-60hz-frozen-summary-v1.json"
 )
 DEFAULT_V2_EVIDENCE = Path(
-    "validation/evidence/hollywood2/"
-    "hollywood2-source-token-numeric-portability-evidence-v2.json"
+    "validation/evidence/hollywood2/hollywood2-source-token-numeric-portability-evidence-v2.json"
 )
 DEFAULT_V3_EVIDENCE = Path(
-    "validation/evidence/hollywood2/"
-    "hollywood2-source-token-numeric-portability-evidence-v3.json"
+    "validation/evidence/hollywood2/hollywood2-source-token-numeric-portability-evidence-v3.json"
 )
 
 
@@ -84,28 +81,27 @@ def _assert_frozen_scientific_identity(
     frozen_preparation = frozen["protocol"]["preparation"]
 
     assert preparation["analysis_rows"] == frozen_preparation["analysis_rows"]
-    assert preparation["analysis_sampling_rate_hz"] == (
-        frozen_preparation["analysis_sampling_rate_hz"]
+    assert (
+        preparation["analysis_sampling_rate_hz"]
+        == (frozen_preparation["analysis_sampling_rate_hz"])
     )
-    assert preparation["prepared_rows_before_exclusions"] == (
-        frozen_preparation["prepared_rows_before_exclusions"]
+    assert (
+        preparation["prepared_rows_before_exclusions"]
+        == (frozen_preparation["prepared_rows_before_exclusions"])
     )
     assert preparation["excluded_rows"] == frozen_preparation["excluded_rows"]
-    assert inventory["ground_truth_file_count"] == (
-        frozen_preparation["ground_truth_file_count"]
-    )
-    assert inventory["ground_truth_sample_count"] == (
-        frozen_preparation["ground_truth_sample_count"]
+    assert inventory["ground_truth_file_count"] == (frozen_preparation["ground_truth_file_count"])
+    assert (
+        inventory["ground_truth_sample_count"] == (frozen_preparation["ground_truth_sample_count"])
     )
     assert inventory["source_tokens"] == frozen_preparation["source_tokens"]
     assert inventory["source_token_count"] == frozen_preparation["source_token_count"]
 
-    assert report["metrics"]["analysis_label_counts"] == frozen["metrics"][
-        "analysis_label_counts"
-    ]
-    assert report["metrics"]["source_token_fold_assignment"] == frozen["metrics"][
-        "source_token_fold_assignment"
-    ]
+    assert report["metrics"]["analysis_label_counts"] == frozen["metrics"]["analysis_label_counts"]
+    assert (
+        report["metrics"]["source_token_fold_assignment"]
+        == frozen["metrics"]["source_token_fold_assignment"]
+    )
 
 
 def _load_raw_reviewed_report(
@@ -113,14 +109,10 @@ def _load_raw_reviewed_report(
     lineage: dict[str, Any],
 ) -> dict[str, Any]:
     raw_bytes = path.read_bytes()
-    assert hashlib.sha256(raw_bytes).hexdigest() == (
-        lineage["uncanonicalized_report_file_sha256"]
-    )
-    raw = validate_hollywood2_source_token_validation_report(
-        json.loads(raw_bytes)
-    )
-    assert raw["report_fingerprint_sha256"] == (
-        lineage["uncanonicalized_report_fingerprint_sha256"]
+    assert hashlib.sha256(raw_bytes).hexdigest() == (lineage["uncanonicalized_report_file_sha256"])
+    raw = validate_hollywood2_source_token_validation_report(json.loads(raw_bytes))
+    assert (
+        raw["report_fingerprint_sha256"] == (lineage["uncanonicalized_report_fingerprint_sha256"])
     )
     return raw
 
@@ -138,9 +130,7 @@ def _canonicalize_and_bind(
     )
     text = _canonical_text(report)
     assert report["report_fingerprint_sha256"] == expected_fingerprint
-    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == (
-        expected_file_sha256
-    )
+    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == (expected_file_sha256)
     return report, text
 
 
@@ -154,12 +144,8 @@ def replay_reviewed_artifacts(
 ) -> None:
     """Replay exact v1, v2, and v3 identities from both reviewed raw artifacts."""
     frozen = load_frozen_benchmark_report(frozen_path)
-    v2_evidence = validate_hollywood2_source_token_portability_evidence(
-        v2_evidence_path
-    )
-    v3_evidence = validate_hollywood2_source_token_portability_v3_evidence(
-        v3_evidence_path
-    )
+    v2_evidence = validate_hollywood2_source_token_portability_evidence(v2_evidence_path)
+    v3_evidence = validate_hollywood2_source_token_portability_v3_evidence(v3_evidence_path)
     reviewed = v3_evidence["reviewed_source_verified_artifacts"]
 
     v1_expected = v2_evidence["migration"]["from_contract"]
@@ -177,32 +163,20 @@ def replay_reviewed_artifacts(
         v1, v1_text = _canonicalize_and_bind(
             raw,
             contract=HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V1,
-            expected_fingerprint=v1_expected[
-                "canonical_source_report_fingerprint_sha256"
-            ],
-            expected_file_sha256=v1_expected[
-                "canonical_source_report_file_sha256"
-            ],
+            expected_fingerprint=v1_expected["canonical_source_report_fingerprint_sha256"],
+            expected_file_sha256=v1_expected["canonical_source_report_file_sha256"],
         )
         v2, v2_text = _canonicalize_and_bind(
             raw,
             contract=HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V2,
-            expected_fingerprint=v2_expected[
-                "canonical_source_report_fingerprint_sha256"
-            ],
-            expected_file_sha256=v2_expected[
-                "canonical_source_report_file_sha256"
-            ],
+            expected_fingerprint=v2_expected["canonical_source_report_fingerprint_sha256"],
+            expected_file_sha256=v2_expected["canonical_source_report_file_sha256"],
         )
         v3, v3_text = _canonicalize_and_bind(
             raw,
             contract=HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V3,
-            expected_fingerprint=v3_expected[
-                "canonical_source_report_fingerprint_sha256"
-            ],
-            expected_file_sha256=v3_expected[
-                "canonical_source_report_file_sha256"
-            ],
+            expected_fingerprint=v3_expected["canonical_source_report_fingerprint_sha256"],
+            expected_file_sha256=v3_expected["canonical_source_report_file_sha256"],
         )
 
         for report, text in (
@@ -227,10 +201,9 @@ def replay_reviewed_artifacts(
     assert v2_texts[0] != v3_texts[0]
     assert reviewed["v3_recanonicalized_reviewed_reports_byte_identical"] is True
     assert reviewed["v3_cross_worker_full_report_match_verified"] is True
-    assert frozen["report_fingerprint_sha256"] == (
-        v3_evidence["historical_evidence"][
-            "v1_frozen_summary_report_fingerprint_sha256"
-        ]
+    assert (
+        frozen["report_fingerprint_sha256"]
+        == (v3_evidence["historical_evidence"]["v1_frozen_summary_report_fingerprint_sha256"])
     )
     print("v1 and v2 evidence preserved; v3 reviewed artifacts are byte-identical")
     print("v3 reviewed full-report fingerprint:", V3_CANONICAL_REPORT_FINGERPRINT)
@@ -245,9 +218,7 @@ def bind_live_v3_report(
     """Fail closed unless a live aggregate report exactly reproduces the v3 identity."""
     report = validate_hollywood2_source_token_validation_report(report_path)
     frozen = load_frozen_benchmark_report(frozen_path)
-    evidence = validate_hollywood2_source_token_portability_v3_evidence(
-        v3_evidence_path
-    )
+    evidence = validate_hollywood2_source_token_portability_v3_evidence(v3_evidence_path)
     expected = evidence["migration"]["to_contract"]
     text = report_path.read_text(encoding="utf-8")
 
@@ -255,8 +226,9 @@ def bind_live_v3_report(
         HOLLYWOOD2_SOURCE_TOKEN_NUMERIC_CANONICALIZATION_V3
     )
     assert report["report_fingerprint_sha256"] == V3_CANONICAL_REPORT_FINGERPRINT
-    assert report["report_fingerprint_sha256"] == (
-        expected["canonical_source_report_fingerprint_sha256"]
+    assert (
+        report["report_fingerprint_sha256"]
+        == (expected["canonical_source_report_fingerprint_sha256"])
     )
     observed_file_sha = hashlib.sha256(report_path.read_bytes()).hexdigest()
     assert observed_file_sha == V3_CANONICAL_REPORT_FILE_SHA256

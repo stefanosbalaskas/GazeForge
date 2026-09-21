@@ -180,9 +180,7 @@ def _comparison(executed: pd.DataFrame) -> pd.DataFrame:
                 "comparison_status": status,
                 "same_estimand": same_estimand,
                 "comparable_to_primary": comparable,
-                "denominator_delta": int(
-                    row.analysis_denominator - primary.analysis_denominator
-                ),
+                "denominator_delta": int(row.analysis_denominator - primary.analysis_denominator),
                 "exposure_delta_ms": int(row.exposure_ms - primary.exposure_ms),
                 "estimate_delta_ms": estimate_delta,
                 "relative_delta_pct": relative_delta_pct,
@@ -384,9 +382,7 @@ def run(output_dir: Path) -> None:
     if not registered_sensitivity_ids <= executed_ids:
         raise RuntimeError("A registered sensitivity condition is missing from execution.")
 
-    same_estimand_ids = set(
-        registry.loc[registry["same_estimand_required"], "condition_id"]
-    )
+    same_estimand_ids = set(registry.loc[registry["same_estimand_required"], "condition_id"])
     executed_same = executed.loc[executed["condition_id"].isin(same_estimand_ids)]
     if set(executed_same["estimand_id"]) != {PRIMARY_ESTIMAND}:
         raise RuntimeError("A same-estimand sensitivity silently changed estimand identity.")

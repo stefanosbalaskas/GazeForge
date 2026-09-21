@@ -11,8 +11,20 @@ from gazeforge.source_resolution_lock import build_source_resolution_bundle_lock
 _DEFAULT_PROTOCOLS = Path("validation/protocols")
 _DEFAULT_OUTPUT = Path("validation/governance/source-resolution-bundle-lock-v1.json")
 _REVIEW_BASIS = (
-    "Reviewed current source-resolution checkpoint set for VISUS, Hollywood2EM, and Gaze-in-the-Wild; Hollywood2EM references separately frozen empirical source evidence and Gaze-in-the-Wild now binds first-author processing provenance plus publication-level Supplementary Table 1 participant/task context while exact dataset copy, rights, distributed-file identity, complete trial-to-task mapping, and source-audit readiness remain unresolved.",
-    "This governance lock snapshots checkpoint identities only; it does not authorize empirical evidence, rights, source-audit readiness, or Frozen Evidence publication.",
+    (
+        "Reviewed current source-resolution checkpoint set for VISUS, "
+        "Hollywood2EM, and Gaze-in-the-Wild; Hollywood2EM references "
+        "separately frozen empirical source evidence and Gaze-in-the-Wild now "
+        "binds first-author processing provenance plus publication-level "
+        "Supplementary Table 1 participant/task context while exact dataset "
+        "copy, rights, distributed-file identity, complete trial-to-task "
+        "mapping, and source-audit readiness remain unresolved."
+    ),
+    (
+        "This governance lock snapshots checkpoint identities only; it does "
+        "not authorize empirical evidence, rights, source-audit readiness, or "
+        "Frozen Evidence publication."
+    ),
 )
 
 

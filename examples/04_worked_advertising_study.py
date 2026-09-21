@@ -83,10 +83,8 @@ def _build_source() -> pd.DataFrame:
                                 "participant_id": participant,
                                 "trial_id": trial,
                                 "timestamp_ms": timestamp_ms,
-                                "x_px": previous[0]
-                                + fraction * (center[0] - previous[0]),
-                                "y_px": previous[1]
-                                + fraction * (center[1] - previous[1]),
+                                "x_px": previous[0] + fraction * (center[0] - previous[0]),
+                                "y_px": previous[1] + fraction * (center[1] - previous[1]),
                             }
                         )
                         timestamp_ms += dt_ms

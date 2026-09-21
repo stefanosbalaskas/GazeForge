@@ -4,6 +4,7 @@ This is a source-recovery probe, not an inference engine.  It records task-relat
 contexts from the exact first-author repository revision and keeps the scientific
 mapping gate closed unless an explicit mapping is present for later human review.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -33,9 +34,7 @@ class ProbeError(RuntimeError):
 
 
 def _run(root: Path, *args: str, binary: bool = False) -> bytes | str:
-    result = subprocess.run(
-        ["git", "-C", str(root), *args], capture_output=True, check=False
-    )
+    result = subprocess.run(["git", "-C", str(root), *args], capture_output=True, check=False)
     if result.returncode:
         raise ProbeError(
             result.stderr.decode("utf-8", errors="replace").strip()
@@ -224,7 +223,9 @@ def main() -> None:
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     record = build_probe(Path(args.repository))
-    Path(args.output).write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    Path(args.output).write_text(
+        json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     print("probe_fingerprint_sha256", record["probe_fingerprint_sha256"])
     print("task_context_count", record["review_queue"]["task_context_count"])
     print(

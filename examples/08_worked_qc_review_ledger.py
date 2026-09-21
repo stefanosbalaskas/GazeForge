@@ -337,12 +337,8 @@ def run(output_dir: Path) -> None:
 
     status = qc.copy()
     status["analysis_status"] = [
-        "excluded_trial"
-        if (participant, trial) in excluded_trial_keys
-        else "retained"
-        for participant, trial in zip(
-            status["participant_id"], status["trial_id"], strict=True
-        )
+        "excluded_trial" if (participant, trial) in excluded_trial_keys else "retained"
+        for participant, trial in zip(status["participant_id"], status["trial_id"], strict=True)
     ]
     primary_rows = status.loc[status["analysis_status"] == "retained"].copy()
 
@@ -351,9 +347,7 @@ def run(output_dir: Path) -> None:
     exploratory["criterion_status"] = "exploratory"
     exploratory["triggered"] = exploratory["anomaly_rate"] >= (1.0 / 30.0)
     exploratory["applied_to_primary_analysis"] = False
-    exploratory["note"] = (
-        "Sensitivity-only teaching rule; primary analysis rows are unchanged."
-    )
+    exploratory["note"] = "Sensitivity-only teaching rule; primary analysis rows are unchanged."
 
     exclusion_flow = _build_exclusion_flow(
         qc,
@@ -415,12 +409,9 @@ def run(output_dir: Path) -> None:
     canonical_unchanged = canonical.equals(canonical_snapshot)
     qc_unchanged = qc.equals(qc_snapshot)
     n_excluded_trials = int((trial_ledger["decision"] == "excluded").sum())
-    n_retained_participants = int(
-        (participant_ledger["decision"] == "retained").sum()
-    )
+    n_retained_participants = int((participant_ledger["decision"] == "retained").sum())
     anomaly_review_retained = bool(
-        sample_ledger.iloc[0]["qc_flag"]
-        and sample_ledger.iloc[0]["decision"] == "retained"
+        sample_ledger.iloc[0]["qc_flag"] and sample_ledger.iloc[0]["decision"] == "retained"
     )
 
     assert canonical_unchanged
@@ -475,9 +466,7 @@ def run(output_dir: Path) -> None:
     print(f"Reviewed trial denominator: {len(trial_ledger)}")
     print(f"Excluded trials: {n_excluded_trials}")
     print(f"Retained participants: {n_retained_participants}/{len(participant_ledger)}")
-    print(
-        "QC-flag boundary: anomaly flags prompt review; they are not automatic exclusions."
-    )
+    print("QC-flag boundary: anomaly flags prompt review; they are not automatic exclusions.")
     print(
         "Evidence boundary: synthetic workflow demo only; reproducible review rules "
         "are not validation evidence."

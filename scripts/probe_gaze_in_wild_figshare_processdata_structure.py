@@ -42,15 +42,11 @@ EXPECTED_IDENTITY_RECORD_TYPE = "gaze-in-wild-processdata-exact-sha256-ledger-v1
 EXPECTED_IDENTITY_EVIDENCE_FINGERPRINT = (
     "85f131389315a1185e3a8973629c8e5ee3417bb73704de8054366e508af0a2e2"
 )
-EXPECTED_SHA256_MANIFEST = (
-    "162bf688fbd0bfdaf79a11d423f3689abd31bea9a4e8423bc03020ebd598354d"
-)
+EXPECTED_SHA256_MANIFEST = "162bf688fbd0bfdaf79a11d423f3689abd31bea9a4e8423bc03020ebd598354d"
 EXPECTED_STABLE_PROCESSDATA_IDENTITY = (
     "7e48396fcfe30e2170708c9d5910caea785ceff1dd06b0455e5715a01e52d3ea"
 )
-EXPECTED_EXACT_BYTE_EVIDENCE = (
-    "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00"
-)
+EXPECTED_EXACT_BYTE_EVIDENCE = "dbf277d698266fe53e337a15fc342e9af1835460d2bcc69c3992635de8fa0a00"
 
 
 class ProcessDataStructureProbeError(RuntimeError):
@@ -137,11 +133,7 @@ def _validate_identity_ledger(ledger: dict[str, Any]) -> list[dict[str, Any]]:
             raise ProcessDataStructureProbeError("Malformed ProcessData identity row.")
         name = row.get("name")
         sha256 = row.get("sha256")
-        if (
-            not isinstance(name, str)
-            or PROCESS_NAME_RE.fullmatch(name) is None
-            or name in seen
-        ):
+        if not isinstance(name, str) or PROCESS_NAME_RE.fullmatch(name) is None or name in seen:
             raise ProcessDataStructureProbeError("Invalid/duplicate ProcessData identity filename.")
         if (
             not isinstance(sha256, str)
@@ -412,9 +404,7 @@ def build_probe(frozen_path: Path, identities_path: Path, retries: int) -> dict[
                     "scene_resolution_px": list(preflight.scene_resolution_px),
                     "labels_present": preflight.labels_present,
                     "labels_shape": (
-                        list(preflight.labels_shape)
-                        if preflight.labels_shape is not None
-                        else None
+                        list(preflight.labels_shape) if preflight.labels_shape is not None else None
                     ),
                     "top_level_labeldata_present": preflight.top_level_labeldata_present,
                     "adapter_coordinate_fields_compatible": (
@@ -446,8 +436,7 @@ def build_probe(frozen_path: Path, identities_path: Path, retries: int) -> dict[
         )
 
     label_tokens = {
-        (row["participant_index"], row["trial_index"])
-        for row in label_summary["recording_tokens"]
+        (row["participant_index"], row["trial_index"]) for row in label_summary["recording_tokens"]
     }
     if not label_tokens.issubset(process_tokens):
         missing = sorted(label_tokens - process_tokens)

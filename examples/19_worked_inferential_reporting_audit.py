@@ -31,43 +31,151 @@ def _write_json(path: Path, payload: object) -> None:
 def _results() -> pd.DataFrame:
     rows = [
         (
-            "R01", "E01", "POP_PRIMARY", "primary", "confirmatory", "F1",
-            "difference_ms", "difference_ms", "ms", "ms", 120.0, 30.0, 210.0,
-            0.95, "wald_confidence_interval", 0.012, 0.024, "holm", True,
+            "R01",
+            "E01",
+            "POP_PRIMARY",
+            "primary",
+            "confirmatory",
+            "F1",
+            "difference_ms",
+            "difference_ms",
+            "ms",
+            "ms",
+            120.0,
+            30.0,
+            210.0,
+            0.95,
+            "wald_confidence_interval",
+            0.012,
+            0.024,
+            "holm",
+            True,
         ),
         (
-            "R02", "E02", "POP_PRIMARY", "secondary", "confirmatory", "F1",
-            "rate_difference_per_s", "rate_difference_per_s", "fixations/s",
-            "fixations/s", 0.18, 0.03, 0.33, 0.95,
-            "wald_confidence_interval", 0.031, 0.031, "holm", True,
+            "R02",
+            "E02",
+            "POP_PRIMARY",
+            "secondary",
+            "confirmatory",
+            "F1",
+            "rate_difference_per_s",
+            "rate_difference_per_s",
+            "fixations/s",
+            "fixations/s",
+            0.18,
+            0.03,
+            0.33,
+            0.95,
+            "wald_confidence_interval",
+            0.031,
+            0.031,
+            "holm",
+            True,
         ),
         (
-            "R03", "E03", "POP_PRIMARY", "exploratory", "exploratory", "",
-            "transition_probability_difference", "transition_probability_difference",
-            "probability", "probability", 0.07, -0.01, 0.15, 0.95,
-            "bootstrap_confidence_interval", 0.080, None,
-            "not_applicable_exploratory", True,
+            "R03",
+            "E03",
+            "POP_PRIMARY",
+            "exploratory",
+            "exploratory",
+            "",
+            "transition_probability_difference",
+            "transition_probability_difference",
+            "probability",
+            "probability",
+            0.07,
+            -0.01,
+            0.15,
+            0.95,
+            "bootstrap_confidence_interval",
+            0.080,
+            None,
+            "not_applicable_exploratory",
+            True,
         ),
         (
-            "R04", "E04", "POP_PRIMARY", "secondary", "confirmatory", "F2",
-            "difference_ms", "difference_ms", "ms", "ms", 75.0, 10.0, 140.0,
-            None, "", 0.041, 0.082, "holm", True,
+            "R04",
+            "E04",
+            "POP_PRIMARY",
+            "secondary",
+            "confirmatory",
+            "F2",
+            "difference_ms",
+            "difference_ms",
+            "ms",
+            "ms",
+            75.0,
+            10.0,
+            140.0,
+            None,
+            "",
+            0.041,
+            0.082,
+            "holm",
+            True,
         ),
         (
-            "R05", "E05", "POP_PRIMARY", "secondary", "confirmatory", "F2",
-            "difference_ms", "difference_ms", "ms", "ms", 55.0, 5.0, 105.0,
-            0.95, "wald_confidence_interval", 0.049, None, "", True,
+            "R05",
+            "E05",
+            "POP_PRIMARY",
+            "secondary",
+            "confirmatory",
+            "F2",
+            "difference_ms",
+            "difference_ms",
+            "ms",
+            "ms",
+            55.0,
+            5.0,
+            105.0,
+            0.95,
+            "wald_confidence_interval",
+            0.049,
+            None,
+            "",
+            True,
         ),
         (
-            "R06", "E06", "POP_PRIMARY", "secondary", "confirmatory", "F3",
-            "difference_ms", "ratio", "ms", "ratio", 1.20, 1.02, 1.41, 0.95,
-            "profile_confidence_interval", 0.018, 0.018, "none_single_member", True,
+            "R06",
+            "E06",
+            "POP_PRIMARY",
+            "secondary",
+            "confirmatory",
+            "F3",
+            "difference_ms",
+            "ratio",
+            "ms",
+            "ratio",
+            1.20,
+            1.02,
+            1.41,
+            0.95,
+            "profile_confidence_interval",
+            0.018,
+            0.018,
+            "none_single_member",
+            True,
         ),
         (
-            "R07", "E07", "POP_PRIMARY", "secondary", "confirmatory", "F4",
-            "difference_ms", "difference_ms", "ms", "ms", 95.0, 20.0, 170.0,
-            0.95, "wald_confidence_interval", 0.022, 0.022,
-            "none_single_member", False,
+            "R07",
+            "E07",
+            "POP_PRIMARY",
+            "secondary",
+            "confirmatory",
+            "F4",
+            "difference_ms",
+            "difference_ms",
+            "ms",
+            "ms",
+            95.0,
+            20.0,
+            170.0,
+            0.95,
+            "wald_confidence_interval",
+            0.022,
+            0.022,
+            "none_single_member",
+            False,
         ),
     ]
     return pd.DataFrame(
@@ -111,16 +219,15 @@ def _uncertainty_audit(results: pd.DataFrame) -> pd.DataFrame:
             "reported_unit",
         ]
     ].copy()
-    out["interval_bounds_ordered"] = (
-        out.interval_lower.le(out.estimate) & out.estimate.le(out.interval_upper)
+    out["interval_bounds_ordered"] = out.interval_lower.le(out.estimate) & out.estimate.le(
+        out.interval_upper
     )
     out["uncertainty_identity_complete"] = (
         out.interval_level.notna() & out.uncertainty_method.astype(str).str.len().gt(0)
     )
-    out["scale_unit_match"] = (
-        out.registered_effect_scale.eq(out.reported_effect_scale)
-        & out.registered_unit.eq(out.reported_unit)
-    )
+    out["scale_unit_match"] = out.registered_effect_scale.eq(
+        out.reported_effect_scale
+    ) & out.registered_unit.eq(out.reported_unit)
     return out
 
 
@@ -285,10 +392,9 @@ def run(output_dir: Path) -> None:
         raise RuntimeError("Teaching interpretation-gate coverage changed.")
     if (results.p_value_raw.dropna() < 0).any() or (results.p_value_raw.dropna() > 1).any():
         raise RuntimeError("Raw p-values must remain in [0, 1].")
-    if (
-        (results.p_value_adjusted.dropna() < 0).any()
-        or (results.p_value_adjusted.dropna() > 1).any()
-    ):
+    if (results.p_value_adjusted.dropna() < 0).any() or (
+        results.p_value_adjusted.dropna() > 1
+    ).any():
         raise RuntimeError("Adjusted p-values must remain in [0, 1].")
     blocked = gate.interpretation_gate.str.startswith("blocked_")
     if gate.loc[blocked, "interpretation_allowed"].any():

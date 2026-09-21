@@ -295,17 +295,23 @@ def main() -> None:
 
     for label in AOI_LABELS:
         track = _track(keyframes, label)
-        if interpolate_dynamic_aoi(
-            track,
-            -100.0,
-            max_gap_ms=MAX_INTERPOLATION_GAP_MS,
-        ) is not None:
+        if (
+            interpolate_dynamic_aoi(
+                track,
+                -100.0,
+                max_gap_ms=MAX_INTERPOLATION_GAP_MS,
+            )
+            is not None
+        ):
             raise RuntimeError("Pre-track extrapolation must return no dynamic AOI geometry.")
-        if interpolate_dynamic_aoi(
-            track,
-            2100.0,
-            max_gap_ms=MAX_INTERPOLATION_GAP_MS,
-        ) is not None:
+        if (
+            interpolate_dynamic_aoi(
+                track,
+                2100.0,
+                max_gap_ms=MAX_INTERPOLATION_GAP_MS,
+            )
+            is not None
+        ):
             raise RuntimeError("Post-track extrapolation must return no dynamic AOI geometry.")
 
     pd.testing.assert_frame_equal(source, source_snapshot, check_exact=True)

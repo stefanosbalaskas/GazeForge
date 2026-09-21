@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import csv
 import hashlib
 import json
 import statistics
@@ -257,13 +256,11 @@ def _participant_metrics(participant: str, path: Path, aoi: dict[str, Any]) -> d
     microseconds = [
         row["MicroSecondTimestamp"] for row in rows if row["MicroSecondTimestamp"] is not None
     ]
-    positive_deltas = [b - a for a, b in zip(microseconds, microseconds[1:]) if b > a]
+    positive_deltas = [b - a for a, b in zip(microseconds, microseconds[1:], strict=False) if b > a]
     median_delta_us = statistics.median(positive_deltas)
     inferred_hz = 1_000_000.0 / median_delta_us
 
-    valid_both = sum(
-        1 for row in rows if row["ValidityLeft"] == 0 and row["ValidityRight"] == 0
-    )
+    valid_both = sum(1 for row in rows if row["ValidityLeft"] == 0 and row["ValidityRight"] == 0)
 
     within_stimulus: list[tuple[dict[str, Any], int, set[str]]] = []
     sample_aoi_counts: dict[str, int] = defaultdict(int)
@@ -388,11 +385,7 @@ def main() -> None:
             "full_visus_stimulus_count": 11,
             "full_visus_recovered": False,
         },
-        "aoi": {
-            key: value
-            for key, value in aoi.items()
-            if key not in {"objects", "object_spans"}
-        }
+        "aoi": {key: value for key, value in aoi.items() if key not in {"objects", "object_spans"}}
         | {
             "object_names": sorted(aoi["objects"]),
             "object_spans": {

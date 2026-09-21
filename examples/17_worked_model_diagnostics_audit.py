@@ -102,9 +102,7 @@ def _gate(fits: pd.DataFrame, diagnostics: pd.DataFrame) -> pd.DataFrame:
     same_target = ~out.changed_estimand_or_population
     out.loc[passed & same_target, "interpretation_gate"] = "eligible_for_interpretation"
     out.loc[passed & ~same_target, "interpretation_gate"] = "exploratory_changed_estimand"
-    out["interpretation_allowed"] = out.interpretation_gate.eq(
-        "eligible_for_interpretation"
-    )
+    out["interpretation_allowed"] = out.interpretation_gate.eq("eligible_for_interpretation")
     out["may_replace_primary_automatically"] = False
     return out[
         [

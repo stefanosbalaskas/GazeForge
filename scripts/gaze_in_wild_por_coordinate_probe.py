@@ -14,8 +14,7 @@ from gazeforge.gaze_in_wild_coordinate_evidence import (
 )
 
 DEFAULT_EVIDENCE = Path(
-    "validation/evidence/gaze-in-wild/"
-    "gaze-in-wild-por-coordinate-semantics-evidence-v1.json"
+    "validation/evidence/gaze-in-wild/gaze-in-wild-por-coordinate-semantics-evidence-v1.json"
 )
 
 
