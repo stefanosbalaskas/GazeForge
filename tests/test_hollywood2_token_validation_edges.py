@@ -789,3 +789,208 @@ def test_report_validator_rejects_raw_prediction_or_sample_payloads():
         _refingerprint_report(report)
         with pytest.raises(BenchmarkIntegrityError, match="must not embed raw"):
             validate_hollywood2_source_token_validation_report(report)
+
+
+
+def _mini_hollywood_tree(tmp_path: Path) -> Path:
+    data_root = tmp_path / "ground_truth"
+    for relative in (
+        "train/clip-a/001_a.arff",
+        "train/clip-a/002_b.arff",
+        "test/clip-b/001_c.arff",
+        "test/clip-b/002_d.arff",
+    ):
+        path = data_root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("synthetic", encoding="utf-8")
+    return data_root
+
+
+def _patch_mini_inventory(monkeypatch) -> None:
+    monkeypatch.setattr(token_validation, "HOLLYWOOD2_GROUND_TRUTH_FILE_COUNT", 4)
+    monkeypatch.setattr(token_validation, "HOLLYWOOD2_GROUND_TRUTH_SAMPLE_COUNT", 8)
+    monkeypatch.setattr(
+        token_validation,
+        "HOLLYWOOD2_CANONICAL_SOURCE_TOKENS",
+        ("001", "002"),
+    )
+    monkeypatch.setattr(token_validation, "HOLLYWOOD2_CLIP_COUNT", 2)
+
+
+def _fake_hollywood_gaze(path, **kwargs):
+    assert kwargs["annotator"] == "final"
+    assert kwargs["participant_id"] is None
+    assert kwargs["coordinate_unit"] == "pixels"
+    return SimpleNamespace(
+        sampling_rate_hz=500.0,
+        data=pd.DataFrame(
+            {
+                "participant_id": ["__unresolved__", "__unresolved__"],
+                "trial_id": [kwargs["trial_id"], kwargs["trial_id"]],
+                "timestamp_ms": [0.0, 2.0],
+                "x_px": [10.0, 11.0],
+                "y_px": [20.0, 21.0],
+                "event_label": ["fixation", "saccade"],
+                "annotator": ["final", "final"],
+                "dataset_id": ["Hollywood2EM", "Hollywood2EM"],
+                "source_file": [str(path), str(path)],
+                "split": [kwargs["split"], kwargs["split"]],
+                "coordinate_unit": ["pixels", "pixels"],
+                "coordinate_unit_verified": [True, True],
+            }
+        ),
+    )
+
+
+def test_mini_file_preparation_preserves_native_inventory(tmp_path, monkeypatch):
+    data_root = _mini_hollywood_tree(tmp_path)
+    _patch_mini_inventory(monkeypatch)
+    monkeypatch.setattr(
+        token_validation,
+        "load_hollywood2_arff",
+        _fake_hollywood_gaze,
+    )
+
+    prepared, inventory = token_validation._load_and_prepare_files(
+        data_root,
+        target_sampling_rate_hz=500.0,
+        min_label_purity=0.75,
+        max_interpolation_gap_ms=None,
+    )
+
+    assert len(prepared) == 8
+    assert set(prepared["source_token"]) == {"001", "002"}
+    assert set(prepared["clip_id"]) == {"clip-a", "clip-b"}
+    assert inventory == {
+        "ground_truth_file_count": 4,
+        "ground_truth_sample_count": 8,
+        "clip_count": 2,
+        "source_token_count": 2,
+        "source_tokens": ["001", "002"],
+        "source_rate_min_hz": 500.0,
+        "source_rate_median_hz": 500.0,
+        "source_rate_max_hz": 500.0,
+        "resampling": None,
+    }
+
+
+@pytest.mark.parametrize(
+    ("max_gap", "purities", "expected_mean"),
+    [
+        (None, [1.0, 0.5], 0.75),
+        (25.0, [float("nan"), float("nan")], None),
+    ],
+)
+def test_mini_file_preparation_aggregates_resampling_provenance(
+    tmp_path,
+    monkeypatch,
+    max_gap,
+    purities,
+    expected_mean,
+):
+    data_root = _mini_hollywood_tree(tmp_path)
+    _patch_mini_inventory(monkeypatch)
+    monkeypatch.setattr(
+        token_validation,
+        "load_hollywood2_arff",
+        _fake_hollywood_gaze,
+    )
+    calls = []
+
+    def fake_resample(part, **kwargs):
+        calls.append(kwargs)
+        sampled = part.copy()
+        sampled["benchmark_label_purity"] = purities
+        return SimpleNamespace(
+            data=sampled,
+            report={
+                "source_rows": len(part),
+                "target_rows": len(sampled),
+                "ambiguous_rows": 1,
+            },
+        )
+
+    monkeypatch.setattr(
+        token_validation,
+        "resample_labeled_gaze",
+        fake_resample,
+    )
+
+    prepared, inventory = token_validation._load_and_prepare_files(
+        data_root,
+        target_sampling_rate_hz=60.0,
+        min_label_purity=0.75,
+        max_interpolation_gap_ms=max_gap,
+    )
+
+    assert len(prepared) == 8
+    assert len(calls) == 4
+    assert all(call["target_sampling_rate_hz"] == 60.0 for call in calls)
+    report = inventory["resampling"]
+    assert report["source_rows"] == 8
+    assert report["target_rows"] == 8
+    assert report["ambiguous_rows"] == 4
+    assert report["ambiguous_fraction"] == 0.5
+    assert report["mean_label_purity"] == expected_mean
+    expected_gap = 2.0 * (1000.0 / 60.0) if max_gap is None else max_gap
+    assert report["max_interpolation_gap_ms"] == expected_gap
+    assert report["per_file_group_reports_embedded"] is False
+
+
+def test_file_preparation_requires_complete_file_inventory(tmp_path, monkeypatch):
+    data_root = tmp_path / "ground_truth"
+    data_root.mkdir()
+    monkeypatch.setattr(token_validation, "HOLLYWOOD2_GROUND_TRUTH_FILE_COUNT", 1)
+
+    with pytest.raises(BenchmarkIntegrityError, match="complete 697-file ground-truth tree"):
+        token_validation._load_and_prepare_files(
+            data_root,
+            target_sampling_rate_hz=60.0,
+            min_label_purity=0.75,
+            max_interpolation_gap_ms=None,
+        )
+
+
+@pytest.mark.parametrize(
+    ("constant", "value", "message"),
+    [
+        (
+            "HOLLYWOOD2_GROUND_TRUTH_SAMPLE_COUNT",
+            9,
+            "sample count does not match",
+        ),
+        (
+            "HOLLYWOOD2_CANONICAL_SOURCE_TOKENS",
+            ("001", "003"),
+            "source-token set does not match",
+        ),
+        (
+            "HOLLYWOOD2_CLIP_COUNT",
+            3,
+            "clip inventory does not match",
+        ),
+    ],
+)
+def test_file_preparation_rejects_frozen_inventory_drift(
+    tmp_path,
+    monkeypatch,
+    constant,
+    value,
+    message,
+):
+    data_root = _mini_hollywood_tree(tmp_path)
+    _patch_mini_inventory(monkeypatch)
+    monkeypatch.setattr(token_validation, constant, value)
+    monkeypatch.setattr(
+        token_validation,
+        "load_hollywood2_arff",
+        _fake_hollywood_gaze,
+    )
+
+    with pytest.raises(BenchmarkIntegrityError, match=message):
+        token_validation._load_and_prepare_files(
+            data_root,
+            target_sampling_rate_hz=500.0,
+            min_label_purity=0.75,
+            max_interpolation_gap_ms=None,
+        )
