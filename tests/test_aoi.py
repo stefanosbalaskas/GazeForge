@@ -15,6 +15,7 @@ from gazeforge.aoi import (
     detect_semantic_aois,
     map_fixations_to_aois,
 )
+from gazeforge.exceptions import OptionalDependencyError, SchemaError
 
 
 def test_semantic_provider_threshold_and_mapping():
@@ -91,7 +92,7 @@ def test_huggingface_provider_reports_missing_optional_dependency(monkeypatch):
 
     monkeypatch.setattr(builtins, "__import__", guarded_import)
 
-    with pytest.raises(Exception, match="vision"):
+    with pytest.raises(OptionalDependencyError, match="vision"):
         provider._get_pipeline()
 
 
@@ -202,11 +203,11 @@ def test_aois_to_frame_preserves_complete_review_metadata():
 def test_aoi_review_requires_action_columns_and_known_identifiers():
     aois = [AOI("a1", "claim", 0, 0, 10, 10)]
 
-    with pytest.raises(Exception, match="require columns"):
+    with pytest.raises(SchemaError, match="require columns"):
         apply_aoi_review(aois, pd.DataFrame({"aoi_id": ["a1"]}))
 
     decisions = pd.DataFrame([{"aoi_id": "missing", "action": "accept"}])
-    with pytest.raises(Exception, match="unknown AOI"):
+    with pytest.raises(SchemaError, match="unknown AOI"):
         apply_aoi_review(aois, decisions)
 
 
@@ -248,7 +249,7 @@ def test_aoi_review_relabel_requires_label():
     aois = [AOI("a1", "claim", 0, 0, 10, 10)]
     decisions = pd.DataFrame([{"aoi_id": "a1", "action": "relabel"}])
 
-    with pytest.raises(Exception, match="requires a label"):
+    with pytest.raises(SchemaError, match="requires a label"):
         apply_aoi_review(aois, decisions)
 
 
@@ -258,7 +259,7 @@ def test_aoi_review_replace_bounds_requires_all_coordinates_and_valid_geometry()
     incomplete = pd.DataFrame(
         [{"aoi_id": "a1", "action": "replace_bounds", "xmin": 1}]
     )
-    with pytest.raises(Exception, match="requires all bounds"):
+    with pytest.raises(SchemaError, match="requires all bounds"):
         apply_aoi_review(aois, incomplete)
 
     invalid = pd.DataFrame(
@@ -310,14 +311,14 @@ def test_aoi_review_rejects_unsupported_action():
     aois = [AOI("a1", "claim", 0, 0, 10, 10)]
     decisions = pd.DataFrame([{"aoi_id": "a1", "action": "merge"}])
 
-    with pytest.raises(Exception, match="Unsupported AOI review action"):
+    with pytest.raises(SchemaError, match="Unsupported AOI review action"):
         apply_aoi_review(aois, decisions)
 
 
 def test_fixation_mapping_validates_coordinate_and_overlap_contracts():
     fixations = pd.DataFrame({"x_px": [1.0]})
 
-    with pytest.raises(Exception, match="coordinate columns"):
+    with pytest.raises(SchemaError, match="coordinate columns"):
         map_fixations_to_aois(fixations, [])
 
     complete = pd.DataFrame({"x_px": [1.0], "y_px": [1.0]})
