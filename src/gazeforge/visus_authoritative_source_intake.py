@@ -190,7 +190,11 @@ def validate_candidate_record(record: Mapping[str, Any]) -> dict[str, Any]:
         raise BenchmarkIntegrityError("VISUS source-authority candidate authority class drifted.")
     _resolved_text(source.get("source_reference"), label="candidate source_reference")
     _resolved_text(source.get("source_revision"), label="candidate source_revision")
-    if not isinstance(source.get("artifact_size_bytes"), int) or source["artifact_size_bytes"] <= 0:
+    if (
+        not isinstance(source.get("artifact_size_bytes"), int)
+        or isinstance(source.get("artifact_size_bytes"), bool)
+        or source["artifact_size_bytes"] <= 0
+    ):
         raise BenchmarkIntegrityError("VISUS candidate source artifact size is invalid.")
     if source.get("authorized_channel_affirmed") is not True:
         raise BenchmarkIntegrityError("VISUS source-authority candidate authorization drifted.")
@@ -199,13 +203,25 @@ def validate_candidate_record(record: Mapping[str, Any]) -> dict[str, Any]:
     _sha256_value(manifest.get("sha256"), label="candidate manifest SHA-256")
     _sha256_value(inventory.get("fingerprint_sha256"), label="candidate inventory SHA-256")
     _resolved_text(rights.get("reference"), label="candidate rights evidence reference")
-    if not isinstance(rights.get("size_bytes"), int) or rights["size_bytes"] <= 0:
+    if (
+        not isinstance(rights.get("size_bytes"), int)
+        or isinstance(rights.get("size_bytes"), bool)
+        or rights["size_bytes"] <= 0
+    ):
         raise BenchmarkIntegrityError("VISUS candidate rights-evidence size is invalid.")
-    if not isinstance(manifest.get("size_bytes"), int) or manifest["size_bytes"] <= 0:
+    if (
+        not isinstance(manifest.get("size_bytes"), int)
+        or isinstance(manifest.get("size_bytes"), bool)
+        or manifest["size_bytes"] <= 0
+    ):
         raise BenchmarkIntegrityError("VISUS candidate manifest size is invalid.")
     if rights.get("raw_rights_text_copied_to_candidate") is not False:
         raise BenchmarkIntegrityError("VISUS source-authority candidate leaked raw rights text.")
-    if not isinstance(inventory.get("file_count"), int) or inventory["file_count"] <= 0:
+    if (
+        not isinstance(inventory.get("file_count"), int)
+        or isinstance(inventory.get("file_count"), bool)
+        or inventory["file_count"] <= 0
+    ):
         raise BenchmarkIntegrityError("VISUS candidate inventory file count is invalid.")
     if inventory.get("published_participant_count") != EXPECTED_PARTICIPANT_COUNT:
         raise BenchmarkIntegrityError("VISUS candidate published participant count drifted.")

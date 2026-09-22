@@ -397,3 +397,79 @@ def test_refingerprinted_certificate_raw_mapping_leak_is_rejected(tmp_path: Path
     _refingerprint_certificate(certificate)
     with pytest.raises(BenchmarkIntegrityError, match="forbidden raw mapping fields"):
         validate_certificate_record(certificate)
+
+
+def _approved_certificate(tmp_path: Path) -> dict:
+    source, manifest = _write_source_and_manifest(tmp_path)
+    candidate = inspect_explicit_crosswalk_candidate(source, manifest)
+    review_path = _write_review(tmp_path, _review_dict(candidate))
+    return require_reviewed_explicit_crosswalk(
+        source,
+        manifest,
+        candidate,
+        review_path,
+    ).certificate
+
+
+def test_certificate_validator_accepts_json_path(tmp_path: Path) -> None:
+    certificate = _approved_certificate(tmp_path)
+    path = tmp_path / "certificate.json"
+    path.write_text(json.dumps(certificate), encoding="utf-8")
+
+    assert validate_certificate_record(path) == certificate
+
+
+@pytest.mark.parametrize(
+    ("payload", "message"),
+    [
+        (b"{", "Could not load"),
+        (b"[]", "must be one JSON object"),
+        (b"\xff", "Could not load"),
+    ],
+)
+def test_certificate_validator_rejects_invalid_serialized_input(
+    tmp_path: Path,
+    payload: bytes,
+    message: str,
+) -> None:
+    path = tmp_path / "certificate.json"
+    path.write_bytes(payload)
+
+    with pytest.raises(BenchmarkIntegrityError, match=message):
+        validate_certificate_record(path)
+
+
+def test_certificate_validator_rejects_missing_file(tmp_path: Path) -> None:
+    with pytest.raises(BenchmarkIntegrityError, match="Could not load"):
+        validate_certificate_record(tmp_path / "missing.json")
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("record_type", "wrong", "type drifted"),
+        ("status", "wrong", "status drifted"),
+        ("candidate_fingerprint_sha256", "BAD", "lowercase SHA-256"),
+        ("gin_tokens", [], "canonical token ledger drifted"),
+        ("mapping_boundary", {}, "mapping boundary drifted"),
+    ],
+)
+def test_certificate_validator_rejects_contract_drift(
+    tmp_path: Path,
+    field: str,
+    value,
+    message: str,
+) -> None:
+    certificate = _approved_certificate(tmp_path)
+    certificate[field] = value
+
+    with pytest.raises(BenchmarkIntegrityError, match=message):
+        validate_certificate_record(certificate)
+
+
+def test_certificate_validator_rejects_fingerprint_drift(tmp_path: Path) -> None:
+    certificate = _approved_certificate(tmp_path)
+    certificate["review_note"] = "content changed without refingerprinting"
+
+    with pytest.raises(BenchmarkIntegrityError, match="fingerprint drifted"):
+        validate_certificate_record(certificate)

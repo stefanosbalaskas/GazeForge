@@ -44,28 +44,19 @@ _EXPECTED_FILES: dict[str, dict[str, Any]] = {
         "sha256": "619da12969d04b774b9456b1b50e8cba6b21c04df33e2e90ef1c798a511d2bbc",
     },
     "lock_P2B_dialog": {
-        "path": (
-            "core/importer/eye-tracker-output/test/Tobii_exports/"
-            ".~lock.P2B-03-dialog.tsv#"
-        ),
+        "path": ("core/importer/eye-tracker-output/test/Tobii_exports/.~lock.P2B-03-dialog.tsv#"),
         "bytes": 86,
         "git_blob_sha1": "512f8242f20b8ecef29fcd45703e157f67d826c6",
         "sha256": "ba23784ed4914988227b6881b1f39fec527c9368a9a97a1377cff70f72fc327c",
     },
     "lock_P4B_dialog": {
-        "path": (
-            "core/importer/eye-tracker-output/test/Tobii_exports/"
-            ".~lock.P4B-03-dialog.tsv#"
-        ),
+        "path": ("core/importer/eye-tracker-output/test/Tobii_exports/.~lock.P4B-03-dialog.tsv#"),
         "bytes": 86,
         "git_blob_sha1": "4ccb75c30a65dea74aa221f1082c3f0a789b2515",
         "sha256": "4f3b2a34d867d5dac51348fca110a3f0f0f121dcd786665326318fca3093346a",
     },
     "lock_P6A_dialog": {
-        "path": (
-            "core/importer/eye-tracker-output/test/Tobii_exports/"
-            ".~lock.P6A-03-dialog.tsv#"
-        ),
+        "path": ("core/importer/eye-tracker-output/test/Tobii_exports/.~lock.P6A-03-dialog.tsv#"),
         "bytes": 86,
         "git_blob_sha1": "03bedf17e307276eb8d9aad5f7f8070f8121f9c5",
         "sha256": "373993fd133df932e9dd7a361cd13046aaa991a58002615f41b3e424d4a50401",
@@ -82,9 +73,7 @@ _EXPECTED_EXECUTION = {
     "probe_head_sha": "9308c79dc3f6ef9d42383e85ec2abc6bad0b783d",
     "probe_fingerprint_sha256": EXPECTED_PROBE_FINGERPRINT_SHA256,
     "artifact_id": 9957528541,
-    "artifact_zip_sha256": (
-        "cc9f139c9c7b27649fefd8a302801707bbe6dc6140f49fafd3525971a02f437d"
-    ),
+    "artifact_zip_sha256": ("cc9f139c9c7b27649fefd8a302801707bbe6dc6140f49fafd3525971a02f437d"),
 }
 _EXPECTED_UNIT_TEST = {
     "path": "core/importer/eye-tracker-output/test/test.cc",
@@ -117,16 +106,13 @@ _EXPECTED_COUNTS = {
 }
 _EXPECTED_LOCK_CONTENT = {
     "lock_P2B_dialog": (
-        "Maurice Koch,maurice,n581,21.05.2017 18:40,"
-        "file:///home/maurice/.config/libreoffice/4;"
+        "Maurice Koch,maurice,n581,21.05.2017 18:40,file:///home/maurice/.config/libreoffice/4;"
     ),
     "lock_P4B_dialog": (
-        "Maurice Koch,maurice,n581,21.05.2017 21:05,"
-        "file:///home/maurice/.config/libreoffice/4;"
+        "Maurice Koch,maurice,n581,21.05.2017 21:05,file:///home/maurice/.config/libreoffice/4;"
     ),
     "lock_P6A_dialog": (
-        "Maurice Koch,maurice,n581,21.05.2017 22:27,"
-        "file:///home/maurice/.config/libreoffice/4;"
+        "Maurice Koch,maurice,n581,21.05.2017 22:27,file:///home/maurice/.config/libreoffice/4;"
     ),
 }
 
@@ -203,13 +189,9 @@ def _require_fraction(value: Any, label: str) -> float:
     try:
         number = float(value)
     except (TypeError, ValueError) as exc:
-        raise BenchmarkIntegrityError(
-            f"VISUS event-extension {label} is not numeric."
-        ) from exc
+        raise BenchmarkIntegrityError(f"VISUS event-extension {label} is not numeric.") from exc
     if not math.isfinite(number) or not 0.0 <= number <= 1.0:
-        raise BenchmarkIntegrityError(
-            f"VISUS event-extension {label} is outside [0, 1]."
-        )
+        raise BenchmarkIntegrityError(f"VISUS event-extension {label} is outside [0, 1].")
     return number
 
 
@@ -220,18 +202,14 @@ def _files_without_urls(files: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
             raise BenchmarkIntegrityError(
                 f"VISUS event-extension source ledger {key} is malformed."
             )
-        cleaned[key] = {
-            name: item for name, item in value.items() if name != "url"
-        }
+        cleaned[key] = {name: item for name, item in value.items() if name != "url"}
     return cleaned
 
 
 def _validate_boundaries(record: Mapping[str, Any]) -> None:
     inference = record.get("stimulus_inference")
     if not isinstance(inference, Mapping):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension stimulus inference is missing."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension stimulus inference is missing.")
     _require_equal(inference.get("candidate"), "03-dialog", "stimulus candidate")
     _require_equal(
         inference.get("identity_status"),
@@ -250,9 +228,7 @@ def _validate_boundaries(record: Mapping[str, Any]) -> None:
 
     reuse = record.get("reuse_boundary")
     if not isinstance(reuse, Mapping):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension reuse boundary is missing."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension reuse boundary is missing.")
     _require_true(reuse.get("analysis_use_basis_recorded"), "analysis-use basis")
     _require_false(
         reuse.get("source_license_resolved"),
@@ -269,9 +245,7 @@ def _validate_boundaries(record: Mapping[str, Any]) -> None:
 
     boundary = record.get("scientific_boundary")
     if not isinstance(boundary, Mapping):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension scientific boundary is missing."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension scientific boundary is missing.")
     _require_true(
         boundary.get("real_external_tobii_60hz_exports"),
         "real Tobii 60 Hz status",
@@ -304,6 +278,8 @@ def _validate_participants(participants: Any) -> list[dict[str, Any]]:
         raise BenchmarkIntegrityError(
             "VISUS event-extension requires exactly two participant records."
         )
+    if any(not isinstance(row, Mapping) for row in participants):
+        raise BenchmarkIntegrityError("VISUS event-extension participant record must be an object.")
     _require_equal(
         tuple(str(row.get("participant")) for row in participants),
         ("P5B", "P3A"),
@@ -373,18 +349,12 @@ def _validate_aggregate(
 ) -> None:
     aggregate = record.get("aggregate")
     if not isinstance(aggregate, Mapping):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension aggregate is missing."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension aggregate is missing.")
     expected = {
         "participant_count": len(participants),
         "sample_count": sum(int(row["sample_count"]) for row in participants),
-        "valid_both_eye_samples": sum(
-            int(row["valid_both_eye_samples"]) for row in participants
-        ),
-        "fixation_event_count": sum(
-            int(row["fixation_event_count"]) for row in participants
-        ),
+        "valid_both_eye_samples": sum(int(row["valid_both_eye_samples"]) for row in participants),
+        "fixation_event_count": sum(int(row["fixation_event_count"]) for row in participants),
         "total_fixation_duration_ms": sum(
             int(row["total_fixation_duration_ms"]) for row in participants
         ),
@@ -396,8 +366,7 @@ def _validate_aggregate(
         expected["valid_both_eye_samples"] / expected["sample_count"]
     )
     expected["on_screen_fixation_fraction"] = (
-        expected["fixations_with_on_screen_mapped_point"]
-        / expected["fixation_event_count"]
+        expected["fixations_with_on_screen_mapped_point"] / expected["fixation_event_count"]
     )
     _require_equal(set(aggregate), set(expected), "aggregate fields")
     for key, value in expected.items():
@@ -428,15 +397,13 @@ def _validate_aggregate(
 
 def _validate_locks(locks: Any) -> None:
     if not isinstance(locks, list) or len(locks) != 3:
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension requires three provenance lockfiles."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension requires three provenance lockfiles.")
+    if any(not isinstance(row, Mapping) for row in locks):
+        raise BenchmarkIntegrityError("VISUS event-extension lockfile record must be an object.")
     for row in locks:
         key = str(row.get("ledger_key"))
         if key not in _EXPECTED_LOCK_CONTENT:
-            raise BenchmarkIntegrityError(
-                f"Unexpected VISUS Dialog lockfile ledger key: {key}"
-            )
+            raise BenchmarkIntegrityError(f"Unexpected VISUS Dialog lockfile ledger key: {key}")
         _require_equal(
             row.get("content"),
             _EXPECTED_LOCK_CONTENT[key],
@@ -464,9 +431,7 @@ def validate_visus_public_event_extension_evidence(
 
     upstream = record.get("upstream")
     if not isinstance(upstream, Mapping):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension upstream identity is missing."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension upstream identity is missing.")
     _require_equal(
         upstream.get("repository"),
         UPSTREAM_REPOSITORY,
@@ -487,9 +452,7 @@ def validate_visus_public_event_extension_evidence(
 
     coverage = record.get("coverage")
     if not isinstance(coverage, Mapping):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension coverage is missing."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension coverage is missing.")
     _require_equal(
         tuple(coverage.get("participants", [])),
         ("P5B", "P3A"),
@@ -529,9 +492,7 @@ def validate_visus_public_event_extension_evidence(
 
     duration = record.get("duration_semantics")
     if not isinstance(duration, Mapping):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension duration semantics are missing."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension duration semantics are missing.")
     _require_equal(
         int(duration.get("exported_fixation_duration_sum_ms", -1)),
         39614,
@@ -550,13 +511,9 @@ def validate_visus_public_event_extension_evidence(
     stored = str(record.get("evidence_fingerprint_sha256", ""))
     calculated = evidence_fingerprint(record)
     if stored != calculated:
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension evidence self-fingerprint is invalid."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension evidence self-fingerprint is invalid.")
     if stored != EXPECTED_EVIDENCE_FINGERPRINT_SHA256:
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension immutable v1 fingerprint drifted."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension immutable v1 fingerprint drifted.")
     return record
 
 
@@ -576,13 +533,9 @@ def validate_visus_public_event_extension_probe(
     _require_equal(probe.get("status"), "probe_only", "probe status")
     stored_probe = str(probe.get("probe_fingerprint_sha256", ""))
     if stored_probe != _probe_fingerprint(probe):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension live probe fingerprint is invalid."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension live probe fingerprint is invalid.")
     if stored_probe != EXPECTED_PROBE_FINGERPRINT_SHA256:
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension live probe drifted from frozen v1."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension live probe drifted from frozen v1.")
 
     upstream = probe.get("upstream")
     if not isinstance(upstream, Mapping):
@@ -601,9 +554,7 @@ def validate_visus_public_event_extension_probe(
     )
     probe_files = upstream.get("files")
     if not isinstance(probe_files, Mapping):
-        raise BenchmarkIntegrityError(
-            "VISUS event-extension live probe source ledger is missing."
-        )
+        raise BenchmarkIntegrityError("VISUS event-extension live probe source ledger is missing.")
     _require_equal(
         _files_without_urls(probe_files),
         evidence["upstream"]["files"],
@@ -657,9 +608,7 @@ def load_visus_public_event_extension_evidence(
         participant_count=int(validated["coverage"]["participant_count"]),
         sample_count=int(validated["aggregate"]["sample_count"]),
         fixation_event_count=int(validated["aggregate"]["fixation_event_count"]),
-        observed_sampling_rate_hz=float(
-            participants[0]["inferred_sampling_rate_hz"]
-        ),
+        observed_sampling_rate_hz=float(participants[0]["inferred_sampling_rate_hz"]),
         stimulus_candidate=str(validated["stimulus_inference"]["candidate"]),
         stimulus_identity_resolved=bool(
             validated["stimulus_inference"]["stimulus_identity_resolved"]

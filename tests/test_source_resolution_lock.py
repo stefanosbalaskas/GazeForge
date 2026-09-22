@@ -4,10 +4,15 @@ from pathlib import Path
 
 import pytest
 
+import gazeforge.source_resolution_lock as source_lock
 from gazeforge.exceptions import BenchmarkIntegrityError
 from gazeforge.source_resolution_cli import main as source_resolution_main
 from gazeforge.source_resolution_discovery import discover_source_resolution_paths
 from gazeforge.source_resolution_lock import (
+    _fingerprint,
+    _require_hex,
+    _require_review_basis,
+    _validated_lock_records,
     build_source_resolution_bundle_lock,
     load_source_resolution_bundle_lock,
     validate_source_resolution_bundle_lock,
@@ -62,8 +67,7 @@ def test_committed_lock_validates_and_loads_typed_identity():
         "22bbdef6e6f2823d10c84fd099596700d9db19c54aecfb76484c7625fd9ebb08"
     )
     assert records["hollywood2em"]["status"] == (
-        "canonical_repository_and_ground_truth_recovered_terms_and_participant_"
-        "mapping_unresolved"
+        "canonical_repository_and_ground_truth_recovered_terms_and_participant_mapping_unresolved"
     )
 
 
@@ -102,19 +106,11 @@ def test_lock_is_governance_only_even_when_a_checkpoint_references_empirical_evi
 
 
 def test_cli_can_require_reviewed_bundle_lock(capsys):
-    assert (
-        source_resolution_main(
-            ["--directory", str(PROTOCOLS), "--lock", str(LOCK)]
-        )
-        == 0
-    )
+    assert source_resolution_main(["--directory", str(PROTOCOLS), "--lock", str(LOCK)]) == 0
     payload = json.loads(capsys.readouterr().out)
 
     assert payload["validation_bundle"]["record_count"] == 3
-    records = {
-        row["dataset_key"]: row
-        for row in payload["validation_bundle"]["records"]
-    }
+    records = {row["dataset_key"]: row for row in payload["validation_bundle"]["records"]}
     assert records["hollywood2em"]["empirical_evidence_created"] is True
     assert payload["bundle_lock"]["matches_current_bundle"] is True
     assert payload["bundle_lock"]["scientific_boundary"]["authorizes_source_audit_ready"] is False
@@ -124,3 +120,229 @@ def test_cli_lock_requires_directory():
     checkpoint = PROTOCOLS / "visus-source-resolution-2026-09-04.json"
     with pytest.raises(SystemExit):
         source_resolution_main([str(checkpoint), "--lock", str(LOCK)])
+
+
+def _write_lock(path: Path, payload: dict) -> Path:
+    payload["lock_fingerprint_sha256"] = _fingerprint(payload)
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
+def _built_lock() -> dict:
+    return build_source_resolution_bundle_lock(
+        PROTOCOLS,
+        reviewed_on="2026-09-05",
+        review_basis=REVIEW_BASIS,
+    )
+
+
+def test_lock_hash_helper_normalizes_and_rejects_invalid_values():
+    assert _require_hex("A" * 64, field="hash") == "a" * 64
+
+    for value in ("abc", "g" * 64):
+        with pytest.raises(BenchmarkIntegrityError, match="64 hexadecimal digits"):
+            _require_hex(value, field="hash")
+
+
+@pytest.mark.parametrize("value", [None, [], "review", [""]])
+def test_lock_review_basis_rejects_missing_or_blank_entries(value):
+    with pytest.raises(BenchmarkIntegrityError, match="review_basis"):
+        _require_review_basis(value)
+
+
+def test_lock_review_basis_strips_reviewed_entries():
+    assert _require_review_basis([" reviewed ", " source audit "]) == (
+        "reviewed",
+        "source audit",
+    )
+
+
+@pytest.mark.parametrize("value", [None, [], "records"])
+def test_lock_record_validation_requires_nonempty_list(value):
+    with pytest.raises(BenchmarkIntegrityError, match="record identities"):
+        _validated_lock_records(value)
+
+
+def test_lock_record_validation_rejects_nonobject_missing_and_duplicate_rows():
+    with pytest.raises(BenchmarkIntegrityError, match="JSON objects"):
+        _validated_lock_records(["not-a-record"])
+
+    with pytest.raises(BenchmarkIntegrityError, match="dataset_key and status"):
+        _validated_lock_records(
+            [
+                {
+                    "dataset_key": "visus",
+                    "status": "",
+                    "record_fingerprint_sha256": "a" * 64,
+                }
+            ]
+        )
+
+    duplicate = [
+        {
+            "dataset_key": "visus",
+            "status": "review",
+            "record_fingerprint_sha256": "a" * 64,
+        },
+        {
+            "dataset_key": "visus",
+            "status": "review",
+            "record_fingerprint_sha256": "b" * 64,
+        },
+    ]
+    with pytest.raises(BenchmarkIntegrityError, match="duplicate dataset identities"):
+        _validated_lock_records(duplicate)
+
+
+def test_lock_record_validation_sorts_and_normalizes_hashes():
+    records = _validated_lock_records(
+        [
+            {
+                "dataset_key": "visus",
+                "status": "review",
+                "record_fingerprint_sha256": "B" * 64,
+            },
+            {
+                "dataset_key": "gaze-in-the-wild",
+                "status": "pending",
+                "record_fingerprint_sha256": "A" * 64,
+            },
+        ]
+    )
+
+    assert [row["dataset_key"] for row in records] == [
+        "gaze-in-the-wild",
+        "visus",
+    ]
+    assert records[0]["record_fingerprint_sha256"] == "a" * 64
+    assert records[1]["record_fingerprint_sha256"] == "b" * 64
+
+
+def test_lock_builder_rejects_invalid_date_and_review_basis():
+    with pytest.raises(BenchmarkIntegrityError, match="ISO date"):
+        build_source_resolution_bundle_lock(
+            PROTOCOLS,
+            reviewed_on="not-a-date",
+            review_basis=REVIEW_BASIS,
+        )
+
+    for basis in ([], [""]):
+        with pytest.raises(BenchmarkIntegrityError, match="review_basis cannot be empty"):
+            build_source_resolution_bundle_lock(
+                PROTOCOLS,
+                reviewed_on="2026-09-05",
+                review_basis=basis,
+            )
+
+
+def test_lock_validation_rejects_missing_invalid_and_nonobject_files(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        validate_source_resolution_bundle_lock(tmp_path / "missing.json", PROTOCOLS)
+
+    invalid_utf8 = tmp_path / "invalid-utf8.json"
+    invalid_utf8.write_bytes(b"\xff")
+    with pytest.raises(BenchmarkIntegrityError, match="valid UTF-8 JSON"):
+        validate_source_resolution_bundle_lock(invalid_utf8, PROTOCOLS)
+
+    invalid_json = tmp_path / "invalid.json"
+    invalid_json.write_text("{", encoding="utf-8")
+    with pytest.raises(BenchmarkIntegrityError, match="valid UTF-8 JSON"):
+        validate_source_resolution_bundle_lock(invalid_json, PROTOCOLS)
+
+    array_json = tmp_path / "array.json"
+    array_json.write_text("[]", encoding="utf-8")
+    with pytest.raises(BenchmarkIntegrityError, match="must be a JSON object"):
+        validate_source_resolution_bundle_lock(array_json, PROTOCOLS)
+
+
+def test_lock_validation_rejects_metadata_contract_corruption(tmp_path):
+    cases = [
+        ("lock_type", "wrong", "lock_type"),
+        ("reviewed_on", "bad-date", "ISO date"),
+        ("review_basis", [], "review_basis"),
+        ("scientific_boundary", {}, "scientific_boundary"),
+        ("records", [], "record identities"),
+        ("record_count", True, "positive integer"),
+        ("record_count", 0, "positive integer"),
+        ("bundle_fingerprint_sha256", "bad", "64 hexadecimal digits"),
+        ("lock_fingerprint_sha256", "bad", "64 hexadecimal digits"),
+    ]
+
+    for index, (field, value, message) in enumerate(cases):
+        payload = _built_lock()
+        payload[field] = value
+        path = tmp_path / f"invalid-{index}.json"
+        if field == "lock_fingerprint_sha256":
+            path.write_text(json.dumps(payload), encoding="utf-8")
+        else:
+            _write_lock(path, payload)
+        with pytest.raises(BenchmarkIntegrityError, match=message):
+            validate_source_resolution_bundle_lock(path, PROTOCOLS)
+
+
+def test_lock_validation_rejects_declared_record_count_mismatch(tmp_path):
+    payload = _built_lock()
+    payload["record_count"] += 1
+    path = _write_lock(tmp_path / "count.json", payload)
+
+    with pytest.raises(BenchmarkIntegrityError, match="does not match its record identity list"):
+        validate_source_resolution_bundle_lock(path, PROTOCOLS)
+
+
+def test_lock_validation_rejects_content_fingerprint_mismatch(tmp_path):
+    payload = _built_lock()
+    payload["review_basis"].append("tampered after fingerprinting")
+    path = tmp_path / "fingerprint.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(BenchmarkIntegrityError, match="fingerprint does not match"):
+        validate_source_resolution_bundle_lock(path, PROTOCOLS)
+
+
+def test_lock_validation_rejects_current_bundle_count_and_record_drift(
+    tmp_path,
+    monkeypatch,
+):
+    payload = _built_lock()
+    path = _write_lock(tmp_path / "lock.json", payload)
+    original_bundle = source_lock.validate_source_resolution_directory(PROTOCOLS)
+
+    count_drift = dict(original_bundle)
+    count_drift["record_count"] = int(payload["record_count"]) + 1
+    monkeypatch.setattr(
+        source_lock,
+        "validate_source_resolution_directory",
+        lambda directory: count_drift,
+    )
+    with pytest.raises(BenchmarkIntegrityError, match="checkpoint count differs"):
+        validate_source_resolution_bundle_lock(path, PROTOCOLS)
+
+    record_drift = dict(original_bundle)
+    record_drift["records"] = [dict(row) for row in original_bundle["records"]]
+    record_drift["records"][0]["status"] = "reviewed-but-different"
+    monkeypatch.setattr(
+        source_lock,
+        "validate_source_resolution_directory",
+        lambda directory: record_drift,
+    )
+    with pytest.raises(BenchmarkIntegrityError, match="record identities differ"):
+        validate_source_resolution_bundle_lock(path, PROTOCOLS)
+
+
+def test_lock_validation_rejects_current_bundle_fingerprint_drift(
+    tmp_path,
+    monkeypatch,
+):
+    payload = _built_lock()
+    path = _write_lock(tmp_path / "lock.json", payload)
+    changed = source_lock.validate_source_resolution_directory(PROTOCOLS)
+    changed = dict(changed)
+    changed["bundle_fingerprint_sha256"] = "f" * 64
+    monkeypatch.setattr(
+        source_lock,
+        "validate_source_resolution_directory",
+        lambda directory: changed,
+    )
+
+    with pytest.raises(BenchmarkIntegrityError, match="changed since the reviewed lock"):
+        validate_source_resolution_bundle_lock(path, PROTOCOLS)

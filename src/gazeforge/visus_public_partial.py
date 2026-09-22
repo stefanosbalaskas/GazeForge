@@ -253,6 +253,8 @@ def validate_visus_public_partial_evidence(
         raise BenchmarkIntegrityError(
             "VISUS public partial evidence must contain exactly three participant records."
         )
+    if any(not isinstance(row, Mapping) for row in participants):
+        raise BenchmarkIntegrityError("VISUS public partial participant record must be an object.")
     _require_equal(
         tuple(str(row.get("participant")) for row in participants),
         _EXPECTED_PARTICIPANTS,
