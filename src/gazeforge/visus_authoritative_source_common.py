@@ -233,8 +233,8 @@ def _resolved_text(value: Any, *, label: str) -> str:
 
 
 def _sha256_value(value: Any, *, label: str) -> str:
-    text = str(value).strip().lower()
-    if _SHA256_RE.fullmatch(text) is None:
+    text = str(value).strip()
+    if text != text.lower() or _SHA256_RE.fullmatch(text) is None:
         raise BenchmarkIntegrityError(
             f"VISUS source authority {label} must be a lowercase SHA-256 digest."
         )
@@ -296,9 +296,7 @@ def _validate_source_manifest(
         raise BenchmarkIntegrityError("VISUS source manifest record type drifted.")
     _resolved_text(manifest.get("source_reference"), label="source_reference")
     _resolved_text(manifest.get("source_revision"), label="source_revision")
-    _resolved_text(
-        manifest.get("rights_evidence_reference"), label="rights_evidence_reference"
-    )
+    _resolved_text(manifest.get("rights_evidence_reference"), label="rights_evidence_reference")
     authority = str(manifest.get("source_authority_claim", "")).strip().lower()
     if authority not in _ALLOWED_AUTHORITY_CLAIMS:
         raise BenchmarkIntegrityError("VISUS source_authority_claim is unsupported.")
@@ -306,24 +304,34 @@ def _validate_source_manifest(
         raise BenchmarkIntegrityError(
             "VISUS source intake requires an authorized-channel affirmation."
         )
-    if _sha256_value(
-        manifest.get("source_artifact_sha256"), label="source_artifact_sha256"
-    ) != source_sha256:
+    if (
+        _sha256_value(manifest.get("source_artifact_sha256"), label="source_artifact_sha256")
+        != source_sha256
+    ):
         raise BenchmarkIntegrityError(
             "VISUS source artifact bytes do not match the declared SHA-256."
         )
-    if _sha256_value(
-        manifest.get("rights_evidence_sha256"), label="rights_evidence_sha256"
-    ) != rights_sha256:
+    if (
+        _sha256_value(manifest.get("rights_evidence_sha256"), label="rights_evidence_sha256")
+        != rights_sha256
+    ):
         raise BenchmarkIntegrityError(
             "VISUS rights evidence bytes do not match the declared SHA-256."
         )
-    if _sha256_value(
-        manifest.get("inventory_fingerprint_sha256"),
-        label="inventory_fingerprint_sha256",
-    ) != inventory_fingerprint_sha256:
+    if (
+        _sha256_value(
+            manifest.get("inventory_fingerprint_sha256"),
+            label="inventory_fingerprint_sha256",
+        )
+        != inventory_fingerprint_sha256
+    ):
         raise BenchmarkIntegrityError(
             "VISUS source-tree inventory does not match the declared fingerprint."
         )
-    if manifest.get("file_count") != file_count:
+    declared_file_count = manifest.get("file_count")
+    if (
+        not isinstance(declared_file_count, int)
+        or isinstance(declared_file_count, bool)
+        or declared_file_count != file_count
+    ):
         raise BenchmarkIntegrityError("VISUS source manifest file count drifted.")
