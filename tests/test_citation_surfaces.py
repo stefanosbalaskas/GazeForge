@@ -53,10 +53,10 @@ def test_release_metadata_remains_release_specific() -> None:
     cff = _read("CITATION.cff")
     zenodo = json.loads(_read(".zenodo.json"))
 
-    assert "version: 0.1.0a1" in cff
-    assert 'doi: "10.5281/zenodo.22650013"' in cff
-    assert zenodo["version"] == "0.1.0a1"
-    assert "0.1.0a1" in zenodo["description"]
+    assert "version: 0.1.0a2" in cff
+    assert 'doi: "10.5281/zenodo.22650012"' in cff
+    assert zenodo["version"] == "0.1.0a2"
+    assert "0.1.0a2" in zenodo["description"]
 
 
 def test_citation_surface_is_discoverable_from_site_entry_points() -> None:

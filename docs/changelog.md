@@ -2,4 +2,150 @@
 
 > **Release boundary:** entries under **Unreleased** describe repository development and are not part of the immutable `0.1.0a1` PyPI/Zenodo artifact. For installation and artifact identity, see [Release & install](release-install.md).
 
-This page is regenerated from the repository-root `CHANGELOG.md` during every MkDocs build.
+All notable changes to GazeForge will be documented here.
+
+The project follows semantic versioning once stable releases begin. Alpha versions may change APIs
+while validation evidence is being established.
+
+## Unreleased
+
+## 0.1.0a2 - 2026-09-22
+
+### Added
+
+- Source-audit-aware VISUS model prediction intake that binds frame-indexed detector/tracker output
+  to exact audited video identities, requires explicit model/version/output provenance, coordinate
+  units and frame indexing, validates geometry and track identities, fingerprints model/output/source
+  metadata, and returns model-labelled `DynamicAOIKeyframe` mappings. Prediction emission frames are
+  explicitly not treated as the evaluation timestamp grid, and the intake creates no performance
+  evidence by itself.
+- Source-audit-aware VISUS canonical AOI intake that links every extracted row to an exact audited
+  AOI XML path and verified stimulus/stream identity, requires explicit 0- or 1-based frame indexing,
+  converts frames to timestamps from the audited video rate, validates geometry and track invariants,
+  fingerprints input/canonical tables, and returns stream/stimulus `DynamicAOIKeyframe` mappings.
+  The intake deliberately does not guess the historical ViPER XML schema or create empirical claims.
+- Guarded VISUS human-human dynamic-AOI agreement that is unusable unless the source audit explicitly
+  verifies separately recoverable independent annotation streams, evaluates both directional
+  reference assignments, fingerprints human AOI inputs and shared external timestamp grids, and
+  optionally measures fixation-assignment agreement without treating either human stream as ground
+  truth. This remains infrastructure until a real authoritative source proves stream independence.
+- Source-audit-aware VISUS model-human dynamic-AOI validation with complete audited-stimulus
+  coverage, explicit manifested human-reference stream and external timestamp-grid provenance,
+  gap-limited/no-extrapolation evaluation, geometry/semantic metrics, optional fixation-assignment
+  agreement, and deterministic source/grid fingerprints. This remains infrastructure until run on
+  an independently audited authoritative VISUS copy.
+- VISUS authoritative-copy audit infrastructure with exact recursive file manifests, SHA-256 and
+  byte-size verification, explicit video/gaze/AOI roles, stimulus and participant identity gates,
+  coordinate/timestamp/reuse evidence requirements, published acquisition consistency checks, and
+  deterministic source/report fingerprints. The audit also corrects a provenance assumption in the
+  earlier candidate protocol: the published two-person AOI annotation process is not treated as two
+  independent human-reference streams. Human-human agreement remains blocked unless separately
+  manifested independent streams are actually verified from an authoritative copy.
+- Source-audit-aware Gaze-in-the-Wild participant-held-out model-validation infrastructure that
+  revalidates source fingerprints, requires an audited pixel-kinematics basis, downsamples each
+  source file independently from its timestamp-inferred cadence without upsampling, preserves
+  invalid gaze as interpolation breaks, compares matched-fold I-VT/RandomForest/ContextMLP models,
+  reports sample- and event-class sensitivity, and supports only explicitly supplied fingerprinted
+  task mappings. This remains infrastructure until run on an independently audited authoritative
+  corpus; no Gaze-in-the-Wild or GP3-specific performance claim is created by the implementation.
+- Source-audit-aware Gaze-in-the-Wild human-human agreement infrastructure with source-fingerprint
+  revalidation, complete-overlap guardrails, one-to-one gaze/sample identity checks, all-label and
+  analysis-label agreement, per-trial timestamp-inferred sampling rates, invalid/unlabelled temporal
+  separators, and bidirectional event-boundary metrics. This is analysis infrastructure only; no
+  empirical labeller-agreement result is claimed without an independently audited external copy.
+- Gaze-in-the-Wild authoritative-copy audit infrastructure with exact LabelData/ProcessData MATLAB
+  manifests, SHA-256/byte-size verification, participant/trial/labeller mappings, coordinate-unit
+  evidence, analysis/reuse provenance separated from redistribution status, per-file timestamp-
+  inferred sampling-rate ledgers, multi-labeller gaze-identity verification, deterministic source
+  fingerprints, and a deliberately non-executable source-audit template.
+- Hollywood2EM authoritative-copy audit infrastructure with exact ARFF inventory checks, per-file
+  SHA-256/byte-size verification, explicit participant/trial mapping, coordinate-unit evidence,
+  reuse/analysis provenance kept separate from redistribution status, student/expert gaze-identity
+  verification, deterministic audit fingerprints, and a deliberately non-executable source-audit
+  template. This closes an infrastructure gap only; no Hollywood2EM empirical audit or performance
+  result is claimed without a real independently reviewed external data copy.
+- Three-report native event validation-suite orchestration that computes human-human agreement,
+  primary-annotator model validation, and second-annotator sensitivity before freezing any report;
+  cross-checks source/spec fingerprints; writes the completion manifest last; validates exact child
+  inventory, safe paths, and report fingerprints; and exposes `native-event-suite` plus
+  `native-event-suite-validate` CLI commands. The suite remains infrastructure until run on a real
+  audited native corpus.
+- Native-rate human-human event agreement with complete sample/gaze-identity verification,
+  all-label and analysis-label sample agreement, bidirectional event-boundary metrics, source/spec
+  fingerprints, and the `gazeforge native-event-agreement` CLI. This adds infrastructure only;
+  no GP3-specific human-agreement result is claimed until a real expert-labelled corpus is run.
+- Native-rate human event benchmark intake with explicit JSON evidence specifications, global and
+  per-participant/trial sampling-rate verification, multi-annotator stream selection, source/spec
+  SHA-256 provenance, matched participant-held-out I-VT/RandomForest/ContextMLP validation, and the
+  `gazeforge native-event-benchmark` CLI. The bundled 60 Hz protocol is a non-executable template;
+  no native GP3 performance claim is created until a real expert-labelled corpus is supplied.
+- First reviewed and merged external empirical evidence suite from the pinned Lund2013 corpus:
+  native/derived MN–RA human agreement, derived-60-Hz RA participant-held-out I-VT/RandomForest/
+  ContextMLP comparison, MN annotator sensitivity, stimulus-family summaries, and a 120/90/60/30-Hz
+  × .60/.75/.90 boundary-purity sensitivity surface. All five reports and the completion manifest
+  are fingerprinted; raw MATLAB benchmark files remain external.
+- Canonical vendor-neutral gaze schema and sampling-rate inference.
+- Gazepoint and explicit processed-table adapters.
+- Auditable Isolation-Forest QC flags and trial-quality summaries.
+- Probabilistic event-model API with sampling-rate compatibility guardrails.
+- Boundary-safe temporal-context MLP event classifier with probabilistic abstention metadata.
+- I-VT baseline event classifier.
+- Geometry-normalized angular I-VT baseline with explicit degrees/second thresholds.
+- Semantic AOI provider API, optional OWL-ViT provider, human review, and fixation mapping.
+- Dynamic AOI keyframes, provider protocol, gap-limited interpolation, and temporal fixation mapping.
+- Dynamic AOI track evaluation with explicit timestamp grids, Hungarian IoU matching, and
+  fixation-assignment agreement.
+- Semantic scanpaths, motifs, TF-IDF/SVD embeddings, similarity, and clustering.
+- Participant/group-held-out and leave-one-dataset-out validation.
+- Matched-fold comparison of I-VT, Random Forest, and temporal-context event models.
+- Descriptive matched-fold model differences with raw and direction-normalized deltas,
+  win/tie/loss counts, identical-fold guardrails, and no naive cross-validation p-values or CIs.
+- Post-hoc out-of-fold stratified event performance with sample, calibration, and temporal-event
+  metrics, explicit fold/group counts, and no model refitting by stratum.
+- Lund2013 stimulus-family performance for image, moving-dot, and video recordings, embedded in
+  the same RA/MN participant-held-out benchmark reports and suite artifacts.
+- Event-level temporal IoU matching, event precision/recall/F1, and onset/offset/duration error
+  metrics integrated into matched-fold and cross-dataset validation.
+- Sampling-rate × label-purity sensitivity surfaces with complete ambiguity/retention ledgers,
+  non-evaluable-setting provenance, and matched sample/event model metrics.
+- Lund2013 sampling-rate × label-purity sensitivity runner and frozen-report CLI.
+- Explicit pinned Lund2013 fetch/cache command with Git-blob SHA/size verification and a
+  fingerprinted local source manifest; raw benchmark files remain external.
+- Run-time Lund source-manifest and local-file revalidation bound into agreement, primary benchmark,
+  and sampling-sensitivity provenance when a GazeForge source manifest is present.
+- One-command Lund2013 validation-suite orchestration that freezes native/60 Hz human agreement,
+  RA primary modelling, MN annotator sensitivity, and RA sampling×purity sensitivity before writing
+  a deterministic suite-completion manifest.
+- Post-freeze Lund2013 suite verification that checks the completion manifest, exact five-report
+  inventory, pinned source identity, safe child paths, and every referenced report fingerprint.
+- Verified Lund suite status in the public benchmark dashboard while preserving child reports as
+  separate empirical evidence rows.
+- Generated Frozen Evidence detail tables for validated model performance, paired fold differences,
+  stimulus-family performance, human agreement, and sampling×purity sensitivity without manually
+  transcribing benchmark values into website Markdown.
+- One-shot/manual Lund2013 empirical GitHub Actions workflow that fetches the pinned external corpus,
+  executes and revalidates the complete suite, uploads JSON evidence, blocks raw MATLAB files from
+  the evidence tree, and pushes a dedicated evidence-only branch for scientific review.
+- GitHub Pages rebuild triggers for committed validation evidence and the evidence-rendering code,
+  so reviewed evidence automatically regenerates the public Frozen Evidence page after merge.
+- Native Lund2013 MATLAB benchmark ingestion with original expert event-code mapping.
+- Label-purity-aware lower-rate benchmark resampling with explicit ambiguous boundary samples.
+- MN-vs-RA sample-label agreement and a fingerprinted Lund2013 60 Hz benchmark runner/CLI.
+- AOI IoU/matching, semantic-label agreement, fixation-assignment agreement, and boundary
+  sensitivity metrics.
+- Multiclass Brier score, ECE/reliability bins, and confidence-versus-coverage diagnostics.
+- Data fingerprints, audit trails, model cards, benchmark dataset cards, and frozen report
+  fingerprints.
+- Benchmark evidence-strength taxonomy with native/resampled and human/algorithmic guardrails.
+- External benchmark catalog entries for VISUS dynamic AOIs, Hollywood2 manual events, and
+  Gaze-in-the-Wild hand-labelled naturalistic events.
+- Hollywood2EM ARFF ingestion with explicit student/expert labels and unresolved-identity and
+  coordinate-evidence guardrails.
+- Cross-dataset Lund2013/Hollywood2 preparation and leave-one-dataset-out RF/ContextMLP validation
+  with coordinate, participant-identity, resampling, and label-harmonisation guardrails.
+- Gaze-in-the-Wild MATLAB ingestion with file-timestamp sampling-rate inference, confidence-based
+  track loss, explicit participant identity, and single-labeller modelling-table guardrails.
+- MkDocs Material website with getting-started, validation-status, benchmark, and API navigation.
+- Conditional GitHub Pages deployment workflow that strict-builds even before Pages is enabled.
+- Redesigned repository README as a scientific project front page.
+- Synthetic gaze generation, tests, CI matrix, and documentation infrastructure.

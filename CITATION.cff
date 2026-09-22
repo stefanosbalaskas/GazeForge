@@ -7,9 +7,9 @@ authors:
     given-names: Stefanos
     orcid: "https://orcid.org/0000-0003-2444-9796"
     affiliation: "University of Patras"
-version: 0.1.0a1
-date-released: 2026-09-07
-doi: "10.5281/zenodo.22650013"
+version: 0.1.0a2
+date-released: 2026-09-22
+doi: "10.5281/zenodo.22650012"
 license: MIT
 repository-code: "https://github.com/stefanosbalaskas/GazeForge"
 url: "https://github.com/stefanosbalaskas/GazeForge"
