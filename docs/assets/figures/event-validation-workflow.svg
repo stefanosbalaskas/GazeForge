@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
+<title id="title">Event-model validation workflow</title>
+<desc id="desc">Reference labels and grouping identity lead to grouped train-test splits, fitting, held-out predictions, calibration and event-level metrics, then a bounded claim.</desc>
+<style>.bg{fill:#fff}.box{fill:#eef2ff;stroke:#4f46e5;stroke-width:2}.accent{fill:#ecfeff;stroke:#0891b2;stroke-width:2}.warn{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.line{stroke:#64748b;stroke-width:3;fill:none}.title{font:700 22px system-ui,sans-serif;fill:#0f172a}.label{font:650 16px system-ui,sans-serif;fill:#0f172a}.small{font:14px system-ui,sans-serif;fill:#334155}@media(prefers-color-scheme:dark){.bg{fill:#0f172a}.box{fill:#1e293b;stroke:#818cf8}.accent{fill:#164e63;stroke:#22d3ee}.warn{fill:#431407;stroke:#fb923c}.line{stroke:#94a3b8}.title,.label{fill:#f8fafc}.small{fill:#cbd5e1}}</style>
+<rect class="bg" width="1200" height="400" rx="24"/>
+<text class="title" x="55" y="55">Event-model validation</text>
+<rect class="box" x="55" y="130" width="175" height="105" rx="16"/><text class="label" x="142" y="168" text-anchor="middle">Reference labels</text><text class="small" x="142" y="198" text-anchor="middle">+ group identity</text>
+<path class="line" d="M230 182 H285"/>
+<rect class="accent" x="285" y="130" width="175" height="105" rx="16"/><text class="label" x="372" y="168" text-anchor="middle">Grouped split</text><text class="small" x="372" y="198" text-anchor="middle">held-out unit</text>
+<path class="line" d="M460 182 H515"/>
+<rect class="box" x="515" y="130" width="175" height="105" rx="16"/><text class="label" x="602" y="168" text-anchor="middle">Fit model</text><text class="small" x="602" y="198" text-anchor="middle">training only</text>
+<path class="line" d="M690 182 H745"/>
+<rect class="accent" x="745" y="130" width="175" height="105" rx="16"/><text class="label" x="832" y="168" text-anchor="middle">Held-out output</text><text class="small" x="832" y="198" text-anchor="middle">predictions + confidence</text>
+<path class="line" d="M920 182 H975"/>
+<rect class="warn" x="975" y="130" width="175" height="105" rx="16"/><text class="label" x="1062" y="168" text-anchor="middle">Bounded claim</text><text class="small" x="1062" y="198" text-anchor="middle">metrics + limits</text>
+<text class="small" x="600" y="305" text-anchor="middle">Participant/source/dataset separation must match the population that the claim is intended to generalise to.</text>
+</svg>
