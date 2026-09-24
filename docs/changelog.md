@@ -9,8 +9,7 @@ while validation evidence is being established.
 
 ## Unreleased
 
-## 0.1.0a2 - 2026-09-22
-
+## 0.1.0a2 - 2026-09-24
 ### Added
 
 - Source-audit-aware VISUS model prediction intake that binds frame-indexed detector/tracker output

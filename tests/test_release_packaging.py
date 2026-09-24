@@ -26,7 +26,7 @@ def test_current_alpha_release_metadata_is_synchronized() -> None:
 
     cff = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert re.search(r"(?m)^version:\s*0\.1\.0a2\s*$", cff)
-    assert re.search(r"(?m)^date-released:\s*2026-09-22\s*$", cff)
+    assert re.search(r"(?m)^date-released:\s*2026-09-24\s*$", cff)
     assert re.search(r'(?m)^doi:\s*"10\.5281/zenodo\.22650012"\s*$', cff)
     assert "https://orcid.org/0000-0003-2444-9796" in cff
 
