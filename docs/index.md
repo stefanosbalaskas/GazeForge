@@ -53,8 +53,8 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
 <div class="gf-status-strip">
   <div class="gf-status-card">
     <span class="gf-status-kicker">Release</span>
-    <strong>0.1.0a1</strong>
-    <span>Public alpha on PyPI and Zenodo.</span>
+    <strong>0.1.0a2</strong>
+    <span>Current alpha release line with auditable workflows, validation surfaces, and reproducible research outputs.</span>
   </div>
   <div class="gf-status-card">
     <span class="gf-status-kicker">Evidence status</span>
@@ -71,6 +71,24 @@ GazeForge keeps predictions, confidence, model identity, sampling-rate assumptio
     <strong>3 Python × 3 OS</strong>
     <span>Python 3.10, 3.12, and 3.14 on Linux, macOS, and Windows.</span>
   </div>
+</div>
+
+## Explore by what you need to do
+
+<div class="gf-explore-grid" markdown>
+
+<a class="gf-explore-card" href="articles/"><strong>Articles</strong><span>Methodological explanations for the decisions that matter before calling a gaze result evidence.</span></a>
+
+<a class="gf-explore-card" href="examples-gallery/"><strong>Worked examples</strong><span>Browse runnable workflows from synthetic QC through study handoff, robustness, and reporting.</span></a>
+
+<a class="gf-explore-card" href="plot-gallery/"><strong>Plots &amp; diagrams</strong><span>See diagnostics, scanpaths, dynamic AOIs, benchmark evidence, and the scientific boundary attached to each visual.</span></a>
+
+<a class="gf-explore-card" href="workflow-gallery/"><strong>Research workflows</strong><span>Choose a complete path from source data to reviewable analysis and publication artifacts.</span></a>
+
+<a class="gf-explore-card" href="guides/"><strong>Guides</strong><span>Task-oriented routes for import, QC, events, AOIs, modelling, validation, reporting, and replication.</span></a>
+
+<a class="gf-explore-card" href="tags/"><strong>Topics</strong><span>Discover related material across QC, events, AOIs, statistics, validation, provenance, and reporting.</span></a>
+
 </div>
 
 ## Start safely with research data
