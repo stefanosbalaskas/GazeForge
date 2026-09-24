@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
+<title id="title">Dynamic AOI temporal support</title>
+<desc id="desc">Reviewed keyframes bound an interpolation interval. Support outside the first and last reviewed keyframes is not extrapolated automatically.</desc>
+<style>.bg{fill:#fff}.accent{fill:#ecfeff;stroke:#0891b2;stroke-width:2}.warn{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.line{stroke:#64748b;stroke-width:3;fill:none}.dash{stroke:#94a3b8;stroke-width:2;stroke-dasharray:8 8;fill:none}.title{font:700 22px system-ui,sans-serif;fill:#0f172a}.label{font:650 16px system-ui,sans-serif;fill:#0f172a}.small{font:14px system-ui,sans-serif;fill:#334155}@media(prefers-color-scheme:dark){.bg{fill:#0f172a}.accent{fill:#164e63;stroke:#22d3ee}.warn{fill:#431407;stroke:#fb923c}.line{stroke:#94a3b8}.dash{stroke:#64748b}.title,.label{fill:#f8fafc}.small{fill:#cbd5e1}}</style>
+<rect class="bg" width="1200" height="400" rx="24"/>
+<text class="title" x="55" y="55">Dynamic AOI temporal support</text>
+<path class="line" d="M120 220 H1080"/><path class="dash" d="M120 160 V280 M1080 160 V280"/>
+<rect class="warn" x="120" y="125" width="220" height="70" rx="14"/><text class="label" x="230" y="154" text-anchor="middle">No automatic</text><text class="small" x="230" y="179" text-anchor="middle">extrapolation</text>
+<rect class="accent" x="340" y="125" width="520" height="70" rx="14"/><text class="label" x="600" y="154" text-anchor="middle">Bounded interpolation</text><text class="small" x="600" y="179" text-anchor="middle">inside reviewed temporal support</text>
+<rect class="warn" x="860" y="125" width="220" height="70" rx="14"/><text class="label" x="970" y="154" text-anchor="middle">No automatic</text><text class="small" x="970" y="179" text-anchor="middle">extrapolation</text>
+<circle cx="340" cy="220" r="15" fill="#0891b2"/><circle cx="600" cy="220" r="15" fill="#0891b2"/><circle cx="860" cy="220" r="15" fill="#0891b2"/>
+<text class="small" x="340" y="258" text-anchor="middle">reviewed keyframe</text><text class="small" x="600" y="258" text-anchor="middle">reviewed keyframe</text><text class="small" x="860" y="258" text-anchor="middle">reviewed keyframe</text>
+</svg>
