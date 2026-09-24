@@ -19,19 +19,19 @@ def _project_name_version() -> tuple[str, str]:
     return name_match.group(1), version_match.group(1)
 
 
-def test_first_public_alpha_release_metadata_is_synchronized() -> None:
+def test_current_alpha_release_metadata_is_synchronized() -> None:
     name, version = _project_name_version()
     assert name == "gazeforge"
-    assert version == "0.1.0a1"
+    assert version == "0.1.0a2"
 
     cff = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
-    assert re.search(r"(?m)^version:\s*0\.1\.0a1\s*$", cff)
-    assert re.search(r"(?m)^date-released:\s*2026-09-07\s*$", cff)
-    assert re.search(r'(?m)^doi:\s*"10\.5281/zenodo\.22650013"\s*$', cff)
+    assert re.search(r"(?m)^version:\s*0\.1\.0a2\s*$", cff)
+    assert re.search(r"(?m)^date-released:\s*2026-09-22\s*$", cff)
+    assert re.search(r'(?m)^doi:\s*"10\.5281/zenodo\.22650012"\s*$', cff)
     assert "https://orcid.org/0000-0003-2444-9796" in cff
 
     zenodo = json.loads((ROOT / ".zenodo.json").read_text(encoding="utf-8"))
-    assert zenodo["version"] == "0.1.0a1"
+    assert zenodo["version"] == "0.1.0a2"
     assert zenodo["upload_type"] == "software"
     assert zenodo["access_right"] == "open"
     assert zenodo["license"] == "mit"
@@ -42,10 +42,10 @@ def test_first_public_alpha_release_metadata_is_synchronized() -> None:
 def test_public_alpha_metadata_is_exposed_in_readme() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     required = (
-        "https://pypi.org/project/gazeforge/0.1.0a1/",
+        "https://pypi.org/project/gazeforge/0.1.0a2/",
         "https://doi.org/10.5281/zenodo.22650013",
         "https://doi.org/10.5281/zenodo.22650012",
-        'python -m pip install "gazeforge==0.1.0a1"',
+        'python -m pip install "gazeforge==0.1.0a2"',
         "3e409fbfc3c194db30ba25fefdf7f6459a3a003aefa0ab4303555d96982fbb46",
         "cee4e061a90d74b3a354a0fb4aa5c7bd00d53577e17167f75342cd476a5c25fa",
     )
@@ -54,9 +54,9 @@ def test_public_alpha_metadata_is_exposed_in_readme() -> None:
 
 
 def test_release_notes_preserve_alpha_scientific_boundaries() -> None:
-    notes = (ROOT / "RELEASE_NOTES_0.1.0a1.md").read_text(encoding="utf-8")
+    notes = (ROOT / "RELEASE_NOTES_0.1.0a2.md").read_text(encoding="utf-8")
     required = (
-        "first public alpha release",
+        "second public alpha release",
         "not native GP3/60 Hz device validation",
         "does **not** establish exact-byte acquisition",
         "participant-disjoint model validation",

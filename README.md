@@ -10,7 +10,7 @@
 <p align="center">
   <a href="https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/stefanosbalaskas/GazeForge/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml"><img alt="Documentation" src="https://github.com/stefanosbalaskas/GazeForge/actions/workflows/docs.yml/badge.svg"></a>
-  <a href="https://pypi.org/project/gazeforge/0.1.0a1/"><img alt="PyPI" src="https://img.shields.io/badge/PyPI-0.1.0a1-blue"></a>
+  <a href="https://pypi.org/project/gazeforge/0.1.0a2/"><img alt="PyPI" src="https://img.shields.io/badge/PyPI-0.1.0a2-blue"></a>
   <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.10%20%7C%203.12%20%7C%203.14-blue"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg"></a>
   <a href="https://doi.org/10.5281/zenodo.22650012"><img alt="DOI" src="https://zenodo.org/badge/1355235505.svg"></a>
@@ -120,7 +120,7 @@ Browse all exact commands and output inventories in the **[Runnable examples gal
 Install the exact public alpha:
 
 ```bash
-python -m pip install "gazeforge==0.1.0a1"
+python -m pip install "gazeforge==0.1.0a2"
 ```
 
 The immutable `0.1.0a1` release is published at [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) and archived on Zenodo with version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The Zenodo concept/latest-release DOI is [`10.5281/zenodo.22650012`](https://doi.org/10.5281/zenodo.22650012).
@@ -135,7 +135,7 @@ gazeforge-0.1.0a1.tar.gz            sha256:cee4e061a90d74b3a354a0fb4aa5c7bd00d53
 Optional open-vocabulary semantic AOI detection:
 
 ```bash
-python -m pip install "gazeforge[vision]==0.1.0a1"
+python -m pip install "gazeforge[vision]==0.1.0a2"
 ```
 
 For development or commit-pinned research work:
