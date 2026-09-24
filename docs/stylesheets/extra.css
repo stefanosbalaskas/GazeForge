@@ -791,3 +791,69 @@
     flex-basis: 100%;
   }
 }
+
+/* GazeForge site experience tranche */
+
+.gf-explore-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0 2rem;
+}
+
+.gf-explore-card {
+  display: flex;
+  min-height: 9rem;
+  flex-direction: column;
+  gap: .55rem;
+  padding: 1.15rem 1.2rem;
+  border: 1px solid var(--gf-border);
+  border-radius: .9rem;
+  background: linear-gradient(145deg, var(--gf-surface), var(--md-default-bg-color));
+  color: var(--md-default-fg-color) !important;
+  text-decoration: none !important;
+  box-shadow: 0 10px 28px rgba(20, 28, 45, 0.05);
+}
+
+.gf-explore-card strong {
+  font-size: 1.02rem;
+  color: var(--md-accent-fg-color);
+}
+
+.gf-explore-card span {
+  line-height: 1.5;
+  color: var(--md-default-fg-color--light);
+}
+
+.gf-method-note {
+  margin: 1rem 0 1.5rem;
+  padding: .85rem 1rem;
+  border-left: .22rem solid var(--gf-accent);
+  border-radius: 0 .7rem .7rem 0;
+  background: var(--gf-accent-soft);
+}
+
+.md-typeset img[src$=".svg"] {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .gf-explore-card {
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
+  .gf-explore-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--gf-accent);
+    box-shadow: var(--gf-shadow);
+  }
+}
+
+@media screen and (max-width: 76.2344em) {
+  .gf-explore-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media screen and (max-width: 44.9844em) {
+  .gf-explore-grid { grid-template-columns: 1fr; }
+  .gf-explore-card { min-height: auto; }
+}
