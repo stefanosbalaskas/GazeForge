@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+<title id="title">GazeForge research lifecycle</title>
+<desc id="desc">Seven stages from source preservation and import through quality control, review, analysis, validation and reporting.</desc>
+<style>
+.bg{fill:#fff}.box{fill:#eef2ff;stroke:#4f46e5;stroke-width:2}.accent{fill:#ecfeff;stroke:#0891b2;stroke-width:2}.warn{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.line{stroke:#64748b;stroke-width:3;fill:none}.title{font:700 22px system-ui,sans-serif;fill:#0f172a}.label{font:650 16px system-ui,sans-serif;fill:#0f172a}.small{font:14px system-ui,sans-serif;fill:#334155}
+@media(prefers-color-scheme:dark){.bg{fill:#0f172a}.box{fill:#1e293b;stroke:#818cf8}.accent{fill:#164e63;stroke:#22d3ee}.warn{fill:#431407;stroke:#fb923c}.line{stroke:#94a3b8}.title,.label{fill:#f8fafc}.small{fill:#cbd5e1}}
+</style>
+<rect class="bg" width="1200" height="360" rx="24"/>
+<text class="title" x="54" y="52">Research lifecycle</text>
+<path class="line" d="M135 180 H1065"/>
+<g><rect class="box" x="45" y="125" width="130" height="110" rx="16"/><text class="label" x="110" y="166" text-anchor="middle">Source</text><text class="small" x="110" y="194" text-anchor="middle">preserve identity</text></g>
+<g><rect class="box" x="205" y="125" width="130" height="110" rx="16"/><text class="label" x="270" y="166" text-anchor="middle">Import</text><text class="small" x="270" y="194" text-anchor="middle">units + geometry</text></g>
+<g><rect class="accent" x="365" y="125" width="130" height="110" rx="16"/><text class="label" x="430" y="166" text-anchor="middle">Quality</text><text class="small" x="430" y="194" text-anchor="middle">diagnostic evidence</text></g>
+<g><rect class="accent" x="525" y="125" width="130" height="110" rx="16"/><text class="label" x="590" y="166" text-anchor="middle">Review</text><text class="small" x="590" y="194" text-anchor="middle">explicit decisions</text></g>
+<g><rect class="box" x="685" y="125" width="130" height="110" rx="16"/><text class="label" x="750" y="166" text-anchor="middle">Analyze</text><text class="small" x="750" y="194" text-anchor="middle">events + AOIs</text></g>
+<g><rect class="box" x="845" y="125" width="130" height="110" rx="16"/><text class="label" x="910" y="166" text-anchor="middle">Validate</text><text class="small" x="910" y="194" text-anchor="middle">claim-matched tests</text></g>
+<g><rect class="warn" x="1005" y="125" width="150" height="110" rx="16"/><text class="label" x="1080" y="166" text-anchor="middle">Report</text><text class="small" x="1080" y="194" text-anchor="middle">bounded claims</text></g>
+<text class="small" x="600" y="306" text-anchor="middle">Each transition preserves provenance; no stage silently upgrades the evidence class.</text>
+</svg>
