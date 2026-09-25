@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -15,7 +16,16 @@ HUBS = (
     "docs/tags.md",
 )
 
-SVGS = (
+ARTICLE_PAGES = (
+    "docs/articles/raw-gaze-to-defensible-analysis.md",
+    "docs/articles/qc-flags-are-not-exclusions.md",
+    "docs/articles/ai-proposals-are-not-ground-truth.md",
+    "docs/articles/missing-is-not-zero.md",
+    "docs/articles/participant-held-out-validation.md",
+    "docs/articles/reviewer-ready-evidence.md",
+)
+
+SVG_ACCESSIBILITY_SET = (
     "docs/assets/figures/research-lifecycle.svg",
     "docs/assets/figures/evidence-ladder.svg",
     "docs/assets/figures/event-validation-workflow.svg",
@@ -23,30 +33,9 @@ SVGS = (
     "docs/assets/figures/location-scale-workflow.svg",
 )
 
-EXAMPLES = (
-    "00_gazeforge_tour.py",
-    "01_synthetic_qc.py",
-    "02_ivt_baseline.py",
-    "03_visual_diagnostics.py",
-    "04_worked_advertising_study.py",
-    "05_worked_dynamic_aoi_study.py",
-    "06_worked_event_model_validation.py",
-    "07_worked_tracker_import_qc.py",
-    "08_worked_qc_review_ledger.py",
-    "09_worked_research_evidence_bundle.py",
-    "10_worked_analysis_handoff.py",
-    "11_worked_manuscript_reporting_bundle.py",
-    "12_worked_measurement_interpretation_audit.py",
-    "13_worked_estimand_preregistration.py",
-    "14_worked_reviewer_replication_bundle.py",
-    "15_worked_sensitivity_robustness_audit.py",
-    "16_worked_denominator_exposure_audit.py",
-    "17_worked_model_diagnostics_audit.py",
-    "18_worked_missing_data_assumptions_audit.py",
-    "19_worked_inferential_reporting_audit.py",
-    "20_worked_grouping_pseudoreplication_audit.py",
-    "end_to_end_research_workflow.py",
-)
+
+def _read(relative: str) -> str:
+    return (ROOT / relative).read_text(encoding="utf-8")
 
 
 def test_site_experience_hubs_exist() -> None:
@@ -57,7 +46,7 @@ def test_site_experience_hubs_exist() -> None:
 def test_site_experience_svg_assets_are_valid_and_accessible() -> None:
     namespace = {"svg": "http://www.w3.org/2000/svg"}
 
-    for relative in SVGS:
+    for relative in SVG_ACCESSIBILITY_SET:
         root = ET.parse(ROOT / relative).getroot()
         assert root.tag.endswith("svg")
         assert root.attrib.get("role") == "img"
@@ -71,8 +60,8 @@ def test_site_experience_svg_assets_are_valid_and_accessible() -> None:
         assert desc.text
 
 
-def test_mkdocs_exposes_explore_and_discovery_features() -> None:
-    text = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+def test_mkdocs_exposes_discovery_privacy_and_prefetch_features() -> None:
+    text = _read("mkdocs.yml")
 
     assert "navigation.instant.prefetch" in text
     assert "  - Explore:" in text
@@ -80,26 +69,83 @@ def test_mkdocs_exposes_explore_and_discovery_features() -> None:
     assert "      - Plot gallery: plot-gallery.md" in text
     assert "      - Workflow gallery: workflow-gallery.md" in text
     assert "      - Guides: guides.md" in text
+    assert "\n  - meta\n" in text
+    assert "\n  - privacy:\n" in text
+    assert "enabled: !ENV [CI, false]" in text
     assert "\n  - tags\n" in text
 
 
+def test_docs_workflow_audits_external_runtime_assets() -> None:
+    text = _read(".github/workflows/docs.yml")
+
+    assert "mkdocs build --strict" in text
+    assert "python scripts/check_site_external_assets.py site" in text
+    assert (ROOT / "scripts" / "check_site_external_assets.py").is_file()
+
+
 def test_homepage_exposes_current_release_and_explore_routes() -> None:
-    text = (ROOT / "docs" / "index.md").read_text(encoding="utf-8")
+    text = _read("docs/index.md")
 
     assert "<strong>0.1.0a2</strong>" in text
+    assert 'python -m pip install "gazeforge==0.1.0a2"' in text
+    assert "**GazeForge 0.1.0a2**" in text
     assert "## Explore by what you need to do" in text
     assert "examples-gallery/" in text
     assert "plot-gallery/" in text
     assert "workflow-gallery/" in text
 
 
+def test_current_install_surfaces_do_not_point_to_a1() -> None:
+    for relative in (
+        "docs/index.md",
+        "docs/getting-started.md",
+        "docs/gazeforge-tour.md",
+        "docs/documentation-map.md",
+        "docs/release-install.md",
+    ):
+        text = _read(relative)
+        assert 'pip install "gazeforge==0.1.0a1"' not in text, relative
+
+
 def test_generated_changelog_hook_has_no_stale_a1_literal() -> None:
-    text = (ROOT / "scripts" / "mkdocs_hooks.py").read_text(encoding="utf-8")
+    text = _read("scripts/mkdocs_hooks.py")
     assert "immutable `0.1.0a1`" not in text
+    assert "latest frozen PyPI/GitHub Release artifact" in text
 
 
-def test_existing_example_inventory_is_represented() -> None:
-    page = (ROOT / "docs" / "examples-gallery.md").read_text(encoding="utf-8")
+def test_example_gallery_tracks_repository_inventory() -> None:
+    page = _read("docs/examples-gallery.md")
+    examples = sorted((ROOT / "examples").glob("*.py"))
 
-    for name in EXAMPLES:
-        assert name in page
+    assert len(examples) >= 22
+
+    for path in examples:
+        assert path.name in page, path.name
+
+
+def test_plot_gallery_tracks_svg_inventory() -> None:
+    page = _read("docs/plot-gallery.md")
+    figures = sorted((ROOT / "docs" / "assets" / "figures").glob("*.svg"))
+
+    assert len(figures) >= 11
+
+    for path in figures:
+        assert path.name in page, path.name
+
+
+def test_new_markdown_pages_do_not_have_empty_image_alt_text() -> None:
+    for relative in (*HUBS, *ARTICLE_PAGES):
+        text = _read(relative)
+        for alt in re.findall(r"!\[([^\]]*)\]\(", text):
+            assert alt.strip(), relative
+
+
+def test_new_markdown_links_to_source_pages_exist() -> None:
+    for relative in (*HUBS, *ARTICLE_PAGES):
+        path = ROOT / relative
+        text = path.read_text(encoding="utf-8")
+
+        for target in re.findall(r"\[[^\]]+\]\(([^)]+\.md(?:#[^)]+)?)\)", text):
+            target_path = target.split("#", 1)[0]
+            resolved = (path.parent / target_path).resolve()
+            assert resolved.is_file(), f"{relative}: {target}"
