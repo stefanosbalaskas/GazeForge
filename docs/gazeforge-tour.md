@@ -231,7 +231,7 @@ It is designed to make the computational analysis **more inspectable and reprodu
 If you are new to the project, use this sequence:
 
 ```bash
-python -m pip install "gazeforge==0.1.0a1"
+python -m pip install "gazeforge==0.1.0a2"
 ```
 
 Then, from a repository checkout, run:

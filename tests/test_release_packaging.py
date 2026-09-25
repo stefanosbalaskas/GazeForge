@@ -46,8 +46,9 @@ def test_public_alpha_metadata_is_exposed_in_readme() -> None:
         "https://doi.org/10.5281/zenodo.22650013",
         "https://doi.org/10.5281/zenodo.22650012",
         'python -m pip install "gazeforge==0.1.0a2"',
-        "3e409fbfc3c194db30ba25fefdf7f6459a3a003aefa0ab4303555d96982fbb46",
-        "cee4e061a90d74b3a354a0fb4aa5c7bd00d53577e17167f75342cd476a5c25fa",
+        "https://github.com/stefanosbalaskas/GazeForge/releases/tag/v0.1.0a2",
+        "ff8bee1efacac7b36cccae6ecfed56dfd428d6c85e3b37263673321c1b6e8705",
+        "36f70467422ffd1879500c77415fbb38a95ae481f9f66f305b918ed0b7f425c7",
     )
     for phrase in required:
         assert phrase in readme

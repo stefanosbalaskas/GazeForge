@@ -32,7 +32,7 @@ def _render_changelog(root: Path) -> str:
     return (
         "# Changelog and releases\n\n"
         "> **Release boundary:** entries under **Unreleased** describe repository development and "
-        "are not part of the latest frozen PyPI/Zenodo artifact. For installation and "
+        "are not part of the latest frozen PyPI/GitHub Release artifact. For installation and "
         "artifact identity, see [Release & install](release-install.md).\n\n" + changelog
     )
 

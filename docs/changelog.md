@@ -1,6 +1,6 @@
 # Changelog and releases
 
-> **Release boundary:** entries under **Unreleased** describe repository development and are not part of the immutable `0.1.0a1` PyPI/Zenodo artifact. For installation and artifact identity, see [Release & install](release-install.md).
+> **Release boundary:** entries under **Unreleased** describe repository development and are not part of the immutable `0.1.0a2` PyPI/GitHub Release artifact. For installation and artifact identity, see [Release & install](release-install.md).
 
 All notable changes to GazeForge will be documented here.
 

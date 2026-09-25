@@ -141,7 +141,7 @@ When a workflow produces a frozen report or certificate, include its determinist
 A compact record can look like:
 
 ```text
-software: gazeforge 0.1.0a1
+software: gazeforge 0.1.0a2
 python: 3.12.x
 analysis_commit: <full git SHA>
 source_manifest: <SHA-256 or certified source record>
@@ -180,7 +180,7 @@ End the methods/results interpretation with what the design does **not** establi
 
 ## Public alpha citation
 
-For the first public alpha, record `gazeforge==0.1.0a1` and cite the archived release DOI `10.5281/zenodo.22650013`. For analyses run from a later development checkout, add the exact full commit SHA even when the public release is also cited.
+For the current public alpha, record `gazeforge==0.1.0a2`, tag `v0.1.0a2`, and project DOI `10.5281/zenodo.22650012`. For exact byte identity, preserve the release artifact SHA-256 values. For analyses run from a later development checkout, add the exact full commit SHA even when the public release is also cited.
 
 ## Before submission
 

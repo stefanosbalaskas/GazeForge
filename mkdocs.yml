@@ -223,6 +223,9 @@ nav:
 
 plugins:
   - search
+  - meta
+  - privacy:
+      enabled: !ENV [CI, false]
   - tags
   - mkdocstrings:
       handlers:

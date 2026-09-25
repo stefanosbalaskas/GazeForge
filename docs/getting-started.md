@@ -27,16 +27,16 @@ GazeForge is currently alpha research software. The first public alpha release i
 ## Install the public alpha
 
 ```bash
-python -m pip install "gazeforge==0.1.0a1"
+python -m pip install "gazeforge==0.1.0a2"
 ```
 
 Optional open-vocabulary semantic AOI detection:
 
 ```bash
-python -m pip install "gazeforge[vision]==0.1.0a1"
+python -m pip install "gazeforge[vision]==0.1.0a2"
 ```
 
-The archived release is available as **GazeForge 0.1.0a1**, DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013).
+The current public release is **GazeForge 0.1.0a2** on [PyPI](https://pypi.org/project/gazeforge/0.1.0a2/) and the [v0.1.0a2 GitHub Release](https://github.com/stefanosbalaskas/GazeForge/releases/tag/v0.1.0a2). The project DOI is [`10.5281/zenodo.22650012`](https://doi.org/10.5281/zenodo.22650012); the earlier `0.1.0a1` version DOI remains historical provenance.
 
 ## Development checkout
 
@@ -237,6 +237,6 @@ At minimum, report:
 - human-human reference agreement when available; and
 - whether evidence is native or derived.
 
-For the public alpha, cite the exact version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013) and record `0.1.0a1` in the analysis environment.
+For the current public alpha, record `0.1.0a2` in the analysis environment and cite the project DOI [`10.5281/zenodo.22650012`](https://doi.org/10.5281/zenodo.22650012). For exact release identity, also preserve tag `v0.1.0a2` or the artifact SHA-256 values from [Release & install](release-install.md).
 
 Continue with the [GazeForge Tour](gazeforge-tour.md), [Worked tracker import](worked-tracker-import.md), [QC review and exclusion-ledger clinic](qc-review-exclusion-ledger.md), [Real-data import clinic](data-import-clinic.md), [practical end-to-end workflow](practical-workflow.md), [Scientific governance](scientific-governance.md), and [Validation status](validation-status.md).
