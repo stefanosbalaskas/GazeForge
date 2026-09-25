@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+<title id="title">Location-scale modelling workflow</title>
+<desc id="desc">A workflow from model specification through location and scale components, hierarchical effects, diagnostics, residual calibration and bootstrap Monte Carlo assessment.</desc>
+<style>.bg{fill:#fff}.box{fill:#eef2ff;stroke:#4f46e5;stroke-width:2}.accent{fill:#ecfeff;stroke:#0891b2;stroke-width:2}.warn{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.line{stroke:#64748b;stroke-width:3;fill:none}.title{font:700 22px system-ui,sans-serif;fill:#0f172a}.label{font:650 16px system-ui,sans-serif;fill:#0f172a}.small{font:14px system-ui,sans-serif;fill:#334155}@media(prefers-color-scheme:dark){.bg{fill:#0f172a}.box{fill:#1e293b;stroke:#818cf8}.accent{fill:#164e63;stroke:#22d3ee}.warn{fill:#431407;stroke:#fb923c}.line{stroke:#94a3b8}.title,.label{fill:#f8fafc}.small{fill:#cbd5e1}}</style>
+<rect class="bg" width="1200" height="420" rx="24"/>
+<text class="title" x="55" y="55">Location-scale modelling workflow</text>
+<rect class="box" x="55" y="135" width="160" height="100" rx="16"/><text class="label" x="135" y="173" text-anchor="middle">Design</text><text class="small" x="135" y="201" text-anchor="middle">estimand + groups</text>
+<path class="line" d="M215 185 H265"/>
+<rect class="accent" x="265" y="100" width="175" height="92" rx="16"/><text class="label" x="352" y="137" text-anchor="middle">Location</text><text class="small" x="352" y="165" text-anchor="middle">conditional mean</text>
+<rect class="accent" x="265" y="210" width="175" height="92" rx="16"/><text class="label" x="352" y="247" text-anchor="middle">Scale</text><text class="small" x="352" y="275" text-anchor="middle">conditional variability</text>
+<path class="line" d="M440 185 H500"/>
+<rect class="box" x="500" y="135" width="175" height="100" rx="16"/><text class="label" x="587" y="173" text-anchor="middle">Hierarchy</text><text class="small" x="587" y="201" text-anchor="middle">group effects</text>
+<path class="line" d="M675 185 H735"/>
+<rect class="box" x="735" y="135" width="175" height="100" rx="16"/><text class="label" x="822" y="173" text-anchor="middle">Diagnostics</text><text class="small" x="822" y="201" text-anchor="middle">fit + residuals</text>
+<path class="line" d="M910 185 H970"/>
+<rect class="warn" x="970" y="100" width="175" height="92" rx="16"/><text class="label" x="1057" y="137" text-anchor="middle">Calibration</text><text class="small" x="1057" y="165" text-anchor="middle">simulation/refit</text>
+<rect class="warn" x="970" y="210" width="175" height="92" rx="16"/><text class="label" x="1057" y="247" text-anchor="middle">MC precision</text><text class="small" x="1057" y="275" text-anchor="middle">bootstrap uncertainty</text>
+</svg>

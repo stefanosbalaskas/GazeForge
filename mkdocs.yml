@@ -18,6 +18,7 @@ theme:
     repo: fontawesome/brands/github
   features:
     - navigation.instant
+    - navigation.instant.prefetch
     - navigation.instant.progress
     - navigation.tracking
     - navigation.tabs
@@ -52,6 +53,21 @@ theme:
 
 nav:
   - Home: index.md
+  - Explore:
+      - Overview: explore.md
+      - Articles:
+          - Article hub: articles.md
+          - Raw gaze to defensible analysis: articles/raw-gaze-to-defensible-analysis.md
+          - QC flags are not exclusions: articles/qc-flags-are-not-exclusions.md
+          - AI proposals are not ground truth: articles/ai-proposals-are-not-ground-truth.md
+          - Missing is not zero: articles/missing-is-not-zero.md
+          - Participant-held-out validation: articles/participant-held-out-validation.md
+          - From output to reviewer-ready evidence: articles/reviewer-ready-evidence.md
+      - Examples gallery: examples-gallery.md
+      - Plot gallery: plot-gallery.md
+      - Workflow gallery: workflow-gallery.md
+      - Guides: guides.md
+      - Topics & tags: tags.md
   - Start:
       - Getting started: getting-started.md
       - Documentation map: documentation-map.md
@@ -207,6 +223,7 @@ nav:
 
 plugins:
   - search
+  - tags
   - mkdocstrings:
       handlers:
         python:
