@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
+<title id="title">Provenance chain</title>
+<desc id="desc">A left-to-right provenance chain from source bytes through transformation specifications, review decisions, analysis derivatives, software identity, and reviewer-facing artifacts.</desc>
+<style>.bg{fill:#fff}.box{fill:#eef2ff;stroke:#4f46e5;stroke-width:2}.accent{fill:#ecfeff;stroke:#0891b2;stroke-width:2}.warn{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.line{stroke:#64748b;stroke-width:3}.title{font:700 22px system-ui,sans-serif;fill:#0f172a}.label{font:650 15px system-ui,sans-serif;fill:#0f172a}.small{font:13px system-ui,sans-serif;fill:#334155}@media(prefers-color-scheme:dark){.bg{fill:#0f172a}.box{fill:#1e293b;stroke:#818cf8}.accent{fill:#164e63;stroke:#22d3ee}.warn{fill:#431407;stroke:#fb923c}.line{stroke:#94a3b8}.title,.label{fill:#f8fafc}.small{fill:#cbd5e1}}</style>
+<rect class="bg" width="1200" height="400" rx="24"/>
+<text class="title" x="55" y="55">Provenance chain: preserve identity at every transformation</text>
+<line class="line" x1="180" y1="185" x2="1020" y2="185"/>
+<rect class="box" x="45" y="125" width="170" height="120" rx="16"/><text class="label" x="130" y="162" text-anchor="middle">Source bytes</text><text class="small" x="130" y="190" text-anchor="middle">file/source hash</text>
+<rect class="box" x="245" y="125" width="170" height="120" rx="16"/><text class="label" x="330" y="162" text-anchor="middle">Transform spec</text><text class="small" x="330" y="190" text-anchor="middle">units · geometry · rate</text>
+<rect class="accent" x="445" y="125" width="170" height="120" rx="16"/><text class="label" x="530" y="162" text-anchor="middle">Review ledger</text><text class="small" x="530" y="190" text-anchor="middle">retain/exclude/edit</text>
+<rect class="accent" x="645" y="125" width="170" height="120" rx="16"/><text class="label" x="730" y="162" text-anchor="middle">Analysis derivative</text><text class="small" x="730" y="190" text-anchor="middle">explicit denominator</text>
+<rect class="box" x="845" y="125" width="170" height="120" rx="16"/><text class="label" x="930" y="162" text-anchor="middle">Software identity</text><text class="small" x="930" y="190" text-anchor="middle">version · commit · config</text>
+<rect class="warn" x="1045" y="125" width="125" height="120" rx="16"/><text class="label" x="1107" y="162" text-anchor="middle">Report</text><text class="small" x="1107" y="190" text-anchor="middle">bounded claim</text>
+<text class="small" x="600" y="315" text-anchor="middle">A fingerprint proves artifact identity; it does not by itself establish measurement, model, construct, or external validity.</text>
+</svg>
