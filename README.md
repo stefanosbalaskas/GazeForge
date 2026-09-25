@@ -123,13 +123,13 @@ Install the exact public alpha:
 python -m pip install "gazeforge==0.1.0a2"
 ```
 
-The immutable `0.1.0a1` release is published at [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) and archived on Zenodo with version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The Zenodo concept/latest-release DOI is [`10.5281/zenodo.22650012`](https://doi.org/10.5281/zenodo.22650012).
+The immutable current alpha is [GazeForge 0.1.0a2 on PyPI](https://pypi.org/project/gazeforge/0.1.0a2/) and the [v0.1.0a2 GitHub Release](https://github.com/stefanosbalaskas/GazeForge/releases/tag/v0.1.0a2). PyPI publication used Trusted Publishing with digital attestations. The project DOI is [`10.5281/zenodo.22650012`](https://doi.org/10.5281/zenodo.22650012); the earlier `0.1.0a1` archive remains historically identifiable by version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013).
 
-The exact GitHub Release distributions are identity-matched to the published alpha:
+The exact v0.1.0a2 GitHub Release distributions are:
 
 ```text
-gazeforge-0.1.0a1-py3-none-any.whl  sha256:3e409fbfc3c194db30ba25fefdf7f6459a3a003aefa0ab4303555d96982fbb46
-gazeforge-0.1.0a1.tar.gz            sha256:cee4e061a90d74b3a354a0fb4aa5c7bd00d53577e17167f75342cd476a5c25fa
+gazeforge-0.1.0a2-py3-none-any.whl  sha256:ff8bee1efacac7b36cccae6ecfed56dfd428d6c85e3b37263673321c1b6e8705
+gazeforge-0.1.0a2.tar.gz            sha256:36f70467422ffd1879500c77415fbb38a95ae481f9f66f305b918ed0b7f425c7
 ```
 
 Optional open-vocabulary semantic AOI detection:
@@ -288,9 +288,11 @@ The active benchmark plan is tracked in [Issue #1](https://github.com/stefanosba
 
 ## Citation
 
-For work using the first public alpha:
+For work using the current public alpha, report the exact version and immutable release tag:
 
-> Balaskas, S. (2026). *GazeForge: Auditable AI for Eye-Tracking Analysis* (Version 0.1.0a1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22650013
+> Balaskas, S. (2026). *GazeForge: Auditable AI for Eye-Tracking Analysis* (Version 0.1.0a2) [Computer software]. https://doi.org/10.5281/zenodo.22650012
+
+For exact byte identity, also record `v0.1.0a2` or the corresponding PyPI/GitHub Release artifact hashes. The earlier `0.1.0a1` Zenodo version DOI remains historical provenance, not the current package version.
 
 Use the exact GazeForge version or full commit SHA in reproducible methods. Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff).
 
