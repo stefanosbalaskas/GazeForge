@@ -33,7 +33,7 @@ def test_secondary_resources_remain_available_without_competing_as_primary_actio
         "release-install.md",
         "https://pypi.org/project/gazeforge/",
         "citation-attribution.md",
-        "https://doi.org/10.5281/zenodo.22650013",
+        "https://doi.org/10.5281/zenodo.22650012",
         "gazepoint-gp3.md",
         "https://github.com/stefanosbalaskas/GazeForge",
     ):
