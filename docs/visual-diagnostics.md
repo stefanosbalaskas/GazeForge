@@ -15,7 +15,7 @@ cd GazeForge
 python -m pip install -e ".[plot]"
 ```
 
-The plotting extra is a development-surface addition after the `0.1.0a1` public archive. Use an exact repository commit for work that depends on it until it appears in a later public release.
+The plotting extra is part of the published `0.1.0a2` artifact. Install `gazeforge[plot]==0.1.0a2` for the immutable public alpha, or use an exact repository commit when relying on plotting changes added later on `main`.
 
 Library plotting functions deliberately **do not call `show()` or `savefig()`**. Each function returns a Matplotlib `Axes`, so the researcher decides whether to compose panels, add manuscript annotations, display interactively, or save a file.
 
