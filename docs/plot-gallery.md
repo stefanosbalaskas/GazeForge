@@ -18,6 +18,14 @@ A scientific figure should make the **interpretation boundary** visible as well 
 
 **Do not infer:** that completing every stage establishes external or construct validity.
 
+## Evidence ladder
+
+![Evidence ladder from observed data through review and validation to bounded scientific claims](assets/figures/evidence-ladder.svg)
+
+**Use for:** showing that observations, diagnostics, review decisions, analysis/validation evidence, and scientific claims are distinct layers.
+
+**Do not infer:** that a higher layer is automatically justified because a lower layer exists.
+
 ## QC diagnostics
 
 ![Synthetic gaze quality-control diagnostics](assets/figures/synthetic-qc-diagnostics.svg)
