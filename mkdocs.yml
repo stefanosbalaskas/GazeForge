@@ -67,6 +67,7 @@ nav:
       - Plot gallery: plot-gallery.md
       - Workflow gallery: workflow-gallery.md
       - Guides: guides.md
+      - API → workflow map: api-workflow-map.md
       - Topics & tags: tags.md
   - Start:
       - Getting started: getting-started.md
