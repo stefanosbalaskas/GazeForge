@@ -1,4 +1,5 @@
 ---
+description: Auditable AI-assisted eye-tracking workflows for gaze import, non-destructive QC, event modelling, semantic AOIs, validation, provenance, and reproducible reporting.
 hide:
   - navigation
   - toc
@@ -26,7 +27,7 @@ Machine learning, computer vision, temporal event modelling, semantic AOIs, scan
 
 <div class="gf-resource-rail" markdown>
 
-[Install](release-install.md) · [Task map](documentation-map.md) · [Troubleshooting](troubleshooting.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation & attribution](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650013) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
+[Install](release-install.md) · [Task map](documentation-map.md) · [API → workflow map](api-workflow-map.md) · [Troubleshooting](troubleshooting.md) · [PyPI](https://pypi.org/project/gazeforge/) · [Citation & attribution](citation-attribution.md) · [DOI](https://doi.org/10.5281/zenodo.22650012) · [Gazepoint / GP3](gazepoint-gp3.md) · [GitHub](https://github.com/stefanosbalaskas/GazeForge)
 
 </div>
 

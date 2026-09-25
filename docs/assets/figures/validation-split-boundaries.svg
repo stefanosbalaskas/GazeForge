@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" role="img" aria-labelledby="title desc">
+<title id="title">Validation split boundaries</title>
+<desc id="desc">A matrix showing participant, stimulus, source-token, and dataset held-out validation and the corresponding generalisation boundary each split can support.</desc>
+<style>.bg{fill:#fff}.head{fill:#eef2ff;stroke:#4f46e5;stroke-width:2}.cell{fill:#f8fafc;stroke:#cbd5e1;stroke-width:1.5}.accent{fill:#ecfeff;stroke:#0891b2;stroke-width:1.5}.warn{fill:#fff7ed;stroke:#c2410c;stroke-width:1.5}.title{font:700 22px system-ui,sans-serif;fill:#0f172a}.label{font:650 14px system-ui,sans-serif;fill:#0f172a}.small{font:13px system-ui,sans-serif;fill:#334155}@media(prefers-color-scheme:dark){.bg{fill:#0f172a}.head{fill:#1e293b;stroke:#818cf8}.cell{fill:#111827;stroke:#475569}.accent{fill:#164e63;stroke:#22d3ee}.warn{fill:#431407;stroke:#fb923c}.title,.label{fill:#f8fafc}.small{fill:#cbd5e1}}</style>
+<rect class="bg" width="1200" height="470" rx="24"/>
+<text class="title" x="55" y="52">Held-out unit defines the generalisation boundary</text>
+<rect class="head" x="70" y="100" width="230" height="65" rx="12"/><text class="label" x="185" y="140" text-anchor="middle">Held-out unit</text>
+<rect class="head" x="300" y="100" width="390" height="65" rx="12"/><text class="label" x="495" y="140" text-anchor="middle">Directly supports evaluation on</text>
+<rect class="head" x="690" y="100" width="440" height="65" rx="12"/><text class="label" x="910" y="140" text-anchor="middle">Does not silently establish</text>
+<rect class="accent" x="70" y="165" width="230" height="65"/><text class="label" x="185" y="204" text-anchor="middle">Participant</text>
+<rect class="cell" x="300" y="165" width="390" height="65"/><text class="small" x="495" y="204" text-anchor="middle">new participants under matched conditions</text>
+<rect class="warn" x="690" y="165" width="440" height="65"/><text class="small" x="910" y="204" text-anchor="middle">new datasets, devices, stimuli, or populations</text>
+<rect class="accent" x="70" y="230" width="230" height="65"/><text class="label" x="185" y="269" text-anchor="middle">Stimulus</text>
+<rect class="cell" x="300" y="230" width="390" height="65"/><text class="small" x="495" y="269" text-anchor="middle">new stimuli within sampled participants/design</text>
+<rect class="warn" x="690" y="230" width="440" height="65"/><text class="small" x="910" y="269" text-anchor="middle">participant-general or cross-dataset validity</text>
+<rect class="accent" x="70" y="295" width="230" height="65"/><text class="label" x="185" y="334" text-anchor="middle">Source token</text>
+<rect class="cell" x="300" y="295" width="390" height="65"/><text class="small" x="495" y="334" text-anchor="middle">unseen tokens with the documented token meaning</text>
+<rect class="warn" x="690" y="295" width="440" height="65"/><text class="small" x="910" y="334" text-anchor="middle">participant-disjointness without an authoritative mapping</text>
+<rect class="accent" x="70" y="360" width="230" height="65"/><text class="label" x="185" y="399" text-anchor="middle">Dataset</text>
+<rect class="cell" x="300" y="360" width="390" height="65"/><text class="small" x="495" y="399" text-anchor="middle">a held-out dataset under the tested source mix</text>
+<rect class="warn" x="690" y="360" width="440" height="65"/><text class="small" x="910" y="399" text-anchor="middle">universal device or construct validity</text>
+</svg>

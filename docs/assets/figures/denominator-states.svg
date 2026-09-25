@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+<title id="title">Observation and denominator states</title>
+<desc id="desc">A diagram separating observed zero, observed nonzero, missing, absent by design, undefined, and right-censored outcomes before statistical handoff.</desc>
+<style>.bg{fill:#fff}.box{fill:#eef2ff;stroke:#4f46e5;stroke-width:2}.accent{fill:#ecfeff;stroke:#0891b2;stroke-width:2}.warn{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.title{font:700 22px system-ui,sans-serif;fill:#0f172a}.label{font:650 15px system-ui,sans-serif;fill:#0f172a}.small{font:13px system-ui,sans-serif;fill:#334155}@media(prefers-color-scheme:dark){.bg{fill:#0f172a}.box{fill:#1e293b;stroke:#818cf8}.accent{fill:#164e63;stroke:#22d3ee}.warn{fill:#431407;stroke:#fb923c}.title,.label{fill:#f8fafc}.small{fill:#cbd5e1}}</style>
+<rect class="bg" width="1200" height="430" rx="24"/>
+<text class="title" x="55" y="55">Keep observation states distinct before modelling</text>
+<rect class="accent" x="55" y="120" width="165" height="105" rx="16"/><text class="label" x="137" y="158" text-anchor="middle">Observed nonzero</text><text class="small" x="137" y="188" text-anchor="middle">measured quantity</text>
+<rect class="accent" x="240" y="120" width="165" height="105" rx="16"/><text class="label" x="322" y="158" text-anchor="middle">Observed zero</text><text class="small" x="322" y="188" text-anchor="middle">valid measured zero</text>
+<rect class="box" x="425" y="120" width="165" height="105" rx="16"/><text class="label" x="507" y="158" text-anchor="middle">Missing</text><text class="small" x="507" y="188" text-anchor="middle">expected, unavailable</text>
+<rect class="box" x="610" y="120" width="165" height="105" rx="16"/><text class="label" x="692" y="158" text-anchor="middle">Absent by design</text><text class="small" x="692" y="188" text-anchor="middle">not exposed/defined</text>
+<rect class="warn" x="795" y="120" width="165" height="105" rx="16"/><text class="label" x="877" y="158" text-anchor="middle">Undefined</text><text class="small" x="877" y="188" text-anchor="middle">cannot be computed</text>
+<rect class="warn" x="980" y="120" width="165" height="105" rx="16"/><text class="label" x="1062" y="158" text-anchor="middle">Right-censored</text><text class="small" x="1062" y="188" text-anchor="middle">event not yet observed</text>
+<text class="label" x="600" y="292" text-anchor="middle">Carry state + denominator/exposure + grouping identity into the statistical handoff</text>
+<text class="small" x="600" y="330" text-anchor="middle">Do not convert missing, undefined, absent-by-design, or censored observations to zero for convenience.</text>
+</svg>

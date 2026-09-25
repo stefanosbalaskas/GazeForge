@@ -41,6 +41,12 @@ tags:
 - [Publication readiness](publication-readiness.md)
 - [Reviewer & replication handoff](reviewer-replication-handoff.md)
 
+## API and workflow orientation
+
+- [API → workflow map](api-workflow-map.md) — start from a research task and see the public APIs and runnable examples that implement it.
+- [API reference](api-reference.md) — parameter- and signature-level reference.
+- [Examples gallery](examples-gallery.md) — complete runnable script inventory.
+
 ## When something fails
 
 Use [Troubleshooting & diagnostics](troubleshooting.md). If the question is what current evidence supports rather than software execution, use [Evidence status](evidence-status.md).

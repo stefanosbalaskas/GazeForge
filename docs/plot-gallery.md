@@ -83,3 +83,34 @@ A scientific figure should make the **interpretation boundary** visible as well 
 ![Location-scale workflow](assets/figures/location-scale-workflow.svg)
 
 Use with [hierarchical location-scale models](hierarchical-location-scale.md), [residual calibration](location-scale-residual-calibration.md), and [bootstrap Monte Carlo precision](location-scale-bootstrap-monte-carlo.md).
+
+
+## Observation and denominator states
+
+![Observation states separating observed zero, missing, absent-by-design, undefined, and right-censored outcomes](assets/figures/denominator-states.svg)
+
+**Use for:** explaining why zero, missingness, absent-by-design states, undefined quantities, exposure, and right-censoring must remain distinct in a statistical handoff.
+
+**Do not infer:** that a convenient numeric encoding is scientifically interchangeable with the underlying observation state.
+
+Use with [Denominator, exposure & censoring](denominator-exposure-censoring.md), [Missing-data assumptions](missing-data-assumptions.md), and [Analysis handoff](analysis-handoff.md).
+
+## Provenance chain
+
+![Provenance chain from source bytes through transformations, review, analysis derivatives, software identity, and reporting](assets/figures/provenance-chain.svg)
+
+**Use for:** showing where hashes, transformation specifications, review ledgers, analysis derivatives, and software identity belong in a reproducible record.
+
+**Do not infer:** that matching hashes alone establish measurement, construct, model, or external validity.
+
+Use with [Research evidence bundle](research-evidence-bundle.md), [Reviewer & replication handoff](reviewer-replication-handoff.md), and [Reproducible reporting](reproducible-reporting.md).
+
+## Held-out validation boundaries
+
+![Matrix of participant, stimulus, source-token, and dataset held-out validation boundaries](assets/figures/validation-split-boundaries.svg)
+
+**Use for:** matching the held-out unit to the population or source boundary that the validation claim is intended to address.
+
+**Do not infer:** participant-disjointness from opaque source tokens, or universal validity from a single held-out dataset.
+
+Use with [Event-model validation clinic](event-model-validation-clinic.md), [Cross-dataset events](cross-dataset-events.md), and [Validation evidence guide](validation-evidence-guide.md).

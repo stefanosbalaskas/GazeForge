@@ -13,6 +13,7 @@ HUBS = (
     "docs/plot-gallery.md",
     "docs/workflow-gallery.md",
     "docs/guides.md",
+    "docs/api-workflow-map.md",
     "docs/tags.md",
 )
 
@@ -31,6 +32,9 @@ SVG_ACCESSIBILITY_SET = (
     "docs/assets/figures/event-validation-workflow.svg",
     "docs/assets/figures/dynamic-aoi-support.svg",
     "docs/assets/figures/location-scale-workflow.svg",
+    "docs/assets/figures/denominator-states.svg",
+    "docs/assets/figures/provenance-chain.svg",
+    "docs/assets/figures/validation-split-boundaries.svg",
 )
 
 
@@ -69,6 +73,7 @@ def test_mkdocs_exposes_discovery_privacy_and_prefetch_features() -> None:
     assert "      - Plot gallery: plot-gallery.md" in text
     assert "      - Workflow gallery: workflow-gallery.md" in text
     assert "      - Guides: guides.md" in text
+    assert "      - API → workflow map: api-workflow-map.md" in text
     assert "\n  - meta\n" in text
     assert "\n  - privacy:\n" in text
     assert "enabled: !ENV [CI, false]" in text
@@ -93,6 +98,8 @@ def test_homepage_exposes_current_release_and_explore_routes() -> None:
     assert "examples-gallery/" in text
     assert "plot-gallery/" in text
     assert "workflow-gallery/" in text
+    assert "api-workflow-map.md" in text
+    assert "https://doi.org/10.5281/zenodo.22650012" in text
 
 
 def test_current_install_surfaces_do_not_point_to_a1() -> None:
@@ -149,3 +156,26 @@ def test_new_markdown_links_to_source_pages_exist() -> None:
             target_path = target.split("#", 1)[0]
             resolved = (path.parent / target_path).resolve()
             assert resolved.is_file(), f"{relative}: {target}"
+
+
+def test_api_workflow_map_is_grounded_in_runnable_examples() -> None:
+    text = _read("docs/api-workflow-map.md")
+
+    required = (
+        "canonicalize_gaze()",
+        "ai_flag_anomalies()",
+        "ivt_classify_events()",
+        "map_fixations_to_aois()",
+        "DynamicAOIKeyframe",
+        "compare_event_models_grouped()",
+        "adapt_gazepoint_samples()",
+        "fingerprint_frame()",
+        "00_gazeforge_tour.py",
+        "05_worked_dynamic_aoi_study.py",
+        "06_worked_event_model_validation.py",
+        "07_worked_tracker_import_qc.py",
+        "10_worked_analysis_handoff.py",
+    )
+
+    for phrase in required:
+        assert phrase in text
