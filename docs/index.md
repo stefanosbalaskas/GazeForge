@@ -380,7 +380,7 @@ The previews below use **synthetic/demo data only**. They illustrate software be
 
 ## Public alpha release
 
-**GazeForge 0.1.0a1** is the first public alpha release. It is available from [PyPI](https://pypi.org/project/gazeforge/0.1.0a1/) and archived on Zenodo with version DOI [`10.5281/zenodo.22650013`](https://doi.org/10.5281/zenodo.22650013). The release remains intentionally alpha: APIs may change while native 60 Hz/GP3-class validation, broader external benchmark qualification, and remaining dynamic-detection validation are completed.
+**GazeForge 0.1.0a2** is the current public alpha release. It is published on [PyPI](https://pypi.org/project/gazeforge/0.1.0a2/) through Trusted Publishing and frozen as the [v0.1.0a2 GitHub Release](https://github.com/stefanosbalaskas/GazeForge/releases/tag/v0.1.0a2). The release remains intentionally alpha: APIs may change while native 60 Hz/GP3-class validation, broader external benchmark qualification, and remaining dynamic-detection validation are completed.
 
 [Release & install guidance →](release-install.md) · [Citation & attribution →](citation-attribution.md) · [Changelog & releases →](changelog.md)
 
@@ -456,7 +456,7 @@ GazeForge never silently upgrades evidence strength. Resampled lower-rate eviden
 Install the exact public alpha from PyPI:
 
 ```bash
-python -m pip install "gazeforge==0.1.0a1"
+python -m pip install "gazeforge==0.1.0a2"
 ```
 
 For development or commit-pinned research work:
@@ -480,7 +480,7 @@ flagged = ai_flag_anomalies(gaze.data, sampling_rate_hz=60)
 
 ## Current project phase
 
-GazeForge is **public alpha research software with Frozen, Reviewed, and Bounded external empirical evidence under explicitly different scientific scopes**. Version `0.1.0a1` is published through PyPI Trusted Publishing and archived on Zenodo, but a stable scientific-performance claim still requires broader independent validation.
+GazeForge is **public alpha research software with Frozen, Reviewed, and Bounded external empirical evidence under explicitly different scientific scopes**. Version `0.1.0a2` is published through PyPI Trusted Publishing and frozen in an exact GitHub Release with wheel, source distribution, and SHA-256 manifest; a stable scientific-performance claim still requires broader independent validation.
 
 - CI spans Python 3.10, 3.12, and 3.14 on Linux, Windows, and macOS.
 - Documentation is built strictly and deployed through GitHub Pages.
