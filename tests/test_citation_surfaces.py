@@ -12,13 +12,16 @@ def _read(path: str) -> str:
     return (PROJECT_ROOT / path).read_text(encoding="utf-8")
 
 
-def test_citation_page_identifies_immutable_alpha() -> None:
+def test_citation_page_identifies_current_and_historical_alpha() -> None:
     text = _read("docs/citation-attribution.md")
 
+    assert "0.1.0a2" in text
+    assert "v0.1.0a2" in text
+    assert "10.5281/zenodo.22650012" in text
+    assert "ff8bee1efacac7b36cccae6ecfed56dfd428d6c85e3b37263673321c1b6e8705" in text
+    assert "0000-0003-2444-9796" in text
     assert "0.1.0a1" in text
     assert "10.5281/zenodo.22650013" in text
-    assert "0000-0003-2444-9796" in text
-    assert "immutable `0.1.0a1` release" in text
     assert "Do not cite `main` as though it were the published alpha" in text
 
 
