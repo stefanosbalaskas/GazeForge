@@ -1,0 +1,7 @@
+figure,file,gazeforge_api,evidence_class
+Figure 1,figure01_qc_anomaly_timeline,simulate_gaze; canonicalize_gaze; ai_flag_anomalies; plot_qc_timeline,synthetic software demonstration
+Figure 2,figure02_event_probabilities,plot_event_probabilities,synthetic software demonstration
+Figure 3,figure03_top_label_calibration,plot_event_calibration; top_label_calibration_table,synthetic software demonstration
+Figure 4,figure04_semantic_aois,AOI; plot_aoi_overlay,synthetic software demonstration
+Figure 5,figure05_aoi_scanpath_composite,AOI; plot_aoi_overlay; plot_scanpath,synthetic software demonstration
+Figure 6,figure06_dynamic_aoi_four_panel,DynamicAOIKeyframe; interpolate_dynamic_aoi; plot_dynamic_aoi_snapshot,synthetic software demonstration
