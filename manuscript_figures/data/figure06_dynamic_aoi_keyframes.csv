@@ -1,0 +1,3 @@
+aoi_id,label,timestamp_ms,xmin,ymin,xmax,ymax,source_state
+product,product,0.0,500,320,980,800,observed keyframe
+product,product,150.0,680,300,1160,780,observed keyframe
