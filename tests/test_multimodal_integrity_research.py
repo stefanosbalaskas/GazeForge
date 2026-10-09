@@ -19,6 +19,8 @@ def test_split_axes_do_not_collapse_into_a_single_flag():
     assert result["temporal_block_disjoint"]
     assert result["session_disjoint"]
     assert not result["participant_disjoint"]
+    assert result["trial_separation_certified"] is False
+    assert result["trial_disjoint"] is None
 
 
 def test_cross_source_is_not_labeled_fused():
@@ -49,3 +51,25 @@ def test_fusion_requires_explicit_scales_and_valid_qc():
     assert out["fused_value"].iloc[1] == pytest.approx(8)
     assert pd.isna(out["fused_value"].iloc[2])
     assert out["n_contributing_modalities"].tolist() == [2, 1, 0]
+
+
+def test_trial_disjointness_does_not_alias_session_or_block():
+    train = pd.DataFrame({
+        "participant_id": ["a"], "session_id": ["s1"],
+        "trial_id": ["t1"], "temporal_block_id": ["b1"],
+    })
+    test = pd.DataFrame({
+        "participant_id": ["a"], "session_id": ["s1"],
+        "trial_id": ["t2"], "temporal_block_id": ["b1"],
+    })
+    result = audit_temporal_session_separation(train, test)
+    assert result["trial_separation_certified"] is True
+    assert result["trial_disjoint"] is True
+    assert result["trial_overlap"] == 0
+    assert result["temporal_block_disjoint"] is False
+    assert result["session_disjoint"] is False
+    assert result["participant_disjoint"] is False
+    test["trial_id"] = "t1"
+    shared = audit_temporal_session_separation(train, test)
+    assert shared["trial_overlap"] == 1
+    assert shared["trial_disjoint"] is False
