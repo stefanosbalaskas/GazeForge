@@ -22,7 +22,7 @@ fusion = reliability_weighted_fusion(
 
 ## Scientific boundaries
 
-- Split certification separately reports participant, session and temporal-block overlap from explicit IDs. Nonoverlapping named blocks do **not** prove independent time windows.
+- Split certification separately reports participant, session, trial and temporal-block overlap from explicit IDs. If trial identifiers are absent, trial disjointness is reported as unknown rather than passed. Nonoverlapping named blocks do **not** prove independent time windows.
 - Multimodal pairing can be `unpaired_cross_source`, `paired_within_person_not_trial`, or `paired_within_trial_not_time_certified`. It deliberately **never** certifies synchronized timestamps.
 - Fusion computes a descriptive QC-weighted mean only after the caller explicitly certifies commensurate scales. It does **not** fit StressNet/HAFN, detect artifacts, prove higher prediction quality, or supply significance tests.
 - No stable root namespace, frozen validation evidence, or release flags were changed.
