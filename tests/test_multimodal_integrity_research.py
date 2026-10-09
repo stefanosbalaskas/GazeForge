@@ -9,8 +9,12 @@ from gazeforge.multimodal_integrity_research import (
 
 
 def test_split_axes_do_not_collapse_into_a_single_flag():
-    train = pd.DataFrame({"participant_id": ["a"], "session_id": ["s1"], "temporal_block_id": ["b1"]})
-    test = pd.DataFrame({"participant_id": ["a"], "session_id": ["s2"], "temporal_block_id": ["b2"]})
+    train = pd.DataFrame({
+        "participant_id": ["a"], "session_id": ["s1"], "temporal_block_id": ["b1"]
+    })
+    test = pd.DataFrame({
+        "participant_id": ["a"], "session_id": ["s2"], "temporal_block_id": ["b2"]
+    })
     result = audit_temporal_session_separation(train, test)
     assert result["temporal_block_disjoint"]
     assert result["session_disjoint"]
@@ -34,7 +38,9 @@ def test_fusion_requires_explicit_scales_and_valid_qc():
         "q_gaze": [1., 0., None], "q_eda": [1., 1., 0.],
     })
     with pytest.raises(ValueError, match="commensurate"):
-        reliability_weighted_fusion(frame, value_cols=["gaze", "eda"], weight_cols=["q_gaze", "q_eda"])
+        reliability_weighted_fusion(
+            frame, value_cols=["gaze", "eda"], weight_cols=["q_gaze", "q_eda"]
+        )
     out = reliability_weighted_fusion(
         frame, value_cols=["gaze", "eda"], weight_cols=["q_gaze", "q_eda"],
         values_are_commensurate=True,
