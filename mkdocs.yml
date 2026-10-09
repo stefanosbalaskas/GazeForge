@@ -63,6 +63,7 @@ nav:
           - Missing is not zero: articles/missing-is-not-zero.md
           - Participant-held-out validation: articles/participant-held-out-validation.md
           - From output to reviewer-ready evidence: articles/reviewer-ready-evidence.md
+          - Multimodal evidence plots: articles/multimodal-evidence-plot-showcase.md
       - Examples gallery: examples-gallery.md
       - Plot gallery: plot-gallery.md
       - Workflow gallery: workflow-gallery.md
