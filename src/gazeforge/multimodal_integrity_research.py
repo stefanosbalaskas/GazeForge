@@ -42,7 +42,10 @@ def audit_temporal_session_separation(
         "participant_disjoint": overlaps["participant_overlap"] == 0,
         "session_disjoint": overlaps["session_overlap"] == 0,
         "temporal_block_disjoint": overlaps["temporal_block_overlap"] == 0,
-        "claim_boundary": "Identity-disjointness only. Block naming does not establish independence of adjacent time windows.",
+        "claim_boundary": (
+            "Identity-disjointness only. Block naming does not establish "
+            "independence of adjacent time windows."
+        ),
     })
     return overlaps
 
@@ -59,7 +62,12 @@ def audit_multimodal_pairing(
     participant_sets, trial_sets = [], []
     counts = {}
     for name, frame in streams.items():
-        if not isinstance(name, str) or not name or not isinstance(frame, pd.DataFrame) or frame.empty:
+        if (
+            not isinstance(name, str)
+            or not name
+            or not isinstance(frame, pd.DataFrame)
+            or frame.empty
+        ):
             raise ValueError("each modality requires a nonempty name and DataFrame")
         p = _identity_pairs(frame, (participant_col,))
         trial = _identity_pairs(frame, (participant_col, trial_col))
@@ -80,7 +88,10 @@ def audit_multimodal_pairing(
         "common_participant_trials": len(common_trials),
         "per_modality": counts,
         "clock_alignment_certified": False,
-        "claim_boundary": "Identity pairing only; synchronization and fusion validity require separate evidence.",
+        "claim_boundary": (
+            "Identity pairing only; synchronization and fusion validity "
+            "require separate evidence."
+        ),
     }
 
 
