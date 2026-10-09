@@ -29,3 +29,15 @@ fusion = reliability_weighted_fusion(
 - Scientific qualification requires artifact perturbation trials, weight-calibration assessments, and leakage-safe participant-disjoint prediction comparisons with equal-weight and complete-case baselines.
 
 See [missingness assumptions](missing-data-assumptions.md) and [existing synthetic known-truth benchmarks](synthetic-known-truth-benchmarks.md).
+
+
+## Descriptive deployment frontier
+
+The TinyML methods briefing also distinguishes *reported segment-level performance* from participant generalization and *hardware-measured resource constraints* from analytical estimates. The experimental `deployment_evidence_frontier()` helper records non-dominated candidates over held-constant benchmark, split scope, and evidence type.
+
+```python
+from gazeforge.deployment_evidence_research import deployment_evidence_frontier
+frontier = deployment_evidence_frontier(model_benchmarks)
+```
+
+Required columns: `model_id`, `dataset_id`, `split_scope`, `evidence_type` (`hardware_measured` or `analytical_estimate`), `macro_f1`, `latency_ms`, `memory_mb`, `energy_mj`. Dataset and validation scope must match; mixed measured and estimated resource evidence cannot be ranked together. This is a descriptive Pareto screen, not a deployment test or an automatic model winner.
