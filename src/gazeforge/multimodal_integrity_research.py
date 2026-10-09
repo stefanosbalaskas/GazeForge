@@ -26,22 +26,33 @@ def audit_temporal_session_separation(
     participant_col: str = "participant_id",
     session_col: str = "session_id",
     block_col: str = "temporal_block_id",
+    trial_col: str = "trial_id",
 ) -> dict:
-    """Audit three independent split overlaps using exact supplied identities."""
+    """Audit participant, session, block and trial overlap separately."""
     if train.empty or test.empty:
         raise ValueError("train and test must both contain observations")
     p = (participant_col,)
     s = (participant_col, session_col)
     b = (participant_col, session_col, block_col)
+    trial = (participant_col, session_col, trial_col)
+    trial_available = trial_col in train.columns and trial_col in test.columns
     overlaps = {
         "participant_overlap": len(_identity_pairs(train, p) & _identity_pairs(test, p)),
         "session_overlap": len(_identity_pairs(train, s) & _identity_pairs(test, s)),
         "temporal_block_overlap": len(_identity_pairs(train, b) & _identity_pairs(test, b)),
+        "trial_overlap": (
+            len(_identity_pairs(train, trial) & _identity_pairs(test, trial))
+            if trial_available else None
+        ),
     }
     overlaps.update({
         "participant_disjoint": overlaps["participant_overlap"] == 0,
         "session_disjoint": overlaps["session_overlap"] == 0,
         "temporal_block_disjoint": overlaps["temporal_block_overlap"] == 0,
+        "trial_disjoint": (
+            overlaps["trial_overlap"] == 0 if trial_available else None
+        ),
+        "trial_separation_certified": trial_available,
         "claim_boundary": (
             "Identity-disjointness only. Block naming does not establish "
             "independence of adjacent time windows."
